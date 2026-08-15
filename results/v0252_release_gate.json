@@ -1,0 +1,66 @@
+{
+  "claim_boundary": "hash-pinned Bitcoin Core and the pinned Strata validity-first path were executed and passed the stated matrix, to the extent bitcoin_core_regtest_passed and current_bridge_compiled_and_tested are true above; this is not a statement that RankLock is safe for production funds -- production setup, native hardening, independent rollback operations, governance and external audits remain separate, externally-gated requirements",
+  "clean_archive_report": null,
+  "evidence": {
+    "bitcoin_policy": {
+      "path": "results/v025_bitcoin_policy_envelope.json",
+      "sha256": "0314b82e8fe21b820b7a8d34b3ba3372346b71b3b76b80e5d96ba26747875aca"
+    },
+    "committee": {
+      "path": "results/v025_committee_qualification.json",
+      "sha256": "96df0dc308c01e3798417d44b1398d8cfaf1c576ed5bf284fc9eb1d5a11fdb52"
+    },
+    "hardening": {
+      "path": "results/v0251_security_hardening.json",
+      "sha256": "505f18539455ea8419f753f7bc82071780236a9eaa2ac3c288954480fceacd78"
+    },
+    "split_scalar": {
+      "path": "results/v025_split_scalar_qualification.json",
+      "sha256": "7f61770b1e267936db7fda096024c43127dcc0ae995263a3085b2ae4f84865f7"
+    },
+    "tests": {
+      "path": "results/v025_test_files.json",
+      "sha256": "5a336890cd61177383373e7fd6475f63f16b25717af19aeed202d828f77bb878"
+    }
+  },
+  "evidence_verification": null,
+  "external_attestations_must_be_verified_by": "ranklock.deployment_policy.evaluate_deployment",
+  "facts": {
+    "active_mpc_exact_generator_passed": false,
+    "bitcoin_core_regtest_executed": false,
+    "bitcoin_core_regtest_passed": false,
+    "bitcoin_policy_envelope_passed": true,
+    "committee_authorization_harness_passed": true,
+    "complete_source_archive_reproducible": false,
+    "complete_test_suite_passed": true,
+    "current_bridge_compiled_and_tested": false,
+    "deterministic_fixture_secrets_absent": false,
+    "independent_cryptography_audit_passed": false,
+    "independent_implementation_audit_passed": false,
+    "native_constant_time_implementation": false,
+    "production_rollback_witnesses_deployed": false,
+    "retained_object_below_one_mib": true,
+    "split_scalar_one_honest_harness_passed": true,
+    "split_scalar_production_setup_passed": false
+  },
+  "funds_blockers": [
+    "complete source archive is not reproducible",
+    "Bitcoin Core regtest was not executed",
+    "Bitcoin Core regtest did not pass",
+    "current bridge commit was not compiled and tested",
+    "native constant-time implementation is absent",
+    "production rollback witnesses are not deployed",
+    "deterministic fixture secrets are present",
+    "independent cryptography audit is absent",
+    "independent implementation audit is absent",
+    "production setup gate is open for split-scalar-n-of-n"
+  ],
+  "local_security_hardening_passed": true,
+  "locally_reproducible": false,
+  "maximum_mode": "observe",
+  "package_version": "0.25.2",
+  "safe_for_funds": false,
+  "schema": "ranklock-v0252-release-gate-v1",
+  "setup_gate_passed": false,
+  "setup_security_mode": "split-scalar-n-of-n"
+}

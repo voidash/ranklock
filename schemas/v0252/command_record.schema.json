@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ranklock-v0252-command-record-v1",
+  "title": "RankLock v0.25.2 recorded command",
+  "description": "One executed (or attempted) command with raw evidence on disk. Produced by ranklock.evidence_v0252.run_recorded_command.",
+  "type": "object",
+  "required": [
+    "schema", "argv", "cwd", "started_at_utc", "finished_at_utc",
+    "duration_ms", "exit_code", "timed_out", "stdout_path", "stderr_path",
+    "stdout_sha256", "stderr_sha256", "env_digest"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema": { "const": "ranklock-v0252-command-record-v1" },
+    "argv": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "cwd": { "type": "string" },
+    "started_at_utc": { "type": "string", "format": "date-time" },
+    "finished_at_utc": { "type": "string", "format": "date-time" },
+    "duration_ms": { "type": "integer", "minimum": 0 },
+    "exit_code": { "type": "integer" },
+    "timed_out": { "type": "boolean" },
+    "stdout_path": { "type": "string" },
+    "stderr_path": { "type": "string" },
+    "stdout_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "stderr_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "env_digest": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+  }
+}

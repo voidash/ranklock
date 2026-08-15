@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ranklock-v0252-evidence-verification-v1",
+  "title": "RankLock v0.25.2 strict evidence verification output",
+  "description": "Output of scripts/verify_v0252_evidence.py. This is the only document generate_v0252_release_gate.py may read to derive bitcoin_core_regtest_* and current_bridge_compiled_and_tested facts -- it must never read the underlying matrix reports' producer booleans directly.",
+  "type": "object",
+  "required": [
+    "schema", "all_checks_passed", "checks", "reports_present",
+    "core_matrix", "strata_build_matrix", "strata_e2e_matrix",
+    "bitcoin_core_regtest_executed", "bitcoin_core_regtest_all_passed",
+    "strata_build_all_passed", "strata_e2e_all_passed", "safe_for_funds"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema": { "const": "ranklock-v0252-evidence-verification-v1" },
+    "all_checks_passed": { "type": "boolean" },
+    "checks": { "type": "object", "additionalProperties": { "type": "boolean" } },
+    "reports_present": {
+      "type": "array",
+      "items": { "enum": ["core", "strata_build", "strata_e2e"] }
+    },
+    "core_matrix": { "anyOf": [{ "$ref": "core_matrix.schema.json" }, { "type": "null" }] },
+    "strata_build_matrix": { "anyOf": [{ "$ref": "strata_build_matrix.schema.json" }, { "type": "null" }] },
+    "strata_e2e_matrix": { "anyOf": [{ "$ref": "strata_e2e_matrix.schema.json" }, { "type": "null" }] },
+    "bitcoin_core_regtest_executed": { "type": "boolean" },
+    "bitcoin_core_regtest_all_passed": { "type": "boolean" },
+    "strata_build_all_passed": { "type": "boolean" },
+    "strata_e2e_all_passed": { "type": "boolean" },
+    "safe_for_funds": { "const": false }
+  }
+}

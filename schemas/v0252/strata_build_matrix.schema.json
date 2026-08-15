@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ranklock-v0252-strata-build-matrix-v1",
+  "title": "RankLock v0.25.2 Strata build/patch acceptance matrix",
+  "description": "Evidence for STRATA-001 through STRATA-009 from 03_ACCEPTANCE_MATRIX.md: clean checkout, patch preflight/apply/scope, format, workspace check, and targeted/full test suites at the pinned commit.",
+  "type": "object",
+  "required": ["schema", "identity", "cases", "all_passed", "any_failed", "status_counts"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": { "const": "ranklock-v0252-strata-build-matrix-v1" },
+    "identity": {
+      "type": "object",
+      "properties": {
+        "strata_commit": { "const": "f94c06d08ff29eee746f3e20bd63078d2949b304" },
+        "strata_handoff_sha256": { "const": "95196312827754b8ffabd5850f2ce9b928f3fce510b0b461c8e76ca005c4a928" },
+        "checkout_path": { "type": "string" },
+        "rust_toolchain": { "type": "string" },
+        "cargo_version": { "type": "string" },
+        "patch_sha256": { "type": ["string", "null"], "pattern": "^[0-9a-f]{64}$" }
+      }
+    },
+    "cases": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["STRATA-001", "STRATA-002", "STRATA-003", "STRATA-004", "STRATA-005", "STRATA-006", "STRATA-007", "STRATA-008", "STRATA-009"],
+      "properties": {
+        "STRATA-001": { "$ref": "case_result.schema.json" },
+        "STRATA-002": { "$ref": "case_result.schema.json" },
+        "STRATA-003": { "$ref": "case_result.schema.json" },
+        "STRATA-004": { "$ref": "case_result.schema.json" },
+        "STRATA-005": { "$ref": "case_result.schema.json" },
+        "STRATA-006": { "$ref": "case_result.schema.json" },
+        "STRATA-007": { "$ref": "case_result.schema.json" },
+        "STRATA-008": { "$ref": "case_result.schema.json" },
+        "STRATA-009": { "$ref": "case_result.schema.json" }
+      }
+    },
+    "all_passed": { "type": "boolean" },
+    "any_failed": { "type": "boolean" },
+    "status_counts": {
+      "type": "object",
+      "additionalProperties": { "type": "integer", "minimum": 0 }
+    }
+  }
+}

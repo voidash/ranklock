@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ranklock-v0252-case-result-v1",
+  "title": "RankLock v0.25.2 acceptance-matrix case result",
+  "description": "The result of one CORE-*/STRATA-* acceptance-matrix case. A 'passed' status is only valid when commands contains at least one non-timed-out, zero-exit command -- this is enforced both at write time (ranklock.evidence_v0252.CaseResult) and independently re-verified from raw log bytes on disk by scripts/verify_v0252_evidence.py.",
+  "type": "object",
+  "required": ["schema", "case_id", "status", "description", "commands", "evidence", "blocked_by"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": { "const": "ranklock-v0252-case-result-v1" },
+    "case_id": { "type": "string", "pattern": "^(CORE|STRATA|EVID)-[0-9]{3}$" },
+    "status": {
+      "type": "string",
+      "enum": ["passed", "failed", "not_executed", "unavailable", "modeled_only"]
+    },
+    "description": { "type": "string", "minLength": 1 },
+    "commands": {
+      "type": "array",
+      "items": { "$ref": "command_record.schema.json" }
+    },
+    "evidence": { "type": "object" },
+    "blocked_by": { "type": ["string", "null"] }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "status": { "const": "passed" } } },
+      "then": { "properties": { "commands": { "minItems": 1 } } }
+    },
+    {
+      "if": { "properties": { "status": { "const": "failed" } } },
+      "then": { "properties": { "commands": { "minItems": 1 } } }
+    }
+  ]
+}

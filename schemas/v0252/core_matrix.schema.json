@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ranklock-v0252-core-matrix-v1",
+  "title": "RankLock v0.25.2 Bitcoin Core acceptance matrix",
+  "description": "Evidence for CORE-001 through CORE-030 from 03_ACCEPTANCE_MATRIX.md. 'cases' must contain exactly these 30 keys -- no fewer (a silently dropped case) and no more (an invented case ID).",
+  "type": "object",
+  "required": ["schema", "identity", "cases", "all_passed", "any_failed", "status_counts"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": { "const": "ranklock-v0252-core-matrix-v1" },
+    "identity": {
+      "type": "object",
+      "description": "Pinned Bitcoin Core identity used for every case in this report.",
+      "properties": {
+        "expected_release": { "const": "31.1" },
+        "expected_numeric_version": { "const": 310100 },
+        "bitcoind_path": { "type": "string" },
+        "bitcoind_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "signed_release_verification_digest": { "type": ["string", "null"] },
+        "chain": { "const": "regtest" }
+      }
+    },
+    "cases": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["CORE-001", "CORE-002", "CORE-003", "CORE-004", "CORE-005", "CORE-006", "CORE-007", "CORE-008", "CORE-009", "CORE-010", "CORE-011", "CORE-012", "CORE-013", "CORE-014", "CORE-015", "CORE-016", "CORE-017", "CORE-018", "CORE-019", "CORE-020", "CORE-021", "CORE-022", "CORE-023", "CORE-024", "CORE-025", "CORE-026", "CORE-027", "CORE-028", "CORE-029", "CORE-030"],
+      "properties": {
+        "CORE-001": { "$ref": "case_result.schema.json" },
+        "CORE-002": { "$ref": "case_result.schema.json" },
+        "CORE-003": { "$ref": "case_result.schema.json" },
+        "CORE-004": { "$ref": "case_result.schema.json" },
+        "CORE-005": { "$ref": "case_result.schema.json" },
+        "CORE-006": { "$ref": "case_result.schema.json" },
+        "CORE-007": { "$ref": "case_result.schema.json" },
+        "CORE-008": { "$ref": "case_result.schema.json" },
+        "CORE-009": { "$ref": "case_result.schema.json" },
+        "CORE-010": { "$ref": "case_result.schema.json" },
+        "CORE-011": { "$ref": "case_result.schema.json" },
+        "CORE-012": { "$ref": "case_result.schema.json" },
+        "CORE-013": { "$ref": "case_result.schema.json" },
+        "CORE-014": { "$ref": "case_result.schema.json" },
+        "CORE-015": { "$ref": "case_result.schema.json" },
+        "CORE-016": { "$ref": "case_result.schema.json" },
+        "CORE-017": { "$ref": "case_result.schema.json" },
+        "CORE-018": { "$ref": "case_result.schema.json" },
+        "CORE-019": { "$ref": "case_result.schema.json" },
+        "CORE-020": { "$ref": "case_result.schema.json" },
+        "CORE-021": { "$ref": "case_result.schema.json" },
+        "CORE-022": { "$ref": "case_result.schema.json" },
+        "CORE-023": { "$ref": "case_result.schema.json" },
+        "CORE-024": { "$ref": "case_result.schema.json" },
+        "CORE-025": { "$ref": "case_result.schema.json" },
+        "CORE-026": { "$ref": "case_result.schema.json" },
+        "CORE-027": { "$ref": "case_result.schema.json" },
+        "CORE-028": { "$ref": "case_result.schema.json" },
+        "CORE-029": { "$ref": "case_result.schema.json" },
+        "CORE-030": { "$ref": "case_result.schema.json" }
+      }
+    },
+    "all_passed": { "type": "boolean" },
+    "any_failed": { "type": "boolean" },
+    "status_counts": {
+      "type": "object",
+      "additionalProperties": { "type": "integer", "minimum": 0 }
+    }
+  }
+}

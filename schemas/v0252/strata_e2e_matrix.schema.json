@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ranklock-v0252-strata-e2e-matrix-v1",
+  "title": "RankLock v0.25.2 Strata/Core end-to-end acceptance matrix",
+  "description": "Evidence for STRATA-010 through STRATA-020 from 03_ACCEPTANCE_MATRIX.md: ACK/NACK execution, replay/negative cases, restart, reorg and concurrent-watchtower behavior against the same pinned Core environment qualified by the CORE-* matrix. Only meaningful once the Strata build matrix (STRATA-001..009) fully passed -- the verifier enforces this cross-report dependency.",
+  "type": "object",
+  "required": ["schema", "identity", "cases", "all_passed", "any_failed", "status_counts"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": { "const": "ranklock-v0252-strata-e2e-matrix-v1" },
+    "identity": {
+      "type": "object",
+      "properties": {
+        "strata_commit": { "const": "f94c06d08ff29eee746f3e20bd63078d2949b304" },
+        "bitcoind_path": { "type": "string" },
+        "bitcoind_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "chain": { "const": "regtest" }
+      }
+    },
+    "cases": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["STRATA-010", "STRATA-011", "STRATA-012", "STRATA-013", "STRATA-014", "STRATA-015", "STRATA-016", "STRATA-017", "STRATA-018", "STRATA-019", "STRATA-020"],
+      "properties": {
+        "STRATA-010": { "$ref": "case_result.schema.json" },
+        "STRATA-011": { "$ref": "case_result.schema.json" },
+        "STRATA-012": { "$ref": "case_result.schema.json" },
+        "STRATA-013": { "$ref": "case_result.schema.json" },
+        "STRATA-014": { "$ref": "case_result.schema.json" },
+        "STRATA-015": { "$ref": "case_result.schema.json" },
+        "STRATA-016": { "$ref": "case_result.schema.json" },
+        "STRATA-017": { "$ref": "case_result.schema.json" },
+        "STRATA-018": { "$ref": "case_result.schema.json" },
+        "STRATA-019": { "$ref": "case_result.schema.json" },
+        "STRATA-020": { "$ref": "case_result.schema.json" }
+      }
+    },
+    "all_passed": { "type": "boolean" },
+    "any_failed": { "type": "boolean" },
+    "status_counts": {
+      "type": "object",
+      "additionalProperties": { "type": "integer", "minimum": 0 }
+    }
+  }
+}
