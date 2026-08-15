@@ -1,0 +1,83 @@
+{
+  "artifact_count": 4,
+  "artifacts": [
+    {
+      "bytes": 49198,
+      "first_sha256": "67bdd5d7ab259f3c0a2750a80ca2cc908876fc8a88d0664c80f07ee8ef764846",
+      "identical": true,
+      "name": "alpen-validity-first-f94c-v025.zip",
+      "second_sha256": "67bdd5d7ab259f3c0a2750a80ca2cc908876fc8a88d0664c80f07ee8ef764846",
+      "sha256": "67bdd5d7ab259f3c0a2750a80ca2cc908876fc8a88d0664c80f07ee8ef764846"
+    },
+    {
+      "bytes": 310,
+      "first_sha256": "a8046ec533e3969cf961150293b40707d7c59bc4bc9cd2988459bfd378356ab4",
+      "identical": true,
+      "name": "ranklock-v0.25.1-SHA256SUMS.txt",
+      "second_sha256": "a8046ec533e3969cf961150293b40707d7c59bc4bc9cd2988459bfd378356ab4",
+      "sha256": "a8046ec533e3969cf961150293b40707d7c59bc4bc9cd2988459bfd378356ab4"
+    },
+    {
+      "bytes": 532,
+      "first_sha256": "5ef011b6379b6c96f8ec29d03cbddf175378c789101df07fd94c6026ef7579b4",
+      "identical": true,
+      "name": "ranklock-v0.25.1-release-build.json",
+      "second_sha256": "5ef011b6379b6c96f8ec29d03cbddf175378c789101df07fd94c6026ef7579b4",
+      "sha256": "5ef011b6379b6c96f8ec29d03cbddf175378c789101df07fd94c6026ef7579b4"
+    },
+    {
+      "bytes": 17530814,
+      "first_sha256": "4b7cbb7783aa22c0a756d15febe736b368341bd9f28f073e10c88c595c29b884",
+      "identical": true,
+      "name": "ranklock-v0.25.1-reproducible-source.zip",
+      "second_sha256": "4b7cbb7783aa22c0a756d15febe736b368341bd9f28f073e10c88c595c29b884",
+      "sha256": "4b7cbb7783aa22c0a756d15febe736b368341bd9f28f073e10c88c595c29b884"
+    }
+  ],
+  "byte_identical": true,
+  "commands": [
+    {
+      "argv": [
+        "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/.venv/bin/python",
+        "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/scripts/build_v025_release.py",
+        "--output-dir",
+        "/var/folders/q_/9s2d9ctj6rq165znhnrj6wz40000gn/T/ranklock-v0252-determinism-5bwibmdd/build-a"
+      ],
+      "cwd": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1",
+      "duration_ms": 617,
+      "env_digest": "b6ff0f5eeec3e13b4dd84b4b6945cbe3ffd54c31502b3e6e3e0ddadb7cde0f1f",
+      "exit_code": 0,
+      "finished_at_utc": "2026-08-15T21:13:55.583421Z",
+      "schema": "ranklock-v0252-command-record-v1",
+      "started_at_utc": "2026-08-15T21:13:54.966123Z",
+      "stderr_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/results/v0252_logs/deterministic-build-a.20260815T211354965742Z.stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/results/v0252_logs/deterministic-build-a.20260815T211354965742Z.stdout.log",
+      "stdout_sha256": "5ef011b6379b6c96f8ec29d03cbddf175378c789101df07fd94c6026ef7579b4",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/.venv/bin/python",
+        "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/scripts/build_v025_release.py",
+        "--output-dir",
+        "/var/folders/q_/9s2d9ctj6rq165znhnrj6wz40000gn/T/ranklock-v0252-determinism-5bwibmdd/build-b"
+      ],
+      "cwd": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1",
+      "duration_ms": 605,
+      "env_digest": "b6ff0f5eeec3e13b4dd84b4b6945cbe3ffd54c31502b3e6e3e0ddadb7cde0f1f",
+      "exit_code": 0,
+      "finished_at_utc": "2026-08-15T21:13:56.189470Z",
+      "schema": "ranklock-v0252-command-record-v1",
+      "started_at_utc": "2026-08-15T21:13:55.583858Z",
+      "stderr_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/results/v0252_logs/deterministic-build-b.20260815T211355583804Z.stderr.log",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/results/v0252_logs/deterministic-build-b.20260815T211355583804Z.stdout.log",
+      "stdout_sha256": "5ef011b6379b6c96f8ec29d03cbddf175378c789101df07fd94c6026ef7579b4",
+      "timed_out": false
+    }
+  ],
+  "schema": "ranklock-v0252-deterministic-build-v1",
+  "scope_note": "two builds from the same working tree on one machine; cross-machine reproducibility additionally requires a hash-locked dependency set and is not established here",
+  "status": "passed"
+}

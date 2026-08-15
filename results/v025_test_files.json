@@ -1,11 +1,11 @@
 {
   "complete": true,
   "failed": 0,
-  "files": 106,
+  "files": 107,
   "nonzero_files": 0,
-  "passed": 470,
+  "passed": 474,
   "schema": "ranklock-v025-complete-test-suite-v1",
   "timeout_per_file_seconds": 420,
-  "total_discovered_files": 106,
+  "total_discovered_files": 107,
   "workers": 4
 }

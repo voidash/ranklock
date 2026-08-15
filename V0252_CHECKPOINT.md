@@ -89,7 +89,22 @@ nor the original honest one can drive the slot forward. A conflict arriving
 *after* a terminal outcome is audit-only — released information cannot be
 recalled.
 
-### 5. Strata handoff repair
+### 5. Crash durability and reproducibility
+
+Previous coverage reopened a ledger object in the same interpreter, which
+exercises SQLite reads but not durability. `tests/test_crash_durability.py`
+now SIGKILLs a child process between the committed burn and the response
+write — uncatchable, so nothing can tidy up on the way out — and inspects the
+database from a fresh process. A killed burn stays burned, still blocks a
+conflicting binding (terminally, per CORE-014), and replays deterministically
+with exactly one burn event.
+
+EVID-007 is closed by `scripts/verify_v0252_deterministic_build.py`: two
+independent builds produce byte-identical archives across all four artifacts.
+Its scope note is explicit that this is same-machine determinism;
+cross-machine reproducibility additionally needs a hash-locked dependency set.
+
+### 6. Strata handoff repair
 
 The supplied bundle **could not preflight at the pinned commit at all**. Two
 installer defects, both reproduced directly:
@@ -144,13 +159,16 @@ These are recorded with their actual probe output, never asserted from memory.
 2. **The Strata dependency graph is not resolvable here.** `cargo --offline`
    cannot reach the pinned `mosaic` git rev, and the full workspace also needs
    a FoundationDB client library. STRATA-005..009 are `unavailable`.
-3. **Per-scenario negatives and fault injection are not built.** 15 CORE
-   cases remain: per-scenario burn/anchor/release negatives (wrong slot,
-   wrong context, wrong witness), deterministic process-kill points
-   (CORE-016/017), and the Strata ACK/NACK graph (CORE-021..023, 026/027).
-   The *positive* two-phase path is now executed end to end.
-4. **No real RankLock exporter.** `ranklock_sidecar_fixture.py` remains
-   explicitly unsafe test plumbing, so STRATA-010..020 cannot run.
+3. **Per-scenario protocol negatives are not wired into the matrix.**
+   Remaining CORE rows are per-scenario burn/anchor/release negatives (wrong
+   slot, wrong context, wrong witness) and the Strata ACK/NACK graph
+   (CORE-021..023, 026/027). The *positive* two-phase path is executed end to
+   end, and crash durability (CORE-016/017) is now covered by real SIGKILL
+   tests in `tests/test_crash_durability.py`.
+4. **STRATA-010..020 need the compiled bridge.** A production-shaped
+   exporter now exists (`src/ranklock/strata_exporter.py`), replacing the
+   unsafe fixture, but the ACK/NACK paths cannot be driven until blocker 2
+   is resolved.
 
 ## Gates that engineering cannot close
 
