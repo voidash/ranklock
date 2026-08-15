@@ -1,0 +1,349 @@
+{
+  "all_passed": false,
+  "any_failed": false,
+  "cases": {
+    "STRATA-001": {
+      "blocked_by": null,
+      "case_id": "STRATA-001",
+      "commands": [
+        {
+          "argv": [
+            "git",
+            "rev-parse",
+            "HEAD"
+          ],
+          "cwd": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-matrix-run",
+          "duration_ms": 10,
+          "env_digest": "82c08e65267c8bf5c06cbb2472117e1bfbf163352b4911233c04b8efcc5fdc34",
+          "exit_code": 0,
+          "finished_at_utc": "2026-08-15T20:59:33.421009Z",
+          "schema": "ranklock-v0252-command-record-v1",
+          "started_at_utc": "2026-08-15T20:59:33.410049Z",
+          "stderr_path": "/tmp/strata_logs/strata-head.20260815T205933409796Z.stderr.log",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout_path": "/tmp/strata_logs/strata-head.20260815T205933409796Z.stdout.log",
+          "stdout_sha256": "0cf6b93986b3e13ff8e9b4ccbb5c99202ddff8aae23a9f2507821c9e5e488346",
+          "timed_out": false
+        }
+      ],
+      "description": "checkout is exactly the pinned base commit",
+      "evidence": {
+        "checkout_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-matrix-run",
+        "clean_before_patch": true,
+        "expected_commit": "f94c06d08ff29eee746f3e20bd63078d2949b304",
+        "observed_commit": "f94c06d08ff29eee746f3e20bd63078d2949b304"
+      },
+      "schema": "ranklock-v0252-case-result-v1",
+      "status": "passed"
+    },
+    "STRATA-002": {
+      "blocked_by": null,
+      "case_id": "STRATA-002",
+      "commands": [
+        {
+          "argv": [
+            "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/.venv/bin/python",
+            "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/integration/alpen-validity-first-f94c-v025/apply_validity_first.py",
+            "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-matrix-run",
+            "--check"
+          ],
+          "cwd": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1",
+          "duration_ms": 89,
+          "env_digest": "82c08e65267c8bf5c06cbb2472117e1bfbf163352b4911233c04b8efcc5fdc34",
+          "exit_code": 0,
+          "finished_at_utc": "2026-08-15T20:59:33.540399Z",
+          "schema": "ranklock-v0252-command-record-v1",
+          "started_at_utc": "2026-08-15T20:59:33.450619Z",
+          "stderr_path": "/tmp/strata_logs/strata-preflight.20260815T205933450538Z.stderr.log",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout_path": "/tmp/strata_logs/strata-preflight.20260815T205933450538Z.stdout.log",
+          "stdout_sha256": "0a9df470faeaf738c8bc3daf680c1b6bf8574e6aa3d3ec18d6d830d834d2c8a5",
+          "timed_out": false
+        }
+      ],
+      "description": "apply_validity_first.py --check passes at the pinned commit",
+      "evidence": {
+        "exit_code": 0
+      },
+      "schema": "ranklock-v0252-case-result-v1",
+      "status": "passed"
+    },
+    "STRATA-003": {
+      "blocked_by": null,
+      "case_id": "STRATA-003",
+      "commands": [
+        {
+          "argv": [
+            "git",
+            "status",
+            "--porcelain"
+          ],
+          "cwd": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-matrix-run",
+          "duration_ms": 48,
+          "env_digest": "82c08e65267c8bf5c06cbb2472117e1bfbf163352b4911233c04b8efcc5fdc34",
+          "exit_code": 0,
+          "finished_at_utc": "2026-08-15T20:59:34.335940Z",
+          "schema": "ranklock-v0252-command-record-v1",
+          "started_at_utc": "2026-08-15T20:59:34.287281Z",
+          "stderr_path": "/tmp/strata_logs/strata-scope.20260815T205934287209Z.stderr.log",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout_path": "/tmp/strata_logs/strata-scope.20260815T205934287209Z.stdout.log",
+          "stdout_sha256": "0b4ca6547877d55370dd1d27dbf8c732bd92b4dbedbb00d6ba890700ff72ceb5",
+          "timed_out": false
+        }
+      ],
+      "description": "patch changes exactly the declared 24-file scope",
+      "evidence": {
+        "expected_modified": 20,
+        "expected_new": 4,
+        "git_diff_check_clean": true,
+        "modified_files": 20,
+        "new_files": 4,
+        "paths": [
+          "crates/bridge-exec/src/errors.rs",
+          "crates/bridge-exec/src/graph/common.rs",
+          "crates/bridge-exec/src/graph/mod.rs",
+          "crates/bridge-exec/src/graph/ranklock.rs",
+          "crates/bridge-sm/src/graph/duties.rs",
+          "crates/bridge-sm/src/graph/handlers/retry.rs",
+          "crates/bridge-sm/src/graph/machine.rs",
+          "crates/bridge-sm/src/graph/transitions/common.rs",
+          "crates/bridge-sm/src/graph/transitions/contested.rs",
+          "crates/bridge-sm/src/graph/transitions/counterproof.rs",
+          "crates/bridge-sm/src/graph/tx_classifier.rs",
+          "crates/bridge-sm/src/tx_classifier.rs",
+          "crates/connectors/src/lib.rs",
+          "crates/connectors/src/prelude.rs",
+          "crates/connectors/src/validity_first_counterproof.rs",
+          "crates/tx-graph/src/fee.rs",
+          "crates/tx-graph/src/game_graph.rs",
+          "crates/tx-graph/src/musig_functor.rs",
+          "crates/tx-graph/src/transactions/counterproof.rs",
+          "crates/tx-graph/src/transactions/counterproof_ack.rs",
+          "crates/tx-graph/src/transactions/counterproof_nack.rs",
+          "crates/tx-graph/src/transactions/mod.rs",
+          "crates/tx-graph/src/transactions/prelude.rs",
+          "scripts/ranklock_sidecar_fixture.py"
+        ]
+      },
+      "schema": "ranklock-v0252-case-result-v1",
+      "status": "passed"
+    },
+    "STRATA-004": {
+      "blocked_by": null,
+      "case_id": "STRATA-004",
+      "commands": [
+        {
+          "argv": [
+            "cargo",
+            "fmt",
+            "--all",
+            "--",
+            "--check"
+          ],
+          "cwd": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-matrix-run",
+          "duration_ms": 372,
+          "env_digest": "82c08e65267c8bf5c06cbb2472117e1bfbf163352b4911233c04b8efcc5fdc34",
+          "exit_code": 0,
+          "finished_at_utc": "2026-08-15T20:59:34.724065Z",
+          "schema": "ranklock-v0252-command-record-v1",
+          "started_at_utc": "2026-08-15T20:59:34.351370Z",
+          "stderr_path": "/tmp/strata_logs/strata-fmt.20260815T205934351290Z.stderr.log",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout_path": "/tmp/strata_logs/strata-fmt.20260815T205934351290Z.stdout.log",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "timed_out": false
+        }
+      ],
+      "description": "cargo fmt --all -- --check passes on the patched tree",
+      "evidence": {
+        "exit_code": 0
+      },
+      "schema": "ranklock-v0252-case-result-v1",
+      "status": "passed"
+    },
+    "STRATA-005": {
+      "blocked_by": "the pinned dependency graph (1,176 crates, 16 git-sourced families) is not resolvable in this environment; the full workspace additionally requires a FoundationDB client library",
+      "case_id": "STRATA-005",
+      "commands": [
+        {
+          "argv": [
+            "cargo",
+            "metadata",
+            "--offline",
+            "--format-version",
+            "1"
+          ],
+          "cwd": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-matrix-run",
+          "duration_ms": 207,
+          "env_digest": "82c08e65267c8bf5c06cbb2472117e1bfbf163352b4911233c04b8efcc5fdc34",
+          "exit_code": 101,
+          "finished_at_utc": "2026-08-15T20:59:34.931570Z",
+          "schema": "ranklock-v0252-command-record-v1",
+          "started_at_utc": "2026-08-15T20:59:34.724475Z",
+          "stderr_path": "/tmp/strata_logs/strata-dependency-probe.20260815T205934724416Z.stderr.log",
+          "stderr_sha256": "400c28f2545104e81d760785ef0c2fadfa27e2fe48e87425fb91a8beb156ccf0",
+          "stdout_path": "/tmp/strata_logs/strata-dependency-probe.20260815T205934724416Z.stdout.log",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "timed_out": false
+        }
+      ],
+      "description": "cargo check --workspace --all-targets passes",
+      "evidence": {
+        "dependency_probe_exit_code": 101,
+        "reason": "the pinned dependency graph (1,176 crates, 16 git-sourced families) is not resolvable in this environment; the full workspace additionally requires a FoundationDB client library"
+      },
+      "schema": "ranklock-v0252-case-result-v1",
+      "status": "unavailable"
+    },
+    "STRATA-006": {
+      "blocked_by": "the pinned dependency graph (1,176 crates, 16 git-sourced families) is not resolvable in this environment; the full workspace additionally requires a FoundationDB client library",
+      "case_id": "STRATA-006",
+      "commands": [
+        {
+          "argv": [
+            "cargo",
+            "metadata",
+            "--offline",
+            "--format-version",
+            "1"
+          ],
+          "cwd": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-matrix-run",
+          "duration_ms": 207,
+          "env_digest": "82c08e65267c8bf5c06cbb2472117e1bfbf163352b4911233c04b8efcc5fdc34",
+          "exit_code": 101,
+          "finished_at_utc": "2026-08-15T20:59:34.931570Z",
+          "schema": "ranklock-v0252-command-record-v1",
+          "started_at_utc": "2026-08-15T20:59:34.724475Z",
+          "stderr_path": "/tmp/strata_logs/strata-dependency-probe.20260815T205934724416Z.stderr.log",
+          "stderr_sha256": "400c28f2545104e81d760785ef0c2fadfa27e2fe48e87425fb91a8beb156ccf0",
+          "stdout_path": "/tmp/strata_logs/strata-dependency-probe.20260815T205934724416Z.stdout.log",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "timed_out": false
+        }
+      ],
+      "description": "validity-first connector tests pass",
+      "evidence": {
+        "dependency_probe_exit_code": 101,
+        "reason": "the pinned dependency graph (1,176 crates, 16 git-sourced families) is not resolvable in this environment; the full workspace additionally requires a FoundationDB client library"
+      },
+      "schema": "ranklock-v0252-case-result-v1",
+      "status": "unavailable"
+    },
+    "STRATA-007": {
+      "blocked_by": "the pinned dependency graph (1,176 crates, 16 git-sourced families) is not resolvable in this environment; the full workspace additionally requires a FoundationDB client library",
+      "case_id": "STRATA-007",
+      "commands": [
+        {
+          "argv": [
+            "cargo",
+            "metadata",
+            "--offline",
+            "--format-version",
+            "1"
+          ],
+          "cwd": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-matrix-run",
+          "duration_ms": 207,
+          "env_digest": "82c08e65267c8bf5c06cbb2472117e1bfbf163352b4911233c04b8efcc5fdc34",
+          "exit_code": 101,
+          "finished_at_utc": "2026-08-15T20:59:34.931570Z",
+          "schema": "ranklock-v0252-command-record-v1",
+          "started_at_utc": "2026-08-15T20:59:34.724475Z",
+          "stderr_path": "/tmp/strata_logs/strata-dependency-probe.20260815T205934724416Z.stderr.log",
+          "stderr_sha256": "400c28f2545104e81d760785ef0c2fadfa27e2fe48e87425fb91a8beb156ccf0",
+          "stdout_path": "/tmp/strata_logs/strata-dependency-probe.20260815T205934724416Z.stdout.log",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "timed_out": false
+        }
+      ],
+      "description": "ACK/NACK game-graph tests pass",
+      "evidence": {
+        "dependency_probe_exit_code": 101,
+        "reason": "the pinned dependency graph (1,176 crates, 16 git-sourced families) is not resolvable in this environment; the full workspace additionally requires a FoundationDB client library"
+      },
+      "schema": "ranklock-v0252-case-result-v1",
+      "status": "unavailable"
+    },
+    "STRATA-008": {
+      "blocked_by": "the pinned dependency graph (1,176 crates, 16 git-sourced families) is not resolvable in this environment; the full workspace additionally requires a FoundationDB client library",
+      "case_id": "STRATA-008",
+      "commands": [
+        {
+          "argv": [
+            "cargo",
+            "metadata",
+            "--offline",
+            "--format-version",
+            "1"
+          ],
+          "cwd": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-matrix-run",
+          "duration_ms": 207,
+          "env_digest": "82c08e65267c8bf5c06cbb2472117e1bfbf163352b4911233c04b8efcc5fdc34",
+          "exit_code": 101,
+          "finished_at_utc": "2026-08-15T20:59:34.931570Z",
+          "schema": "ranklock-v0252-command-record-v1",
+          "started_at_utc": "2026-08-15T20:59:34.724475Z",
+          "stderr_path": "/tmp/strata_logs/strata-dependency-probe.20260815T205934724416Z.stderr.log",
+          "stderr_sha256": "400c28f2545104e81d760785ef0c2fadfa27e2fe48e87425fb91a8beb156ccf0",
+          "stdout_path": "/tmp/strata_logs/strata-dependency-probe.20260815T205934724416Z.stdout.log",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "timed_out": false
+        }
+      ],
+      "description": "counterproof state-machine transition tests pass",
+      "evidence": {
+        "dependency_probe_exit_code": 101,
+        "reason": "the pinned dependency graph (1,176 crates, 16 git-sourced families) is not resolvable in this environment; the full workspace additionally requires a FoundationDB client library"
+      },
+      "schema": "ranklock-v0252-case-result-v1",
+      "status": "unavailable"
+    },
+    "STRATA-009": {
+      "blocked_by": "the pinned dependency graph (1,176 crates, 16 git-sourced families) is not resolvable in this environment; the full workspace additionally requires a FoundationDB client library",
+      "case_id": "STRATA-009",
+      "commands": [
+        {
+          "argv": [
+            "cargo",
+            "metadata",
+            "--offline",
+            "--format-version",
+            "1"
+          ],
+          "cwd": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-matrix-run",
+          "duration_ms": 207,
+          "env_digest": "82c08e65267c8bf5c06cbb2472117e1bfbf163352b4911233c04b8efcc5fdc34",
+          "exit_code": 101,
+          "finished_at_utc": "2026-08-15T20:59:34.931570Z",
+          "schema": "ranklock-v0252-command-record-v1",
+          "started_at_utc": "2026-08-15T20:59:34.724475Z",
+          "stderr_path": "/tmp/strata_logs/strata-dependency-probe.20260815T205934724416Z.stderr.log",
+          "stderr_sha256": "400c28f2545104e81d760785ef0c2fadfa27e2fe48e87425fb91a8beb156ccf0",
+          "stdout_path": "/tmp/strata_logs/strata-dependency-probe.20260815T205934724416Z.stdout.log",
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "timed_out": false
+        }
+      ],
+      "description": "the complete intended workspace test suite passes",
+      "evidence": {
+        "dependency_probe_exit_code": 101,
+        "reason": "the pinned dependency graph (1,176 crates, 16 git-sourced families) is not resolvable in this environment; the full workspace additionally requires a FoundationDB client library"
+      },
+      "schema": "ranklock-v0252-case-result-v1",
+      "status": "unavailable"
+    }
+  },
+  "identity": {
+    "checkout_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-matrix-run",
+    "rust_toolchain": "[toolchain]\nchannel = \"nightly-2026-05-01\"\ncomponents = [\n  \"cargo\",\n  \"clippy\",\n  \"rustc\",\n  \"rustfmt\",\n  \"rust-analyzer\",\n  \"rust-docs\",\n  \"rust-src\",\n  \"rust-std\",\n  # \"miri\" # some of the secp256k1 FFIs fail with miri\n]",
+    "strata_commit": "f94c06d08ff29eee746f3e20bd63078d2949b304"
+  },
+  "schema": "ranklock-v0252-strata-build-matrix-v1",
+  "status_counts": {
+    "failed": 0,
+    "modeled_only": 0,
+    "not_executed": 0,
+    "passed": 4,
+    "unavailable": 5
+  }
+}
