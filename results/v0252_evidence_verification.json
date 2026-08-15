@@ -1,0 +1,1049 @@
+{
+  "all_checks_passed": true,
+  "bitcoin_core_regtest_all_passed": false,
+  "bitcoin_core_regtest_executed": true,
+  "checks": {
+    "core/CORE-001: stderr log at core-matrix-bitcoind-version.20260815T204929302975Z.stderr.log matches recorded hash": true,
+    "core/CORE-001: stdout log at core-matrix-bitcoind-version.20260815T204929302975Z.stdout.log matches recorded hash": true,
+    "core/CORE-004: passed status is backed by real commands": true,
+    "core/CORE-004: stderr log at core-matrix-bitcoind-version.20260815T204929302975Z.stderr.log matches recorded hash": true,
+    "core/CORE-004: stdout log at core-matrix-bitcoind-version.20260815T204929302975Z.stdout.log matches recorded hash": true,
+    "core/CORE-006: passed status is backed by real commands": true,
+    "core/CORE-006: stderr log at core-matrix-bitcoind-version.20260815T204929302975Z.stderr.log matches recorded hash": true,
+    "core/CORE-006: stdout log at core-matrix-bitcoind-version.20260815T204929302975Z.stdout.log matches recorded hash": true,
+    "core/CORE-007: passed status is backed by real commands": true,
+    "core/CORE-007: stderr log at core-matrix-bitcoind-version.20260815T204929302975Z.stderr.log matches recorded hash": true,
+    "core/CORE-007: stdout log at core-matrix-bitcoind-version.20260815T204929302975Z.stdout.log matches recorded hash": true,
+    "core/CORE-012: passed status is backed by real commands": true,
+    "core/CORE-012: stderr log at core-matrix-bitcoind-version.20260815T204929302975Z.stderr.log matches recorded hash": true,
+    "core/CORE-012: stdout log at core-matrix-bitcoind-version.20260815T204929302975Z.stdout.log matches recorded hash": true,
+    "core/CORE-019: passed status is backed by real commands": true,
+    "core/CORE-019: stderr log at core-matrix-bitcoind-version.20260815T204929302975Z.stderr.log matches recorded hash": true,
+    "core/CORE-019: stdout log at core-matrix-bitcoind-version.20260815T204929302975Z.stdout.log matches recorded hash": true,
+    "core/CORE-024: passed status is backed by real commands": true,
+    "core/CORE-024: stderr log at core-matrix-bitcoind-version.20260815T204929302975Z.stderr.log matches recorded hash": true,
+    "core/CORE-024: stdout log at core-matrix-bitcoind-version.20260815T204929302975Z.stdout.log matches recorded hash": true,
+    "core/CORE-025: passed status is backed by real commands": true,
+    "core/CORE-025: stderr log at core-matrix-bitcoind-version.20260815T204929302975Z.stderr.log matches recorded hash": true,
+    "core/CORE-025: stdout log at core-matrix-bitcoind-version.20260815T204929302975Z.stdout.log matches recorded hash": true,
+    "core/CORE-028: passed status is backed by real commands": true,
+    "core/CORE-028: stderr log at core-matrix-bitcoind-version.20260815T204929302975Z.stderr.log matches recorded hash": true,
+    "core/CORE-028: stdout log at core-matrix-bitcoind-version.20260815T204929302975Z.stdout.log matches recorded hash": true,
+    "core/CORE-029: passed status is backed by real commands": true,
+    "core/CORE-029: stderr log at core-matrix-bitcoind-version.20260815T204929302975Z.stderr.log matches recorded hash": true,
+    "core/CORE-029: stdout log at core-matrix-bitcoind-version.20260815T204929302975Z.stdout.log matches recorded hash": true,
+    "core/CORE-030: passed status is backed by real commands": true,
+    "core/CORE-030: stderr log at core-matrix-bitcoind-version.20260815T204929302975Z.stderr.log matches recorded hash": true,
+    "core/CORE-030: stdout log at core-matrix-bitcoind-version.20260815T204929302975Z.stdout.log matches recorded hash": true,
+    "strata_build/STRATA-001: passed status is backed by real commands": true,
+    "strata_build/STRATA-001: stderr log at strata-head.20260815T205933409796Z.stderr.log matches recorded hash": true,
+    "strata_build/STRATA-001: stdout log at strata-head.20260815T205933409796Z.stdout.log matches recorded hash": true,
+    "strata_build/STRATA-002: passed status is backed by real commands": true,
+    "strata_build/STRATA-002: stderr log at strata-preflight.20260815T205933450538Z.stderr.log matches recorded hash": true,
+    "strata_build/STRATA-002: stdout log at strata-preflight.20260815T205933450538Z.stdout.log matches recorded hash": true,
+    "strata_build/STRATA-003: passed status is backed by real commands": true,
+    "strata_build/STRATA-003: stderr log at strata-scope.20260815T205934287209Z.stderr.log matches recorded hash": true,
+    "strata_build/STRATA-003: stdout log at strata-scope.20260815T205934287209Z.stdout.log matches recorded hash": true,
+    "strata_build/STRATA-004: passed status is backed by real commands": true,
+    "strata_build/STRATA-004: stderr log at strata-fmt.20260815T205934351290Z.stderr.log matches recorded hash": true,
+    "strata_build/STRATA-004: stdout log at strata-fmt.20260815T205934351290Z.stdout.log matches recorded hash": true,
+    "strata_build/STRATA-005: stderr log at strata-dependency-probe.20260815T205934724416Z.stderr.log matches recorded hash": true,
+    "strata_build/STRATA-005: stdout log at strata-dependency-probe.20260815T205934724416Z.stdout.log matches recorded hash": true,
+    "strata_build/STRATA-006: stderr log at strata-dependency-probe.20260815T205934724416Z.stderr.log matches recorded hash": true,
+    "strata_build/STRATA-006: stdout log at strata-dependency-probe.20260815T205934724416Z.stdout.log matches recorded hash": true,
+    "strata_build/STRATA-007: stderr log at strata-dependency-probe.20260815T205934724416Z.stderr.log matches recorded hash": true,
+    "strata_build/STRATA-007: stdout log at strata-dependency-probe.20260815T205934724416Z.stdout.log matches recorded hash": true,
+    "strata_build/STRATA-008: stderr log at strata-dependency-probe.20260815T205934724416Z.stderr.log matches recorded hash": true,
+    "strata_build/STRATA-008: stdout log at strata-dependency-probe.20260815T205934724416Z.stdout.log matches recorded hash": true,
+    "strata_build/STRATA-009: stderr log at strata-dependency-probe.20260815T205934724416Z.stderr.log matches recorded hash": true,
+    "strata_build/STRATA-009: stdout log at strata-dependency-probe.20260815T205934724416Z.stdout.log matches recorded hash": true
+  },
+  "core_matrix": {
+    "all_passed": false,
+    "any_failed": false,
+    "cases": {
+      "CORE-001": {
+        "blocked_by": "development probe explicitly ran against an unpinned binary",
+        "case_id": "CORE-001",
+        "commands": [
+          {
+            "argv": [
+              "/opt/homebrew/bin/bitcoind",
+              "--version"
+            ],
+            "cwd": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1",
+            "duration_ms": 24,
+            "env_digest": "b6ff0f5eeec3e13b4dd84b4b6945cbe3ffd54c31502b3e6e3e0ddadb7cde0f1f",
+            "exit_code": 0,
+            "finished_at_utc": "2026-08-15T20:49:29.327558Z",
+            "schema": "ranklock-v0252-command-record-v1",
+            "started_at_utc": "2026-08-15T20:49:29.303130Z",
+            "stderr_path": "/tmp/core_matrix_logs2/core-matrix-bitcoind-version.20260815T204929302975Z.stderr.log",
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_path": "/tmp/core_matrix_logs2/core-matrix-bitcoind-version.20260815T204929302975Z.stdout.log",
+            "stdout_sha256": "74d559b6c8fd51c5ff8c5487a23480f1d2e08133aed7fd62168b2047ab8cc36d",
+            "timed_out": false
+          }
+        ],
+        "description": "pinned Bitcoin Core identity",
+        "evidence": {
+          "bitcoind_path": "/opt/homebrew/bin/bitcoind",
+          "expected_bitcoind_sha256": null,
+          "expected_numeric_version": 310100,
+          "expected_release": "31.1",
+          "observed_bitcoind_sha256": "d83bbb59b110b69fa351e7fc9d966e5b825cfe16db166d7e65b648f53f96b1bb",
+          "observed_numeric_version": 310000,
+          "observed_subversion": "/Satoshi:31.0.0/",
+          "reason": "development probe; not qualification evidence"
+        },
+        "schema": "ranklock-v0252-case-result-v1",
+        "status": "unavailable"
+      },
+      "CORE-002": {
+        "blocked_by": "two-phase sidecar protocol scenario",
+        "case_id": "CORE-002",
+        "commands": [],
+        "description": "valid slot 0 authorization end to end",
+        "evidence": {},
+        "schema": "ranklock-v0252-case-result-v1",
+        "status": "not_executed"
+      },
+      "CORE-003": {
+        "blocked_by": "two-phase sidecar protocol scenario",
+        "case_id": "CORE-003",
+        "commands": [],
+        "description": "valid adaptive slot 1 chosen after slot-0 output",
+        "evidence": {},
+        "schema": "ranklock-v0252-case-result-v1",
+        "status": "not_executed"
+      },
+      "CORE-004": {
+        "blocked_by": null,
+        "case_id": "CORE-004",
+        "commands": [
+          {
+            "argv": [
+              "/opt/homebrew/bin/bitcoind",
+              "--version"
+            ],
+            "cwd": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1",
+            "duration_ms": 24,
+            "env_digest": "b6ff0f5eeec3e13b4dd84b4b6945cbe3ffd54c31502b3e6e3e0ddadb7cde0f1f",
+            "exit_code": 0,
+            "finished_at_utc": "2026-08-15T20:49:29.327558Z",
+            "schema": "ranklock-v0252-command-record-v1",
+            "started_at_utc": "2026-08-15T20:49:29.303130Z",
+            "stderr_path": "/tmp/core_matrix_logs2/core-matrix-bitcoind-version.20260815T204929302975Z.stderr.log",
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_path": "/tmp/core_matrix_logs2/core-matrix-bitcoind-version.20260815T204929302975Z.stdout.log",
+            "stdout_sha256": "74d559b6c8fd51c5ff8c5487a23480f1d2e08133aed7fd62168b2047ab8cc36d",
+            "timed_out": false
+          }
+        ],
+        "description": "modified selected label is rejected",
+        "evidence": {
+          "expected": "rejected",
+          "expected_reject_substring": "OP_VERIFY",
+          "raw_transaction_sha256": "0b15c01fdb7fa3f9814f6bfbc37ef09c40489eaa93dbbed3cb37ba25063f6aa2",
+          "testmempoolaccept": {
+            "allowed": false,
+            "reject-details": "mempool-script-verify-flag-failed (Script failed an OP_VERIFY operation), input 0 of f0e79dc04f3959a95bcd21bb88d864f0d070595f665933675f1e59250414aee2 (wtxid c327aabb684f52212f6423e63a10d2baa3a7084d65698de9f9e3694fb3a8cf5f), spending a880a9308c8ff452bbd1a62d0c413b791791152a65d10d1f396cd25f65bdaf6d:1",
+            "reject-reason": "mempool-script-verify-flag-failed (Script failed an OP_VERIFY operation)",
+            "txid": "f0e79dc04f3959a95bcd21bb88d864f0d070595f665933675f1e59250414aee2",
+            "wtxid": "c327aabb684f52212f6423e63a10d2baa3a7084d65698de9f9e3694fb3a8cf5f"
+          },
+          "txid": "f0e79dc04f3959a95bcd21bb88d864f0d070595f665933675f1e59250414aee2"
+        },
+        "schema": "ranklock-v0252-case-result-v1",
+        "status": "passed"
+      },
+      "CORE-005": {
+        "blocked_by": "two-phase sidecar protocol scenario",
+        "case_id": "CORE-005",
+        "commands": [],
+        "description": "wrong sibling/opening is rejected",
+        "evidence": {},
+        "schema": "ranklock-v0252-case-result-v1",
+        "status": "not_executed"
+      },
+      "CORE-006": {
+        "blocked_by": null,
+        "case_id": "CORE-006",
+        "commands": [
+          {
+            "argv": [
+              "/opt/homebrew/bin/bitcoind",
+              "--version"
+            ],
+            "cwd": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1",
+            "duration_ms": 24,
+            "env_digest": "b6ff0f5eeec3e13b4dd84b4b6945cbe3ffd54c31502b3e6e3e0ddadb7cde0f1f",
+            "exit_code": 0,
+            "finished_at_utc": "2026-08-15T20:49:29.327558Z",
+            "schema": "ranklock-v0252-command-record-v1",
+            "started_at_utc": "2026-08-15T20:49:29.303130Z",
+            "stderr_path": "/tmp/core_matrix_logs2/core-matrix-bitcoind-version.20260815T204929302975Z.stderr.log",
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_path": "/tmp/core_matrix_logs2/core-matrix-bitcoind-version.20260815T204929302975Z.stdout.log",
+            "stdout_sha256": "74d559b6c8fd51c5ff8c5487a23480f1d2e08133aed7fd62168b2047ab8cc36d",
+            "timed_out": false
+          }
+        ],
+        "description": "offering both labels for a bit is rejected",
+        "evidence": {
+          "expected": "rejected",
+          "expected_reject_substring": "OP_VERIFY",
+          "raw_transaction_sha256": "96ae76f3a5ba4da93bdadca134d471eef1ebd73de035567a977e3c1de6fb06b7",
+          "testmempoolaccept": {
+            "allowed": false,
+            "reject-details": "mempool-script-verify-flag-failed (Script failed an OP_VERIFY operation), input 0 of f0e79dc04f3959a95bcd21bb88d864f0d070595f665933675f1e59250414aee2 (wtxid 119eab9ebbfee4916754470c678ca5d77612271e44ca37330e59dc83c93d4636), spending a880a9308c8ff452bbd1a62d0c413b791791152a65d10d1f396cd25f65bdaf6d:1",
+            "reject-reason": "mempool-script-verify-flag-failed (Script failed an OP_VERIFY operation)",
+            "txid": "f0e79dc04f3959a95bcd21bb88d864f0d070595f665933675f1e59250414aee2",
+            "wtxid": "119eab9ebbfee4916754470c678ca5d77612271e44ca37330e59dc83c93d4636"
+          },
+          "txid": "f0e79dc04f3959a95bcd21bb88d864f0d070595f665933675f1e59250414aee2"
+        },
+        "schema": "ranklock-v0252-case-result-v1",
+        "status": "passed"
+      },
+      "CORE-007": {
+        "blocked_by": null,
+        "case_id": "CORE-007",
+        "commands": [
+          {
+            "argv": [
+              "/opt/homebrew/bin/bitcoind",
+              "--version"
+            ],
+            "cwd": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1",
+            "duration_ms": 24,
+            "env_digest": "b6ff0f5eeec3e13b4dd84b4b6945cbe3ffd54c31502b3e6e3e0ddadb7cde0f1f",
+            "exit_code": 0,
+            "finished_at_utc": "2026-08-15T20:49:29.327558Z",
+            "schema": "ranklock-v0252-command-record-v1",
+            "started_at_utc": "2026-08-15T20:49:29.303130Z",
+            "stderr_path": "/tmp/core_matrix_logs2/core-matrix-bitcoind-version.20260815T204929302975Z.stderr.log",
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_path": "/tmp/core_matrix_logs2/core-matrix-bitcoind-version.20260815T204929302975Z.stdout.log",
+            "stdout_sha256": "74d559b6c8fd51c5ff8c5487a23480f1d2e08133aed7fd62168b2047ab8cc36d",
+            "timed_out": false
+          }
+        ],
+        "description": "a missing label item is rejected",
+        "evidence": {
+          "expected": "rejected",
+          "expected_reject_substring": "OP_VERIFY",
+          "raw_transaction_sha256": "ddda7f9ccbb79a91f21c126e0721437316c7308966ad5bbcd803b50ab93d0496",
+          "testmempoolaccept": {
+            "allowed": false,
+            "reject-details": "mempool-script-verify-flag-failed (Script failed an OP_VERIFY operation), input 0 of f0e79dc04f3959a95bcd21bb88d864f0d070595f665933675f1e59250414aee2 (wtxid 866829277756d54eb7173cbf4f950df578115ce94d08123198899dd10ae33e9e), spending a880a9308c8ff452bbd1a62d0c413b791791152a65d10d1f396cd25f65bdaf6d:1",
+            "reject-reason": "mempool-script-verify-flag-failed (Script failed an OP_VERIFY operation)",
+            "txid": "f0e79dc04f3959a95bcd21bb88d864f0d070595f665933675f1e59250414aee2",
+            "wtxid": "866829277756d54eb7173cbf4f950df578115ce94d08123198899dd10ae33e9e"
+          },
+          "txid": "f0e79dc04f3959a95bcd21bb88d864f0d070595f665933675f1e59250414aee2"
+        },
+        "schema": "ranklock-v0252-case-result-v1",
+        "status": "passed"
+      },
+      "CORE-008": {
+        "blocked_by": "two-phase sidecar protocol scenario",
+        "case_id": "CORE-008",
+        "commands": [],
+        "description": "noncanonical/wrong point is rejected",
+        "evidence": {},
+        "schema": "ranklock-v0252-case-result-v1",
+        "status": "not_executed"
+      },
+      "CORE-009": {
+        "blocked_by": "two-phase sidecar protocol scenario",
+        "case_id": "CORE-009",
+        "commands": [],
+        "description": "wrong slot is rejected",
+        "evidence": {},
+        "schema": "ranklock-v0252-case-result-v1",
+        "status": "not_executed"
+      },
+      "CORE-010": {
+        "blocked_by": "two-phase sidecar protocol scenario",
+        "case_id": "CORE-010",
+        "commands": [],
+        "description": "wrong game/deposit/operator/epoch is rejected",
+        "evidence": {},
+        "schema": "ranklock-v0252-case-result-v1",
+        "status": "not_executed"
+      },
+      "CORE-011": {
+        "blocked_by": "two-phase sidecar protocol scenario",
+        "case_id": "CORE-011",
+        "commands": [],
+        "description": "wrong txid/wtxid/witness releases no seed",
+        "evidence": {},
+        "schema": "ranklock-v0252-case-result-v1",
+        "status": "not_executed"
+      },
+      "CORE-012": {
+        "blocked_by": null,
+        "case_id": "CORE-012",
+        "commands": [
+          {
+            "argv": [
+              "/opt/homebrew/bin/bitcoind",
+              "--version"
+            ],
+            "cwd": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1",
+            "duration_ms": 24,
+            "env_digest": "b6ff0f5eeec3e13b4dd84b4b6945cbe3ffd54c31502b3e6e3e0ddadb7cde0f1f",
+            "exit_code": 0,
+            "finished_at_utc": "2026-08-15T20:49:29.327558Z",
+            "schema": "ranklock-v0252-command-record-v1",
+            "started_at_utc": "2026-08-15T20:49:29.303130Z",
+            "stderr_path": "/tmp/core_matrix_logs2/core-matrix-bitcoind-version.20260815T204929302975Z.stderr.log",
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_path": "/tmp/core_matrix_logs2/core-matrix-bitcoind-version.20260815T204929302975Z.stdout.log",
+            "stdout_sha256": "74d559b6c8fd51c5ff8c5487a23480f1d2e08133aed7fd62168b2047ab8cc36d",
+            "timed_out": false
+          }
+        ],
+        "description": "an alternate tapscript does not satisfy the committed output",
+        "evidence": {
+          "expected": "rejected",
+          "expected_reject_substring": "Witness program hash mismatch",
+          "raw_transaction_sha256": "9d877e7692c81df3c2e6933cdc0e63a69576acd1fea4de2606c25eb57490fa4a",
+          "testmempoolaccept": {
+            "allowed": false,
+            "reject-details": "mempool-script-verify-flag-failed (Witness program hash mismatch), input 0 of f0e79dc04f3959a95bcd21bb88d864f0d070595f665933675f1e59250414aee2 (wtxid 81bf73717a439263669bc6258b065400242222df7fa25b8c5f1fffaf3847d5a0), spending a880a9308c8ff452bbd1a62d0c413b791791152a65d10d1f396cd25f65bdaf6d:1",
+            "reject-reason": "mempool-script-verify-flag-failed (Witness program hash mismatch)",
+            "txid": "f0e79dc04f3959a95bcd21bb88d864f0d070595f665933675f1e59250414aee2",
+            "wtxid": "81bf73717a439263669bc6258b065400242222df7fa25b8c5f1fffaf3847d5a0"
+          },
+          "txid": "f0e79dc04f3959a95bcd21bb88d864f0d070595f665933675f1e59250414aee2"
+        },
+        "schema": "ranklock-v0252-case-result-v1",
+        "status": "passed"
+      },
+      "CORE-013": {
+        "blocked_by": "two-phase sidecar protocol scenario",
+        "case_id": "CORE-013",
+        "commands": [],
+        "description": "exact phase-one retry is byte-identical",
+        "evidence": {},
+        "schema": "ranklock-v0252-case-result-v1",
+        "status": "not_executed"
+      },
+      "CORE-014": {
+        "blocked_by": "two-phase sidecar protocol scenario",
+        "case_id": "CORE-014",
+        "commands": [],
+        "description": "conflicting phase-one retry is terminal",
+        "evidence": {},
+        "schema": "ranklock-v0252-case-result-v1",
+        "status": "not_executed"
+      },
+      "CORE-015": {
+        "blocked_by": "two-phase sidecar protocol scenario",
+        "case_id": "CORE-015",
+        "commands": [],
+        "description": "exact phase-two retry releases no second seed",
+        "evidence": {},
+        "schema": "ranklock-v0252-case-result-v1",
+        "status": "not_executed"
+      },
+      "CORE-016": {
+        "blocked_by": "process-level fault injection harness",
+        "case_id": "CORE-016",
+        "commands": [],
+        "description": "crash after burn before response",
+        "evidence": {},
+        "schema": "ranklock-v0252-case-result-v1",
+        "status": "not_executed"
+      },
+      "CORE-017": {
+        "blocked_by": "process-level fault injection harness",
+        "case_id": "CORE-017",
+        "commands": [],
+        "description": "crash after response write",
+        "evidence": {},
+        "schema": "ranklock-v0252-case-result-v1",
+        "status": "not_executed"
+      },
+      "CORE-018": {
+        "blocked_by": "two-phase sidecar protocol scenario",
+        "case_id": "CORE-018",
+        "commands": [],
+        "description": "reorg before required depth withholds the seed",
+        "evidence": {},
+        "schema": "ranklock-v0252-case-result-v1",
+        "status": "not_executed"
+      },
+      "CORE-019": {
+        "blocked_by": null,
+        "case_id": "CORE-019",
+        "commands": [
+          {
+            "argv": [
+              "/opt/homebrew/bin/bitcoind",
+              "--version"
+            ],
+            "cwd": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1",
+            "duration_ms": 24,
+            "env_digest": "b6ff0f5eeec3e13b4dd84b4b6945cbe3ffd54c31502b3e6e3e0ddadb7cde0f1f",
+            "exit_code": 0,
+            "finished_at_utc": "2026-08-15T20:49:29.327558Z",
+            "schema": "ranklock-v0252-command-record-v1",
+            "started_at_utc": "2026-08-15T20:49:29.303130Z",
+            "stderr_path": "/tmp/core_matrix_logs2/core-matrix-bitcoind-version.20260815T204929302975Z.stderr.log",
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_path": "/tmp/core_matrix_logs2/core-matrix-bitcoind-version.20260815T204929302975Z.stdout.log",
+            "stdout_sha256": "74d559b6c8fd51c5ff8c5487a23480f1d2e08133aed7fd62168b2047ab8cc36d",
+            "timed_out": false
+          }
+        ],
+        "description": "a reorg after terminal release orphans the authorization without reopening it",
+        "evidence": {
+          "confirmations_after_reconsider": 6,
+          "confirmations_while_orphaned": 0,
+          "expected": "a reorg may orphan the authorization, but it can never make published material secret again or reopen a consumed slot",
+          "original_containing_block": "47edd7e33d894235ccf0e55e7603a1f27171ad09b9cb3a6d8837abb46e376d5e",
+          "slot_ledger_coverage": "the no-reopen property of the slot ledger itself is covered by tests/test_durable_slot_ledger.py::test_reorg_is_recorded_but_never_reopens_slot",
+          "tip_after_reconsider": "6cfb722eca74e6219b6498c208702fc54f1905343029da701ecb9e2d1f6b2f31",
+          "tip_before_reorg": "6cfb722eca74e6219b6498c208702fc54f1905343029da701ecb9e2d1f6b2f31",
+          "tip_while_orphaned": "0e9637d4deda8f8d1f4dba146dadef489db14b434f82def3b369c79e33ced4e3",
+          "txid": "f0e79dc04f3959a95bcd21bb88d864f0d070595f665933675f1e59250414aee2"
+        },
+        "schema": "ranklock-v0252-case-result-v1",
+        "status": "passed"
+      },
+      "CORE-020": {
+        "blocked_by": "two-phase sidecar protocol scenario",
+        "case_id": "CORE-020",
+        "commands": [],
+        "description": "competing/stale fork observation fails closed",
+        "evidence": {},
+        "schema": "ranklock-v0252-case-result-v1",
+        "status": "not_executed"
+      },
+      "CORE-021": {
+        "blocked_by": "Strata ACK/NACK graph (STRATA-012)",
+        "case_id": "CORE-021",
+        "commands": [],
+        "description": "pre-CSV NACK is rejected",
+        "evidence": {},
+        "schema": "ranklock-v0252-case-result-v1",
+        "status": "not_executed"
+      },
+      "CORE-022": {
+        "blocked_by": "Strata ACK/NACK graph (STRATA-012)",
+        "case_id": "CORE-022",
+        "commands": [],
+        "description": "mature CSV NACK is accepted",
+        "evidence": {},
+        "schema": "ranklock-v0252-case-result-v1",
+        "status": "not_executed"
+      },
+      "CORE-023": {
+        "blocked_by": "Strata ACK/NACK graph (STRATA-012)",
+        "case_id": "CORE-023",
+        "commands": [],
+        "description": "timeout NACK remains reachable",
+        "evidence": {},
+        "schema": "ranklock-v0252-case-result-v1",
+        "status": "not_executed"
+      },
+      "CORE-024": {
+        "blocked_by": null,
+        "case_id": "CORE-024",
+        "commands": [
+          {
+            "argv": [
+              "/opt/homebrew/bin/bitcoind",
+              "--version"
+            ],
+            "cwd": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1",
+            "duration_ms": 24,
+            "env_digest": "b6ff0f5eeec3e13b4dd84b4b6945cbe3ffd54c31502b3e6e3e0ddadb7cde0f1f",
+            "exit_code": 0,
+            "finished_at_utc": "2026-08-15T20:49:29.327558Z",
+            "schema": "ranklock-v0252-command-record-v1",
+            "started_at_utc": "2026-08-15T20:49:29.303130Z",
+            "stderr_path": "/tmp/core_matrix_logs2/core-matrix-bitcoind-version.20260815T204929302975Z.stderr.log",
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_path": "/tmp/core_matrix_logs2/core-matrix-bitcoind-version.20260815T204929302975Z.stdout.log",
+            "stdout_sha256": "74d559b6c8fd51c5ff8c5487a23480f1d2e08133aed7fd62168b2047ab8cc36d",
+            "timed_out": false
+          }
+        ],
+        "description": "a fee below the relay floor is predictably rejected",
+        "evidence": {
+          "expected": "rejected",
+          "expected_reject_substring": "min relay fee not met",
+          "raw_transaction_sha256": "641e0c92c831b24980b502693bc6ae8cd68f42c559362057f777c90fb92a5b46",
+          "testmempoolaccept": {
+            "allowed": false,
+            "reject-details": "min relay fee not met, 1 < 50",
+            "reject-reason": "min relay fee not met",
+            "txid": "e82ee9412e4853453841bc4c74ac0dccd8c9f907471f49c42a99c4df662f3920",
+            "wtxid": "5b959fb0d2309d6e8b61df816f29be40e3edeab66260d761b94d04f8cd677a27"
+          },
+          "txid": "e82ee9412e4853453841bc4c74ac0dccd8c9f907471f49c42a99c4df662f3920"
+        },
+        "schema": "ranklock-v0252-case-result-v1",
+        "status": "passed"
+      },
+      "CORE-025": {
+        "blocked_by": null,
+        "case_id": "CORE-025",
+        "commands": [
+          {
+            "argv": [
+              "/opt/homebrew/bin/bitcoind",
+              "--version"
+            ],
+            "cwd": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1",
+            "duration_ms": 24,
+            "env_digest": "b6ff0f5eeec3e13b4dd84b4b6945cbe3ffd54c31502b3e6e3e0ddadb7cde0f1f",
+            "exit_code": 0,
+            "finished_at_utc": "2026-08-15T20:49:29.327558Z",
+            "schema": "ranklock-v0252-command-record-v1",
+            "started_at_utc": "2026-08-15T20:49:29.303130Z",
+            "stderr_path": "/tmp/core_matrix_logs2/core-matrix-bitcoind-version.20260815T204929302975Z.stderr.log",
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_path": "/tmp/core_matrix_logs2/core-matrix-bitcoind-version.20260815T204929302975Z.stdout.log",
+            "stdout_sha256": "74d559b6c8fd51c5ff8c5487a23480f1d2e08133aed7fd62168b2047ab8cc36d",
+            "timed_out": false
+          }
+        ],
+        "description": "intended fee is standard and relayable",
+        "evidence": {
+          "expected": "accepted",
+          "fee_sat": 5000,
+          "raw_transaction_sha256": "ce0bf1c335926ef30a7ea51e1fb496271ffda2e47a4856b038ca9d83ae343a26",
+          "testmempoolaccept": {
+            "allowed": true,
+            "fees": {
+              "base": 5e-05,
+              "effective-feerate": 0.00010141,
+              "effective-includes": [
+                "172db90972555dc5e15b5a4d635914584616186ebc603861e515f0c643960b1c"
+              ]
+            },
+            "txid": "f0e79dc04f3959a95bcd21bb88d864f0d070595f665933675f1e59250414aee2",
+            "vsize": 493,
+            "wtxid": "172db90972555dc5e15b5a4d635914584616186ebc603861e515f0c643960b1c"
+          },
+          "txid": "f0e79dc04f3959a95bcd21bb88d864f0d070595f665933675f1e59250414aee2",
+          "vsize": 493,
+          "wtxid": "172db90972555dc5e15b5a4d635914584616186ebc603861e515f0c643960b1c"
+        },
+        "schema": "ranklock-v0252-case-result-v1",
+        "status": "passed"
+      },
+      "CORE-026": {
+        "blocked_by": "Strata ACK/NACK graph (STRATA-012)",
+        "case_id": "CORE-026",
+        "commands": [],
+        "description": "CPFP before the allowed point",
+        "evidence": {},
+        "schema": "ranklock-v0252-case-result-v1",
+        "status": "not_executed"
+      },
+      "CORE-027": {
+        "blocked_by": "Strata ACK/NACK graph (STRATA-012)",
+        "case_id": "CORE-027",
+        "commands": [],
+        "description": "CPFP after the allowed point",
+        "evidence": {},
+        "schema": "ranklock-v0252-case-result-v1",
+        "status": "not_executed"
+      },
+      "CORE-028": {
+        "blocked_by": null,
+        "case_id": "CORE-028",
+        "commands": [
+          {
+            "argv": [
+              "/opt/homebrew/bin/bitcoind",
+              "--version"
+            ],
+            "cwd": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1",
+            "duration_ms": 24,
+            "env_digest": "b6ff0f5eeec3e13b4dd84b4b6945cbe3ffd54c31502b3e6e3e0ddadb7cde0f1f",
+            "exit_code": 0,
+            "finished_at_utc": "2026-08-15T20:49:29.327558Z",
+            "schema": "ranklock-v0252-command-record-v1",
+            "started_at_utc": "2026-08-15T20:49:29.303130Z",
+            "stderr_path": "/tmp/core_matrix_logs2/core-matrix-bitcoind-version.20260815T204929302975Z.stderr.log",
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_path": "/tmp/core_matrix_logs2/core-matrix-bitcoind-version.20260815T204929302975Z.stdout.log",
+            "stdout_sha256": "74d559b6c8fd51c5ff8c5487a23480f1d2e08133aed7fd62168b2047ab8cc36d",
+            "timed_out": false
+          }
+        ],
+        "description": "revealed labels cannot be replayed into a mutated-output transaction (previously exploitable)",
+        "evidence": {
+          "expected": "rejected",
+          "expected_reject_substring": "Invalid Schnorr signature",
+          "raw_transaction_sha256": "c18025046d7611542e8417ebbbeb821811fbf4f3ec14347dd255017a129cf718",
+          "testmempoolaccept": {
+            "allowed": false,
+            "reject-details": "mempool-script-verify-flag-failed (Invalid Schnorr signature), input 0 of a2eba67175e77d088ba23fdc9af29d57438c2bb0ea34b5ee0103aac1ddb426e6 (wtxid 269119b64408c051a51cb09421cb9284a25f14340d003743b62a95fffbc17acc), spending a880a9308c8ff452bbd1a62d0c413b791791152a65d10d1f396cd25f65bdaf6d:1",
+            "reject-reason": "mempool-script-verify-flag-failed (Invalid Schnorr signature)",
+            "txid": "a2eba67175e77d088ba23fdc9af29d57438c2bb0ea34b5ee0103aac1ddb426e6",
+            "wtxid": "269119b64408c051a51cb09421cb9284a25f14340d003743b62a95fffbc17acc"
+          },
+          "txid": "a2eba67175e77d088ba23fdc9af29d57438c2bb0ea34b5ee0103aac1ddb426e6"
+        },
+        "schema": "ranklock-v0252-case-result-v1",
+        "status": "passed"
+      },
+      "CORE-029": {
+        "blocked_by": null,
+        "case_id": "CORE-029",
+        "commands": [
+          {
+            "argv": [
+              "/opt/homebrew/bin/bitcoind",
+              "--version"
+            ],
+            "cwd": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1",
+            "duration_ms": 24,
+            "env_digest": "b6ff0f5eeec3e13b4dd84b4b6945cbe3ffd54c31502b3e6e3e0ddadb7cde0f1f",
+            "exit_code": 0,
+            "finished_at_utc": "2026-08-15T20:49:29.327558Z",
+            "schema": "ranklock-v0252-command-record-v1",
+            "started_at_utc": "2026-08-15T20:49:29.303130Z",
+            "stderr_path": "/tmp/core_matrix_logs2/core-matrix-bitcoind-version.20260815T204929302975Z.stderr.log",
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_path": "/tmp/core_matrix_logs2/core-matrix-bitcoind-version.20260815T204929302975Z.stdout.log",
+            "stdout_sha256": "74d559b6c8fd51c5ff8c5487a23480f1d2e08133aed7fd62168b2047ab8cc36d",
+            "timed_out": false
+          }
+        ],
+        "description": "Core restart causes no duplicate release or state regression",
+        "evidence": {
+          "confirmations_after_restart": 6,
+          "confirmations_before_restart": 6,
+          "expected": "no duplicate release and no state regression",
+          "rebroadcast_created_duplicate": false,
+          "rebroadcast_response_digest": "3160235c9eaa582160f668d232de1d50819615a40e539e20da709445aa531c60",
+          "restarts": 1,
+          "tip_after_restart": "6cfb722eca74e6219b6498c208702fc54f1905343029da701ecb9e2d1f6b2f31",
+          "tip_before_restart": "6cfb722eca74e6219b6498c208702fc54f1905343029da701ecb9e2d1f6b2f31",
+          "txid": "f0e79dc04f3959a95bcd21bb88d864f0d070595f665933675f1e59250414aee2"
+        },
+        "schema": "ranklock-v0252-case-result-v1",
+        "status": "passed"
+      },
+      "CORE-030": {
+        "blocked_by": null,
+        "case_id": "CORE-030",
+        "commands": [
+          {
+            "argv": [
+              "/opt/homebrew/bin/bitcoind",
+              "--version"
+            ],
+            "cwd": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1",
+            "duration_ms": 24,
+            "env_digest": "b6ff0f5eeec3e13b4dd84b4b6945cbe3ffd54c31502b3e6e3e0ddadb7cde0f1f",
+            "exit_code": 0,
+            "finished_at_utc": "2026-08-15T20:49:29.327558Z",
+            "schema": "ranklock-v0252-command-record-v1",
+            "started_at_utc": "2026-08-15T20:49:29.303130Z",
+            "stderr_path": "/tmp/core_matrix_logs2/core-matrix-bitcoind-version.20260815T204929302975Z.stderr.log",
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_path": "/tmp/core_matrix_logs2/core-matrix-bitcoind-version.20260815T204929302975Z.stdout.log",
+            "stdout_sha256": "74d559b6c8fd51c5ff8c5487a23480f1d2e08133aed7fd62168b2047ab8cc36d",
+            "timed_out": false
+          }
+        ],
+        "description": "malformed and oversize parser input is bounded-rejected",
+        "evidence": {
+          "core_rejected_oversize": true,
+          "core_response_digest": "94c46cacbf086ea28609439341a6b141f0b7cde6f3e990135eb46e8bdf3792c1",
+          "expected": "bounded rejection without crash or unbounded allocation",
+          "local_parser_bounded_rejection": true,
+          "local_parser_error": "serialized transaction exceeds RankLock size limit",
+          "max_parse_transaction_bytes": 400000,
+          "oversize_input_bytes": 400005,
+          "truncated_input_rejected": true
+        },
+        "schema": "ranklock-v0252-case-result-v1",
+        "status": "passed"
+      }
+    },
+    "identity": {
+      "bitcoind_path": "/opt/homebrew/bin/bitcoind",
+      "bitcoind_sha256": "d83bbb59b110b69fa351e7fc9d966e5b825cfe16db166d7e65b648f53f96b1bb",
+      "chain": "regtest",
+      "expected_numeric_version": 310100,
+      "expected_release": "31.1"
+    },
+    "schema": "ranklock-v0252-core-matrix-v1",
+    "status_counts": {
+      "failed": 0,
+      "modeled_only": 0,
+      "not_executed": 19,
+      "passed": 10,
+      "unavailable": 1
+    }
+  },
+  "reports_present": [
+    "core",
+    "strata_build"
+  ],
+  "safe_for_funds": false,
+  "schema": "ranklock-v0252-evidence-verification-v1",
+  "strata_build_all_passed": false,
+  "strata_build_matrix": {
+    "all_passed": false,
+    "any_failed": false,
+    "cases": {
+      "STRATA-001": {
+        "blocked_by": null,
+        "case_id": "STRATA-001",
+        "commands": [
+          {
+            "argv": [
+              "git",
+              "rev-parse",
+              "HEAD"
+            ],
+            "cwd": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-matrix-run",
+            "duration_ms": 10,
+            "env_digest": "82c08e65267c8bf5c06cbb2472117e1bfbf163352b4911233c04b8efcc5fdc34",
+            "exit_code": 0,
+            "finished_at_utc": "2026-08-15T20:59:33.421009Z",
+            "schema": "ranklock-v0252-command-record-v1",
+            "started_at_utc": "2026-08-15T20:59:33.410049Z",
+            "stderr_path": "/tmp/strata_logs/strata-head.20260815T205933409796Z.stderr.log",
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_path": "/tmp/strata_logs/strata-head.20260815T205933409796Z.stdout.log",
+            "stdout_sha256": "0cf6b93986b3e13ff8e9b4ccbb5c99202ddff8aae23a9f2507821c9e5e488346",
+            "timed_out": false
+          }
+        ],
+        "description": "checkout is exactly the pinned base commit",
+        "evidence": {
+          "checkout_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-matrix-run",
+          "clean_before_patch": true,
+          "expected_commit": "f94c06d08ff29eee746f3e20bd63078d2949b304",
+          "observed_commit": "f94c06d08ff29eee746f3e20bd63078d2949b304"
+        },
+        "schema": "ranklock-v0252-case-result-v1",
+        "status": "passed"
+      },
+      "STRATA-002": {
+        "blocked_by": null,
+        "case_id": "STRATA-002",
+        "commands": [
+          {
+            "argv": [
+              "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/.venv/bin/python",
+              "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/integration/alpen-validity-first-f94c-v025/apply_validity_first.py",
+              "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-matrix-run",
+              "--check"
+            ],
+            "cwd": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1",
+            "duration_ms": 89,
+            "env_digest": "82c08e65267c8bf5c06cbb2472117e1bfbf163352b4911233c04b8efcc5fdc34",
+            "exit_code": 0,
+            "finished_at_utc": "2026-08-15T20:59:33.540399Z",
+            "schema": "ranklock-v0252-command-record-v1",
+            "started_at_utc": "2026-08-15T20:59:33.450619Z",
+            "stderr_path": "/tmp/strata_logs/strata-preflight.20260815T205933450538Z.stderr.log",
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_path": "/tmp/strata_logs/strata-preflight.20260815T205933450538Z.stdout.log",
+            "stdout_sha256": "0a9df470faeaf738c8bc3daf680c1b6bf8574e6aa3d3ec18d6d830d834d2c8a5",
+            "timed_out": false
+          }
+        ],
+        "description": "apply_validity_first.py --check passes at the pinned commit",
+        "evidence": {
+          "exit_code": 0
+        },
+        "schema": "ranklock-v0252-case-result-v1",
+        "status": "passed"
+      },
+      "STRATA-003": {
+        "blocked_by": null,
+        "case_id": "STRATA-003",
+        "commands": [
+          {
+            "argv": [
+              "git",
+              "status",
+              "--porcelain"
+            ],
+            "cwd": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-matrix-run",
+            "duration_ms": 48,
+            "env_digest": "82c08e65267c8bf5c06cbb2472117e1bfbf163352b4911233c04b8efcc5fdc34",
+            "exit_code": 0,
+            "finished_at_utc": "2026-08-15T20:59:34.335940Z",
+            "schema": "ranklock-v0252-command-record-v1",
+            "started_at_utc": "2026-08-15T20:59:34.287281Z",
+            "stderr_path": "/tmp/strata_logs/strata-scope.20260815T205934287209Z.stderr.log",
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_path": "/tmp/strata_logs/strata-scope.20260815T205934287209Z.stdout.log",
+            "stdout_sha256": "0b4ca6547877d55370dd1d27dbf8c732bd92b4dbedbb00d6ba890700ff72ceb5",
+            "timed_out": false
+          }
+        ],
+        "description": "patch changes exactly the declared 24-file scope",
+        "evidence": {
+          "expected_modified": 20,
+          "expected_new": 4,
+          "git_diff_check_clean": true,
+          "modified_files": 20,
+          "new_files": 4,
+          "paths": [
+            "crates/bridge-exec/src/errors.rs",
+            "crates/bridge-exec/src/graph/common.rs",
+            "crates/bridge-exec/src/graph/mod.rs",
+            "crates/bridge-exec/src/graph/ranklock.rs",
+            "crates/bridge-sm/src/graph/duties.rs",
+            "crates/bridge-sm/src/graph/handlers/retry.rs",
+            "crates/bridge-sm/src/graph/machine.rs",
+            "crates/bridge-sm/src/graph/transitions/common.rs",
+            "crates/bridge-sm/src/graph/transitions/contested.rs",
+            "crates/bridge-sm/src/graph/transitions/counterproof.rs",
+            "crates/bridge-sm/src/graph/tx_classifier.rs",
+            "crates/bridge-sm/src/tx_classifier.rs",
+            "crates/connectors/src/lib.rs",
+            "crates/connectors/src/prelude.rs",
+            "crates/connectors/src/validity_first_counterproof.rs",
+            "crates/tx-graph/src/fee.rs",
+            "crates/tx-graph/src/game_graph.rs",
+            "crates/tx-graph/src/musig_functor.rs",
+            "crates/tx-graph/src/transactions/counterproof.rs",
+            "crates/tx-graph/src/transactions/counterproof_ack.rs",
+            "crates/tx-graph/src/transactions/counterproof_nack.rs",
+            "crates/tx-graph/src/transactions/mod.rs",
+            "crates/tx-graph/src/transactions/prelude.rs",
+            "scripts/ranklock_sidecar_fixture.py"
+          ]
+        },
+        "schema": "ranklock-v0252-case-result-v1",
+        "status": "passed"
+      },
+      "STRATA-004": {
+        "blocked_by": null,
+        "case_id": "STRATA-004",
+        "commands": [
+          {
+            "argv": [
+              "cargo",
+              "fmt",
+              "--all",
+              "--",
+              "--check"
+            ],
+            "cwd": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-matrix-run",
+            "duration_ms": 372,
+            "env_digest": "82c08e65267c8bf5c06cbb2472117e1bfbf163352b4911233c04b8efcc5fdc34",
+            "exit_code": 0,
+            "finished_at_utc": "2026-08-15T20:59:34.724065Z",
+            "schema": "ranklock-v0252-command-record-v1",
+            "started_at_utc": "2026-08-15T20:59:34.351370Z",
+            "stderr_path": "/tmp/strata_logs/strata-fmt.20260815T205934351290Z.stderr.log",
+            "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "stdout_path": "/tmp/strata_logs/strata-fmt.20260815T205934351290Z.stdout.log",
+            "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "timed_out": false
+          }
+        ],
+        "description": "cargo fmt --all -- --check passes on the patched tree",
+        "evidence": {
+          "exit_code": 0
+        },
+        "schema": "ranklock-v0252-case-result-v1",
+        "status": "passed"
+      },
+      "STRATA-005": {
+        "blocked_by": "the pinned dependency graph (1,176 crates, 16 git-sourced families) is not resolvable in this environment; the full workspace additionally requires a FoundationDB client library",
+        "case_id": "STRATA-005",
+        "commands": [
+          {
+            "argv": [
+              "cargo",
+              "metadata",
+              "--offline",
+              "--format-version",
+              "1"
+            ],
+            "cwd": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-matrix-run",
+            "duration_ms": 207,
+            "env_digest": "82c08e65267c8bf5c06cbb2472117e1bfbf163352b4911233c04b8efcc5fdc34",
+            "exit_code": 101,
+            "finished_at_utc": "2026-08-15T20:59:34.931570Z",
+            "schema": "ranklock-v0252-command-record-v1",
+            "started_at_utc": "2026-08-15T20:59:34.724475Z",
+            "stderr_path": "/tmp/strata_logs/strata-dependency-probe.20260815T205934724416Z.stderr.log",
+            "stderr_sha256": "400c28f2545104e81d760785ef0c2fadfa27e2fe48e87425fb91a8beb156ccf0",
+            "stdout_path": "/tmp/strata_logs/strata-dependency-probe.20260815T205934724416Z.stdout.log",
+            "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "timed_out": false
+          }
+        ],
+        "description": "cargo check --workspace --all-targets passes",
+        "evidence": {
+          "dependency_probe_exit_code": 101,
+          "reason": "the pinned dependency graph (1,176 crates, 16 git-sourced families) is not resolvable in this environment; the full workspace additionally requires a FoundationDB client library"
+        },
+        "schema": "ranklock-v0252-case-result-v1",
+        "status": "unavailable"
+      },
+      "STRATA-006": {
+        "blocked_by": "the pinned dependency graph (1,176 crates, 16 git-sourced families) is not resolvable in this environment; the full workspace additionally requires a FoundationDB client library",
+        "case_id": "STRATA-006",
+        "commands": [
+          {
+            "argv": [
+              "cargo",
+              "metadata",
+              "--offline",
+              "--format-version",
+              "1"
+            ],
+            "cwd": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-matrix-run",
+            "duration_ms": 207,
+            "env_digest": "82c08e65267c8bf5c06cbb2472117e1bfbf163352b4911233c04b8efcc5fdc34",
+            "exit_code": 101,
+            "finished_at_utc": "2026-08-15T20:59:34.931570Z",
+            "schema": "ranklock-v0252-command-record-v1",
+            "started_at_utc": "2026-08-15T20:59:34.724475Z",
+            "stderr_path": "/tmp/strata_logs/strata-dependency-probe.20260815T205934724416Z.stderr.log",
+            "stderr_sha256": "400c28f2545104e81d760785ef0c2fadfa27e2fe48e87425fb91a8beb156ccf0",
+            "stdout_path": "/tmp/strata_logs/strata-dependency-probe.20260815T205934724416Z.stdout.log",
+            "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "timed_out": false
+          }
+        ],
+        "description": "validity-first connector tests pass",
+        "evidence": {
+          "dependency_probe_exit_code": 101,
+          "reason": "the pinned dependency graph (1,176 crates, 16 git-sourced families) is not resolvable in this environment; the full workspace additionally requires a FoundationDB client library"
+        },
+        "schema": "ranklock-v0252-case-result-v1",
+        "status": "unavailable"
+      },
+      "STRATA-007": {
+        "blocked_by": "the pinned dependency graph (1,176 crates, 16 git-sourced families) is not resolvable in this environment; the full workspace additionally requires a FoundationDB client library",
+        "case_id": "STRATA-007",
+        "commands": [
+          {
+            "argv": [
+              "cargo",
+              "metadata",
+              "--offline",
+              "--format-version",
+              "1"
+            ],
+            "cwd": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-matrix-run",
+            "duration_ms": 207,
+            "env_digest": "82c08e65267c8bf5c06cbb2472117e1bfbf163352b4911233c04b8efcc5fdc34",
+            "exit_code": 101,
+            "finished_at_utc": "2026-08-15T20:59:34.931570Z",
+            "schema": "ranklock-v0252-command-record-v1",
+            "started_at_utc": "2026-08-15T20:59:34.724475Z",
+            "stderr_path": "/tmp/strata_logs/strata-dependency-probe.20260815T205934724416Z.stderr.log",
+            "stderr_sha256": "400c28f2545104e81d760785ef0c2fadfa27e2fe48e87425fb91a8beb156ccf0",
+            "stdout_path": "/tmp/strata_logs/strata-dependency-probe.20260815T205934724416Z.stdout.log",
+            "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "timed_out": false
+          }
+        ],
+        "description": "ACK/NACK game-graph tests pass",
+        "evidence": {
+          "dependency_probe_exit_code": 101,
+          "reason": "the pinned dependency graph (1,176 crates, 16 git-sourced families) is not resolvable in this environment; the full workspace additionally requires a FoundationDB client library"
+        },
+        "schema": "ranklock-v0252-case-result-v1",
+        "status": "unavailable"
+      },
+      "STRATA-008": {
+        "blocked_by": "the pinned dependency graph (1,176 crates, 16 git-sourced families) is not resolvable in this environment; the full workspace additionally requires a FoundationDB client library",
+        "case_id": "STRATA-008",
+        "commands": [
+          {
+            "argv": [
+              "cargo",
+              "metadata",
+              "--offline",
+              "--format-version",
+              "1"
+            ],
+            "cwd": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-matrix-run",
+            "duration_ms": 207,
+            "env_digest": "82c08e65267c8bf5c06cbb2472117e1bfbf163352b4911233c04b8efcc5fdc34",
+            "exit_code": 101,
+            "finished_at_utc": "2026-08-15T20:59:34.931570Z",
+            "schema": "ranklock-v0252-command-record-v1",
+            "started_at_utc": "2026-08-15T20:59:34.724475Z",
+            "stderr_path": "/tmp/strata_logs/strata-dependency-probe.20260815T205934724416Z.stderr.log",
+            "stderr_sha256": "400c28f2545104e81d760785ef0c2fadfa27e2fe48e87425fb91a8beb156ccf0",
+            "stdout_path": "/tmp/strata_logs/strata-dependency-probe.20260815T205934724416Z.stdout.log",
+            "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "timed_out": false
+          }
+        ],
+        "description": "counterproof state-machine transition tests pass",
+        "evidence": {
+          "dependency_probe_exit_code": 101,
+          "reason": "the pinned dependency graph (1,176 crates, 16 git-sourced families) is not resolvable in this environment; the full workspace additionally requires a FoundationDB client library"
+        },
+        "schema": "ranklock-v0252-case-result-v1",
+        "status": "unavailable"
+      },
+      "STRATA-009": {
+        "blocked_by": "the pinned dependency graph (1,176 crates, 16 git-sourced families) is not resolvable in this environment; the full workspace additionally requires a FoundationDB client library",
+        "case_id": "STRATA-009",
+        "commands": [
+          {
+            "argv": [
+              "cargo",
+              "metadata",
+              "--offline",
+              "--format-version",
+              "1"
+            ],
+            "cwd": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-matrix-run",
+            "duration_ms": 207,
+            "env_digest": "82c08e65267c8bf5c06cbb2472117e1bfbf163352b4911233c04b8efcc5fdc34",
+            "exit_code": 101,
+            "finished_at_utc": "2026-08-15T20:59:34.931570Z",
+            "schema": "ranklock-v0252-command-record-v1",
+            "started_at_utc": "2026-08-15T20:59:34.724475Z",
+            "stderr_path": "/tmp/strata_logs/strata-dependency-probe.20260815T205934724416Z.stderr.log",
+            "stderr_sha256": "400c28f2545104e81d760785ef0c2fadfa27e2fe48e87425fb91a8beb156ccf0",
+            "stdout_path": "/tmp/strata_logs/strata-dependency-probe.20260815T205934724416Z.stdout.log",
+            "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "timed_out": false
+          }
+        ],
+        "description": "the complete intended workspace test suite passes",
+        "evidence": {
+          "dependency_probe_exit_code": 101,
+          "reason": "the pinned dependency graph (1,176 crates, 16 git-sourced families) is not resolvable in this environment; the full workspace additionally requires a FoundationDB client library"
+        },
+        "schema": "ranklock-v0252-case-result-v1",
+        "status": "unavailable"
+      }
+    },
+    "identity": {
+      "checkout_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-matrix-run",
+      "rust_toolchain": "[toolchain]\nchannel = \"nightly-2026-05-01\"\ncomponents = [\n  \"cargo\",\n  \"clippy\",\n  \"rustc\",\n  \"rustfmt\",\n  \"rust-analyzer\",\n  \"rust-docs\",\n  \"rust-src\",\n  \"rust-std\",\n  # \"miri\" # some of the secp256k1 FFIs fail with miri\n]",
+      "strata_commit": "f94c06d08ff29eee746f3e20bd63078d2949b304"
+    },
+    "schema": "ranklock-v0252-strata-build-matrix-v1",
+    "status_counts": {
+      "failed": 0,
+      "modeled_only": 0,
+      "not_executed": 0,
+      "passed": 4,
+      "unavailable": 5
+    }
+  },
+  "strata_e2e_all_passed": false,
+  "strata_e2e_matrix": null
+}

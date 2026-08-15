@@ -4,30 +4,38 @@
   "evidence": {
     "bitcoin_policy": {
       "path": "results/v025_bitcoin_policy_envelope.json",
-      "sha256": "0314b82e8fe21b820b7a8d34b3ba3372346b71b3b76b80e5d96ba26747875aca"
+      "sha256": "d27de56dfe0e5871844a465061d3b1a498276f818c05ded23761d8f17bb6f12b"
     },
     "committee": {
       "path": "results/v025_committee_qualification.json",
-      "sha256": "96df0dc308c01e3798417d44b1398d8cfaf1c576ed5bf284fc9eb1d5a11fdb52"
+      "sha256": "d2036c58d539a974e54eaa479473ff16292fdf6a5dfc04c680dd6c90bbf923a6"
     },
     "hardening": {
       "path": "results/v0251_security_hardening.json",
-      "sha256": "505f18539455ea8419f753f7bc82071780236a9eaa2ac3c288954480fceacd78"
+      "sha256": "457ee2b1be4d4a669ff809510a841be4873552e767762e33e7408e21f45eed91"
     },
     "split_scalar": {
       "path": "results/v025_split_scalar_qualification.json",
-      "sha256": "7f61770b1e267936db7fda096024c43127dcc0ae995263a3085b2ae4f84865f7"
+      "sha256": "da7af5eb596952b0039e88299df0cadb789f5ccb416ba8326a9d6c299bd0bae7"
     },
     "tests": {
       "path": "results/v025_test_files.json",
-      "sha256": "5a336890cd61177383373e7fd6475f63f16b25717af19aeed202d828f77bb878"
+      "sha256": "f8aae8ccd56e00945ba55fbd3e7b771f53a2ca8951ace8cc37a5301e931bd7ff"
     }
   },
-  "evidence_verification": null,
+  "evidence_verification": {
+    "all_checks_passed": true,
+    "path": "results/v0252_evidence_verification.json",
+    "reports_present": [
+      "core",
+      "strata_build"
+    ],
+    "sha256": "aa367b51982cd9937042f89373ffc65d75478665d5035dfc24a2c0fb2b67d436"
+  },
   "external_attestations_must_be_verified_by": "ranklock.deployment_policy.evaluate_deployment",
   "facts": {
     "active_mpc_exact_generator_passed": false,
-    "bitcoin_core_regtest_executed": false,
+    "bitcoin_core_regtest_executed": true,
     "bitcoin_core_regtest_passed": false,
     "bitcoin_policy_envelope_passed": true,
     "committee_authorization_harness_passed": true,
@@ -45,7 +53,6 @@
   },
   "funds_blockers": [
     "complete source archive is not reproducible",
-    "Bitcoin Core regtest was not executed",
     "Bitcoin Core regtest did not pass",
     "current bridge commit was not compiled and tested",
     "native constant-time implementation is absent",
