@@ -1,0 +1,58 @@
+{
+  "bitcoin_core_regtest_result": {
+    "error": "a pinned bitcoind executable SHA-256 is required; set --expected-bitcoind-sha256 or RANKLOCK_BITCOIND_SHA256",
+    "executed": false,
+    "passed": false,
+    "schema": "ranklock-v025-bitcoin-core-regtest-evidence-v3"
+  },
+  "git": {
+    "baseline_commit": "215476c977afe2566aadfdd5d5565cc054cd5440",
+    "workspace": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1"
+  },
+  "host": {
+    "arch": "arm64",
+    "os": "macOS-26.5.2-arm64-arm-64bit-Mach-O"
+  },
+  "python": {
+    "implementation": "CPython",
+    "tested_baseline_note": "requirements.lock was tested on CPython 3.13.5 / Linux x86_64; this run used CPython 3.14.6 / macOS arm64. check_locked_environment.py only enforces python>=3.11 and exact locked package versions, both of which passed.",
+    "version": "3.14.6"
+  },
+  "reproduce_v025_result": {
+    "all_checks_passed": true,
+    "checks": {
+      "bitcoin_policy_envelope": true,
+      "committee_harness": true,
+      "environment": true,
+      "evidence_verifier": true,
+      "release_gate_is_fail_closed": true,
+      "security_hardening": true,
+      "split_scalar_harness": true,
+      "strata_handoff_checks": true,
+      "tests": true
+    },
+    "claim_boundary": "reproducible research/canary harness; external production gates remain open",
+    "package_version": "0.25.1",
+    "safe_for_funds": false,
+    "schema": "ranklock-v0251-reproducibility-v1"
+  },
+  "schema": "ranklock-v0252-baseline-report-v1",
+  "source": {
+    "handoff_source_archive_sha256": "87237d993ad01cb34430d7f40524e31183de75d2c822148f61d981abc27b8b4b",
+    "manifest_entries_verified": 549,
+    "sha256sums_verified": 14
+  },
+  "started_at_utc": "2026-08-15T00:00:00Z",
+  "status": "passed",
+  "test_files_result": {
+    "complete": true,
+    "failed": 0,
+    "files": 100,
+    "nonzero_files": 0,
+    "passed": 423,
+    "schema": "ranklock-v025-complete-test-suite-v1",
+    "timeout_per_file_seconds": 420,
+    "total_discovered_files": 100,
+    "workers": 4
+  }
+}

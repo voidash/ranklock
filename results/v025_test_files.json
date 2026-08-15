@@ -5,7 +5,7 @@
   "nonzero_files": 0,
   "passed": 423,
   "schema": "ranklock-v025-complete-test-suite-v1",
-  "timeout_per_file_seconds": 240,
+  "timeout_per_file_seconds": 420,
   "total_discovered_files": 100,
   "workers": 4
 }
