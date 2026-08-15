@@ -249,6 +249,16 @@ MODELED_COVERAGE = {
         "tests/test_release_sidecar.py::"
         "test_reorg_race_after_burn_aborts_without_emitting_share",
     ),
+    "CORE-005": (
+        "wrong sibling/opening is rejected",
+        "tests/test_protocol_negatives.py -- an opening that does not "
+        "reconstruct the committed share root is refused",
+    ),
+    "CORE-009": (
+        "wrong slot is rejected",
+        "tests/test_protocol_negatives.py -- slot id is part of the signed "
+        "policy body and labels are slot-separated",
+    ),
 }
 
 
@@ -817,8 +827,6 @@ def run_core_matrix(
     # execution) or the Strata ACK/NACK graph per scenario, rather than the
     # carrier-level spends exercised above.
     deferred = {
-        "CORE-005": ("wrong sibling/opening is rejected", "two-phase sidecar protocol scenario"),
-        "CORE-009": ("wrong slot is rejected", "two-phase sidecar protocol scenario"),
         "CORE-021": ("pre-CSV NACK is rejected", "Strata ACK/NACK graph (STRATA-012)"),
         "CORE-022": ("mature CSV NACK is accepted", "Strata ACK/NACK graph (STRATA-012)"),
         "CORE-023": ("timeout NACK remains reachable", "Strata ACK/NACK graph (STRATA-012)"),
