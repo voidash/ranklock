@@ -167,3 +167,88 @@ def test_ledger_database_and_sqlite_sidecars_remain_private(tmp_path):
     for path in (ledger.path, *[type(ledger.path)(str(ledger.path) + suffix) for suffix in ("-wal", "-shm")]):
         if path.exists():
             assert stat.S_IMODE(os.lstat(path).st_mode) & 0o077 == 0
+
+
+def test_authenticated_conflict_is_terminal_and_never_completes(tmp_path):
+    """CORE-014: a conflicting binding permanently closes the slot.
+
+    Only a validly signed preauthorization reaches ``begin``, so a conflict
+    means one one-shot slot was bound to two different transactions.  The slot
+    must fail closed: neither the conflicting request nor the original honest
+    one may drive it forward afterwards.
+    """
+
+    ledger = _ledger(tmp_path, slots=1)
+    context = _d(b"context")
+    original = dict(
+        context_digest=context,
+        input_digest=_d(b"input"),
+        authorization_digest=_d(b"authorization"),
+        chain_binding_digest=_d(b"wtxid"),
+    )
+    assert ledger.begin(0, **original).state == "burned"
+
+    with pytest.raises(SlotConflictError):
+        ledger.begin(
+            0,
+            context_digest=context,
+            input_digest=_d(b"other input"),
+            authorization_digest=_d(b"other authorization"),
+            chain_binding_digest=_d(b"other wtxid"),
+        )
+
+    conflicted = ledger.use(0)
+    assert conflicted.state == "retry-rejected"
+    assert conflicted.terminal
+    # The original binding is preserved for audit even though it can no
+    # longer complete.
+    assert conflicted.input_digest == _d(b"input")
+
+    # The honest request cannot resume the slot either.
+    with pytest.raises(SlotConflictError):
+        ledger.begin(0, **original)
+    assert ledger.use(0).state == "retry-rejected"
+
+    # A terminal slot cannot be finalized into a different outcome.
+    with pytest.raises(SlotTerminalError):
+        ledger.finalize(0, outcome="success")
+
+    assert ledger.remaining == 0
+    assert ledger.verify_audit_chain()
+
+
+def test_conflict_after_success_is_audit_only_and_keeps_the_terminal_outcome(tmp_path):
+    """A late conflict must not rewrite an already-released outcome.
+
+    Once a slot has released on its original binding, that information cannot
+    be recalled, so the terminal outcome stands and the conflict is recorded
+    as audit only.
+    """
+
+    ledger = _ledger(tmp_path, slots=1)
+    context = _d(b"context")
+    ledger.begin(
+        0,
+        context_digest=context,
+        input_digest=_d(b"input"),
+        authorization_digest=_d(b"authorization"),
+        chain_binding_digest=_d(b"wtxid"),
+    )
+    ledger.finalize(0, outcome="success")
+
+    with pytest.raises(SlotConflictError):
+        ledger.begin(
+            0,
+            context_digest=context,
+            input_digest=_d(b"late input"),
+            authorization_digest=_d(b"late authorization"),
+            chain_binding_digest=_d(b"late wtxid"),
+        )
+
+    assert ledger.use(0).state == "success"
+    assert [event.event_type for event in ledger.events()] == [
+        "burn",
+        "finalize",
+        "conflict-rejected",
+    ]
+    assert ledger.verify_audit_chain()

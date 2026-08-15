@@ -134,7 +134,7 @@
     "manifest_bytes": 748,
     "margin_to_one_mib": 3624,
     "public_committee_metadata_added_to_retained_object": 0,
-    "sha256": "ef95858321ab55ab6b66a2dfd326b0cd1eebd51765f81662b4cfa25421cdeb08",
+    "sha256": "a719c7503276de7744ae9e8ab4badc7d8420155b5ec26ef853a792ef26e96f60",
     "slot_count": 2
   },
   "safe_for_funds": false,

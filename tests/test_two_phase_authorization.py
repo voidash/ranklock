@@ -275,7 +275,28 @@ def test_exact_phase_one_retry_is_stable_but_another_point_cannot_rebind_slot(tm
             participant=participant,
             ledger=ledger,
         )
-    assert ledger.use(0).state == "burned"
+    # CORE-014: an authenticated conflicting binding is terminal, not a
+    # recoverable rejection.  Only a validly signed preauthorization gets this
+    # far, so a conflict means one one-shot slot was bound to two different
+    # transactions; the slot must fail closed permanently.
+    conflicted = ledger.use(0)
+    assert conflicted.state == "retry-rejected"
+    assert conflicted.terminal
+
+    # Even the original, honest request can no longer drive the slot forward.
+    with pytest.raises((SlotConflictError, TwoPhaseAuthorizationError)):
+        prepare_witness_share_response(
+            activation=row["activation"],
+            preauthorization=row["preauthorization"],
+            plan=row["plan"],
+            policy=row["policy"],
+            participant=participant,
+            ledger=ledger,
+        )
+    assert ledger.use(0).state == "retry-rejected"
+    # The slot never returns to available and the audit chain stays intact.
+    assert ledger.remaining == 0
+    assert ledger.verify_audit_chain()
 
 
 def test_seed_share_is_withheld_for_tampered_or_point_mismatched_confirmation(tmp_path):

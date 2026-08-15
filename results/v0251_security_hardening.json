@@ -42,7 +42,7 @@
     },
     "durable_ledger": {
       "path": "src/ranklock/durable_slot_ledger.py",
-      "sha256": "f931f8bc7d9daec98f60bffbe5e0a980106756f17889748c6fa6a7bdc3519acf"
+      "sha256": "a488bd52433faaa4c17f7e21e2fe69f491a3d0f4ed0599a3764d0195a335577b"
     },
     "kill_safe_test_runner": {
       "path": "scripts/run_test_files.py",
@@ -63,7 +63,7 @@
   },
   "tests": {
     "failed": 0,
-    "files": 103,
-    "passed": 442
+    "files": 104,
+    "passed": 453
   }
 }

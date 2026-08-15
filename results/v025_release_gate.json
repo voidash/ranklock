@@ -12,11 +12,11 @@
     },
     "committee": {
       "path": "results/v025_committee_qualification.json",
-      "sha256": "c7a05bb9680d7e5042312bf8724d439aad0a0897910401997e42cfb04ca160e3"
+      "sha256": "d2036c58d539a974e54eaa479473ff16292fdf6a5dfc04c680dd6c90bbf923a6"
     },
     "hardening": {
       "path": "results/v0251_security_hardening.json",
-      "sha256": "720d2a1a3f4f41647e8cc5a418856cce82c2472b88d232864765d2625b33892a"
+      "sha256": "c7a047694270e368c357bcaa3745b83387f12175a26060520712495062304ebe"
     },
     "split_scalar": {
       "path": "results/v025_split_scalar_qualification.json",
@@ -24,7 +24,7 @@
     },
     "tests": {
       "path": "results/v025_test_files.json",
-      "sha256": "9e03d95ae1876c9e50e4c6f4eb2d4f8535898a4ec62427222ac00661983ac491"
+      "sha256": "3a7d34f4046fb97c917fcf343399517b4092252ce118f7c77e929b91359c5460"
     }
   },
   "external_attestations_must_be_verified_by": "ranklock.deployment_policy.evaluate_deployment",

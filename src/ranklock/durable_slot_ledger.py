@@ -494,6 +494,16 @@ class DurableSlotLedger:
                 and bytes(row["authorization_digest"]) == authorization_digest
                 and bytes(row["chain_binding_digest"]) == chain_binding_digest
             )
+            if exact and str(row["state"]) == "retry-rejected":
+                # The slot was poisoned by a conflicting authenticated binding
+                # and never completed, so there is no published result to be
+                # idempotent about.  Refuse even the original request rather
+                # than letting it resume and release fresh material.
+                conn.execute("COMMIT")
+                raise SlotConflictError(
+                    "slot was terminally rejected after a conflicting binding "
+                    "and can no longer be used"
+                )
             if exact:
                 event_hash = self._append_event(
                     conn,
@@ -515,20 +525,40 @@ class DurableSlotLedger:
                 conn.execute("COMMIT")
                 return self._to_use(row, exact_replay=True)
 
+            # An authenticated request that conflicts with the binding this
+            # slot was burned for is a terminal event, not a recoverable one.
+            # Only a validly signed preauthorization reaches this method, so a
+            # conflict means the authorizer bound one one-shot slot to two
+            # different transactions -- the slot must fail closed and can
+            # never complete.  A slot that is already terminal keeps its
+            # existing outcome; the conflict is recorded as audit only, since
+            # information released on the original binding cannot be recalled.
+            already_terminal = str(row["state"]) in _TERMINAL_STATES
+            resulting_state = str(row["state"]) if already_terminal else "retry-rejected"
             event_hash = self._append_event(
                 conn,
                 slot_id=slot_id,
                 event_type="conflict-rejected",
-                state=str(row["state"]),
+                state=resulting_state,
                 input_digest=input_digest,
                 authorization_digest=authorization_digest,
                 chain_binding_digest=chain_binding_digest,
                 outcome="retry-rejected",
             )
-            conn.execute(
-                "UPDATE slots SET latest_event_hash=? WHERE slot_id=?",
-                (event_hash, slot_id),
-            )
+            if already_terminal:
+                conn.execute(
+                    "UPDATE slots SET latest_event_hash=? WHERE slot_id=?",
+                    (event_hash, slot_id),
+                )
+            else:
+                conn.execute(
+                    """
+                    UPDATE slots SET state='retry-rejected', outcome='retry-rejected',
+                                     finalized_at_ns=?, latest_event_hash=?
+                    WHERE slot_id=? AND state='burned'
+                    """,
+                    (time.time_ns(), event_hash, slot_id),
+                )
             conn.execute("COMMIT")
             conflict = True
         except Exception:
