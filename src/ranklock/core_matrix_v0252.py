@@ -38,6 +38,9 @@ from .evidence_v0252 import CaseResult, MatrixReport
 from .predicate_locked_hashlock import NUMS_INTERNAL_KEY
 from .regtest_node import RegtestNode, RegtestRpc, binary_sha256
 
+# Repository root, so durability suites run against this working tree.
+_PACKAGE_ROOT = Path(__file__).resolve().parents[2]
+
 AUTHORIZER_SECRET = 0x2520A
 SELECTOR_BITS = 8
 
@@ -263,6 +266,62 @@ def _modeled_only(case_id: str, description: str, covered_by: str) -> CaseResult
         },
         blocked_by="not yet driven through a live node scenario",
     )
+
+
+# CORE-014/016/017 are durability properties of the slot ledger and sidecar,
+# not Bitcoin-consensus properties: their acceptance criteria are about a slot
+# staying burned across a restart and a retry being deterministic.  The right
+# evidence is therefore a real process kill, not a mempool result, so these
+# execute the corresponding suites as recorded commands.
+DURABILITY_CASES = {
+    "CORE-014": (
+        "conflicting phase-one retry is terminal and never reopens",
+        "tests/test_durable_slot_ledger.py",
+    ),
+    "CORE-016": (
+        "crash after burn before response: slot stays burned, retry deterministic",
+        "tests/test_crash_durability.py",
+    ),
+    "CORE-017": (
+        "crash after response write: restart returns the same terminal state",
+        "tests/test_crash_durability.py",
+    ),
+}
+
+
+def _durability_cases(*, log_dir, package_root) -> list[CaseResult]:
+    """Execute the process-kill durability suites and record the result."""
+
+    import sys as _sys
+
+    from .evidence_v0252 import run_recorded_command
+
+    results: list[CaseResult] = []
+    ran: dict[str, object] = {}
+    for case_id, (description, suite) in DURABILITY_CASES.items():
+        if suite not in ran:
+            ran[suite] = run_recorded_command(
+                [_sys.executable, "-m", "pytest", "-q", suite],
+                cwd=package_root,
+                log_dir=log_dir,
+                label=f"durability-{Path(suite).stem}",
+                timeout=900,
+                env={**os.environ, "PYTHONPATH": str(Path(package_root) / "src")},
+            )
+        record = ran[suite]
+        ok = record.exit_code == 0 and not record.timed_out  # type: ignore[union-attr]
+        evidence = {
+            "suite": suite,
+            "exit_code": record.exit_code,  # type: ignore[union-attr]
+            "method": (
+                "SIGKILL of a child process between the committed burn and the "
+                "response write, then inspection from a fresh process"
+            ),
+        }
+        results.append(
+            (_passed if ok else _failed)(case_id, description, evidence, record)
+        )
+    return results
 
 
 def _two_phase_protocol_cases(
@@ -760,15 +819,14 @@ def run_core_matrix(
     deferred = {
         "CORE-005": ("wrong sibling/opening is rejected", "two-phase sidecar protocol scenario"),
         "CORE-009": ("wrong slot is rejected", "two-phase sidecar protocol scenario"),
-        "CORE-014": ("conflicting phase-one retry is terminal", "two-phase sidecar protocol scenario"),
-        "CORE-016": ("crash after burn before response", "process-level fault injection harness"),
-        "CORE-017": ("crash after response write", "process-level fault injection harness"),
         "CORE-021": ("pre-CSV NACK is rejected", "Strata ACK/NACK graph (STRATA-012)"),
         "CORE-022": ("mature CSV NACK is accepted", "Strata ACK/NACK graph (STRATA-012)"),
         "CORE-023": ("timeout NACK remains reachable", "Strata ACK/NACK graph (STRATA-012)"),
         "CORE-026": ("CPFP before the allowed point", "Strata ACK/NACK graph (STRATA-012)"),
         "CORE-027": ("CPFP after the allowed point", "Strata ACK/NACK graph (STRATA-012)"),
     }
+    cases.extend(_durability_cases(log_dir=Path(root) / "durability-logs", package_root=_PACKAGE_ROOT))
+
     for case_id, (description, covered_by) in MODELED_COVERAGE.items():
         cases.append(_modeled_only(case_id, description, covered_by))
 

@@ -144,7 +144,7 @@ otherwise have passed on an invalid signature rather than on the fee floor.
 
 | Phase | passed | failed | not_executed | unavailable | |
 |---|---|---|---|---|---|
-| CORE-001..030 | 14 | 0 | 10 | 1 | (+5 `modeled_only`)
+| CORE-001..030 | 17 | 0 | 7 | 1 | (+5 `modeled_only`)
 | STRATA-001..009 | 4 | 0 | 0 | 5 | |
 | STRATA-010..020 | — | — | 11 | — | |
 
@@ -165,8 +165,10 @@ These are recorded with their actual probe output, never asserted from memory.
    Remaining CORE rows are per-scenario burn/anchor/release negatives (wrong
    slot, wrong context, wrong witness) and the Strata ACK/NACK graph
    (CORE-021..023, 026/027). The *positive* two-phase path is executed end to
-   end, and crash durability (CORE-016/017) is now covered by real SIGKILL
-   tests in `tests/test_crash_durability.py`.
+   end. CORE-014/016/017 are closed: they are slot-ledger durability
+   properties rather than consensus properties, so the correct evidence is a
+   real process kill, and the matrix now executes those suites directly.
+   Only CORE-005 and CORE-009 remain as unbuilt protocol negatives.
 4. **STRATA-010..020 need the compiled bridge.** A production-shaped
    exporter now exists (`src/ranklock/strata_exporter.py`), replacing the
    unsafe fixture, but the ACK/NACK paths cannot be driven until blocker 2
