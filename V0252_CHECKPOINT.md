@@ -142,11 +142,13 @@ later pass vacuously:
 Pinning those reasons was not cosmetic: it caught that CORE-024 would
 otherwise have passed on an invalid signature rather than on the fee floor.
 
-| Phase | passed | failed | not_executed | unavailable |
-|---|---|---|---|---|
-| CORE-001..030 | 14 | 0 | 15 | 1 |
-| STRATA-001..009 | 4 | 0 | 0 | 5 |
-| STRATA-010..020 | — | — | 11 | — |
+| Phase | passed | failed | not_executed | unavailable | |
+|---|---|---|---|---|---|
+| CORE-001..030 | 14 | 0 | 10 | 1 | (+5 `modeled_only`)
+| STRATA-001..009 | 4 | 0 | 0 | 5 | |
+| STRATA-010..020 | — | — | 11 | — | |
+
+Five CORE rows are `modeled_only`: covered by the package suite but not driven through a live node. Per the acceptance matrix only `PASS` closes a release fact, so this records existing coverage without inflating the gate — asserted by a regression test.
 
 ## Blockers (why the remaining cases are open)
 

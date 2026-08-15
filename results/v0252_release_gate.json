@@ -12,7 +12,7 @@
     },
     "hardening": {
       "path": "results/v0251_security_hardening.json",
-      "sha256": "457ee2b1be4d4a669ff809510a841be4873552e767762e33e7408e21f45eed91"
+      "sha256": "5a74cd6073fcf834414706a5072b46c8c477a4246e9965b68b07752ec67d3059"
     },
     "split_scalar": {
       "path": "results/v025_split_scalar_qualification.json",
@@ -20,7 +20,7 @@
     },
     "tests": {
       "path": "results/v025_test_files.json",
-      "sha256": "f8aae8ccd56e00945ba55fbd3e7b771f53a2ca8951ace8cc37a5301e931bd7ff"
+      "sha256": "77dd7622aefd3dc5143dc20b82c5254688f626ca765e402728c92f453888fbcb"
     }
   },
   "evidence_verification": {
@@ -30,7 +30,7 @@
       "core",
       "strata_build"
     ],
-    "sha256": "b711c7f0d0a32e95351c71fb347bd9d3962c50d615b4843cbabaa5f3a5779b68"
+    "sha256": "c1d5f46cb47b4ccb1abdb8cb8fcc284c10d6bc75ed2eeef4efbe592cde17e03c"
   },
   "external_attestations_must_be_verified_by": "ranklock.deployment_policy.evaluate_deployment",
   "facts": {

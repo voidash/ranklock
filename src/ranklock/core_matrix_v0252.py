@@ -215,6 +215,56 @@ def _rejection_case(
     return builder(case_id, description, evidence, command)
 
 
+# Rows proven by the package suite but not yet driven through a live node.
+# Recorded as ``modeled_only`` rather than ``not_executed``: the property is
+# covered, the coverage is simply not consensus-backed.  Per the acceptance
+# matrix, only ``passed`` closes a release fact, so this cannot inflate the
+# gate -- it only stops the evidence from understating existing coverage.
+MODELED_COVERAGE = {
+    "CORE-008": (
+        "noncanonical/wrong point is rejected",
+        "tests/test_bitcoin_witness_selection.py -- witness bits that do not "
+        "encode a canonical BN254 point are rejected by the selector parser",
+    ),
+    "CORE-010": (
+        "wrong game/deposit/operator/epoch is rejected",
+        "tests/test_release_sidecar.py::test_core_genesis_mismatch_fails_before_burn "
+        "and the EvaluationContext binding tests",
+    ),
+    "CORE-011": (
+        "wrong txid/wtxid/witness releases no seed",
+        "tests/test_two_phase_authorization.py::"
+        "test_seed_share_is_withheld_for_tampered_or_point_mismatched_confirmation",
+    ),
+    "CORE-018": (
+        "reorg before required depth withholds the seed",
+        "tests/test_release_sidecar.py::"
+        "test_core_mismatch_or_insufficient_confirmations_fails_before_burn",
+    ),
+    "CORE-020": (
+        "competing/stale fork observation fails closed",
+        "tests/test_release_sidecar.py::"
+        "test_reorg_race_after_burn_aborts_without_emitting_share",
+    ),
+}
+
+
+def _modeled_only(case_id: str, description: str, covered_by: str) -> CaseResult:
+    return CaseResult(
+        case_id=case_id,
+        status="modeled_only",
+        description=description,
+        evidence={
+            "covered_by": covered_by,
+            "limitation": (
+                "proven by the package suite, not against a live Bitcoin Core "
+                "node; does not close the acceptance-matrix row"
+            ),
+        },
+        blocked_by="not yet driven through a live node scenario",
+    )
+
+
 def _two_phase_protocol_cases(
     *,
     bitcoind: str,
@@ -709,21 +759,19 @@ def run_core_matrix(
     # carrier-level spends exercised above.
     deferred = {
         "CORE-005": ("wrong sibling/opening is rejected", "two-phase sidecar protocol scenario"),
-        "CORE-008": ("noncanonical/wrong point is rejected", "two-phase sidecar protocol scenario"),
         "CORE-009": ("wrong slot is rejected", "two-phase sidecar protocol scenario"),
-        "CORE-010": ("wrong game/deposit/operator/epoch is rejected", "two-phase sidecar protocol scenario"),
-        "CORE-011": ("wrong txid/wtxid/witness releases no seed", "two-phase sidecar protocol scenario"),
         "CORE-014": ("conflicting phase-one retry is terminal", "two-phase sidecar protocol scenario"),
         "CORE-016": ("crash after burn before response", "process-level fault injection harness"),
         "CORE-017": ("crash after response write", "process-level fault injection harness"),
-        "CORE-018": ("reorg before required depth withholds the seed", "two-phase sidecar protocol scenario"),
-        "CORE-020": ("competing/stale fork observation fails closed", "two-phase sidecar protocol scenario"),
         "CORE-021": ("pre-CSV NACK is rejected", "Strata ACK/NACK graph (STRATA-012)"),
         "CORE-022": ("mature CSV NACK is accepted", "Strata ACK/NACK graph (STRATA-012)"),
         "CORE-023": ("timeout NACK remains reachable", "Strata ACK/NACK graph (STRATA-012)"),
         "CORE-026": ("CPFP before the allowed point", "Strata ACK/NACK graph (STRATA-012)"),
         "CORE-027": ("CPFP after the allowed point", "Strata ACK/NACK graph (STRATA-012)"),
     }
+    for case_id, (description, covered_by) in MODELED_COVERAGE.items():
+        cases.append(_modeled_only(case_id, description, covered_by))
+
     covered = {case.case_id for case in cases}
     for case_id in CORE_CASE_IDS:
         if case_id in covered:

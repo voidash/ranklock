@@ -99,3 +99,20 @@ def test_executed_negative_cases_pin_their_rejection_reason(probe_report):
             continue
         reason = str(case.evidence["testmempoolaccept"].get("reject-reason"))  # type: ignore[union-attr]
         assert substring in reason, f"{case_id} rejected for the wrong reason: {reason}"
+
+
+def test_modeled_only_rows_never_close_a_gate(probe_report):
+    """`modeled_only` must document coverage without inflating the matrix.
+
+    The acceptance matrix says only PASS closes a release fact. Reclassifying
+    a row from not_executed to modeled_only records that non-Core coverage
+    exists; it must never make the matrix read as passing.
+    """
+
+    modeled = [case for case in probe_report.cases if case.status == "modeled_only"]
+    assert modeled, "expected some rows to carry non-Core coverage"
+    for case in modeled:
+        assert case.evidence.get("covered_by"), f"{case.case_id} claims coverage without naming it"
+        assert case.evidence.get("limitation")
+    # A matrix containing modeled_only rows is still not a passing matrix.
+    assert not probe_report.all_passed
