@@ -215,6 +215,130 @@ def _rejection_case(
     return builder(case_id, description, evidence, command)
 
 
+def _two_phase_protocol_cases(
+    *,
+    bitcoind: str,
+    root: str | os.PathLike[str],
+    command_record,
+    expected_bitcoind_sha256: str | None,
+) -> list[CaseResult]:
+    """Drive the complete two-phase protocol once and map what it proves.
+
+    ``run_bitcoin_core_regtest`` executes the real protocol end to end against
+    Core: burn before any label release, broadcast, confirm, then release seed
+    shares only after every sidecar independently re-reads the exact txid,
+    wtxid, witness digest, block and confirmation depth.  Rather than
+    reimplement that, this maps its observed results onto the matrix rows it
+    actually establishes.
+
+    A failure here is a real defect and is reported as ``failed``; an
+    infrastructure problem (no usable node) is reported as ``unavailable``.
+    """
+
+    from .bitcoin_core_regtest import BitcoinCoreRegtestError, run_bitcoin_core_regtest
+
+    protocol_root = Path(root) / "two-phase"
+    protocol_root.mkdir(parents=True, exist_ok=True)
+    try:
+        result = run_bitcoin_core_regtest(
+            bitcoind=bitcoind,
+            working_directory=protocol_root,
+            # Version pinning is enforced by CORE-001; this run must not
+            # duplicate that gate, only exercise the protocol.
+            expected_version=None,
+            expected_bitcoind_sha256=expected_bitcoind_sha256,
+        )
+    except BitcoinCoreRegtestError as exc:
+        blocked = f"two-phase protocol run did not complete: {exc}"
+        return [
+            CaseResult(
+                case_id=case_id,
+                status="unavailable",
+                description=description,
+                commands=(command_record,),
+                evidence={"error": str(exc)},
+                blocked_by=blocked,
+            )
+            for case_id, description in (
+                ("CORE-002", "valid slot 0 authorization end to end"),
+                ("CORE-003", "valid adaptive slot 1 chosen after slot-0 output"),
+                ("CORE-013", "exact phase-one retry is byte-identical"),
+                ("CORE-015", "exact phase-two retry releases no second seed"),
+            )
+        ]
+
+    document = result.document()
+    slots = document["transactions"]
+    assert isinstance(slots, list)
+
+    def _slot_case(case_id: str, slot_id: int, description: str) -> CaseResult:
+        row = slots[slot_id]
+        assert isinstance(row, dict)
+        ok = bool(
+            row["mempool_policy_allowed"]
+            and int(row["confirmations"]) >= 6
+            and row["labels_released_before_broadcast"]
+            and row["seed_released_only_after_confirmation"]
+        )
+        evidence: dict[str, object] = {
+            "txid": row["txid"],
+            "wtxid": row["wtxid"],
+            "block_hash": row["block_hash"],
+            "confirmations": row["confirmations"],
+            "selector_items": row["selector_items"],
+            "raw_transaction_sha256": row["raw_transaction_sha256"],
+            "witness_policy_sha256": row["witness_policy_sha256"],
+            "mempool_policy_allowed": row["mempool_policy_allowed"],
+            "labels_released_before_broadcast": row["labels_released_before_broadcast"],
+            "seed_released_only_after_confirmation": row["seed_released_only_after_confirmation"],
+            "program_seed_commitment": row["program_seed_commitment"],
+            "standard_policy_enabled": document["standard_policy_enabled"],
+        }
+        if case_id == "CORE-003":
+            # Recorded precisely rather than overclaimed: slot 1's point is
+            # adaptive by dependency on slot-0's released material, not the
+            # BN254 projective output of executing the retained DFB program
+            # (the harness uses synthetic slot artifacts).
+            evidence["adaptive_derivation"] = (
+                "derived from slot-0 released seed and labels, which exist only "
+                "after slot 0 confirmed"
+            )
+            evidence["scope_limitation"] = (
+                "not the retained-program execution output; full retained-slot "
+                "execution remains out of scope for this harness"
+            )
+        return (_passed if ok else _failed)(case_id, description, evidence, command_record)
+
+    cases = [
+        _slot_case("CORE-002", 0, "valid slot 0 authorization end to end"),
+        _slot_case("CORE-003", 1, "valid adaptive slot 1 chosen after slot-0 output"),
+    ]
+
+    for case_id, key, description in (
+        (
+            "CORE-013",
+            "exact_phase_one_replay_created_no_second_response",
+            "exact phase-one retry is byte-identical and creates no second response",
+        ),
+        (
+            "CORE-015",
+            "exact_phase_two_replay_created_no_second_response",
+            "exact phase-two retry releases no second seed",
+        ),
+    ):
+        observed = bool(document[key])
+        cases.append(
+            (_passed if observed else _failed)(
+                case_id,
+                description,
+                {key: observed, "authorization_plan_digest": document["authorization_plan_digest"]},
+                command_record,
+            )
+        )
+
+    return cases
+
+
 def run_core_matrix(
     *,
     bitcoind: str | os.PathLike[str],
@@ -568,21 +692,28 @@ def run_core_matrix(
     finally:
         node.stop()
 
+    # The complete two-phase protocol runs against its own node, so it happens
+    # after the carrier scenarios have released theirs.
+    cases.extend(
+        _two_phase_protocol_cases(
+            bitcoind=executable,
+            root=root,
+            command_record=command_record,
+            expected_bitcoind_sha256=expected_bitcoind_sha256,
+        )
+    )
+
     # Cases this build does not yet execute.  They require driving the full
     # two-phase sidecar protocol (burn/anchor/release ordering, retained-slot
     # execution) or the Strata ACK/NACK graph per scenario, rather than the
     # carrier-level spends exercised above.
     deferred = {
-        "CORE-002": ("valid slot 0 authorization end to end", "two-phase sidecar protocol scenario"),
-        "CORE-003": ("valid adaptive slot 1 chosen after slot-0 output", "two-phase sidecar protocol scenario"),
         "CORE-005": ("wrong sibling/opening is rejected", "two-phase sidecar protocol scenario"),
         "CORE-008": ("noncanonical/wrong point is rejected", "two-phase sidecar protocol scenario"),
         "CORE-009": ("wrong slot is rejected", "two-phase sidecar protocol scenario"),
         "CORE-010": ("wrong game/deposit/operator/epoch is rejected", "two-phase sidecar protocol scenario"),
         "CORE-011": ("wrong txid/wtxid/witness releases no seed", "two-phase sidecar protocol scenario"),
-        "CORE-013": ("exact phase-one retry is byte-identical", "two-phase sidecar protocol scenario"),
         "CORE-014": ("conflicting phase-one retry is terminal", "two-phase sidecar protocol scenario"),
-        "CORE-015": ("exact phase-two retry releases no second seed", "two-phase sidecar protocol scenario"),
         "CORE-016": ("crash after burn before response", "process-level fault injection harness"),
         "CORE-017": ("crash after response write", "process-level fault injection harness"),
         "CORE-018": ("reorg before required depth withholds the seed", "two-phase sidecar protocol scenario"),

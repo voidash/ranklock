@@ -121,13 +121,15 @@ later pass vacuously:
 | CORE-019 | passed | orphaned, then cleanly reconsidered |
 | CORE-029 | passed | restart: no duplicate release, no regression |
 | CORE-030 | passed | oversize/truncated input bounded-rejected |
+| CORE-002/003 | passed | full two-phase protocol, 6 confirmations |
+| CORE-013/015 | passed | exact retries create no second response |
 
 Pinning those reasons was not cosmetic: it caught that CORE-024 would
 otherwise have passed on an invalid signature rather than on the fee floor.
 
 | Phase | passed | failed | not_executed | unavailable |
 |---|---|---|---|---|
-| CORE-001..030 | 10 | 0 | 19 | 1 |
+| CORE-001..030 | 14 | 0 | 15 | 1 |
 | STRATA-001..009 | 4 | 0 | 0 | 5 |
 | STRATA-010..020 | — | — | 11 | — |
 
@@ -142,9 +144,11 @@ These are recorded with their actual probe output, never asserted from memory.
 2. **The Strata dependency graph is not resolvable here.** `cargo --offline`
    cannot reach the pinned `mosaic` git rev, and the full workspace also needs
    a FoundationDB client library. STRATA-005..009 are `unavailable`.
-3. **Two-phase sidecar scenarios and fault injection are not built.** 19 CORE
-   cases need per-scenario burn/anchor/release ordering, deterministic
-   process-kill points, or the Strata ACK/NACK graph.
+3. **Per-scenario negatives and fault injection are not built.** 15 CORE
+   cases remain: per-scenario burn/anchor/release negatives (wrong slot,
+   wrong context, wrong witness), deterministic process-kill points
+   (CORE-016/017), and the Strata ACK/NACK graph (CORE-021..023, 026/027).
+   The *positive* two-phase path is now executed end to end.
 4. **No real RankLock exporter.** `ranklock_sidecar_fixture.py` remains
    explicitly unsafe test plumbing, so STRATA-010..020 cannot run.
 
