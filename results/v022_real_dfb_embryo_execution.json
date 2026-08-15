@@ -1,0 +1,157 @@
+{
+  "artifacts": {
+    "future_input_labels": [
+      {
+        "bytes": 4096,
+        "path": "artifacts/embryo-v022-input-labels-0.bin",
+        "retained_with_setup_artifact": false,
+        "root": "a545f32cea7a0bfbe5c5e5f8f801da48bdec736fe23f00e5f221d53aa123cafd",
+        "sha256": "d8d5998e3193968ff117e698f2d5eb20e9bd5f32382ef326fea365d45f711bad"
+      },
+      {
+        "bytes": 4096,
+        "path": "artifacts/embryo-v022-input-labels-1.bin",
+        "retained_with_setup_artifact": false,
+        "root": "cb907accabced2c4ff67d7bc2d98767931d91978a1b62adbb9806e2781bcadc4",
+        "sha256": "9437d4427c95e4dd239a5e387f06e4896655ab3f4c9f5bc695504cd192de780c"
+      }
+    ],
+    "join_program": {
+      "bytes": 449779,
+      "path": "artifacts/embryo-v022-dfb-program.bin",
+      "sha256": "7e6d94ced9b0d663c32941f2687e90e4f7629b370044b298eadfbde1690540e0"
+    },
+    "standalone_artifact": {
+      "bytes": 677862,
+      "path": "artifacts/embryo-v022-standalone-artifact.bin",
+      "sha256": "84debc542dcbd55de04ab73ddc5b672bc3cc5ad849dd2ed4f38d2b9bc8cfd536"
+    },
+    "standalone_decode_state": {
+      "bytes": 228083,
+      "path": "artifacts/embryo-v022-standalone-decode-state.bin",
+      "sha256": "8e310b7feec78574a4d2c680c2e851ad3fb4d4dbcecbd064cdd4f81507e788b0"
+    }
+  },
+  "claim_boundary": {
+    "active_mpc_executed": false,
+    "adaptive_security_proved": false,
+    "application_level_output_mask_fusion_proved": false,
+    "authenticated_bitcoin_label_release_implemented": false,
+    "bitcoin_core_regtest_complete": false,
+    "breakthrough_target_met": false,
+    "real_dfb_join_program_generated_serialized_parsed_evaluated": true,
+    "real_embryo_polynomial_and_group_evaluation": true,
+    "standalone_output_masks_serialized": true
+  },
+  "clean_archive_evidence": {
+    "compileall": true,
+    "manifest_verified": true,
+    "report": "results/v022_clean_archive_verification.json",
+    "test_files": 75,
+    "tests_failed": 0,
+    "tests_passed": 285
+  },
+  "embryo": {
+    "conditional_maps": 256,
+    "conditional_maps_verified": 256,
+    "curve_check_elements": 5,
+    "curve_check_valid": true,
+    "curve_secret_recovered": true,
+    "dimensions": [
+      1795,
+      1282
+    ],
+    "expected_point_compressed": "ad5fab5a4706e606ea59783b23d52de5111c4330b244e23d9ba111fca3633cd8",
+    "hidden_scalar_hex": "0x123456789abcdef00112233445566778899aabbccddeeff",
+    "input_point_compressed": "8ba173a9155665e0f39b925d3118c2e68a63e5da3563e34603ffc5eb3e638584",
+    "output_matches_hidden_scalar_multiplication": true,
+    "output_point_compressed": "ad5fab5a4706e606ea59783b23d52de5111c4330b244e23d9ba111fca3633cd8"
+  },
+  "execution": {
+    "artifact_replay_evaluator_aes_blocks": 6058542,
+    "artifact_replay_seconds": 4.979071275999559,
+    "evaluator_aes_blocks": 6058542,
+    "garbler_aes_blocks": 6089838,
+    "max_rss_kib": 143016,
+    "platform": "Linux-6.18.35-x86_64-with-glibc2.41",
+    "program_generated_before_input_binding": true,
+    "program_reparsed_canonically_before_evaluation": true,
+    "python": "3.13.5",
+    "standalone_bundle_and_future_labels_replayed_from_bytes": true,
+    "timings_seconds": {
+      "crt_reconstruct_seconds": 0.036509489999843936,
+      "dfb_evaluate_seconds": 3.090704642999299,
+      "dfb_generate_serialize_parse_seconds": 3.0907843079994564,
+      "embryo_eval_seconds": 1.2472606909996102,
+      "embryo_garble_seconds": 1.2569327369992607,
+      "input_binding_seconds": 0.000261799999861978
+    }
+  },
+  "generated_at_utc": "2026-08-11T10:20:08.830399+00:00",
+  "next_gate": {
+    "id": "P0-MASK-FUSION-1",
+    "kill_condition": "If the 228,083-byte output-mask state cannot be eliminated or compressed soundly, two standalone slots exceed one MiB by 307,896 bytes.",
+    "question": "Can the DFB final output masks be consumed inside Embryo without serializing one CRT residue per affine output, under a complete selective/adaptive security proof?"
+  },
+  "profile": {
+    "body_join_bits": 1824661,
+    "chunk_join_bits_per_coordinate": 118784,
+    "chunk_size": 8,
+    "crt_bits": 593,
+    "dimensions": [
+      1795,
+      1282
+    ],
+    "ell": 22,
+    "extract_join_bits_per_coordinate": 624640,
+    "fold_bits": 14,
+    "fold_join_bits_per_coordinate": 143360,
+    "input_bits": 256,
+    "largest_prime": 409,
+    "num_chunks": 32,
+    "prime_count": 80,
+    "program_bits": 3598229,
+    "program_boundary": "join payload only; output masks are separate decode state",
+    "program_bytes": 449779,
+    "reference_revision": "e2b45be8ceaea0d51e4e7a9ef862b91b59ff255e",
+    "schema": "ranklock-dfb-reference-profile-v1",
+    "standalone_bundle_bits": 5422890,
+    "standalone_bundle_bytes": 677862,
+    "standalone_decode_bits": 1824661,
+    "standalone_decode_bytes": 228083,
+    "sub_widths": [
+      8,
+      8,
+      6
+    ]
+  },
+  "reference": {
+    "port_scope": "fixed-key AES CCRND/CCRH, 128-bit labels, nonce layout, fused [8,8,6] extraction, fold/body switch execution, canonical LSB packing",
+    "repository": "alpenlabs/duty-free-bits",
+    "revision": "e2b45be8ceaea0d51e4e7a9ef862b91b59ff255e"
+  },
+  "schema": "ranklock-real-dfb-embryo-execution-v2",
+  "storage": {
+    "boundary": "The 449,779-byte object is the DFB join payload. Standalone public decoding also requires 228,083 bytes of final output masks unless an application-level label-flow fusion is constructed and proved.",
+    "join_program_delta_from_v021_paper_model": -61440,
+    "manifest_bytes_v021_fixture": 748,
+    "one_mib_bytes": 1048576,
+    "one_slot_join_program_bytes": 449779,
+    "one_slot_output_mask_bytes": 228083,
+    "one_slot_standalone_bytes": 677862,
+    "q2_join_program_margin_to_one_mib": 148270,
+    "q2_join_program_plus_manifest_bytes": 900306,
+    "q2_standalone_over_one_mib": 307896,
+    "q2_standalone_plus_manifest_bytes": 1356472,
+    "standalone_delta_from_v021_paper_model": 166643,
+    "v021_paper_model_slot_bytes": 511219
+  },
+  "test_evidence": {
+    "nonzero_test_files": 0,
+    "report": "results/v022_test_files.json",
+    "test_files": 75,
+    "tests_failed": 0,
+    "tests_passed": 285
+  },
+  "version": "0.22.0"
+}

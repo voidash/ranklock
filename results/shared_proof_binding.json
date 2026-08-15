@@ -1,0 +1,19 @@
+{
+  "breakthrough_target_met": false,
+  "canonical_parse_can_remove_a_separate_equality_proof": true,
+  "cost_not_yet_known": [
+    "canonical outer-curve point decompression",
+    "subgroup validation",
+    "compressed sign-bit binding",
+    "cost of exposing the same typed variable to the LVA hash and pairing gadgets"
+  ],
+  "effect_on_325_constraint_threshold": "positive but unquantified; no lower point-binding scenario is claimed until the real compiler shares variables",
+  "evidence_class": "REAL canonical BN254 parsing and executable split-brain regression",
+  "required_interface": "parse each proof element once; transcript and pairing gadgets consume the same typed object",
+  "schema": "ranklock-shared-proof-binding-frontier-v1",
+  "separate_hash_and_pairing_witnesses_allowed": false,
+  "shared_typed_object_repair_executed": true,
+  "split_brain_attack_executed": true,
+  "split_brain_attack_reproduced": true,
+  "transcript_digest": "020c55e435f01685aefd34dca185df0cc28abb7b2407729f07ababfdb747b9af"
+}

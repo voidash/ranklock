@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools==82.0.1"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ranklock"
+version = "0.25.1"
+description = "Mask-carrying DFB/Embryo retained-object and conditional-lock research models"
+requires-python = ">=3.11"
+dependencies = [
+  "numpy==2.3.5",
+  "cryptography==46.0.4",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+addopts = "-ra"
+testpaths = ["tests"]
+pythonpath = ["src"]

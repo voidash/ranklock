@@ -1,0 +1,37 @@
+{
+  "all_attacks_have_executable_tests": true,
+  "attacks": [
+    {
+      "fixed_module": "ranklock.phased_air",
+      "id": "A-006",
+      "legacy_test": "test_legacy_helper_has_a_real_late_binding_attack",
+      "name": "late-bound AIR quotient"
+    },
+    {
+      "fixed_module": "ranklock.phased_permutation",
+      "id": "A-007",
+      "legacy_test": "test_legacy_tuple_permutation_has_late_binding_forgery",
+      "name": "late-bound tuple-permutation quotient"
+    },
+    {
+      "fixed_module": "ranklock.phased_memory",
+      "id": "A-008",
+      "legacy_test": "test_legacy_memory_bundle_accepts_unrelated_permutation_and_air_tables",
+      "name": "split-brain memory composition"
+    },
+    {
+      "fixed_module": "ranklock.batched_opening",
+      "id": "A-009",
+      "legacy_test": "test_known_batching_scalar_allows_false_values_to_cancel",
+      "name": "known-rho batched-opening cancellation"
+    },
+    {
+      "fixed_module": "ranklock.canonical_bytes / common-table binding requirement",
+      "id": "A-011",
+      "legacy_test": "test_unbound_dual_proofs_can_describe_two_unrelated_multiplications",
+      "name": "unbound dual-field CRT split brain"
+    }
+  ],
+  "generated_at_utc": "2026-08-05T20:02:57.683945+00:00",
+  "schema": "ranklock-attack-regressions-v1"
+}

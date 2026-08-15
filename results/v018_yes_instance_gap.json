@@ -1,0 +1,45 @@
+{
+  "breakthrough_target_met": false,
+  "decision": "STANDARD_WE_DEFINITION_INSUFFICIENT: target a hard-YES secure, extractable RankVM witness PRF/predictable token (or an enhanced WE notion proving the same game).",
+  "executable_toy_separation": {
+    "accepting_witness_token_bytes": 32,
+    "accepting_witness_value": 1,
+    "fixed_statement_is_YES": true,
+    "interpretation": "language membership and adversarial witness availability are different facts",
+    "two_byte_public_guess_space_finds_witness": false
+  },
+  "language_profile": {
+    "at_least_one_invalid_counterproof_exists": true,
+    "fixed_statement_excludes_future_bytes": true,
+    "fixed_statement_is_YES_before_event": true,
+    "future_counterproof_bytes": 128,
+    "future_input_bits": 1312,
+    "future_input_bytes": 164,
+    "future_input_domain": "2^1312",
+    "future_public_value_bytes": 36,
+    "projective_layer_supports_every_byte": true,
+    "schema": "ranklock-fixed-deposit-language-profile-v1",
+    "standard_NO_instance_WE_hiding_applies": false
+  },
+  "required_security": {
+    "challenge_game": [
+      "fix one program/deposit/epoch context x whose RankVM-invalidity relation is a YES instance",
+      "run distributed setup and give the adversary the public artifact, all corrupted contributor states, abort transcripts, and erasure receipts",
+      "withhold every complete authenticated RankVM INVALID witness",
+      "challenge the adversary to distinguish F_k(x) from a uniform output or recover the committed Bitcoin fault scalar"
+    ],
+    "corrupt_contributors": 2,
+    "one_honest_contributor_model": true,
+    "output_bytes": 32,
+    "required_guarantees": {
+      "extractability": "any algorithm that recovers or non-negligibly predicts the output yields a complete authenticated RankVM INVALID witness",
+      "hard_YES_pseudorandomness": "the fixed per-deposit output remains pseudorandom without a complete authenticated witness even though x is in the language",
+      "partial_setup_corruption": "the guarantees survive corruption of every contributor except one, including malicious abort/restart attempts",
+      "witness_invariance": "all accepting witnesses for the same context produce the identical output"
+    },
+    "schema": "ranklock-hard-yes-security-requirement-v1",
+    "setup_contributors": 3,
+    "standard_WE_gap": "ordinary NO-instance witness-encryption secrecy alone makes no claim for this already-YES statement"
+  },
+  "schema": "ranklock-fixed-yes-instance-gap-v1"
+}

@@ -1,0 +1,13 @@
+{
+  "conclusion": "One aggregate PPE requires individual values bound before rho; in the current external-randomness model this adds a publication phase and beacon.",
+  "example_20_same_point_openings": {
+    "additional_external_beacon": 1,
+    "additional_value_publication_phase": true,
+    "batched_openings": 1,
+    "individual_same_point_openings": 20,
+    "pairing_product_equations": 1,
+    "schema": "ranklock-kzg-batching-cost-v1",
+    "security_condition": "rho must be unpredictable until commitments and every claimed value are bound"
+  },
+  "schema": "ranklock-batching-schedule-v1"
+}

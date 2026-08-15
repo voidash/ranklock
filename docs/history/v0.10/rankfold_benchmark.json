@@ -1,0 +1,54 @@
+{
+  "implementation": "pure-python-reference",
+  "rows": [
+    {
+      "accepted": true,
+      "constraints": 1024,
+      "padded_constraints": 1024,
+      "peak_python_tracemalloc_bytes": 244920,
+      "proof_bytes_excluding_real_pcs": 1466,
+      "prove_seconds": 0.13230026900055236,
+      "rounds": 10,
+      "setup_seconds": 0.005585834000157774,
+      "verify_seconds_transparent_oracle": 0.023926046999804385,
+      "warning": "Verification uses the non-succinct in-memory oracle and therefore scales linearly; the sumcheck verifier itself is logarithmic."
+    },
+    {
+      "accepted": true,
+      "constraints": 4096,
+      "padded_constraints": 4096,
+      "peak_python_tracemalloc_bytes": 976900,
+      "proof_bytes_excluding_real_pcs": 1722,
+      "prove_seconds": 0.517037769000126,
+      "rounds": 12,
+      "setup_seconds": 0.020587357000295015,
+      "verify_seconds_transparent_oracle": 0.09574863200032269,
+      "warning": "Verification uses the non-succinct in-memory oracle and therefore scales linearly; the sumcheck verifier itself is logarithmic."
+    },
+    {
+      "accepted": true,
+      "constraints": 16384,
+      "padded_constraints": 16384,
+      "peak_python_tracemalloc_bytes": 3876248,
+      "proof_bytes_excluding_real_pcs": 1978,
+      "prove_seconds": 1.9976838849997876,
+      "rounds": 14,
+      "setup_seconds": 0.07863272699978552,
+      "verify_seconds_transparent_oracle": 0.3552870379999149,
+      "warning": "Verification uses the non-succinct in-memory oracle and therefore scales linearly; the sumcheck verifier itself is logarithmic."
+    },
+    {
+      "accepted": true,
+      "constraints": 65536,
+      "padded_constraints": 65536,
+      "peak_python_tracemalloc_bytes": 15530412,
+      "proof_bytes_excluding_real_pcs": 2234,
+      "prove_seconds": 8.120903660000295,
+      "rounds": 16,
+      "setup_seconds": 0.3154357240000536,
+      "verify_seconds_transparent_oracle": 1.5051150819999748,
+      "warning": "Verification uses the non-succinct in-memory oracle and therefore scales linearly; the sumcheck verifier itself is logarithmic."
+    }
+  ],
+  "schema": "ranklock-rankfold-benchmark-v1"
+}

@@ -1,0 +1,55 @@
+{
+  "authorization_handoff": {
+    "bridge_input": "32-byte positive-lock preimage only",
+    "phase_one": "durable burn then selected label-share release",
+    "phase_two": "stable Bitcoin Core confirmation then program-seed-share release"
+  },
+  "base_commit": "f94c06d08ff29eee746f3e20bd63078d2949b304",
+  "base_compatibility": {
+    "cargo_revalidation_required": true,
+    "changed_paths_outside_patch_targets": [
+      "crates/bridge-exec/src/graph/counterproof.rs",
+      "crates/proofs/bridge-counterproof/src/statements.rs"
+    ],
+    "intervening_commits": 3,
+    "prior_reviewed_base": "e7623c2e88dd26b4fceff17c422d0e769d7e4000",
+    "updated_base": "f94c06d08ff29eee746f3e20bd63078d2949b304"
+  },
+  "executed_checks": {
+    "bitcoin_core_regtest_executed": false,
+    "bundle_python_tests": {
+      "failed": 0,
+      "passed": 10
+    },
+    "ranklock_validity_first_tests": {
+      "failed": 0,
+      "passed": 6
+    },
+    "rust_compile_executed": false
+  },
+  "execution_limit": "creation environment lacked Rust, bitcoind, Docker, and package-network access",
+  "fee_rate_sat_per_vbyte": 2,
+  "polarity": {
+    "immediate": "ACK requiring RankLock 32-byte preimage plus exact-message N/N signature",
+    "timeout": "CSV NACK requiring exact-message N/N signature"
+  },
+  "ranklock_version": "0.25.1",
+  "repository": "alpenlabs/strata-bridge",
+  "schema": "alpen-validity-first-counterproof-integration-v2",
+  "schema_changes": {
+    "database": false,
+    "p2p": false,
+    "packed_signatures_per_watchtower_after": 5,
+    "packed_signatures_per_watchtower_before": 4
+  },
+  "transaction_fees_sat": {
+    "ack": 422,
+    "nack_delay_144": 276,
+    "nack_delay_le_16": 274
+  },
+  "transaction_vbytes": {
+    "ack": 211,
+    "nack_delay_144": 138,
+    "nack_delay_le_16": 137
+  }
+}

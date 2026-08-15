@@ -1,0 +1,6 @@
+RankLock v0.21 per-file regression
+test files: 74
+passed: 277
+failed: 0
+nonzero files: 0
+execution: six deterministic per-file shards; every test file completed independently

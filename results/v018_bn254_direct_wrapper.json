@@ -1,0 +1,309 @@
+{
+  "architectural_pivot": {
+    "new": "non-native RankVM Fq arithmetic inside a BN254-Fr one-sided wrapper",
+    "old": "native RankVM Fq arithmetic on a large-cofactor CP6-style outer curve",
+    "reason": "BN254 G1 has 32/64-byte encodings and cofactor one; the added field-bridge cost is reusable prover/CRS work rather than per-proof subgroup parsing"
+  },
+  "decision": {
+    "BN254_direct_point_binding_gate": "passes",
+    "CP6_generic_parser_route": "killed in current logical model",
+    "breakthrough_target_met": false,
+    "one_MiB_margin_bytes": 33885,
+    "public_Fiat_Shamir_wrapper_route": "survives this gate",
+    "reference_rows_per_G1": 267,
+    "threshold_rows_per_G1": 325,
+    "why_not_complete": "The complete one-sided proof system, transcript/scalar verifier, LVA-WE compiler, lookup backend, and malicious activation proof remain uninstantiated."
+  },
+  "evidence_class": "REAL canonical BN254 proof parser + exact integer field bridge + parameterised wrapper/CRS cost envelope",
+  "known_kernel_field_bridge": {
+    "arithmetic_linear_equations": 129445,
+    "config": {
+      "capacity_bits": 255,
+      "carry_abs_bound_bits": 88,
+      "coefficient_abs_bound_bits": 173,
+      "equation_abs_bound_bits": 174,
+      "foreign_bits": 254,
+      "foreign_modulus": "21888242871839275222246405745257275088696311157297823662689037894645226208583",
+      "limb_bits": 85,
+      "limbs": 3,
+      "native_bits": 254,
+      "native_modulus": "21888242871839275222246405745257275088548364400416034343698204186575808495617",
+      "nonlinear_products_per_mul": 9,
+      "nonlinear_products_per_square": 6,
+      "safe_no_wrap": true,
+      "schema": "ranklock-nonnative-limb-config-v1"
+    },
+    "convolution_method": "fixed-point evaluation/interpolation",
+    "convolution_rank_per_foreign_product": 5,
+    "foreign_products": 25889,
+    "linear_equations_total": 440113,
+    "logical_lookup_events_total": 1967564,
+    "native_nonlinear_products": 129445,
+    "output_canonical_linear_equations": 233001,
+    "output_carry_lookup_events": 51778,
+    "output_serialization_lookup_events": 414224,
+    "output_slack_range_lookup_events": 466002,
+    "per_foreign_product": {
+      "logical_lookup_events": 76,
+      "native_nonlinear_products": 5,
+      "simple_row_equivalent": 81
+    },
+    "quotient_bits": 254,
+    "quotient_pack_linear_equations": 77667,
+    "quotient_range_lookup_events": 414224,
+    "range_model": {
+      "accounting_unit": "logical lookup event",
+      "chunk_bits": 16,
+      "schema": "ranklock-range-lookup-model-v1",
+      "table_rows": 65536
+    },
+    "schema": "ranklock-low-rank-reduced-quotient-limb-bridge-estimate-v1",
+    "schoolbook_products_avoided": 103556,
+    "schoolbook_products_per_foreign_product": 9,
+    "scope": "exact relation plus logical range/linear inventory; excludes PCS, lookup-argument fixed overhead, parser/hash work and conditional disclosure",
+    "signed_arithmetic_carry_lookup_events": 621336,
+    "simple_row_equivalent": 2097009,
+    "soundness_note": "2n-1 fixed products determine the convolution over the native field; bounded canonical limbs make every true coefficient smaller than the native modulus, and the existing no-wrap carry bound lifts the final field equations to integer equalities"
+  },
+  "next_gate": "Compile the actual one-sided verifier transcript and scalar equations over BN254 Fr, using this canonical 267-row point object, then replace the 1,024 scalar-verifier allowance with a complete equation inventory.",
+  "one_foreign_product_reference": {
+    "arithmetic_linear_equations": 5,
+    "config": {
+      "capacity_bits": 255,
+      "carry_abs_bound_bits": 88,
+      "coefficient_abs_bound_bits": 173,
+      "equation_abs_bound_bits": 174,
+      "foreign_bits": 254,
+      "foreign_modulus": "21888242871839275222246405745257275088696311157297823662689037894645226208583",
+      "limb_bits": 85,
+      "limbs": 3,
+      "native_bits": 254,
+      "native_modulus": "21888242871839275222246405745257275088548364400416034343698204186575808495617",
+      "nonlinear_products_per_mul": 9,
+      "nonlinear_products_per_square": 6,
+      "safe_no_wrap": true,
+      "schema": "ranklock-nonnative-limb-config-v1"
+    },
+    "convolution_method": "fixed-point evaluation/interpolation",
+    "convolution_rank_per_foreign_product": 5,
+    "foreign_products": 1,
+    "linear_equations_total": 17,
+    "logical_lookup_events_total": 76,
+    "native_nonlinear_products": 5,
+    "output_canonical_linear_equations": 9,
+    "output_carry_lookup_events": 2,
+    "output_serialization_lookup_events": 16,
+    "output_slack_range_lookup_events": 18,
+    "per_foreign_product": {
+      "logical_lookup_events": 76,
+      "native_nonlinear_products": 5,
+      "simple_row_equivalent": 81
+    },
+    "quotient_bits": 254,
+    "quotient_pack_linear_equations": 3,
+    "quotient_range_lookup_events": 16,
+    "range_model": {
+      "accounting_unit": "logical lookup event",
+      "chunk_bits": 16,
+      "schema": "ranklock-range-lookup-model-v1",
+      "table_rows": 65536
+    },
+    "schema": "ranklock-low-rank-reduced-quotient-limb-bridge-estimate-v1",
+    "schoolbook_products_avoided": 4,
+    "schoolbook_products_per_foreign_product": 9,
+    "scope": "exact relation plus logical range/linear inventory; excludes PCS, lookup-argument fixed overhead, parser/hash work and conditional disclosure",
+    "signed_arithmetic_carry_lookup_events": 24,
+    "simple_row_equivalent": 81,
+    "soundness_note": "2n-1 fixed products determine the convolution over the native field; bounded canonical limbs make every true coefficient smaller than the native modulus, and the existing no-wrap carry bound lifts the final field equations to integer equalities"
+  },
+  "point_binding_16bit": {
+    "activation_plus_future_proof_bytes": 1014691,
+    "cofactor": 1,
+    "config": {
+      "capacity_bits": 255,
+      "carry_abs_bound_bits": 88,
+      "coefficient_abs_bound_bits": 173,
+      "equation_abs_bound_bits": 174,
+      "foreign_bits": 254,
+      "foreign_modulus": "21888242871839275222246405745257275088696311157297823662689037894645226208583",
+      "limb_bits": 85,
+      "limbs": 3,
+      "native_bits": 254,
+      "native_modulus": "21888242871839275222246405745257275088548364400416034343698204186575808495617",
+      "nonlinear_products_per_mul": 9,
+      "nonlinear_products_per_square": 6,
+      "safe_no_wrap": true,
+      "schema": "ranklock-nonnative-limb-config-v1"
+    },
+    "encoding": "canonical 64-byte affine x||y",
+    "evidence_class": "EXACT logical range/product inventory under the 3x85 rank-5 bridge; not a physical lookup layout or LVA-WE key",
+    "exact_logical_rows_per_G1": 267,
+    "external_x": {
+      "carry_lookups": 2,
+      "linear_equations": 9,
+      "logical_rows": 36,
+      "schema": "ranklock-bn254-coordinate-binding-cost-v1",
+      "serialization_lookups": 16,
+      "serialized": true,
+      "slack_range_lookups": 18
+    },
+    "external_y": {
+      "carry_lookups": 2,
+      "linear_equations": 9,
+      "logical_rows": 36,
+      "schema": "ranklock-bn254-coordinate-binding-cost-v1",
+      "serialization_lookups": 16,
+      "serialized": true,
+      "slack_range_lookups": 18
+    },
+    "fits_one_MiB": true,
+    "fits_threshold": true,
+    "foreign_coordinate_field": "BN254 Fq",
+    "foreign_products": 3,
+    "linear_equations_not_charged_as_relation_coordinates": 70,
+    "load_bearing_assumptions": [
+      "one logical lookup or native product consumes one fixed-relation coordinate",
+      "linear packing/carry equations do not consume a 66-byte nonlinear coordinate",
+      "one canonical proof object is shared by transcript and pairing gadgets",
+      "affine infinity has no accepted encoding",
+      "BN254 G1 cofactor is one"
+    ],
+    "margin_to_one_MiB_bytes": 33885,
+    "native_field": "BN254 Fr",
+    "per_foreign_product": {
+      "linear_equations": 17,
+      "logical_rows": 65,
+      "native_products": 5,
+      "output_canonical": {
+        "carry_lookups": 2,
+        "linear_equations": 9,
+        "logical_rows": 20,
+        "schema": "ranklock-bn254-coordinate-binding-cost-v1",
+        "serialization_lookups": 0,
+        "serialized": false,
+        "slack_range_lookups": 18
+      },
+      "quotient_range_lookups": 16,
+      "schema": "ranklock-bn254-internal-foreign-product-cost-v1",
+      "signed_carry_lookups": 24
+    },
+    "point_binding_threshold_per_G1": 325,
+    "range_model": {
+      "accounting_unit": "logical lookup event",
+      "chunk_bits": 16,
+      "schema": "ranklock-range-lookup-model-v1",
+      "table_rows": 65536
+    },
+    "schema": "ranklock-bn254-uncompressed-point-binding-v1",
+    "subgroup_rows": 0,
+    "wrapper_trace_width": 13326
+  },
+  "point_binding_20bit": {
+    "activation_plus_future_proof_bytes": 986971,
+    "cofactor": 1,
+    "config": {
+      "capacity_bits": 255,
+      "carry_abs_bound_bits": 88,
+      "coefficient_abs_bound_bits": 173,
+      "equation_abs_bound_bits": 174,
+      "foreign_bits": 254,
+      "foreign_modulus": "21888242871839275222246405745257275088696311157297823662689037894645226208583",
+      "limb_bits": 85,
+      "limbs": 3,
+      "native_bits": 254,
+      "native_modulus": "21888242871839275222246405745257275088548364400416034343698204186575808495617",
+      "nonlinear_products_per_mul": 9,
+      "nonlinear_products_per_square": 6,
+      "safe_no_wrap": true,
+      "schema": "ranklock-nonnative-limb-config-v1"
+    },
+    "encoding": "canonical 64-byte affine x||y",
+    "evidence_class": "EXACT logical range/product inventory under the 3x85 rank-5 bridge; not a physical lookup layout or LVA-WE key",
+    "exact_logical_rows_per_G1": 225,
+    "external_x": {
+      "carry_lookups": 2,
+      "linear_equations": 9,
+      "logical_rows": 30,
+      "schema": "ranklock-bn254-coordinate-binding-cost-v1",
+      "serialization_lookups": 13,
+      "serialized": true,
+      "slack_range_lookups": 15
+    },
+    "external_y": {
+      "carry_lookups": 2,
+      "linear_equations": 9,
+      "logical_rows": 30,
+      "schema": "ranklock-bn254-coordinate-binding-cost-v1",
+      "serialization_lookups": 13,
+      "serialized": true,
+      "slack_range_lookups": 15
+    },
+    "fits_one_MiB": true,
+    "fits_threshold": true,
+    "foreign_coordinate_field": "BN254 Fq",
+    "foreign_products": 3,
+    "linear_equations_not_charged_as_relation_coordinates": 70,
+    "load_bearing_assumptions": [
+      "one logical lookup or native product consumes one fixed-relation coordinate",
+      "linear packing/carry equations do not consume a 66-byte nonlinear coordinate",
+      "one canonical proof object is shared by transcript and pairing gadgets",
+      "affine infinity has no accepted encoding",
+      "BN254 G1 cofactor is one"
+    ],
+    "margin_to_one_MiB_bytes": 61605,
+    "native_field": "BN254 Fr",
+    "per_foreign_product": {
+      "linear_equations": 17,
+      "logical_rows": 55,
+      "native_products": 5,
+      "output_canonical": {
+        "carry_lookups": 2,
+        "linear_equations": 9,
+        "logical_rows": 17,
+        "schema": "ranklock-bn254-coordinate-binding-cost-v1",
+        "serialization_lookups": 0,
+        "serialized": false,
+        "slack_range_lookups": 15
+      },
+      "quotient_range_lookups": 13,
+      "schema": "ranklock-bn254-internal-foreign-product-cost-v1",
+      "signed_carry_lookups": 20
+    },
+    "point_binding_threshold_per_G1": 325,
+    "range_model": {
+      "accounting_unit": "logical lookup event",
+      "chunk_bits": 20,
+      "schema": "ranklock-range-lookup-model-v1",
+      "table_rows": 1048576
+    },
+    "schema": "ranklock-bn254-uncompressed-point-binding-v1",
+    "subgroup_rows": 0,
+    "wrapper_trace_width": 12906
+  },
+  "proof_format": {
+    "G1_bytes": 64,
+    "G1_elements": 10,
+    "G1_encoding": "canonical uncompressed affine x||y",
+    "compressed_transport_variant_bytes": 960,
+    "scalar_elements": 20,
+    "total_proof_bytes": 1280,
+    "why_uncompressed": "avoids square-root, sign-selection, and comparator constraints in the static transcript relation"
+  },
+  "reusable_wrapper_CRS_scenarios": [
+    {
+      "circuit_gate_assumption": 129445,
+      "combined_prover_MSM_terms": 2847790,
+      "name": "nonlinear rank-5 products only",
+      "proof_size_CRS_bytes_compressed": 12426848,
+      "prover_time_CRS_bytes_compressed": 4142368
+    },
+    {
+      "circuit_gate_assumption": 2537122,
+      "combined_prover_MSM_terms": 55816684,
+      "name": "all current field-bridge logical events",
+      "proof_size_CRS_bytes_compressed": 243563840,
+      "prover_time_CRS_bytes_compressed": 81188032
+    }
+  ],
+  "schema": "ranklock-bn254-direct-wrapper-frontier-v1"
+}

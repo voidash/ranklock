@@ -1,0 +1,24 @@
+{
+  "ciphertext_bytes": 112,
+  "commitment_bytes": 32,
+  "generated_at_utc": "2026-08-06T19:32:57.636487+00:00",
+  "maximum_degree": 8,
+  "opening_verified": true,
+  "opening_witness_bytes": 32,
+  "polynomial_coefficients": 8,
+  "schema": "ranklock-real-kzg-we-benchmark-v1",
+  "secret_recovered": true,
+  "security_boundary": [
+    "Actual BN254 group and pairing arithmetic; variable-time research code.",
+    "The SRS trapdoor is generated locally and is not a production ceremony.",
+    "The ciphertext is bound to a concrete future KZG statement."
+  ],
+  "srs_bytes": 416,
+  "timing_seconds": {
+    "commit_and_open": 0.006118972999956895,
+    "decrypt": 0.3621433440000601,
+    "encrypt": 0.3751862970000275,
+    "srs_generation": 0.0053110320000087086,
+    "verify_opening": 0.43777742699990085
+  }
+}

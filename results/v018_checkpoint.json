@@ -1,0 +1,44 @@
+{
+  "breakthrough_target_met": false,
+  "decision": "CONTINUE_WITH_VALIDITY_FIRST_POSITIVE_BACKEND_AND_KEEP_HARD_YES_WPRF_AS_FALLBACK",
+  "evidence": [
+    "v018_bn254_direct_wrapper.json",
+    "v018_coupled_shvzk_frontier.json",
+    "v018_laconic_shvzk_frontier.json",
+    "v018_lva_decomposition.json",
+    "v018_lva_gadget_coverage.json",
+    "v018_poseidon2_transcript.json",
+    "v018_rankvm_wprf_target.json",
+    "v018_scalar_verifier.json",
+    "v018_static_session_checkpoint.json",
+    "v018_validity_first_graph.json",
+    "v018_yes_instance_gap.json"
+  ],
+  "failed_or_open_gates": {
+    "66_byte_scalar_gadget_covers_unknown_log_G1_proof": false,
+    "coordinate_envelope_is_real_conditional_key": false,
+    "hard_YES_rankvm_WPRF_constructed": false,
+    "identity_normalized_PPE_supplies_hidden_session": false,
+    "ordinary_NO_instance_WE_covers_fixed_invalidity_relation": false
+  },
+  "new_protocol_pivot": {
+    "complete_strata_integration": false,
+    "mechanically_expressible_in_existing_immediate_plus_timeout_connector": true,
+    "name": "validity-first counterproof graph",
+    "positive_backend_candidate": "BABE + Duty-Free-Bits Embryo",
+    "projective_backend_still_required": true,
+    "security_proof": false
+  },
+  "passed_gates": {
+    "arithmetic_and_transcript_coordinate_envelope_bytes": 862693,
+    "bn254_cofactor_one_point_binding_rows_per_G1": 267,
+    "coordinate_envelope_margin_to_one_MiB_bytes": 185883,
+    "official_poseidon2_bn256_KAT": true,
+    "one_sided_scalar_verifier_nonlinear_rows": 161,
+    "point_binding_below_old_325_row_ceiling": true,
+    "typed_transcript_nonlinear_rows": 7680,
+    "typed_transcript_permutations": 32
+  },
+  "schema": "ranklock-v018-checkpoint-v1",
+  "version": "0.18.0"
+}

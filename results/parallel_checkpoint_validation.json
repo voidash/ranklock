@@ -1,0 +1,20 @@
+{
+  "checkpoint": "ranklock-v0.15-research-breakthrough.zip",
+  "failures": [
+    "empty sumcheck_messages caused an IndexError in test_r1cs_ipa",
+    "toy field-bridge R1CS IPA failed its final sumcheck equation"
+  ],
+  "generated_at_utc": "2026-08-06T19:32:57.636487+00:00",
+  "not_retained_as_evidence": [
+    "broken BLS12-381 R1CS/IPA proof backend",
+    "the checkpoint's breakthrough label"
+  ],
+  "result": "REJECTED_AS_RELEASE_BASELINE",
+  "schema": "ranklock-parallel-checkpoint-validation-v1",
+  "selectively_retained": [
+    "formal Groth16 PPE/context encoding model",
+    "recursive architecture inventory, relabeled as a formal candidate"
+  ],
+  "tests_failed": 2,
+  "tests_passed": 109
+}

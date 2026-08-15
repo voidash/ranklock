@@ -1,0 +1,126 @@
+{
+  "breakthrough_target_met": false,
+  "byte_envelope_classification": {
+    "activation_plus_future_proof_bytes": 862693,
+    "classification": "ARITHMETIC_AND_TRANSCRIPT_COORDINATE_ENVELOPE",
+    "is_actual_serialized_full_LVA_key": false,
+    "margin_to_one_MiB_bytes": 185883,
+    "warning": "The 66-byte slope is valid for the scalar inner-product baseline only. Applying it to every wrapper row is not a semantic compiler or a cryptographic serialization result."
+  },
+  "components": [
+    {
+      "blocker": "The measured OT/VOLE path produces authenticated byte witnesses, but no real static WPRF/LVA gadget yet consumes them together with the wrapper proof.",
+      "component": "projective future-byte authentication",
+      "directly_composable_into_complete_wrapper": false,
+      "evidence_module": "projective_vole_lock.py / vole_input_auth.py",
+      "executable_semantics": true,
+      "fully_covered": false,
+      "load_bearing": true,
+      "real_conditional_gadget": false,
+      "schema": "ranklock-conditional-gadget-coverage-item-v1",
+      "witness_kind": "authenticated_byte"
+    },
+    {
+      "blocker": "This is a real gadget only for a public fixed scalar inner-product relation; it is a baseline primitive rather than coverage of the one-sided proof.",
+      "component": "batched scalar inner-product WE",
+      "directly_composable_into_complete_wrapper": true,
+      "evidence_module": "batched_inner_product_we.py",
+      "executable_semantics": true,
+      "fully_covered": true,
+      "load_bearing": false,
+      "real_conditional_gadget": true,
+      "schema": "ranklock-conditional-gadget-coverage-item-v1",
+      "witness_kind": "known_scalar"
+    },
+    {
+      "blocker": "The 267-row relation is executable, but no conditional gadget maps those nonlinear limb/curve constraints to a hidden session.",
+      "component": "canonical BN254 G1 proof parsing and on-curve binding",
+      "directly_composable_into_complete_wrapper": false,
+      "evidence_module": "bn254_direct_wrapper.py",
+      "executable_semantics": true,
+      "fully_covered": false,
+      "load_bearing": true,
+      "real_conditional_gadget": false,
+      "schema": "ranklock-conditional-gadget-coverage-item-v1",
+      "witness_kind": "bn254_g1_element_unknown_discrete_log"
+    },
+    {
+      "blocker": "The 32-permutation transcript is executable and KAT checked; its x^5 trace has not been compiled into a concrete hard-YES conditional token.",
+      "component": "typed Poseidon2 Fiat-Shamir transcript",
+      "directly_composable_into_complete_wrapper": false,
+      "evidence_module": "poseidon2_bn254_transcript.py",
+      "executable_semantics": true,
+      "fully_covered": false,
+      "load_bearing": true,
+      "real_conditional_gadget": false,
+      "schema": "ranklock-conditional-gadget-coverage-item-v1",
+      "witness_kind": "bn254_fr_field_trace"
+    },
+    {
+      "blocker": "The 161 nonlinear rows are counted/executed, but multiplication and inversion checks have no matching LVA-WE gadget.",
+      "component": "one-sided scalar verifier Steps 23-29",
+      "directly_composable_into_complete_wrapper": false,
+      "evidence_module": "one_sided_scalar_verifier.py",
+      "executable_semantics": true,
+      "fully_covered": false,
+      "load_bearing": true,
+      "real_conditional_gadget": false,
+      "schema": "ranklock-conditional-gadget-coverage-item-v1",
+      "witness_kind": "bn254_fr_field_trace"
+    },
+    {
+      "blocker": "The scalar inner-product gadget cannot consume unknown-discrete-log G1 elements, and publishing a common scaled G2 generator leaks the direct split-basis session.",
+      "component": "ten future one-sided proof G1 elements",
+      "directly_composable_into_complete_wrapper": false,
+      "evidence_module": "shared_proof_binding.py / bn254_direct_wrapper.py",
+      "executable_semantics": true,
+      "fully_covered": false,
+      "load_bearing": true,
+      "real_conditional_gadget": false,
+      "schema": "ranklock-conditional-gadget-coverage-item-v1",
+      "witness_kind": "bn254_g1_element_unknown_discrete_log"
+    },
+    {
+      "blocker": "The direct residual is public 1_GT; public affine target shifts are reconstructible from scaled anchors; a richer witness-dependent token is missing.",
+      "component": "identity-normalised final pairing equation",
+      "directly_composable_into_complete_wrapper": false,
+      "evidence_module": "one_sided_static_session_gap.py / one_sided_lva_decomposition.py",
+      "executable_semantics": true,
+      "fully_covered": false,
+      "load_bearing": true,
+      "real_conditional_gadget": false,
+      "schema": "ranklock-conditional-gadget-coverage-item-v1",
+      "witness_kind": "pairing_product_witness"
+    },
+    {
+      "blocker": "This final derivation is real once a hidden accepting session exists; the upstream session is the missing primitive.",
+      "component": "accepting-session to secp256k1 fault key",
+      "directly_composable_into_complete_wrapper": true,
+      "evidence_module": "ciphertext_free_fault_key.py",
+      "executable_semantics": true,
+      "fully_covered": true,
+      "load_bearing": false,
+      "real_conditional_gadget": true,
+      "schema": "ranklock-conditional-gadget-coverage-item-v1",
+      "witness_kind": "accepting_session"
+    }
+  ],
+  "inner_product_baseline": {
+    "accepted_witness_kind": "known_scalar",
+    "fixed_overhead_bytes": 130,
+    "implemented_relation": "sum_i w_i U_i = T over secp256k1",
+    "reason": "The one-sided proof publishes group elements whose discrete logarithms are neither public nor known to the prover. Treating their encodings as scalar coordinates does not preserve the verifier relation.",
+    "reference_bytes_per_scalar_coordinate": 66,
+    "rejects_arbitrary_BN254_G1_proof_elements": true,
+    "schema": "ranklock-inner-product-gadget-applicability-v1"
+  },
+  "next_gate": "Construct a group-aware, hard-YES-secure predictable token/WPRF for the typed one-sided verifier, or replace the wrapper with a proof whose public-evaluation token is already covered by a concrete standard-assumption gadget.",
+  "schema": "ranklock-lva-gadget-coverage-v1",
+  "summary": {
+    "complete_conditional_compiler_instantiated": false,
+    "components_total": 8,
+    "load_bearing_components": 6,
+    "load_bearing_components_fully_covered": 0,
+    "load_bearing_components_uncovered": 6
+  }
+}

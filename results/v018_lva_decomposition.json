@@ -1,0 +1,29 @@
+{
+  "breakthrough_target_met": false,
+  "direct_split_basis": {
+    "argument": [
+      "To scale every public-coefficient future G1 term by the same hidden r, the lock publishes [r]G2.",
+      "The fixed verifier commitments and transcript-derived scalars are public G1 elements.",
+      "Anyone can pair their fixed aggregate with [r]G2 and recover the proposed statement-side session without a valid proof."
+    ],
+    "attack_applies": true,
+    "inventory": {
+      "Q_terms_with_(s-alpha)_coefficient": 1,
+      "direct_two_anchor_requires_[r]G2": true,
+      "fixed_G2_anchor_rank": 2,
+      "fixed_statement_G1_terms_with_public_G2_coefficient": 7,
+      "fixed_statement_session_is_public_under_direct_scaling": true,
+      "future_G1_terms_with_public_G2_coefficient": 9,
+      "generator_scalar_terms": 1,
+      "schema": "ranklock-one-sided-final-equation-inventory-v1"
+    },
+    "schema": "ranklock-direct-common-scalar-lva-barrier-v1",
+    "scope": "Kills only the direct common-scalar split-basis construction.  A gadget may hide correlated verifier coefficients without exposing [r]G2."
+  },
+  "schema": "ranklock-one-sided-lva-decomposition-v1",
+  "surviving_routes": [
+    "instantiate the concrete LVA-WE gadget for the full fixed relation",
+    "construct a predictable/witness-PRF token for fixed RankVM invalidity",
+    "redesign the wrapper so no freely varying proof term has a public-coefficient G2 anchor"
+  ]
+}

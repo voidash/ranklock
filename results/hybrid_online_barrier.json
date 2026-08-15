@@ -1,0 +1,13 @@
+{
+  "breakthrough_failure": "KZG-WE encryption is statement-bound. The future commitment does not exist during static setup, so OnlineTraceEncapsulator must retain a secret share.",
+  "concrete_components": [
+    "real one-shot secp256k1 OT/projective input lock",
+    "real BN254 KZG commitment and opening verification",
+    "real KZG-opening witness encryption",
+    "XOR conjunction of independently protected 32-byte shares"
+  ],
+  "generated_at_utc": "2026-08-06T19:32:57.636487+00:00",
+  "no_online_authority_target_met": false,
+  "required_replacement": "a fixed-relation linearly-verifiable WE/compiler in which future commitments, openings, authenticated bytes, and invalidity evidence are witness variables",
+  "schema": "ranklock-hybrid-online-encapsulator-barrier-v1"
+}

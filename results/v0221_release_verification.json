@@ -1,0 +1,91 @@
+{
+  "artifact_hashes_match_recorded_execution": true,
+  "artifacts": [
+    {
+      "bytes": 508395,
+      "path": "artifacts/embryo-v0221-dfb-program-128.bin",
+      "sha256": "8048bd63f1da493971fdac9b17be2b08f80854ce0bc00c13574ccac967271d61"
+    },
+    {
+      "bytes": 262699,
+      "path": "artifacts/embryo-v0221-decode-state-128.bin",
+      "sha256": "e2925336275d0ca6d1fde460167f7ed4383b33523916aa6ccb3f020a64ca5475"
+    },
+    {
+      "bytes": 771094,
+      "path": "artifacts/embryo-v0221-standalone-128.bin",
+      "sha256": "9f5aaf20385f58b8741ee7f4adad3ef1854e0b2f86f445e80fb03bea325d4680"
+    },
+    {
+      "bytes": 4096,
+      "path": "artifacts/embryo-v0221-input-labels-x.bin",
+      "sha256": "f556e2d155de1cdfef56f0c469f520e07d142c634d9e6f6375adeb7065ba2a29"
+    },
+    {
+      "bytes": 4096,
+      "path": "artifacts/embryo-v0221-input-labels-y.bin",
+      "sha256": "7621e49d1441fe984ace73ca1a0e6984de462f6e6cdff0317425de34316594f0"
+    }
+  ],
+  "canonical_artifact_roundtrip": {
+    "decode_state_parse_reserialize_exact": true,
+    "input_label_encodings_parse_exact": true,
+    "program_parse_reserialize_exact": true,
+    "standalone_bundle_parse_reserialize_exact": true
+  },
+  "compileall": {
+    "passed": true,
+    "scope": [
+      "src",
+      "scripts",
+      "tests"
+    ]
+  },
+  "focused_security_tests": {
+    "command": "PYTHONPATH=src pytest -q tests/test_real_dfb_embryo.py",
+    "evidence": "results/v0221_focused_tests.txt",
+    "failed": 0,
+    "passed": 12,
+    "skipped": 1
+  },
+  "generated_at_utc": "2026-08-11T18:41:06.330117+00:00",
+  "historical_v022_suite": {
+    "evidence": "results/v022_clean_archive_verification.json",
+    "failed": 0,
+    "passed": 285,
+    "warning": "Historical only; it predates the v0.22.1 security corrections."
+  },
+  "inherited_regression_attempt": {
+    "complete": false,
+    "completed_files": 10,
+    "completed_tests_failed": 0,
+    "completed_tests_passed": 35,
+    "evidence": "results/v0221_test_runner.log",
+    "modified_protocol_modules_tested_by": "tests/test_real_dfb_embryo.py",
+    "note": "Only tests/test_real_dfb_embryo.py imports ranklock.dfb_real or ranklock.embryo_real; that focused file completed successfully. This is not a claim that the full inherited suite completed.",
+    "termination": "release-verification execution cap before the whole suite completed"
+  },
+  "recorded_full_execution": {
+    "curve_check_valid": true,
+    "evidence": "results/v0221_security_audit_baseline.json",
+    "latest_release_verification_reran_heavy_generator_to_completion": false,
+    "map_points_verified": 256,
+    "note": "Existing bytes and report come from a completed deterministic full execution; the final verification did not complete a new heavy generator run within the execution cap.",
+    "output_matches_hidden_scalar_multiplication": true
+  },
+  "schema": "ranklock-v0221-release-verification-v1",
+  "security_claim_boundary": {
+    "active_mpc_executed": false,
+    "adaptive_security_proved": false,
+    "authenticated_bitcoin_label_release_implemented": false,
+    "conservative_whole_q2_128_bit_statistical_target_met": false,
+    "output_mask_fusion_proved": false,
+    "production_ready": false,
+    "selective_dfb_theorem_instantiated_more_faithfully": false,
+    "slot_level_nonce_domain_separation_implemented": false,
+    "two_instance_same_scalar_theorem_proved": false,
+    "uniform_body_pad_sampling_implemented": false
+  },
+  "verdict": "correctness_and_security_audit_checkpoint_not_production_ready",
+  "version": "0.22.1"
+}

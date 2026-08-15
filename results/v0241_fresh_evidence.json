@@ -1,0 +1,40 @@
+{
+  "artifacts": [
+    {
+      "bytes": 522102,
+      "path": "artifacts/fresh-v0241/embryo-v0241-slot-0.bin",
+      "sha256": "1acb392fd196970dcf025564536d5db902d69b6caf9cf3e75f5c18e8d13aa727"
+    },
+    {
+      "bytes": 522102,
+      "path": "artifacts/fresh-v0241/embryo-v0241-slot-1.bin",
+      "sha256": "07352ea9f5fdc2c2f730878ca7139a18d7f1d7d476b93cc7529adc73e0885a6e"
+    },
+    {
+      "bytes": 24836,
+      "path": "artifacts/fresh-v0241/ranklock-v0241-slot-0-authorized-label-release.bin",
+      "sha256": "098a032c7e6300ef8bdf78eb317de5cc0ba5d0d72cbc1bbc80b385fa0818b538"
+    },
+    {
+      "bytes": 24836,
+      "path": "artifacts/fresh-v0241/ranklock-v0241-slot-1-authorized-label-release.bin",
+      "sha256": "eb5fd0cd372ea1502579a8814d67dae1eae9156421cf0ffb684c224ae7e76088"
+    },
+    {
+      "bytes": 748,
+      "path": "artifacts/fresh-v0241/ranklock-v0241-two-slot-manifest.bin",
+      "sha256": "0d1344ad650d7b751c995f5dc088ee4c696aca83662c8377c9709f2398c07ec6"
+    },
+    {
+      "bytes": 1044952,
+      "path": "artifacts/fresh-v0241/ranklock-v0241-two-slot-retained-object.bin",
+      "sha256": "f230112c842c5c8aeb737098360e236c692e8583704182353deb62bdf22eae16"
+    }
+  ],
+  "claim_boundary": "single-process OS-entropy evidence only; not an active MPC ceremony",
+  "entropy_mode": "os-random-unfunded-evidence",
+  "independent_public_replay": true,
+  "safe_for_funds": false,
+  "schema": "ranklock-v0241-fresh-unfunded-evidence-v1",
+  "uses_os_entropy": true
+}

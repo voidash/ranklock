@@ -1,0 +1,29 @@
+{
+  "all_logical_events": {
+    "factor_over_cap": 159.81715393066406,
+    "mib": 159.81715393066406,
+    "relation_width": 2537386,
+    "retained_bytes": 167580432
+  },
+  "batched_DLEQ_key_bytes_per_scalar": 66,
+  "cap_bytes": 1048576,
+  "decision": "KILL direct one-coordinate-per-event fixed relation. Even multiplication-only material exceeds the one-MiB target; use a succinct/folding/recursive wrapper or a structured gadget whose relation key does not scale with trace events.",
+  "future_input_bytes": 132,
+  "generated_at_utc": "2026-08-06T19:32:57.636487+00:00",
+  "input_relation_width": 264,
+  "known_verifier_inventory": {
+    "linear_relations": 440113,
+    "logical_events": 2537122,
+    "logical_lookups": 1967564,
+    "native_multiplications": 129445
+  },
+  "maximum_trace_width_under_cap": 13912,
+  "multiplication_only": {
+    "factor_over_cap": 8.271932601928711,
+    "mib": 8.271932601928711,
+    "relation_width": 129709,
+    "retained_bytes": 8673750
+  },
+  "schema": "ranklock-direct-fixed-relation-barrier-v1",
+  "scope": "Executable cost barrier for the current concrete inner-product gadget; not a generic lower bound on all LVA-WE or witness-encryption constructions."
+}

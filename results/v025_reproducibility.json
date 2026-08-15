@@ -1,0 +1,18 @@
+{
+  "all_checks_passed": true,
+  "checks": {
+    "bitcoin_policy_envelope": true,
+    "committee_harness": true,
+    "environment": true,
+    "evidence_verifier": true,
+    "release_gate_is_fail_closed": true,
+    "security_hardening": true,
+    "split_scalar_harness": true,
+    "strata_handoff_checks": true,
+    "tests": true
+  },
+  "claim_boundary": "reproducible research/canary harness; external production gates remain open",
+  "package_version": "0.25.1",
+  "safe_for_funds": false,
+  "schema": "ranklock-v0251-reproducibility-v1"
+}

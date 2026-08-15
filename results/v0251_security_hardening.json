@@ -1,0 +1,69 @@
+{
+  "all_local_checks_passed": true,
+  "external_gates": {
+    "bitcoin_core_31_1_regtest": false,
+    "current_strata_workspace_compile_and_tests": false,
+    "independent_cryptography_audit": false,
+    "independent_implementation_audit": false,
+    "independent_operations_audit": false,
+    "independently_administered_rollback_witnesses": false,
+    "native_constant_time_and_secret_erasure": false,
+    "production_active_mpc_or_split_scalar_ceremony": false
+  },
+  "hardening_properties": {
+    "bitcoind_cli_hash_pin_required": true,
+    "ceremony_and_mpc_verifier_separation_required": true,
+    "funding_attestation_exact_core_observation_bound": true,
+    "funding_attestation_maximum_ttl_seconds": 3600,
+    "mpc_statement_chain_genesis_bound": true,
+    "mpc_statement_deployment_context_bound": true,
+    "test_timeout_kills_process_group": true
+  },
+  "local_checks": {
+    "canonical_evidence_verifier": true,
+    "complete_per_file_suite": true,
+    "core_gate_fail_closed_when_unavailable": true,
+    "durable_two_phase_committee_harness": true,
+    "split_scalar_one_honest_harness": true,
+    "static_bitcoin_policy_envelope": true
+  },
+  "maximum_mode": "canary",
+  "package_version": "0.25.1",
+  "safe_for_funds": false,
+  "schema": "ranklock-v0251-security-hardening-v1",
+  "source_digests": {
+    "bitcoin_core_regtest": {
+      "path": "src/ranklock/bitcoin_core_regtest.py",
+      "sha256": "3ca239bdb538168316be4f0b2c46719f183ffa953de9735ca9118c0e6b37107f"
+    },
+    "ceremony_core_binding": {
+      "path": "src/ranklock/setup_ceremony_evidence.py",
+      "sha256": "e92784323c4a07283f64bd6cec054b7932a30959857a4a03afe7c614278c54fc"
+    },
+    "durable_ledger": {
+      "path": "src/ranklock/durable_slot_ledger.py",
+      "sha256": "f931f8bc7d9daec98f60bffbe5e0a980106756f17889748c6fa6a7bdc3519acf"
+    },
+    "kill_safe_test_runner": {
+      "path": "scripts/run_test_files.py",
+      "sha256": "1502bc14e941db3ccbc31024c9860dc5ac4d8746cdbca8d4acc549e975fc9d0a"
+    },
+    "mpc_qualification": {
+      "path": "src/ranklock/mpc_qualification.py",
+      "sha256": "c49dba873d07e4fe1948db00d30190416efcef5a62286fa7a3fe6eaed9186690"
+    },
+    "rollback_witness": {
+      "path": "src/ranklock/rollback_witness.py",
+      "sha256": "fb7619d89470befd178b52b45c6ff246519af1f2088d56dd50a22824d71c66a7"
+    },
+    "two_phase_sidecar": {
+      "path": "src/ranklock/two_phase_sidecar.py",
+      "sha256": "e7a931421f22d8091592764f0d18912a4329d6d6e63accd837a29a149840b1ed"
+    }
+  },
+  "tests": {
+    "failed": 0,
+    "files": 100,
+    "passed": 423
+  }
+}

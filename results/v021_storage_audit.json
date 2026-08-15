@@ -1,0 +1,38 @@
+{
+  "generated_at_utc": "2026-08-10T10:37:14.059192+00:00",
+  "schema": "ranklock-v021-storage-audit-v1",
+  "v019": {
+    "archive": "ranklock-v0.19-current-research-checkpoint.zip",
+    "checkpoint_primary_target_still_open": true,
+    "release_baseline_accepted": false,
+    "reported_focused_tests_not_present_in_archive_as_delta_coverage": true,
+    "sha256": "0a4470fd44244ad3e52fbe0824c281b91bb00bea53f82a4634d14451e5b26784",
+    "size_bytes": 621548,
+    "top_level_metadata_version": "0.18.0",
+    "v019_addition_modules": 8,
+    "v019_delta_modules_importing_missing_bip340": [
+      "authenticated_counterproof_semantics.py",
+      "predicate_locked_hashlock.py"
+    ]
+  },
+  "v020": {
+    "additive_share_pairing_composition": true,
+    "archive": "ranklock-v0.20-candidate-checkpoint.zip",
+    "breakthrough_target_met": false,
+    "cut_and_choose_total_copies_over_40_bits": 44,
+    "exact_dfb_generator_present": false,
+    "setup_bytes_per_contributor_at_500_kib": 22528000,
+    "sha256": "cbcd0e1f9f688d6b5eb4f1142811ae03f5c196086cff194448c14d9564ffc272",
+    "size_bytes": 1510876
+  },
+  "v021_repairs": {
+    "bip340_added_and_official_vectors_tested": true,
+    "bounded_two_slot_active_mpc_candidate": true,
+    "full_suite": {
+      "failed": 0,
+      "passed": 277,
+      "test_files": 74
+    },
+    "v019_connector_and_semantic_modules_exercised": true
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "execution": {
+    "absorbed_field_elements": 56,
+    "challenge_phases": 9,
+    "challenge_scalars": 10,
+    "challenges": [
+      "0x2fac49b457a5a939f352636134592e5adf646672ecde72af7080a1a6c1b0e369",
+      "0x1fad80702d7d4ab8e71b0102be891a3118f70c9d374674d2975f69303710d932",
+      "0x1c4afbc198fda691764ec95e886c6e26554ca69ef28646f92d7bf8924be27893",
+      "0x2b63e03c737fe8bcd291aa673e2efc0f11cddd4c2069e732693c3fdf3a7a59ba",
+      "0x1fcf05706d35674831168c569fa809214cd6fb5353820e6f684c51739a8e9bb8",
+      "0x2f998dc07014d01b2a8ea0565bbf52eda8f3559f79009e2cae153a0d8a7d9a8b",
+      "0x10f0be3566da15e2d82a46fb4dc3d2c7d514dabd925316954a7d4f3c0ab2a260",
+      "0x8728b0fe386a51936ff559ee31ed5af285f5f7f9c6d803ce433d48973d61d0e",
+      "0x2a598ab519d8697b7d4801cd0e6f378a7570217a832facc37d7a02af3608988f",
+      "0x26b44dd7d3bb54e0dcfd851a868e329581d50c2f20a5b31d8e3956473c976484"
+    ],
+    "constraint_counter": {
+      "constraints_per_permutation": 240,
+      "multiplication_constraints": 7680,
+      "permutation_labels": {
+        "alpha": 2,
+        "alpha_e": 2,
+        "delta": 11,
+        "gamma": 2,
+        "lambda": 1,
+        "lambda_b": 3,
+        "lambda_e": 1,
+        "xi": 6,
+        "xi_e": 4
+      },
+      "permutations": 32,
+      "sboxes": 2560
+    },
+    "evidence_class": "REAL Poseidon2 permutation and fixed Protocol-3.1 duplex schedule",
+    "final_state": [
+      "0x26b44dd7d3bb54e0dcfd851a868e329581d50c2f20a5b31d8e3956473c976484",
+      "0x2808974deb3156cd065f797e80bf1f9034df9a479e903e1fdb745d26e07ead59",
+      "0xb78ce6539a3593c9ea0cadccb8041c30ab9b0b8f88e233ca942925f00e5f3fb"
+    ],
+    "schema": "ranklock-one-sided-poseidon2-transcript-execution-v1"
+  },
+  "parameters": {
+    "constraints_per_permutation": 240,
+    "field": "BN254 Fr",
+    "full_rounds": 8,
+    "official_KAT_passes": true,
+    "partial_rounds": 56,
+    "rate": 2,
+    "sbox": "x^5",
+    "state_width": 3
+  },
+  "schema": "ranklock-poseidon2-one-sided-transcript-report-v1",
+  "security_boundary": [
+    "the permutation and fixed transcript schedule are executable and KAT-checked",
+    "the transcript uses one canonical parsed proof object shared with pairing verification",
+    "the final Q_e response is bound by the pairing equation, not by a later challenge",
+    "adaptive Fiat--Shamir knowledge soundness of the composed RankLock protocol remains to be proved"
+  ]
+}

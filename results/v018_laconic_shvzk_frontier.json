@@ -1,0 +1,42 @@
+{
+  "breakthrough_target_met": false,
+  "concrete_decision": "THEORETICAL_BYPASS_ONLY: the current source proof lacks an established SHVZK simulator, and the generic probabilistic-prover histogram compiler is not a practical path at 10,240 prover-message bits.",
+  "generic_compiler_cost": {
+    "communication": {
+      "g1_elements": 10,
+      "next_message_support_upper_bound": "2^10240",
+      "proof_bytes": 1280,
+      "prover_communication_bits": 10240,
+      "prover_speaking_phases": 9,
+      "scalar_elements": 20,
+      "schema": "ranklock-prover-communication-profile-v1",
+      "support_bound_decimal_digits": 3083
+    },
+    "explicit_histogram_bytes_upper_bound": "2^10243.000",
+    "explicit_histogram_entries_upper_bound": "2^10240",
+    "explicit_histogram_feasible_under_one_TiB": false,
+    "generic_construction_mechanism": [
+      "sample a simulator transcript prefix at fixed verifier coins",
+      "estimate the simulator next-message distribution by repeated sampling",
+      "estimate the honest-prover next-message distribution during decryption",
+      "correlated-sample from the two estimated histograms"
+    ],
+    "schema": "ranklock-generic-histogram-we-cost-v1",
+    "unit_constant_laconicity_would_require_instance_bits_at_least": "2^10240",
+    "warning": "The asymptotic theorem does not require explicit enumeration of a full 2^ell table in every optimized realization; this figure evaluates the paper's generic histogram/correlated-sampling route at RankLock's concrete 10-G1 + 20-scalar proof length."
+  },
+  "next_target": "Construct a special-purpose, directly coupled/projective simulator for the fixed RankVM wrapper, or instantiate the concrete LVA-WE gadgets.  Either route must avoid enumerating the prover-message support.",
+  "schema": "ranklock-laconic-shvzk-we-frontier-v1",
+  "source_protocol_audit": {
+    "decision": "The current one-sided SNARK cannot be fed into the generic laconic-SHVZK-to-WE theorem without first constructing and proving a special-HVZK simulator (or replacing the proof system).",
+    "direct_wire_commitments": true,
+    "explicit_commitment_blinding": false,
+    "generic_WE_prerequisite_established": false,
+    "schema": "ranklock-one-sided-shvzk-audit-v1",
+    "simulator_specified": false,
+    "source_security_theorem": "soundness/knowledge soundness in the algebraic group model",
+    "stated_HVZK_theorem": false,
+    "stated_SHVZK_theorem": false
+  },
+  "theoretical_result": "A laconic efficient-prover SHVZK argument would imply witness encryption for the fixed RankVM-invalidity language, so the identity-normalised final pairing is not a universal impossibility barrier."
+}

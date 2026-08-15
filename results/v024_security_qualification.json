@@ -1,0 +1,222 @@
+{
+  "authorization": {
+    "attack_regressions": {
+      "forged_signature_rejected_without_burn": true,
+      "outsider_program_seed_substitution_rejected_without_burn": true,
+      "valid_authorization_with_bad_opening_rejected_and_burned": true,
+      "validly_resigned_cross_slot_release_rejected_without_burn": true,
+      "validly_signed_wrong_program_seed_rejected_and_burned": true
+    },
+    "authorizer_pubkey": "0f3cd23c8c1cda1c312ca46ffc9ef7aa0400a4e6a698c016999d2a971476c321",
+    "context": {
+      "chain_genesis_hash": "b088196b64918a266ebfdd1805c9dadf0dccf2bfcf087ca93eee132de54ad796",
+      "counterproof_txid": "5894fc055c8bf9e685dc545e966a162e41c0a5d17bf5e417c76ce7f83944f17e",
+      "deadline_height": 900000,
+      "deposit_outpoint": "6c22bf33c64cccfffb351ff370aa9a33483c5a68ae1f9c76ae38f5685c3ce52a03000000",
+      "epoch": 11,
+      "game_index": 7,
+      "operator_index": 2,
+      "program_id": "72ab0def0e4b7f53bff7da43183c096c23febc08a0c04080c75d5127c13fb9e4",
+      "verifier_key_digest": "a608bf180b11f40ce78b9f356775b9c7f4b9514daef6b6a963a2a58b7b7843b2"
+    },
+    "context_digest": "fb3e6a4b3630ea0ed60ae8c194955aaa7bb86db205a01df63e682625a69b0a92",
+    "cross_slot_context_point_root_seed_and_tx_binding": true,
+    "evidence_archive_contains_post_use_release_transcripts": true,
+    "exactly_one_label_per_bit": true,
+    "labels_per_release": 512,
+    "release_bytes_each": 24836,
+    "release_bytes_retained": false,
+    "release_bytes_two_slots": 49672,
+    "replay_rejected": true,
+    "slot_burn_before_point_label_or_program_parsing": true,
+    "whole_slot_program_seed_released_atomically": true
+  },
+  "closed_gates": [
+    "exact uniform CRT body-pad sampling",
+    "machine-checked triangular mask-fusion algebra",
+    "disjoint per-slot CCRH nonce namespaces",
+    "whole-program-plus-decoder ROM sealing with zero retained-byte overhead",
+    "correct two-artifact-before-input adaptive chronology",
+    "canonical context-bound exactly-one-label-per-bit authorization",
+    "program-seed, point, slot, transaction and label-root binding",
+    "burn-before-evaluate replay and selective-failure control",
+    "one-shot hidden-phi exceptional-input bound above 243 bits",
+    "corrected raw-linearity versus accepted-third-evaluation boundary"
+  ],
+  "corrected_two_instance_game": {
+    "A2_adaptive_after_Y1": true,
+    "accepted_evaluations": 2,
+    "authorized_outputs_correct": true,
+    "fresh_independent_A3_security": "reduction to the post-challenge two-query one-more scalar-multiplication assumption",
+    "hidden_scalar_not_serialized_in_report": true,
+    "raw_linear_example": "[r](A1+A2)=[r]A1+[r]A2",
+    "raw_linear_third_output_derivable": true,
+    "same_hidden_scalar_used_by_both_slots": true,
+    "third_accepted_evaluation_rejected": true
+  },
+  "decision": "CORRECTED_TWO_INSTANCE_CRYPTOGRAPHIC_QUALIFICATION_IMPLEMENTED_CONDITIONAL_ON_STATED_ASSUMPTIONS",
+  "formal_assumptions": [
+    "selective privacy of the exact fused DFB/Embryo slot under CCRH",
+    "Bellare-Hoang-Rogaway whole-garbled-function coarse-adaptive transform in the random-oracle model",
+    "SHA-256 commitment/collision/preimage resistance and BIP340 EUF-CMA",
+    "BN254 discrete logarithm and post-challenge two-query one-more scalar multiplication",
+    "BABE positive-lock security for the explicit public lock side information"
+  ],
+  "generated_at_utc": "2026-08-14T13:56:36.345499+00:00",
+  "generation_entropy": {
+    "deterministic_mode_is_explicitly_insecure": true,
+    "dfb_and_embryo_tapes_sampled_fresh_per_slot": true,
+    "hidden_scalar_sampled_fresh": true,
+    "mode": "INSECURE-deterministic-reproduction",
+    "program_seeds_sampled_fresh_per_slot": true,
+    "signing_keys_sampled_fresh": true
+  },
+  "positive_lock_side_information": {
+    "claim_boundary": "sealed DFB/Embryo slots add no leakage beyond authorized outputs; the BABE positive lock is separate public side information covered by its own assumption",
+    "included_in_public_view": true
+  },
+  "protocol_chronology": {
+    "A1_fixed_before_slot0_seed_release": true,
+    "A2_derived_only_after_Y1": true,
+    "both_complete_slots_sealed_before_A1": true,
+    "both_plaintext_slots_generated_before_A1": true,
+    "manifest_and_both_ciphertexts_published_before_A1": true,
+    "seed_and_selected_labels_released_atomically": true,
+    "slot1_seed_hidden_until_after_A2_fixed": true
+  },
+  "remaining_production_gates": [
+    "actively secure dishonest-majority MPC execution of this exact fused and sealed generator",
+    "Bitcoin witness extraction plus Bitcoin Core regtest for atomic seed/label release and burn semantics",
+    "constant-time implementation, denial-of-service hardening and independent cryptographic audit"
+  ],
+  "retained_object": {
+    "bytes": 1044952,
+    "canonical_opaque_roundtrip": true,
+    "manifest_bytes": 748,
+    "margin_to_one_mib": 3624,
+    "path": "artifacts/ranklock-v024-two-slot-retained-object.bin",
+    "sha256": "75bd344afe130c0b00be742a40b30a97bc0033153d4831e8146ea4338005eea3",
+    "slot_count": 2,
+    "whole_slot_sealing_retained_byte_overhead": 0
+  },
+  "safe_for_funds": false,
+  "schema": "ranklock-v024-security-qualification-v2",
+  "security_qualification": {
+    "exceptional_inputs": {
+      "adaptive_privacy_required": true,
+      "bound": "Adv_ROM_wrapper + 2*slots*maps/(curve_order-1)",
+      "conditional_maps_per_slot": 256,
+      "exceptional_hit_union_bound_bits": 243.59669135500215,
+      "gate_passed": true,
+      "one_shot_burn_enforced": true,
+      "schema": "ranklock-v0241-exceptional-input-qualification-v1",
+      "slot_count": 2
+    },
+    "fusion": {
+      "acyclic": true,
+      "algebraic_fusion_gate_passed": true,
+      "assumptions": [
+        "CCRH/PRF security for the exact switch implementation and unique nonce schedule",
+        "selective DFB/Embryo privacy for the exact fused construction under CCRH",
+        "whole-slot coarse-adaptive transform in the random-oracle model",
+        "the evaluator receives exactly one authenticated label per input bit",
+        "independent per-slot deltas, pads, PRF domains, roots and nonce namespaces"
+      ],
+      "body_pad_candidate_bits": 32,
+      "body_pad_watchdog_abort_bound_bits_per_pad": 1529027.9536711273,
+      "body_pad_watchdog_attempts": 65536,
+      "chain_count": 2050,
+      "composition_preconditions_machine_checked": true,
+      "dependency_edges": 1027,
+      "every_body_sum_readout_map_rank_two": true,
+      "exact_uniform_body_sampler": true,
+      "lane_count": 3077,
+      "maximum_indegree": 1,
+      "maximum_outdegree": 1,
+      "no_wrap_union_bound_bits_two_slots": 129.12251674798753,
+      "nonce_schedule_unique": true,
+      "prime_count": 91,
+      "root_count": 2050,
+      "schema": "ranklock-v0241-fusion-qualification-v1",
+      "toy_online_bijection_exhaustive": true,
+      "two_slot_nonce_namespaces_disjoint": true
+    },
+    "input_commitments": {
+      "assumption": "SHA-256 leaf preimage/collision resistance and BIP340 EUF-CMA; base masks and deltas are sampled independently of the hidden scalar",
+      "complete_label_pairs_committed": true,
+      "context_slot_point_bound": true,
+      "coordinate_count": 2,
+      "exactly_one_label_per_bit": true,
+      "gate_passed": true,
+      "input_bits_per_coordinate": 256,
+      "label_bits": 128,
+      "precommitted_label_pairs_secret_independent": true,
+      "program_seed_bound": true,
+      "release_signature_security_bits": 128,
+      "schema": "ranklock-v0241-input-commitment-qualification-v1",
+      "selected_labels_per_slot": 512,
+      "selected_labels_uniform": true,
+      "selected_vector_bijection_for_every_input": true,
+      "sibling_hash_bits": 256,
+      "slot_count": 2
+    },
+    "rom_adaptive_wrapper": {
+      "bad_event_bound": "slots*Q_pre/2^seed_bits",
+      "ciphertext_length_preserved": true,
+      "distinct_label_roots": true,
+      "distinct_seed_commitments": true,
+      "distinct_seeds": true,
+      "gate_passed": true,
+      "model": "random-oracle model",
+      "pre_release_query_budget_per_slot": 18446744073709551616,
+      "pre_release_seed_query_bound_bits": 191.0,
+      "schema": "ranklock-v0241-rom-adaptive-qualification-v1",
+      "seed_bits": 256,
+      "slot_count": 2,
+      "transform": "Bellare-Hoang-Rogaway rom-prv-to-prv1",
+      "whole_program_and_decoder_sealed": true
+    }
+  },
+  "slots": [
+    {
+      "authorized_release_bytes": 24836,
+      "authorized_release_sha256": "82c93eed12dc10dd951ea005543236097d6c73c7f1668172aff1c88be67874de",
+      "ciphertext_bytes": 522102,
+      "conditional_maps_verified": 256,
+      "input_label_root": "f6d996da9d51efa01e24ee2eccbf042ab899afd54ada03c7e37e10cec6aa6f46",
+      "input_point": "8ba173a9155665e0f39b925d3118c2e68a63e5da3563e34603ffc5eb3e638584",
+      "input_scalar": 1234567,
+      "input_selection": "fixed only after both sealed slots were published",
+      "length_preserved": true,
+      "no_wrap_limit": 2184388827958183606469810778001988127598000868549577861005755072744428068975255856690811697943785477942723866654074384358453053813661642548143265605444182783396231993995026474142244667488619687045,
+      "nonce_namespace": 0,
+      "output_matches_direct_scalar_multiplication": true,
+      "output_point": "c5161d5df8a98c6a0216c0f103508cc9e95d915428d47ca87c4b4f3ddf90bf9e",
+      "plaintext_bytes": 522102,
+      "program_seed_commitment": "df80824c9deb5a6056aec79e82de7c382933c1f0a31060e67ace49b8387af9e4",
+      "sealed_artifact_sha256": "cb3ae46e24fba1b249fe955587f80c72cdaaa47176c0345c7d40138a375a1d67",
+      "slot_id": 0,
+      "slot_outcome": "success"
+    },
+    {
+      "authorized_release_bytes": 24836,
+      "authorized_release_sha256": "f7129e9c428f68dd5d7e2455e77cdfb83460b9f60dc643590e25cf019dd9de22",
+      "ciphertext_bytes": 522102,
+      "conditional_maps_verified": 256,
+      "input_label_root": "221b75410ff9c878775acdefb85a1feb6f85098d23ec5ddc07d5c565b10010e1",
+      "input_point": "c8ceedfa1e3ffb337e5edfa01da9d8d0f2902f276f0f7291f8f7b0aac9b71130",
+      "input_scalar": 20704891900033291582751546348226065189425867338850857946031584459363270459276,
+      "input_selection": "SHA256([r]A1)-adaptive while slot-1 seed remained hidden",
+      "length_preserved": true,
+      "no_wrap_limit": 2184388827958183606469810778001988127598000868549577861005755072744428068975255856690811697943785477942723866654074384358453053813661642548143265605444182783396231993995026474142244667488619687045,
+      "nonce_namespace": 1,
+      "output_matches_direct_scalar_multiplication": true,
+      "output_point": "ab248a35aea465d0415cab9a0c4450f782e97e2f9d3a0964e162c5e4e5e3e55a",
+      "plaintext_bytes": 522102,
+      "program_seed_commitment": "84a22da67f5de323734def7a36667bc82b910707ab18f482411c5bf2652a14d4",
+      "sealed_artifact_sha256": "af7190f3b5ace4aee8ef3bb23b0ffad20c3162fa9241c5d99cef050820d30c65",
+      "slot_id": 1,
+      "slot_outcome": "success"
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+RankLock v0.22 source-suite verification
+test files: 75
+passed: 285
+failed: 0
+nonzero files: 0

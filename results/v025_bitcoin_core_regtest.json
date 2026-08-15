@@ -1,0 +1,6 @@
+{
+  "error": "a pinned bitcoind executable SHA-256 is required; set --expected-bitcoind-sha256 or RANKLOCK_BITCOIND_SHA256",
+  "executed": false,
+  "passed": false,
+  "schema": "ranklock-v025-bitcoin-core-regtest-evidence-v3"
+}

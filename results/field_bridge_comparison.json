@@ -1,0 +1,300 @@
+{
+  "comparison": {
+    "cost_relation_vs_3x85": {
+      "dual_field_crt_bounded_quotient_free_shared_table_lower_bound": {
+        "classification": "challenger_dominates_cost_point",
+        "equal_cost_weight": null,
+        "lookup_delta": -27,
+        "multiplication_weight_domain": "w >= 0",
+        "native_nonlinear_product_delta": -3
+      },
+      "dual_field_crt_bounded_quotient_owner_side": {
+        "classification": "challenger_dominates_cost_point",
+        "equal_cost_weight": null,
+        "lookup_delta": -13,
+        "multiplication_weight_domain": "w >= 0",
+        "native_nonlinear_product_delta": -3
+      },
+      "single_field_2x127_split": {
+        "classification": "challenger_wins_above_threshold",
+        "equal_cost_weight": 130.0,
+        "lookup_delta": 130,
+        "multiplication_weight_domain": "w >= 0",
+        "native_nonlinear_product_delta": -1
+      },
+      "single_field_3x85_schoolbook_reference": {
+        "classification": "baseline_dominates_cost_point",
+        "equal_cost_weight": null,
+        "lookup_delta": 0,
+        "multiplication_weight_domain": "w >= 0",
+        "native_nonlinear_product_delta": 4
+      }
+    },
+    "decision": {
+      "current_single_field_baseline": "single_field_3x85_rank5",
+      "dual_field_status": "not selectable: both CRT cost points omit the cryptographic equality proof that binds the two PCS traces to one canonical table",
+      "reason": "rank-5 3x85 is cheapest among safe 3-to-8-limb low-rank convolution geometries in the 16-bit logical-event model. Removing the redundant quotient canonical-slack proof lowers it to 76 lookups plus five multiplications. The exact 2x127 challenger needs a multiplication gate to cost more than 130 lookup events before its four-product core wins. Backend packing could still change that result.",
+      "status": "provisional pending a real lookup backend"
+    },
+    "evidence_class": "ESTIMATE backed by exact executable witness and constraint-inventory models",
+    "fixed_table_rows_not_amortized_into_event_counts": 65536,
+    "foreign_products": 25889,
+    "range_model": {
+      "accounting_unit": "logical lookup event",
+      "chunk_bits": 16,
+      "schema": "ranklock-range-lookup-model-v1",
+      "table_rows": 65536
+    },
+    "routes": [
+      {
+        "logical_lookup_events_per_foreign_product": 76,
+        "name": "single_field_3x85_rank5",
+        "native_nonlinear_products_per_foreign_product": 5,
+        "notes": "rank-5 fixed-point convolution; canonical output and 254-bit bounded internal quotient",
+        "proof_fields": 1,
+        "selectable": true,
+        "sound_cross_field_binding": true
+      },
+      {
+        "logical_lookup_events_per_foreign_product": 76,
+        "name": "single_field_3x85_schoolbook_reference",
+        "native_nonlinear_products_per_foreign_product": 9,
+        "notes": "legacy nine-product reference; strictly dominated by rank-5 convolution",
+        "proof_fields": 1,
+        "selectable": false,
+        "sound_cross_field_binding": true
+      },
+      {
+        "logical_lookup_events_per_foreign_product": 206,
+        "name": "single_field_2x127_split",
+        "native_nonlinear_products_per_foreign_product": 4,
+        "notes": "four exact products; product-chunk normalization drives lookup cost",
+        "proof_fields": 1,
+        "selectable": true,
+        "sound_cross_field_binding": true
+      },
+      {
+        "logical_lookup_events_per_foreign_product": 63,
+        "name": "dual_field_crt_bounded_quotient_owner_side",
+        "native_nonlinear_products_per_foreign_product": 2,
+        "notes": "canonical output plus 254-bit quotient bound are modeled, but no cross-PCS equality proof exists",
+        "proof_fields": 2,
+        "selectable": false,
+        "sound_cross_field_binding": false
+      },
+      {
+        "logical_lookup_events_per_foreign_product": 49,
+        "name": "dual_field_crt_bounded_quotient_free_shared_table_lower_bound",
+        "native_nonlinear_products_per_foreign_product": 2,
+        "notes": "optimistic lower bound assuming free cross-field table sharing; not a construction",
+        "proof_fields": 2,
+        "selectable": false,
+        "sound_cross_field_binding": false
+      }
+    ],
+    "schema": "ranklock-field-bridge-comparison-v4",
+    "single_field_limb_geometry_sweep": [
+      {
+        "capacity_bits": 255,
+        "carry_abs_bound_bits": 88,
+        "limb_bits": 85,
+        "limbs": 3,
+        "logical_lookup_events": 76,
+        "native_nonlinear_products": 5,
+        "simple_row_equivalent": 81
+      },
+      {
+        "capacity_bits": 256,
+        "carry_abs_bound_bits": 68,
+        "limb_bits": 64,
+        "limbs": 4,
+        "logical_lookup_events": 81,
+        "native_nonlinear_products": 7,
+        "simple_row_equivalent": 88
+      },
+      {
+        "capacity_bits": 258,
+        "carry_abs_bound_bits": 47,
+        "limb_bits": 43,
+        "limbs": 6,
+        "logical_lookup_events": 85,
+        "native_nonlinear_products": 11,
+        "simple_row_equivalent": 96
+      },
+      {
+        "capacity_bits": 255,
+        "carry_abs_bound_bits": 55,
+        "limb_bits": 51,
+        "limbs": 5,
+        "logical_lookup_events": 88,
+        "native_nonlinear_products": 9,
+        "simple_row_equivalent": 97
+      },
+      {
+        "capacity_bits": 259,
+        "carry_abs_bound_bits": 41,
+        "limb_bits": 37,
+        "limbs": 7,
+        "logical_lookup_events": 95,
+        "native_nonlinear_products": 13,
+        "simple_row_equivalent": 108
+      },
+      {
+        "capacity_bits": 256,
+        "carry_abs_bound_bits": 36,
+        "limb_bits": 32,
+        "limbs": 8,
+        "logical_lookup_events": 97,
+        "native_nonlinear_products": 15,
+        "simple_row_equivalent": 112
+      }
+    ],
+    "weighted_rankings_all_cost_points": {
+      "1.0": [
+        "dual_field_crt_bounded_quotient_free_shared_table_lower_bound",
+        "dual_field_crt_bounded_quotient_owner_side",
+        "single_field_3x85_rank5",
+        "single_field_3x85_schoolbook_reference",
+        "single_field_2x127_split"
+      ],
+      "16.0": [
+        "dual_field_crt_bounded_quotient_free_shared_table_lower_bound",
+        "dual_field_crt_bounded_quotient_owner_side",
+        "single_field_3x85_rank5",
+        "single_field_3x85_schoolbook_reference",
+        "single_field_2x127_split"
+      ],
+      "32.0": [
+        "dual_field_crt_bounded_quotient_free_shared_table_lower_bound",
+        "dual_field_crt_bounded_quotient_owner_side",
+        "single_field_3x85_rank5",
+        "single_field_2x127_split",
+        "single_field_3x85_schoolbook_reference"
+      ],
+      "4.0": [
+        "dual_field_crt_bounded_quotient_free_shared_table_lower_bound",
+        "dual_field_crt_bounded_quotient_owner_side",
+        "single_field_3x85_rank5",
+        "single_field_3x85_schoolbook_reference",
+        "single_field_2x127_split"
+      ],
+      "8.0": [
+        "dual_field_crt_bounded_quotient_free_shared_table_lower_bound",
+        "dual_field_crt_bounded_quotient_owner_side",
+        "single_field_3x85_rank5",
+        "single_field_3x85_schoolbook_reference",
+        "single_field_2x127_split"
+      ]
+    },
+    "weighted_rankings_selectable_routes": {
+      "1.0": [
+        "single_field_3x85_rank5",
+        "single_field_2x127_split"
+      ],
+      "16.0": [
+        "single_field_3x85_rank5",
+        "single_field_2x127_split"
+      ],
+      "32.0": [
+        "single_field_3x85_rank5",
+        "single_field_2x127_split"
+      ],
+      "4.0": [
+        "single_field_3x85_rank5",
+        "single_field_2x127_split"
+      ],
+      "8.0": [
+        "single_field_3x85_rank5",
+        "single_field_2x127_split"
+      ]
+    }
+  },
+  "generated_at_utc": "2026-08-05T20:02:57.683945+00:00",
+  "native_benchmark": {
+    "evidence_class": "REPRODUCED native Python witness model; not PCS performance",
+    "routes": {
+      "dual_field_crt_bounded_quotient_owner_side": {
+        "all_seconds": [
+          0.027739123000174004,
+          0.027950146999955905,
+          0.027755032000186475
+        ],
+        "cases": 300,
+        "median_seconds": 0.027755032000186475,
+        "repeats": 3,
+        "witnesses_per_second": 10808.85080579206
+      },
+      "single_field_2x127_split": {
+        "all_seconds": [
+          0.01574198400021487,
+          0.015626152000095317,
+          0.015902393000033044
+        ],
+        "cases": 300,
+        "median_seconds": 0.01574198400021487,
+        "repeats": 3,
+        "witnesses_per_second": 19057.318314889988
+      },
+      "single_field_3x85_rank5": {
+        "all_seconds": [
+          0.033616896999774326,
+          0.03358104500011905,
+          0.034044673000153125
+        ],
+        "cases": 300,
+        "median_seconds": 0.033616896999774326,
+        "repeats": 3,
+        "witnesses_per_second": 8924.083623839937
+      },
+      "single_field_3x85_schoolbook_reference": {
+        "all_seconds": [
+          0.024345038999854296,
+          0.023860207999859995,
+          0.023870894000083354
+        ],
+        "cases": 300,
+        "median_seconds": 0.023870894000083354,
+        "repeats": 3,
+        "witnesses_per_second": 12567.606391237481
+      }
+    },
+    "schema": "ranklock-field-bridge-native-benchmark-v1",
+    "seed": 1380011595
+  },
+  "range_width_sensitivity": {
+    "foreign_products": 25889,
+    "rows": [
+      {
+        "2x127_equal_cost_multiplication_weight": 259.0,
+        "2x127_lookup_events_per_product": 406,
+        "3x85_lookup_events_per_product": 147,
+        "chunk_bits": 8,
+        "fixed_table_rows": 256
+      },
+      {
+        "2x127_equal_cost_multiplication_weight": 179.0,
+        "2x127_lookup_events_per_product": 281,
+        "3x85_lookup_events_per_product": 102,
+        "chunk_bits": 12,
+        "fixed_table_rows": 4096
+      },
+      {
+        "2x127_equal_cost_multiplication_weight": 130.0,
+        "2x127_lookup_events_per_product": 206,
+        "3x85_lookup_events_per_product": 76,
+        "chunk_bits": 16,
+        "fixed_table_rows": 65536
+      },
+      {
+        "2x127_equal_cost_multiplication_weight": 116.0,
+        "2x127_lookup_events_per_product": 179,
+        "3x85_lookup_events_per_product": 63,
+        "chunk_bits": 20,
+        "fixed_table_rows": 1048576
+      }
+    ],
+    "schema": "ranklock-range-width-sensitivity-v1",
+    "warning": "fixed-table rows and backend-specific lookup packing are shown separately; logical lookup events are not physical proof rows"
+  },
+  "schema": "ranklock-field-bridge-results-v3"
+}

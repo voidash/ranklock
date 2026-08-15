@@ -1,0 +1,7 @@
+python=3.13.5 (main, May  5 2026, 21:05:52) [GCC 14.2.0]
+platform=Linux-6.18.35-x86_64-with-glibc2.41
+machine=x86_64
+processor=
+workers=6
+per_file_timeout_seconds=420
+wall_seconds=54.616

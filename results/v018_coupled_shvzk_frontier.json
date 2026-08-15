@@ -1,0 +1,18 @@
+{
+  "breakthrough_target_met": false,
+  "novelty_warning": "Predictable arguments and witness encryption are already known to be equivalent in general.  A paper contribution would require a concretely efficient construction for the RankVM/one-sided-wrapper relation under standard pairing assumptions.",
+  "required_property": {
+    "interface": "Recover(instance, witness, verifier_coins, public_prefix) -> the same laconic prover token selected by setup, without simulator secret coins",
+    "name": "witness-computable transcript coupling",
+    "security_role": "The recovered token can key a fixed per-deposit fault secret while remaining computationally unavailable on NO instances."
+  },
+  "schema": "ranklock-coupled-shvzk-frontier-v1",
+  "toy_audit": {
+    "conclusion": "Exact simulator/prover coin coupling is insufficient.  RankLock needs witness-computable coupling (a predictable argument/WPRF-like token) or a concrete LVA-WE gadget.",
+    "exact_coin_coupling": true,
+    "public_witness_recovery_of_simulated_response": false,
+    "recovery_barrier": "Given only (A, c, X) and witness w, the simulator response is z = log_G(A) + c*w.  Coin coupling exposes a map only when the simulator's hidden response z is already known; it does not give the decryptor a public witness-only recovery algorithm.",
+    "schema": "ranklock-coupled-shvzk-audit-v1",
+    "simulated_transcript_accepts": true
+  }
+}

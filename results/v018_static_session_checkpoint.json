@@ -1,0 +1,41 @@
+{
+  "cryptographic_gate": {
+    "acceptable_repair_classes": [
+      "real LVA-WE gadget composition for the full typed one-sided verifier",
+      "predictable/target-token argument with a proof-only hidden session",
+      "a different proof backend with a basis-separated fixed statement session"
+    ],
+    "constructed_static_witness_lift": false,
+    "decision": "FAIL",
+    "required_new_object": "An extractable fixed-relation LVA witness-encryption compiler, or a witness-dependent target token that is unavailable from public affine proof shifts and whose accepting session is fixed at activation."
+  },
+  "direct_identity_session": {
+    "direct_lock_has_entropy": false,
+    "direct_residual_is_identity": true,
+    "equation_accepts": true,
+    "failure": "Scaling both fixed G2 anchors preserves the accepting residual 1_GT. A KDF of that residual is a public constant, not conditional disclosure.",
+    "scaled_residual_is_identity": true,
+    "schema": "ranklock-one-sided-identity-session-audit-v1",
+    "session_digest_equals_public_identity_digest": true
+  },
+  "overall_decision": "CONDITIONAL_SIZE_PASS__STATIC_SESSION_NOT_CONSTRUCTED",
+  "public_affine_target_repair": {
+    "anchor_rank_upper_bound": 2,
+    "failure": "Any public affine target shift over the fixed-G2 witness-anchor span has a public decomposition against the published scaled anchors.",
+    "public_reconstruction_equals_target_to_r": true,
+    "public_shift_encodings": [
+      "97072b2ed3bb8d759a5325f477629386cb6fc6ecb801bd76983a6b86abffe078",
+      "ea14705537b009189da8808651eecdb82482477fe92ac12ca8b71f80fc3d49ef"
+    ],
+    "schema": "ranklock-public-affine-target-barrier-v1",
+    "shift_terms": 2,
+    "target_is_nonidentity": true
+  },
+  "schema": "ranklock-one-sided-static-session-checkpoint-v1",
+  "size_gate": {
+    "activation_plus_future_proof_bytes": 862693,
+    "decision": "PASS",
+    "margin_to_one_MiB_bytes": 185883,
+    "warning": "This is a concrete arithmetic/transcript envelope but still uses the uninstantiated fixed-relation LVA-WE coordinate-key model."
+  }
+}

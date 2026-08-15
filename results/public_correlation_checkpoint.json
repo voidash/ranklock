@@ -1,0 +1,174 @@
+{
+  "claims_boundary": [
+    "The public PCG route for arbitrary independent source-group bases is killed only in the stated algebraic model.",
+    "The real low-rank PPE lock is not a complete RankVM-invalidity proof or witness-encryption theorem.",
+    "The 11-term shape is a cost envelope, not an implemented knowledge-sound wrapper.",
+    "The setup proof is single-generator and does not establish malicious distributed activation."
+  ],
+  "decision": "BREAKTHROUGH TARGET NOT MET",
+  "eleven_term_two_anchor_cost": {
+    "anchor_count": 2,
+    "ciphertext_bytes": 48,
+    "coefficient_bytes": 704,
+    "coefficient_rank": 2,
+    "compressed_pairings": 2,
+    "compressed_scaled_g2_bytes": 128,
+    "direct_pairings": 11,
+    "direct_scaled_g2_bytes": 704,
+    "evidence_class": "EXACT serialization accounting for the executable prototype",
+    "ordinary_linear_work": "O(term_count * anchor_count) G1 public-scalar work",
+    "relation_bytes": 1255,
+    "scaled_base_compression_ratio": 5.5,
+    "schema": "ranklock-low-rank-ppe-cost-v1",
+    "setup_bytes": 416,
+    "term_count": 11,
+    "total_retained_bytes": 1719
+  },
+  "generated_at_utc": "2026-08-06T19:44:02.209856+00:00",
+  "new_target": "Construct a target-separated, transcript-bound, knowledge-sound proof whose final verification has only future G1 terms, a polylog-rank fixed G2 basis, and a nonidentity target with no public decomposition over the scaled anchors; then add malicious n-1-corrupt activation that proves ciphertext/share consistency.",
+  "rank_lower_bound": {
+    "all_current_logical_events_as_independent_bases": {
+      "coefficient_columns": 2537122,
+      "coefficient_rank": 2537122,
+      "cryptographic_compression_ratio": 1268561.0,
+      "direct_independent_bytes": 162375808,
+      "evidence_class": "EXACT algebraic linear-rank model",
+      "lower_bound_met": false,
+      "minimum_seed_bytes": 162375808,
+      "proposed_seed_bytes": 128,
+      "public_seed_elements": 2,
+      "schema": "ranklock-public-correlation-rank-v1",
+      "scope": "Public algebraic source-group expansion using group addition and public-scalar multiplication. Pairings may produce GT values but do not map back to a source group. This is not a universal computational lower bound.",
+      "term_count": 2537122
+    },
+    "current_linear_relations_as_independent_bases": {
+      "coefficient_columns": 440113,
+      "coefficient_rank": 440113,
+      "cryptographic_compression_ratio": 220056.5,
+      "direct_independent_bytes": 28167232,
+      "evidence_class": "EXACT algebraic linear-rank model",
+      "lower_bound_met": false,
+      "minimum_seed_bytes": 28167232,
+      "proposed_seed_bytes": 128,
+      "public_seed_elements": 2,
+      "schema": "ranklock-public-correlation-rank-v1",
+      "scope": "Public algebraic source-group expansion using group addition and public-scalar multiplication. Pairings may produce GT values but do not map back to a source group. This is not a universal computational lower bound.",
+      "term_count": 440113
+    },
+    "eleven_term_two_anchor_wrapper": {
+      "coefficient_columns": 2,
+      "coefficient_rank": 2,
+      "cryptographic_compression_ratio": 5.5,
+      "direct_independent_bytes": 704,
+      "evidence_class": "EXACT algebraic linear-rank model",
+      "lower_bound_met": true,
+      "minimum_seed_bytes": 128,
+      "proposed_seed_bytes": 128,
+      "public_seed_elements": 2,
+      "schema": "ranklock-public-correlation-rank-v1",
+      "scope": "Public algebraic source-group expansion using group addition and public-scalar multiplication. Pairings may produce GT values but do not map back to a source group. This is not a universal computational lower bound.",
+      "term_count": 11
+    },
+    "theorem_scope": "Exact public algebraic source-group rank bound. It rules out a short public linear/group-operation seed for arbitrary independent verifier bases, not obfuscation, multilinear maps, hardware, or already-low-rank verifiers."
+  },
+  "real_bn254_low_rank_ppe": {
+    "changed_witness_rejected": true,
+    "direct_matches_compressed": true,
+    "evidence_class": "REPRODUCED executable research prototype",
+    "malformed_ciphertext_detectable_before_future_witness": false,
+    "malformed_ciphertext_fails_once_future_witness_exists": true,
+    "public_target_preimage_unlocks": true,
+    "setup_generator_substitution_rejected": true,
+    "valid_witness_decrypts": true,
+    "warning": "The common-scalar proof authenticates scaled anchors but does not prove ciphertext/plaintext correctness. Malicious distributed activation remains open."
+  },
+  "schema": "ranklock-v0.16-public-correlation-checkpoint-v1",
+  "verifier_shape_frontier": {
+    "evidence_class": "EXACT interface classification; named-system instantiation not implemented",
+    "required_new_object": "A knowledge-sound, transcript-bound proof whose final equation has only future G1 terms, a polylog-rank fixed G2 basis, and a nonidentity target whose decomposition over the scaled anchors is unavailable before a satisfying proof.",
+    "schema": "ranklock-verifier-shape-frontier-v1",
+    "shapes": [
+      {
+        "blockers": [
+          "identity target yields the public session 1^r = 1"
+        ],
+        "complete_construction_holds": false,
+        "dynamic_g1_terms": 3,
+        "dynamic_g2_terms": 0,
+        "fixed_g2_anchor_rank": 2,
+        "knowledge_sound_backend_constructed": true,
+        "lock_interface_holds": false,
+        "name": "KZG opening equation after fixed-basis expansion",
+        "schema": "ranklock-verifier-pairing-shape-v1",
+        "target_is_identity": true,
+        "target_preimage_from_scaled_anchors_is_public": false,
+        "transcript_coefficients_bound": true
+      },
+      {
+        "blockers": [
+          "identity target yields the public session 1^r = 1"
+        ],
+        "complete_construction_holds": false,
+        "dynamic_g1_terms": 2,
+        "dynamic_g2_terms": 0,
+        "fixed_g2_anchor_rank": 2,
+        "knowledge_sound_backend_constructed": true,
+        "lock_interface_holds": false,
+        "name": "PLONK/KZG-style aggregated opening equation",
+        "schema": "ranklock-verifier-pairing-shape-v1",
+        "target_is_identity": true,
+        "target_preimage_from_scaled_anchors_is_public": false,
+        "transcript_coefficients_bound": true
+      },
+      {
+        "blockers": [
+          "future/dynamic G2 proof terms cannot be pre-scaled statically"
+        ],
+        "complete_construction_holds": false,
+        "dynamic_g1_terms": 2,
+        "dynamic_g2_terms": 1,
+        "fixed_g2_anchor_rank": 3,
+        "knowledge_sound_backend_constructed": true,
+        "lock_interface_holds": false,
+        "name": "Groth16 normalized PPE",
+        "schema": "ranklock-verifier-pairing-shape-v1",
+        "target_is_identity": false,
+        "target_preimage_from_scaled_anchors_is_public": false,
+        "transcript_coefficients_bound": true
+      },
+      {
+        "blockers": [
+          "knowledge-sound proof backend is not constructed"
+        ],
+        "complete_construction_holds": false,
+        "dynamic_g1_terms": 11,
+        "dynamic_g2_terms": 0,
+        "fixed_g2_anchor_rank": 2,
+        "knowledge_sound_backend_constructed": false,
+        "lock_interface_holds": true,
+        "name": "target-separated low-rank fixed-G2 wrapper target",
+        "schema": "ranklock-verifier-pairing-shape-v1",
+        "target_is_identity": false,
+        "target_preimage_from_scaled_anchors_is_public": false,
+        "transcript_coefficients_bound": true
+      },
+      {
+        "blockers": [
+          "public target decomposition over scaled anchors reveals T^r",
+          "knowledge-sound proof backend is not constructed"
+        ],
+        "complete_construction_holds": false,
+        "dynamic_g1_terms": 11,
+        "dynamic_g2_terms": 0,
+        "fixed_g2_anchor_rank": 2,
+        "knowledge_sound_backend_constructed": false,
+        "lock_interface_holds": false,
+        "name": "low-rank PPE with exposed target preimage",
+        "schema": "ranklock-verifier-pairing-shape-v1",
+        "target_is_identity": false,
+        "target_preimage_from_scaled_anchors_is_public": true,
+        "transcript_coefficients_bound": true
+      }
+    ]
+  }
+}

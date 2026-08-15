@@ -1,0 +1,7 @@
+RankLock v0.21 clean archive verification
+manifest: PASS
+compileall: PASS
+test files: 74
+passed: 277
+failed: 0
+nonzero files: 0

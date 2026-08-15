@@ -1,0 +1,32 @@
+{
+  "activation_statement_digest": "7bfa227df9cd97bf6b1d0c89860f39df117b125145f4f5941adba41b788e75b8",
+  "breakthrough_target_met": false,
+  "ceremony_rule": "verify every rostered contribution before graph funding; any invalid proof or abort invalidates the epoch and restarts with fresh setup scalars",
+  "ciphertext_or_payload_consistency_needed": false,
+  "ordinary_ZK_proof_implemented_here": false,
+  "ordinary_ZK_proof_system_can_instantiate_relation": true,
+  "program_inventory": {
+    "SHA256_to_scalar": 1,
+    "execution_class": "one-time setup proof; never evaluated by the conditional lock",
+    "scaled_G2_equalities": 3,
+    "schema": "ranklock-activation-program-inventory-v1",
+    "secp256k1_fixed_base_multiplications": 1,
+    "statement_pairings": 2
+  },
+  "public_key_consistency_relation_executable": true,
+  "public_statement_bytes": 331,
+  "remaining_engineering": [
+    "write the fixed activation guest/circuit",
+    "select and pin the public proof verifier",
+    "bind proof-system version and program digest into the ceremony manifest",
+    "benchmark setup proof generation and verification"
+  ],
+  "schema": "ranklock-activation-nizk-frontier-v1",
+  "security_effect": [
+    "malicious contributors cannot substitute an unlock-dead fault key without breaking proof soundness",
+    "one honest contributor keeps the aggregate pre-witness signing scalar hidden",
+    "all accepted contributors remain necessary for liveness in the n-of-n variant"
+  ],
+  "visible_relation_accepts_correct_scale": true,
+  "visible_relation_rejects_wrong_scale": true
+}

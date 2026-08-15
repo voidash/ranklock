@@ -1,0 +1,78 @@
+{
+  "budget": {
+    "cap_bytes": 1048576,
+    "input_bytes": 132,
+    "interpretation": "The batched-DLEQ fixed-linear compiler can retain at most this many scalar bases under one MiB. A real LVA gadget compiler may use a different mix of G1/G2 elements and must be measured separately.",
+    "kill_rule": "Reject the fixed-relation route if relation-specific CRS/key material, excluding a genuinely universal reusable CRS, exceeds the remaining byte budget.",
+    "legacy_per_coordinate_DLEQ_bytes_per_scalar": 130,
+    "maximum_48_byte_G1_elements_after_projective_layer": 19496,
+    "maximum_96_byte_G2_elements_after_projective_layer": 9748,
+    "maximum_reference_relation_width": 14176,
+    "maximum_reference_trace_width": 13912,
+    "projective_input_relation_width": 264,
+    "projective_offer_bytes": 39072,
+    "projective_offer_count": 1056,
+    "projective_public_without_offers": 73674,
+    "projective_static_bytes": 112746,
+    "reference_batched_inner_product_fixed_bytes": 130,
+    "reference_inner_product_bytes_per_scalar": 66,
+    "remaining_raw_bytes_after_projective_layer": 935830,
+    "schema": "ranklock-fixed-relation-budget-v1"
+  },
+  "generated_at_utc": "2026-08-06T19:32:57.636487+00:00",
+  "key_batching": {
+    "maximum_trace_width_after_132_inputs": 13912,
+    "maximum_width_under_one_mib": 14176,
+    "width_328": {
+      "batched_dleq_bytes": 21778,
+      "compression_ratio": 1.9609697860225916,
+      "per_coordinate_dleq_bytes": 42706,
+      "relation_width": 328,
+      "rom_soundness_error_upper_bound": "327/115792089237316195423570985008687907852837564279074904382605163141518161494337",
+      "saved_bytes": 20928,
+      "schema": "ranklock-batched-inner-product-key-size-v1",
+      "security_boundary": "The batch proof is a Fiat-Shamir random-linear-combination check. It is not a replacement for malicious distributed setup."
+    }
+  },
+  "wrapper_frontier": {
+    "byte_budget": {
+      "cap_bytes": 1048576,
+      "input_bytes": 132,
+      "interpretation": "The batched-DLEQ fixed-linear compiler can retain at most this many scalar bases under one MiB. A real LVA gadget compiler may use a different mix of G1/G2 elements and must be measured separately.",
+      "kill_rule": "Reject the fixed-relation route if relation-specific CRS/key material, excluding a genuinely universal reusable CRS, exceeds the remaining byte budget.",
+      "legacy_per_coordinate_DLEQ_bytes_per_scalar": 130,
+      "maximum_48_byte_G1_elements_after_projective_layer": 19496,
+      "maximum_96_byte_G2_elements_after_projective_layer": 9748,
+      "maximum_reference_relation_width": 14176,
+      "maximum_reference_trace_width": 13912,
+      "projective_input_relation_width": 264,
+      "projective_offer_bytes": 39072,
+      "projective_offer_count": 1056,
+      "projective_public_without_offers": 73674,
+      "projective_static_bytes": 112746,
+      "reference_batched_inner_product_fixed_bytes": 130,
+      "reference_inner_product_bytes_per_scalar": 66,
+      "remaining_raw_bytes_after_projective_layer": 935830,
+      "schema": "ranklock-fixed-relation-budget-v1"
+    },
+    "decisive_unknowns": [
+      "exact LVA-WE encryption-key/CRS elements per KZG, multiplication, hash, and range gadget",
+      "whether the CRS is universal/reusable or verifier-specific retained material",
+      "malicious setup and extractability of the composed relation",
+      "actual RankVM proof-verifier width including transcript hashing"
+    ],
+    "fixed_relation": {
+      "future commitments_are_witness_variables": true,
+      "future_bytes_are_authenticated_witness_variables": true,
+      "post_statement_encapsulator_required": false
+    },
+    "known_gadget_inventory": {
+      "Fiat_Shmir_or_beacon_binding_compiled": false,
+      "RankVM_invalidity_verifier_compiled": false,
+      "aggregate_input_authentication_gadgets": 2,
+      "raw_KZG_openings_before_safe_batching": 72,
+      "same_point_batched_KZG_opening_gadgets": 4
+    },
+    "schema": "ranklock-lva-wrapper-frontier-v1"
+  }
+}

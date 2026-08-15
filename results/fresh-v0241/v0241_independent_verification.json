@@ -1,0 +1,32 @@
+{
+  "adaptive_A2_binding_verified": true,
+  "all_checks_passed": true,
+  "manifest_verified_against_current_source": true,
+  "package_version": "0.24.1",
+  "public_replay_without_hidden_scalar": true,
+  "raw_linear_A3": "eb2e735477741e6846d2119e139c4ddaa9794cdf4e656dac8903dadf446310e5",
+  "raw_linear_Y3": "c2e803e62f334f19bf07944b5cb1dff35cdd34291f4e6547203d73076072159b",
+  "raw_linear_combination_boundary_acknowledged": true,
+  "replays": [
+    {
+      "maps_evaluated": 256,
+      "outcome": "success",
+      "output": "a6d4a62cbd202ec0544f77d6f863d2778c01c92103b599172410ebcd374ee92e",
+      "point": "8ba173a9155665e0f39b925d3118c2e68a63e5da3563e34603ffc5eb3e638584",
+      "slot_id": 0
+    },
+    {
+      "maps_evaluated": 256,
+      "outcome": "success",
+      "output": "ab00806be34e7ae520bdf4cfbd90573d53cf48e6656fe0a5ef3d0603914319b9",
+      "point": "c48c2130a5bc0bbd7fdd2aa67741046b9485fb2ad20ebc6616b29c5fc4ac29df",
+      "slot_id": 1
+    }
+  ],
+  "retained_object_bytes": 1044952,
+  "retained_object_sha256": "f230112c842c5c8aeb737098360e236c692e8583704182353deb62bdf22eae16",
+  "schema": "ranklock-v0241-independent-verification-v1",
+  "third_protocol_evaluation_rejected": true,
+  "two_slots_consumed": true,
+  "verified_at_utc": "2026-08-14T14:19:05.177194+00:00"
+}

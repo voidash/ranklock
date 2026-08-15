@@ -1,0 +1,208 @@
+{
+  "breakthrough_target_met": false,
+  "censorship_symmetry": {
+    "current_failure_case": "invalid proof immediate NACK censored until timeout",
+    "current_safety_failures": 1,
+    "public_publishability": "after the proof transaction confirms, any observer that evaluates the projective lock can publish the immediate ACK",
+    "same_deadline_assumption": true,
+    "validity_first_failure_case": "valid proof immediate ACK censored until timeout",
+    "validity_first_safety_failures": 1
+  },
+  "decision": "PROMISING_PROTOCOL_PIVOT_NOT_YET_A_COMPLETE_REPLACEMENT",
+  "exhaustive_resolution_matrix": [
+    {
+      "conditioned_key_available": false,
+      "correct_resolution": "ack_and_slash_operator",
+      "counterproof_status": "valid",
+      "immediate_spend_confirms_before_timeout": false,
+      "path": "N/N timeout ACK",
+      "polarity": "current_invalidity_first",
+      "resolution": "ack_and_slash_operator",
+      "safety_preserved": true,
+      "schema": "ranklock-counterproof-resolution-v1"
+    },
+    {
+      "conditioned_key_available": false,
+      "correct_resolution": "ack_and_slash_operator",
+      "counterproof_status": "valid",
+      "immediate_spend_confirms_before_timeout": true,
+      "path": "N/N timeout ACK",
+      "polarity": "current_invalidity_first",
+      "resolution": "ack_and_slash_operator",
+      "safety_preserved": true,
+      "schema": "ranklock-counterproof-resolution-v1"
+    },
+    {
+      "conditioned_key_available": true,
+      "correct_resolution": "nack_and_continue_contested_payout",
+      "counterproof_status": "invalid",
+      "immediate_spend_confirms_before_timeout": false,
+      "path": "N/N timeout ACK",
+      "polarity": "current_invalidity_first",
+      "resolution": "ack_and_slash_operator",
+      "safety_preserved": false,
+      "schema": "ranklock-counterproof-resolution-v1"
+    },
+    {
+      "conditioned_key_available": true,
+      "correct_resolution": "nack_and_continue_contested_payout",
+      "counterproof_status": "invalid",
+      "immediate_spend_confirms_before_timeout": true,
+      "path": "immediate wt_fault key-path NACK",
+      "polarity": "current_invalidity_first",
+      "resolution": "nack_and_continue_contested_payout",
+      "safety_preserved": true,
+      "schema": "ranklock-counterproof-resolution-v1"
+    },
+    {
+      "conditioned_key_available": false,
+      "correct_resolution": "nack_and_continue_contested_payout",
+      "counterproof_status": "absent",
+      "immediate_spend_confirms_before_timeout": false,
+      "path": "no CounterproofTx; contested-payout timeout path",
+      "polarity": "current_invalidity_first",
+      "resolution": "nack_and_continue_contested_payout",
+      "safety_preserved": true,
+      "schema": "ranklock-counterproof-resolution-v1"
+    },
+    {
+      "conditioned_key_available": false,
+      "correct_resolution": "nack_and_continue_contested_payout",
+      "counterproof_status": "absent",
+      "immediate_spend_confirms_before_timeout": false,
+      "path": "no CounterproofTx; contested-payout timeout path",
+      "polarity": "current_invalidity_first",
+      "resolution": "nack_and_continue_contested_payout",
+      "safety_preserved": true,
+      "schema": "ranklock-counterproof-resolution-v1"
+    },
+    {
+      "conditioned_key_available": true,
+      "correct_resolution": "ack_and_slash_operator",
+      "counterproof_status": "valid",
+      "immediate_spend_confirms_before_timeout": false,
+      "path": "N/N timeout NACK",
+      "polarity": "validity_first",
+      "resolution": "nack_and_continue_contested_payout",
+      "safety_preserved": false,
+      "schema": "ranklock-counterproof-resolution-v1"
+    },
+    {
+      "conditioned_key_available": true,
+      "correct_resolution": "ack_and_slash_operator",
+      "counterproof_status": "valid",
+      "immediate_spend_confirms_before_timeout": true,
+      "path": "immediate valid-proof key-path ACK",
+      "polarity": "validity_first",
+      "resolution": "ack_and_slash_operator",
+      "safety_preserved": true,
+      "schema": "ranklock-counterproof-resolution-v1"
+    },
+    {
+      "conditioned_key_available": false,
+      "correct_resolution": "nack_and_continue_contested_payout",
+      "counterproof_status": "invalid",
+      "immediate_spend_confirms_before_timeout": false,
+      "path": "N/N timeout NACK",
+      "polarity": "validity_first",
+      "resolution": "nack_and_continue_contested_payout",
+      "safety_preserved": true,
+      "schema": "ranklock-counterproof-resolution-v1"
+    },
+    {
+      "conditioned_key_available": false,
+      "correct_resolution": "nack_and_continue_contested_payout",
+      "counterproof_status": "invalid",
+      "immediate_spend_confirms_before_timeout": true,
+      "path": "N/N timeout NACK",
+      "polarity": "validity_first",
+      "resolution": "nack_and_continue_contested_payout",
+      "safety_preserved": true,
+      "schema": "ranklock-counterproof-resolution-v1"
+    },
+    {
+      "conditioned_key_available": false,
+      "correct_resolution": "nack_and_continue_contested_payout",
+      "counterproof_status": "absent",
+      "immediate_spend_confirms_before_timeout": false,
+      "path": "no CounterproofTx; contested-payout timeout path",
+      "polarity": "validity_first",
+      "resolution": "nack_and_continue_contested_payout",
+      "safety_preserved": true,
+      "schema": "ranklock-counterproof-resolution-v1"
+    },
+    {
+      "conditioned_key_available": false,
+      "correct_resolution": "nack_and_continue_contested_payout",
+      "counterproof_status": "absent",
+      "immediate_spend_confirms_before_timeout": false,
+      "path": "no CounterproofTx; contested-payout timeout path",
+      "polarity": "validity_first",
+      "resolution": "nack_and_continue_contested_payout",
+      "safety_preserved": true,
+      "schema": "ranklock-counterproof-resolution-v1"
+    }
+  ],
+  "positive_backend": {
+    "candidate_backend": "BABE + Duty-Free-Bits Embryo",
+    "current_mosaic_predicate": "invalid Groth16/SP1 counterproof",
+    "fit": "polarity inversion aligns the Bitcoin graph with the backend's positive proof predicate",
+    "full_strata_object_measured": false,
+    "malicious_activation_integrated": false,
+    "native_predicate": "valid Groth16/SP1 counterproof",
+    "reported_projective_scalar_multiplication_encoding_bytes": 512000,
+    "reported_size_scope": "Embryo projective scalar-multiplication encoding only; not a measured complete Strata lock",
+    "schema": "ranklock-positive-backend-fit-v1"
+  },
+  "rewrite": [
+    {
+      "current": "CounterproofConnector internal key = wt_fault_pubkey",
+      "reason": "the immediate key path changes from complement verification to positive verification",
+      "schema": "ranklock-validity-first-rewrite-item-v1",
+      "validity_first": "CounterproofConnector internal key = valid_counterproof_pubkey"
+    },
+    {
+      "current": "CounterproofNackTx spends Normal/key path with Mosaic evaluate_and_sign",
+      "reason": "a confirmed valid counterproof should win immediately",
+      "schema": "ranklock-validity-first-rewrite-item-v1",
+      "validity_first": "CounterproofAckTx spends Normal/key path with the public valid-proof-derived signature"
+    },
+    {
+      "current": "CounterproofAckTx spends Timeout/script path with pre-signed N/N signatures",
+      "reason": "absence of a valid immediate spend should reject the counterproof after the same deadline",
+      "schema": "ranklock-validity-first-rewrite-item-v1",
+      "validity_first": "CounterproofNackTx spends Timeout/script path with a pre-signed N/N signature"
+    },
+    {
+      "current": "Mosaic computes INVALID(counterproof) and releases wt_fault",
+      "reason": "positive Groth16 verification matches BABE/Embryo; the complement verifier disappears",
+      "schema": "ranklock-validity-first-rewrite-item-v1",
+      "validity_first": "positive projective backend computes VALID(counterproof) and releases ack key"
+    },
+    {
+      "current": "counterproof_ack input 0 sequence = Timeout",
+      "reason": "ACK moves to the immediate Taproot key path",
+      "schema": "ranklock-validity-first-rewrite-item-v1",
+      "validity_first": "counterproof_ack input 0 sequence = Normal"
+    },
+    {
+      "current": "counterproof_nack input 0 uses key-path signing_info_partial",
+      "reason": "NACK becomes the publicly publishable default transaction",
+      "schema": "ranklock-validity-first-rewrite-item-v1",
+      "validity_first": "counterproof_nack input 0 uses Timeout sequence and N/N script-path signing info"
+    }
+  ],
+  "schema": "ranklock-validity-first-graph-checkpoint-v1",
+  "semantic_boundary": {
+    "hard_yes_WPRF_avoided_by_instantiated_projective_positive_backend": "candidate, contingent on BABE/Embryo security and complete Strata integration",
+    "hard_yes_WPRF_required_if_using_old_fixed_relation_model": true,
+    "ordinary_fixed_statement_WE_alone_is_sufficient": false,
+    "reason": "the connector and conditioned key are fixed before future proof bytes are selected; a real projective garbling/encoding layer is still required"
+  },
+  "source_graph_facts": {
+    "counterproof_ack_also_consumes_contest_payout_connector": true,
+    "counterproof_transaction_publishes_authenticated_proof_bytes": true,
+    "current_immediate_path": "wt_fault key-path NACK",
+    "current_timeout_path": "N/N script-path ACK"
+  }
+}

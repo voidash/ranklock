@@ -1,0 +1,19 @@
+{
+  "breakthrough_target_met": false,
+  "ciphertext_bytes": 176,
+  "decision": "BASIS_SEPARATION_PASSES; STATIC_TIMING_REMAINS_OPEN",
+  "decryption_pairings": 1,
+  "evidence_class": "EXACT interface/cost accounting plus executable attacks",
+  "maximum_degree": 8,
+  "opening_verified": true,
+  "post_statement_encapsulator_required": true,
+  "proof_g1_elements": 1,
+  "publishing_scaled_statement_basis_breaks_secrecy": true,
+  "reusable_witness_header_anchors": 2,
+  "reusable_witness_header_bytes": 128,
+  "schema": "ranklock-basis-separated-kzg-frontier-v1",
+  "secret_recovered": true,
+  "srs_bytes": 768,
+  "statement_base_publicly_decomposed_over_witness_headers": false,
+  "why": "The future point z can be applied to r[tau],r[1] without exposing the rho-separated statement session.  But the payload key still depends on the future C-y point while r is live.  Publishing r[rho] removes the online encapsulator and simultaneously makes the session public."
+}

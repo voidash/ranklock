@@ -1,0 +1,36 @@
+{
+  "full_132_byte_64_scalar_exact_serialized_model": {
+    "constant_ciphertext_bytes": 48,
+    "evidence_class": "EXACT byte accounting from concrete serialization law; full-width Python timing not run",
+    "input_bytes": 132,
+    "post_statement_encapsulator_required": false,
+    "relation_width": 328,
+    "retained_bytes": 134604,
+    "trace_width": 64
+  },
+  "generated_at_utc": "2026-08-06T19:32:57.636487+00:00",
+  "schema": "ranklock-static-linear-conjunction-result-v2",
+  "small_executable_benchmark": {
+    "decrypt_seconds": 0.06272189900005287,
+    "finalize_seconds": 0.08896514999992178,
+    "input_bytes": 4,
+    "projective_offer_bytes": 1184,
+    "relation_width": 13,
+    "request_seconds": 0.028952895999964312,
+    "response_seconds": 0.07976692000011099,
+    "retained_bytes": 4630,
+    "runtime_request_bytes": 1184,
+    "runtime_response_bytes": 3200,
+    "runtime_total_bytes": 4384,
+    "schema": "ranklock-static-linear-conjunction-benchmark-v1",
+    "secret_recovered": true,
+    "security_boundary": [
+      "The trace predicate is a fixed linear relation, not RankVM invalidity.",
+      "The binary OT is the online Chou-Orlandi measurement baseline.",
+      "The relation key is linear in wrapper width but independent of execution rows.",
+      "No post-statement secret holder or KZG encapsulator is used."
+    ],
+    "setup_seconds": 0.3361629449998418,
+    "trace_width": 5
+  }
+}

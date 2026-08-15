@@ -1,0 +1,34 @@
+{
+  "archives": {
+    "manifest_files": 274,
+    "release_filenames": [
+      "ranklock-v0.18-next-gate-research.zip",
+      "ranklock-v0.18-next-gate-research.tar.gz"
+    ],
+    "tar_manifest_sha256": true,
+    "tar_python_compileall": true,
+    "zip_manifest_sha256": true,
+    "zip_python_compileall": true
+  },
+  "clean_zip_tests": {
+    "additional_completed_files_before_second_container_ceiling": 2,
+    "additional_completed_tests_before_second_container_ceiling": 11,
+    "broad_per_file_runner_completed_files_before_container_ceiling": 39,
+    "broad_per_file_runner_completed_tests_before_container_ceiling": 135,
+    "complete_clean_71_file_run_finished": false,
+    "critical_v018_focused_test_files": 7,
+    "critical_v018_focused_tests_passed": 29,
+    "incompletion_reason": "The container command execution ceiling terminated the aggregate orchestration process; every emitted test result was PASS. This is not recorded as a source-test failure.",
+    "observed_test_failures": 0
+  },
+  "complete_source_tree_suite": {
+    "evidence": "results/test_files.json",
+    "failed": 0,
+    "nonzero_test_files": 0,
+    "test_files": 71,
+    "tests_passed": 261
+  },
+  "decision": "SOURCE_SUITE_PASS_AND_CLEAN_CRITICAL_GATE_PASS; CLEAN_FULL_SUITE_ORCHESTRATION_INCOMPLETE_DUE_RUNTIME_CEILING",
+  "schema": "ranklock-clean-archive-verification-v1",
+  "version": "0.18.0"
+}

@@ -1,0 +1,61 @@
+{
+  "adaptive_security": {
+    "dfb_paper_security_notion": "selective",
+    "direct_transfer_from_half_gates_or_npro_results_proved": false,
+    "future_input_requires_adaptive_security": true,
+    "proof_target": "docs/52_ADAPTIVE_DFB_PROOF_TARGET.md"
+  },
+  "bounded_query_construction": "q independent one-shot Embryo slots under one hidden scalar",
+  "breakthrough_target_met": false,
+  "construction_target_met_under_assumptions": true,
+  "decision": "CONSTRUCTION_LEVEL_BREAKTHROUGH_CANDIDATE_NOT_IMPLEMENTATION_COMPLETE",
+  "generated_at_utc": "2026-08-10T10:37:14.049752+00:00",
+  "malicious_setup_route": "n-party active dishonest-majority MPC with abort; activate only after all registered signatures",
+  "manifest": {
+    "contributor_count": 2,
+    "encoded_bytes": 748,
+    "encoded_sha256": "b236cba1c72e58409aa3dc686613f540d1068182d365dd5efa1ee19b08ee5508",
+    "margin_to_one_mib": 25390,
+    "retained_bytes": 1023186,
+    "slot_count": 2,
+    "verified": true
+  },
+  "missing_for_unconditional_implementation_claim": [
+    "exact serialized Duty-Free-Bits/Embryo generator and artifacts",
+    "concrete active-MPC execution/benchmark of the generator",
+    "adaptive authenticated one-shot label-release theorem/implementation",
+    "full BABE and validity-first transaction-graph byte accounting",
+    "end-to-end formal proof and Bitcoin Core regtest integration"
+  ],
+  "one_honest_party_required": true,
+  "online_authority_after_activation": false,
+  "paper_cost": {
+    "artifact_bytes": 511219,
+    "chunk_conversion_bytes_per_coordinate": 14848,
+    "chunk_conversion_hashes_per_coordinate": 188352,
+    "curve_check_bytes": 371,
+    "evidence_class": "paper-derived exact arithmetic; no local DFB serializer",
+    "hash_calls": 5845972,
+    "it_label_bytes": 227712,
+    "it_label_hashes": 3174552,
+    "residue_evaluation_bytes_per_coordinate": 126720,
+    "residue_evaluation_hashes_per_coordinate": 1147358,
+    "schema": "ranklock-embryo-paper-cost-v1"
+  },
+  "q2_hash_calls": 11691944,
+  "q2_manifest_bytes": 748,
+  "q2_margin_to_one_mib": 25390,
+  "q2_total_retained_bytes": 1023186,
+  "q3_artifacts_only_bytes": 1533657,
+  "q3_cannot_fit_one_mib_even_before_manifest": true,
+  "schema": "ranklock-bounded-mpc-embryo-checkpoint-v1",
+  "slot_replay_or_retry_rejected": true,
+  "test_evidence": {
+    "machine_report": "results/v021_test_files.json",
+    "report": "results/v021_test_report.txt",
+    "test_files": 74,
+    "tests_failed": 0,
+    "tests_passed": 277
+  },
+  "wrong_runtime_output_publicly_detected": true
+}

@@ -1,0 +1,141 @@
+{
+  "algebraic_input_authentication": {
+    "aggregate_witness_group_elements": 2,
+    "cardinality": 256,
+    "ciphertext_size_conclusion": "O(1) at the gadget level is prior-art-supported; exact compiler/CRS cost remains unknown",
+    "contributors": 1,
+    "coordinates": 132,
+    "lva_inner_product_gadgets": 1,
+    "lva_signature_gadgets": 1,
+    "naive_catalog_bytes": 1622016,
+    "naive_catalog_group_elements": 33792,
+    "not_counted": [
+      "projective/oblivious delivery wrapper",
+      "malicious distributed token generation proof",
+      "trace-proof gadgets",
+      "WE encryption key and CRS",
+      "real pairing and group-operation costs"
+    ],
+    "one_time_delivery_required": true,
+    "public_basis_bytes": 25344,
+    "public_basis_group_elements": 264,
+    "schema": "ranklock-algebraic-input-auth-cost-v1",
+    "selected_token_bytes": 6336
+  },
+  "authenticated_witness_lift": {
+    "authentication_items": 132,
+    "ciphertext_statement_can_remain_static": true,
+    "dynamic_input_bytes": 132,
+    "outer_relation_must_verify": [
+      "authentication of every future input item",
+      "unique session/deposit binding",
+      "invalidity proof for the authenticated input"
+    ],
+    "schema": "ranklock-authenticated-witness-lift-cost-v1",
+    "strata_candidate": "132 completed adaptor signatures become witness authentication",
+    "warning": "constant ciphertext does not imply cheap witness verification or cheap CRS"
+  },
+  "decision": {
+    "dynamic_four-opening_kzg_we_is_small": true,
+    "fixed_input_authentication_compresses_to_two_gadget_shapes": true,
+    "next_question": "instantiate a fixed authenticated-input relation in the LVA-WE framework and measure CRS/decryption work, or construct commitment-oblivious projective WE",
+    "one_time_token_delivery_solved": false,
+    "opening_equation_count_is_primary_blocker": false,
+    "static_fault_secret_lock_constructed": false,
+    "vector_ole_interface_candidate": true,
+    "vector_ole_protocol_implemented": false
+  },
+  "direct_kzg_we_after_batching": {
+    "asymptotic": "linear in the number of KZG opening constraints",
+    "ciphertext_group_elements": 4,
+    "ciphertext_header_bytes": 384,
+    "decryption_pairings": 4,
+    "encryption_pairings": 4,
+    "opening_constraints": 4,
+    "schema": "ranklock-kzg-we-conjunction-cost-v1",
+    "source_result": "Fleischhacker-Hall-Andersen-Simkin multi-constraint KZG-WE"
+  },
+  "evidence_class": "FORMAL exponent-space model with executable attacks/regressions",
+  "memory_opening_conjunction": {
+    "batch_group_sizes": [
+      2,
+      1,
+      65,
+      4
+    ],
+    "batched_kzg_openings": 4,
+    "distinct_evaluation_points": 4,
+    "external_beacons": 3,
+    "kzg_we_ciphertext_group_elements_after_batching": 4,
+    "kzg_we_decryption_pairings_after_batching": 4,
+    "points": [
+      "0",
+      "6",
+      "1902367590447821202792974820595421097571522969578083617179512958425495077943",
+      "1902367590447821202792974820595421097571522969578083617179512958425495077944"
+    ],
+    "raw_kzg_openings": 72,
+    "remaining_barrier": "aggregate KZG statements are created after the trace and value-binding beacon",
+    "schema": "ranklock-unified-memory-opening-inventory-v1",
+    "static_encapsulation_supported": false
+  },
+  "reusable_public_update_barrier": {
+    "not_ruled_out": [
+      "one-time selected projective delivery revealing only one header",
+      "fresh-randomizer updates with an online encapsulator",
+      "stronger witness/functional encryption not algebraically equivalent to standard KZG-WE"
+    ],
+    "remaining_dynamic_commitment_problem": true,
+    "ruled_out": [
+      "reusable arbitrary-point public updates with one fixed KZG-WE randomizer",
+      "security from hiding r*[1]_2 when two standard headers are publicly obtainable"
+    ],
+    "schema": "ranklock-commitment-oblivious-kzg-we-barrier-v1"
+  },
+  "schema": "ranklock-cds-research-results-v1",
+  "static_timing": {
+    "barrier": "the masked payload depends on r*C; public affine update needs r*[1]_2, which reveals the KZG-WE session",
+    "fixed_bytes_before_delivery_mechanism": 49248,
+    "fixed_commitment": false,
+    "fixed_group_elements": 513,
+    "future_arbitrary_commitment_supported": false,
+    "point_labels": 256,
+    "schema": "ranklock-static-kzg-we-timing-v1",
+    "value_labels": 256
+  },
+  "unbatched_kzg_we": {
+    "asymptotic": "linear in the number of KZG opening constraints",
+    "ciphertext_group_elements": 72,
+    "ciphertext_header_bytes": 6912,
+    "decryption_pairings": 72,
+    "encryption_pairings": 72,
+    "opening_constraints": 72,
+    "schema": "ranklock-kzg-we-conjunction-cost-v1",
+    "source_result": "Fleischhacker-Hall-Andersen-Simkin multi-constraint KZG-WE"
+  },
+  "vole_projective_input": {
+    "asymptotic_leading_expression_bits": 66300,
+    "asymptotic_leading_expression_bytes_ceiling": 8288,
+    "coordinates": 132,
+    "eliminated_naive_token_catalog_bytes": 1622016,
+    "field_bits": 255,
+    "input_bits_per_coordinate": 8,
+    "public_basis_bytes": 25344,
+    "receiver_output_scalar_bytes": 4224,
+    "remaining_work": [
+      "instantiate the actual Duty-Free-Bits vector-OLE protocol",
+      "bind OLE receiver bits to the bridge's selected bytes",
+      "distribute sender state with one-honest-party security",
+      "compose the aggregate BLS and inner-product gadgets in real LVA-WE"
+    ],
+    "required_lifecycle": [
+      "fresh affine sender state per deposit/session",
+      "at most one receiver vector per state",
+      "burn state on abort, retry, or completion"
+    ],
+    "schema": "ranklock-vole-input-auth-cost-v1",
+    "security_bits": 128,
+    "source_bound": "Duty-Free Bits: O((lambda+n) log p) bits plus base OTs",
+    "warning": "The leading expression is not a concrete protocol byte count: big-O constants, base OTs, authentication, framing, malicious checks and distributed setup are excluded."
+  }
+}

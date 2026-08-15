@@ -1,0 +1,92 @@
+{
+  "body_pad_sampler": {
+    "construction": "nibble-width raw random slice, subsequently reduced modulo the CRT prime",
+    "max_total_variation_distance": 0.1715728591160221,
+    "paper_uniform_group_requirement_met": false,
+    "uniform": false,
+    "worst_prime": 181
+  },
+  "bundle_bytes": 771094,
+  "bundle_sha256": "9f5aaf20385f58b8741ee7f4adad3ef1854e0b2f86f445e80fb03bea325d4680",
+  "claim_boundary": {
+    "active_mpc_executed": false,
+    "adaptive_security_proved": false,
+    "authenticated_bitcoin_label_release_implemented": false,
+    "conservative_whole_q2_128_bit_statistical_target_met": false,
+    "output_mask_fusion_proved": false,
+    "production_ready": false,
+    "selective_dfb_theorem_instantiated_more_faithfully": false,
+    "slot_level_nonce_domain_separation_implemented": false,
+    "two_instance_same_scalar_theorem_proved": false,
+    "uniform_body_pad_sampling_implemented": false
+  },
+  "coordinate_deltas_independent": true,
+  "curve_check_valid": true,
+  "decode_bytes": 262699,
+  "decode_sha256": "e2925336275d0ca6d1fde460167f7ed4383b33523916aa6ccb3f020a64ca5475",
+  "evaluator_aes_blocks": 7661830,
+  "field_modulus": "21888242871839275222246405745257275088696311157297823662689037894645226208583",
+  "garbler_aes_blocks": 7697526,
+  "input_labels_bytes": [
+    4096,
+    4096
+  ],
+  "map_points_verified": 256,
+  "nonce_namespaces_independent": true,
+  "output_matches_hidden_scalar_multiplication": true,
+  "profile": {
+    "body_join_bits": 2101591,
+    "chunk_join_bits_per_coordinate": 118784,
+    "chunk_size": 8,
+    "crt_bits": 683,
+    "dimensions": [
+      1795,
+      1282
+    ],
+    "ell": 22,
+    "extract_join_bits_per_coordinate": 702720,
+    "fold_bits": 14,
+    "fold_join_bits_per_coordinate": 161280,
+    "input_bits": 256,
+    "largest_prime": 463,
+    "num_chunks": 32,
+    "prime_count": 90,
+    "program_bits": 4067159,
+    "program_boundary": "join payload only; output masks are separate decode state",
+    "program_bytes": 508395,
+    "reference_revision": "e2b45be8ceaea0d51e4e7a9ef862b91b59ff255e",
+    "schema": "ranklock-dfb-reference-profile-v1",
+    "standalone_bundle_bits": 6168750,
+    "standalone_bundle_bytes": 771094,
+    "standalone_decode_bits": 2101591,
+    "standalone_decode_bytes": 262699,
+    "sub_widths": [
+      8,
+      8,
+      6
+    ]
+  },
+  "program_bytes": 508395,
+  "program_sha256": "8048bd63f1da493971fdac9b17be2b08f80854ce0bc00c13574ccac967271d61",
+  "q2_join_margin_to_mib": 31038,
+  "q2_join_plus_748": 1017538,
+  "q2_standalone_plus_748": 1542936,
+  "schema": "ranklock-v0221-security-audit-baseline-v2",
+  "smudging_applied": true,
+  "statistical_security_bits_requested": 128,
+  "statistical_security_bits_supported": 132,
+  "statistical_security_scope": "128 bits requested per affine-output component; conservative whole-q2 bound is lower",
+  "whole_q2_smudging_accounting": {
+    "affine_outputs_per_slot": 3077,
+    "available_per_component_bits": 132,
+    "components_across_two_slots": 6154,
+    "conservative_joint_bits": 119.41269127166646,
+    "executed_91_prime_artifact": false,
+    "first_91_largest_prime": 467,
+    "first_91_program_bytes": 514257,
+    "first_91_q2_join_margin_to_mib": 19314,
+    "first_91_q2_join_plus_748": 1029262,
+    "first_91_supported_bits": 141,
+    "first_primes_for_conservative_128_bit_joint_target": 91
+  }
+}

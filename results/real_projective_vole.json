@@ -1,0 +1,26 @@
+{
+  "binary_ots": 1056,
+  "finalize_seconds": 3.030788856000072,
+  "generated_at_utc": "2026-08-06T19:32:57.636487+00:00",
+  "input_bytes": 132,
+  "offer_bytes": 39072,
+  "public_lock_bytes_excluding_offers": 73674,
+  "public_verification_seconds": 2.008239205999871,
+  "receiver_local_witness_bytes": 4356,
+  "request_bytes": 39072,
+  "request_seconds": 0.9929924859998209,
+  "response_bytes": 105600,
+  "response_seconds": 2.5572230400000535,
+  "schema": "ranklock-real-projective-vole-run-v1",
+  "security_boundary": [
+    "Real secp256k1 group operations and AEAD; variable-time research implementation.",
+    "Binary OT is a Chou-Orlandi measurement baseline, not the final malicious-receiver-secure DFB protocol.",
+    "The OT sender is online for selection; this experiment does not yet provide public cold-start delivery.",
+    "The lock releases an authenticated-input share, not the complete fault secret.",
+    "Every affine state is one-shot; abort/retry requires fresh setup."
+  ],
+  "setup_seconds": 6.600812152999879,
+  "share_recovered": true,
+  "total_public_and_interactive_bytes": 257418,
+  "unlock_seconds": 2.2641983759999675
+}

@@ -1,0 +1,136 @@
+{
+  "all_estimates_reproduced": true,
+  "generated_at_utc": "2026-08-05T20:02:57.683945+00:00",
+  "schema": "ranklock-field-bridge-constraint-backend-results-v1",
+  "traces": [
+    {
+      "cross_field_binding": "not applicable: one proof field",
+      "embedded_linear_relations": 0,
+      "estimate_match": true,
+      "estimated_linear_relation_events": 17,
+      "estimated_logical_lookup_events": 76,
+      "estimated_native_nonlinear_products": 5,
+      "evidence_class": "REPRODUCED executable constraint trace; transparent witness, no PCS",
+      "linear_relation_events": 17,
+      "logical_lookup_events": 76,
+      "native_ledgers": [
+        {
+          "assumptions": [
+            "x_prebound: input x is already constrained by the enclosing trace",
+            "y_prebound: input y is already constrained by the enclosing trace"
+          ],
+          "embedded_linear_relations": 0,
+          "event_digest": "4209d777273f870518d3381259a137d8eea44084bbeba3b0ceae9afea95ba4a8",
+          "fixed_boundary_checks": 2,
+          "label": "single_field_bls12_381_fr",
+          "linear_relation_events": 17,
+          "logical_lookup_events": 76,
+          "modulus": "52435875175126190479447740508185965837690552500527637822603658699938581184513",
+          "multiplication_constraints": 5,
+          "schema": "ranklock-native-constraint-ledger-report-v1",
+          "standalone_linear_constraints": 17
+        }
+      ],
+      "native_nonlinear_products": 5,
+      "route": "single_field_3x85_rank5",
+      "schema": "ranklock-compiled-field-bridge-trace-v1",
+      "selectable": true,
+      "standalone_linear_constraints": 17,
+      "warnings": [
+        "Transparent native constraint ledger only; no lookup argument, PCS, degree bound, or proof bytes.",
+        "Input x/y canonical costs are amortized as prebound trace values; z is canonical and the internal quotient is only 254-bit bounded."
+      ]
+    },
+    {
+      "cross_field_binding": "not applicable: one proof field",
+      "embedded_linear_relations": 4,
+      "estimate_match": true,
+      "estimated_linear_relation_events": 26,
+      "estimated_logical_lookup_events": 206,
+      "estimated_native_nonlinear_products": 4,
+      "evidence_class": "REPRODUCED executable constraint trace; transparent witness, no PCS",
+      "linear_relation_events": 26,
+      "logical_lookup_events": 206,
+      "native_ledgers": [
+        {
+          "assumptions": [
+            "x_prebound: input x is already constrained by the enclosing trace",
+            "y_prebound: input y is already constrained by the enclosing trace"
+          ],
+          "embedded_linear_relations": 4,
+          "event_digest": "67f2fcbe2c00303fe3b816bbda1e383384f4a4be551dfa5ae4c56b65108d1d55",
+          "fixed_boundary_checks": 1,
+          "label": "single_field_bls12_381_fr",
+          "linear_relation_events": 26,
+          "logical_lookup_events": 206,
+          "modulus": "52435875175126190479447740508185965837690552500527637822603658699938581184513",
+          "multiplication_constraints": 4,
+          "schema": "ranklock-native-constraint-ledger-report-v1",
+          "standalone_linear_constraints": 22
+        }
+      ],
+      "native_nonlinear_products": 4,
+      "route": "single_field_2x127_split",
+      "schema": "ranklock-compiled-field-bridge-trace-v1",
+      "selectable": true,
+      "standalone_linear_constraints": 22,
+      "warnings": [
+        "Transparent native constraint ledger only; no lookup argument, PCS, degree bound, or proof bytes.",
+        "Input x/y canonical costs are amortized as prebound trace values; z is canonical and the internal quotient is only 254-bit bounded."
+      ]
+    },
+    {
+      "cross_field_binding": "MISSING: host-equal canonical words are used in both ledgers, but no common PCS commitment or verified equality proof binds them",
+      "embedded_linear_relations": 0,
+      "estimate_match": true,
+      "estimated_linear_relation_events": 20,
+      "estimated_logical_lookup_events": 63,
+      "estimated_native_nonlinear_products": 2,
+      "evidence_class": "REPRODUCED executable constraint trace; transparent witness, no PCS",
+      "linear_relation_events": 20,
+      "logical_lookup_events": 63,
+      "native_ledgers": [
+        {
+          "assumptions": [
+            "x_y_prebound: x/y canonical encodings are reused from the enclosing trace"
+          ],
+          "embedded_linear_relations": 0,
+          "event_digest": "71e59458bf1a3eb3d0b3b69f727892ca2e9b57c0e794b9789c986595bd397047",
+          "fixed_boundary_checks": 0,
+          "label": "bn254_fr",
+          "linear_relation_events": 2,
+          "logical_lookup_events": 0,
+          "modulus": "21888242871839275222246405745257275088548364400416034343698204186575808495617",
+          "multiplication_constraints": 1,
+          "schema": "ranklock-native-constraint-ledger-report-v1",
+          "standalone_linear_constraints": 2
+        },
+        {
+          "assumptions": [
+            "x_y_prebound: x/y canonical encodings are reused from the enclosing trace"
+          ],
+          "embedded_linear_relations": 0,
+          "event_digest": "add4058f3e8a10128aaebb1102b7c0f7a65551943b27f61780c09fe6575054b1",
+          "fixed_boundary_checks": 1,
+          "label": "bls12_381_fr_owner",
+          "linear_relation_events": 18,
+          "logical_lookup_events": 63,
+          "modulus": "52435875175126190479447740508185965837690552500527637822603658699938581184513",
+          "multiplication_constraints": 1,
+          "schema": "ranklock-native-constraint-ledger-report-v1",
+          "standalone_linear_constraints": 18
+        }
+      ],
+      "native_nonlinear_products": 2,
+      "route": "dual_field_crt_bounded_quotient_owner_side",
+      "schema": "ranklock-compiled-field-bridge-trace-v1",
+      "selectable": false,
+      "standalone_linear_constraints": 20,
+      "warnings": [
+        "Not a sound end-to-end dual-field construction.",
+        "Transparent native constraint ledgers only; no PCS, degree bound, or conditional-lock conjunction."
+      ]
+    }
+  ],
+  "warning": "This is a transparent backend-independent constraint ledger, not a proof system. It has no PCS, lookup argument, degree bound, zero knowledge, or cryptographic cross-field binding."
+}

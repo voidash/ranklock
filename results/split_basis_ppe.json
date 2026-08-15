@@ -1,0 +1,25 @@
+{
+  "actual_criterion": "the statement-side session must not have a public decomposition over the scaled witness-anchor span",
+  "breakthrough_target_met": false,
+  "changed_witness_rejected": true,
+  "cost": {
+    "ciphertext_bytes": 48,
+    "compressed_witness_pairings": 2,
+    "direct_witness_pairings": 11,
+    "encryption_pairings": 2,
+    "evidence_class": "EXACT serialization accounting for executable BN254 prototype",
+    "ordinary_linear_work": "O(witness_terms * witness_anchor_rank) G1 public-scalar work",
+    "relation_bytes": 1053,
+    "schema": "ranklock-split-basis-ppe-cost-v1",
+    "setup_bytes": 416,
+    "statement_terms": 2,
+    "total_retained_bytes": 1517,
+    "witness_anchor_rank": 2,
+    "witness_terms": 11
+  },
+  "evidence_class": "REAL BN254 arithmetic and exact serialization",
+  "identity_target_is_fundamental_blocker": false,
+  "relation_accepts": true,
+  "schema": "ranklock-v017-split-basis-result-v1",
+  "secret_recovered": true
+}

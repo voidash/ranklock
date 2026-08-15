@@ -1,0 +1,162 @@
+{
+  "kernel_certificate": {
+    "digest": "0cf87df98220a89e1b1904114377d01252c0eb24e035aee639c8a623ee03049b",
+    "kernels": [
+      {
+        "digest": "c23f6fa54b82d661f059a73ad399263ba234d55f64e52ef3857bd1be3a1b24ae",
+        "exact_checks": 12,
+        "left_dimension": 6,
+        "name": "bn254-e6-mul-by-e2-rank9",
+        "output_dimension": 6,
+        "passed": true,
+        "random_checks": 16,
+        "rank": 9,
+        "right_dimension": 2
+      },
+      {
+        "digest": "22bfafaa022f4d60942400ddd83217352a161c00670fce254b72b80de3083fcb",
+        "exact_checks": 24,
+        "left_dimension": 6,
+        "name": "bn254-e6-mul-by01-rank15",
+        "output_dimension": 6,
+        "passed": true,
+        "random_checks": 16,
+        "rank": 15,
+        "right_dimension": 4
+      },
+      {
+        "digest": "dfabbeaa4156209106b93328e8ac1c4f2e8305ebf4b5295dd152717e98437b65",
+        "exact_checks": 78,
+        "left_dimension": 12,
+        "name": "bn254-e12-square-rank36",
+        "output_dimension": 12,
+        "passed": true,
+        "random_checks": 16,
+        "rank": 36,
+        "right_dimension": 12
+      },
+      {
+        "digest": "d0038ce4e07710d737a23ab59d62a32e286e51dc7a08a584993decc2e562dc5f",
+        "exact_checks": 72,
+        "left_dimension": 12,
+        "name": "bn254-e12-mul-by034-rank39",
+        "output_dimension": 12,
+        "passed": true,
+        "random_checks": 16,
+        "rank": 39,
+        "right_dimension": 6
+      },
+      {
+        "digest": "4f8330409f18507de5123eb0d13735e751b158672b9d42cd28189ba7e4d3a1b9",
+        "exact_checks": 36,
+        "left_dimension": 6,
+        "name": "bn254-mul034-by034-rank18",
+        "output_dimension": 10,
+        "passed": true,
+        "random_checks": 16,
+        "rank": 18,
+        "right_dimension": 6
+      },
+      {
+        "digest": "c94bcc6cd84dcb782ea8eae88426a8f0b63e145d3daa4ed91e63877f601c778f",
+        "exact_checks": 120,
+        "left_dimension": 12,
+        "name": "bn254-e12-mul-by01234-rank51",
+        "output_dimension": 12,
+        "passed": true,
+        "random_checks": 16,
+        "rank": 51,
+        "right_dimension": 10
+      },
+      {
+        "digest": "9e239eb823946151cb31f5c84886dfe900ba4785b0f3eec2997c2004d48d8bf7",
+        "exact_checks": 78,
+        "left_dimension": 12,
+        "name": "bn254-cyclotomic-square-nonlinear-rank18",
+        "output_dimension": 12,
+        "passed": true,
+        "random_checks": 16,
+        "rank": 18,
+        "right_dimension": 12
+      }
+    ],
+    "passed": true
+  },
+  "loop_counter": {
+    "active_rounds": 65,
+    "digits": {
+      "-1": 13,
+      "0": 44,
+      "1": 9
+    },
+    "length": 66
+  },
+  "pairing": {
+    "accumulator_squares": 2340,
+    "active_pairings": 3,
+    "constant_pairings_folded": 1,
+    "dense_v05_pairing_products": 770266,
+    "dynamic_g2_line_generation": 993,
+    "dynamic_g2_pairings": 1,
+    "dynamic_line_count": 88,
+    "dynamic_line_evaluation": 352,
+    "final_exponentiation_eliminated_products": 6858,
+    "final_line_products": 180,
+    "fixed_g2_pairings": 2,
+    "g1_affine_normalization": 6,
+    "loop_rounds": 65,
+    "nonzero_digits": 21,
+    "nonzero_line_products": 3780,
+    "nonzero_residue_witness_multiplications": 1134,
+    "reduction_vs_dense_v05": 59.26490728629684,
+    "residue_check_postlude": 198,
+    "residue_witness_inverse_check": 54,
+    "total_base_field_products": 12997,
+    "zero_digits": 44,
+    "zero_round_sparse_multiplications": 3960
+  },
+  "primitive_ranks": {
+    "fq12_cyclotomic_square": 18,
+    "fq12_mul": 54,
+    "fq12_mul_by_01234": 51,
+    "fq12_mul_by_034": 39,
+    "fq12_mul_by_34": 30,
+    "fq12_square": 36,
+    "fq2_mul": 3,
+    "fq2_mul_by_variable_fq": 2,
+    "fq2_square": 2,
+    "fq6_mul": 18,
+    "fq6_mul_by_01": 15,
+    "fq6_mul_by_fq2": 9,
+    "g2_affine_add": 8,
+    "g2_affine_double": 10,
+    "g2_affine_double_and_add": 13,
+    "miller_affine_add_line": 11,
+    "miller_affine_double_and_add_lines": 19,
+    "miller_affine_double_line": 13,
+    "mul034_by034": 18,
+    "mul34_by34": 9
+  },
+  "schema": "ranklock-bn254-sparse-pairing-rank-v1",
+  "security_boundary": [
+    "The sparse arithmetic identities are exact and executable.",
+    "The schedule uses the residue-witness pairing check and one folded fixed-fixed pairing term.",
+    "SHA-256/public-byte binding and canonical parser/range constraints are not in the subtotal.",
+    "The dynamic MSM still uses the conservative measured v0.5 product count.",
+    "This is a Rank-R1CS schedule, not a conditional-disclosure construction."
+  ],
+  "verifier_schedule": {
+    "corrected_dense_exponentiation_model": 795827,
+    "corrected_dense_witness_model": 782635,
+    "dynamic_msm_conservative": 12150,
+    "known_arithmetic_subtotal": 25889,
+    "old_erroneous_rank_terms": 645221,
+    "padded_rankfold_domain": 32768,
+    "proof_curve_and_g2_subgroup_checks": 742,
+    "rankfold_rounds": 15,
+    "reduction_vs_corrected_dense_witness": 30.230406736451776,
+    "sparse_residue_pairing": 12997,
+    "unresolved_canonical_parsing_and_range_checks": true,
+    "unresolved_sha256_and_byte_binding": true
+  }
+}

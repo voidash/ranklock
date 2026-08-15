@@ -1,0 +1,116 @@
+{
+  "byte_granular_reference_fresh_z_and_quotient": {
+    "byte_addition_linear_equations": 1656896,
+    "byte_lookups": 3313792,
+    "canonical_values": 51778,
+    "carry_bit_checks": 1605118,
+    "per_value": {
+      "byte_addition_linear_equations": 32,
+      "byte_lookups_total": 64,
+      "carry_bit_checks": 31,
+      "residue_recomposition_linear_equations": 2,
+      "schema": "ranklock-canonical-byte-cost-v1",
+      "slack_byte_lookups": 32,
+      "value_byte_lookups": 32
+    },
+    "raw_shared_value_bytes": 1656896,
+    "residue_recomposition_linear_equations": 103556,
+    "schema": "ranklock-canonical-byte-schedule-v1",
+    "warning": "This inventory does not implement a binding commitment shared by two PCS systems; lookup arguments may amortize byte/bit checks but add their own proof costs."
+  },
+  "generated_at_utc": "2026-08-05T20:02:57.683945+00:00",
+  "packed_16_bit_owner_side_crt_bounded_quotient": {
+    "canonical_linear_equations": 414224,
+    "canonical_lookup_events": 1631007,
+    "config": {
+      "bounded_quotient_254_safety_ratio": 1.8113802253851288,
+      "coprime": true,
+      "crt_modulus_bits": 509,
+      "crt_over_foreign_square_ratio": 2.395618299840255,
+      "exact_residual_uniqueness": true,
+      "foreign_modulus": "21888242871839275222246405745257275088696311157297823662689037894645226208583",
+      "foreign_square_bits": 508,
+      "maximum_crt_exact_quotient_bits": 254,
+      "minimum_honest_quotient_bits": 254,
+      "native_moduli": [
+        "21888242871839275222246405745257275088548364400416034343698204186575808495617",
+        "52435875175126190479447740508185965837690552500527637822603658699938581184513"
+      ],
+      "native_moduli_bits": [
+        254,
+        255
+      ],
+      "schema": "ranklock-dual-field-crt-config-v1"
+    },
+    "cross_field_binding_cost_included": false,
+    "foreign_products": 25889,
+    "fresh_values_per_product": 2,
+    "linear_equations_total": 517780,
+    "mode": "bounded_quotient_owner_side",
+    "native_nonlinear_products": 51778,
+    "per_foreign_product": {
+      "logical_lookup_events": 63,
+      "native_nonlinear_products": 2,
+      "simple_row_equivalent": 65
+    },
+    "quotient_bits": 254,
+    "range_model": {
+      "accounting_unit": "logical lookup event",
+      "chunk_bits": 16,
+      "schema": "ranklock-range-lookup-model-v1",
+      "table_rows": 65536
+    },
+    "residue_recomposition_linear_equations": 103556,
+    "schema": "ranklock-crt-bounded-quotient-schedule-estimate-v1",
+    "simple_row_equivalent": 1682785,
+    "warning": "The common byte-table commitment/equality proof is not included; this is not a sound end-to-end dual-field construction."
+  },
+  "packed_16_bit_owner_side_crt_canonical_quotient_reference": {
+    "canonical_linear_equations": 828448,
+    "canonical_lookup_events": 2433566,
+    "config": {
+      "bounded_quotient_254_safety_ratio": 1.8113802253851288,
+      "coprime": true,
+      "crt_modulus_bits": 509,
+      "crt_over_foreign_square_ratio": 2.395618299840255,
+      "exact_residual_uniqueness": true,
+      "foreign_modulus": "21888242871839275222246405745257275088696311157297823662689037894645226208583",
+      "foreign_square_bits": 508,
+      "maximum_crt_exact_quotient_bits": 254,
+      "minimum_honest_quotient_bits": 254,
+      "native_moduli": [
+        "21888242871839275222246405745257275088548364400416034343698204186575808495617",
+        "52435875175126190479447740508185965837690552500527637822603658699938581184513"
+      ],
+      "native_moduli_bits": [
+        254,
+        255
+      ],
+      "schema": "ranklock-dual-field-crt-config-v1"
+    },
+    "cross_field_binding_cost_included": false,
+    "foreign_products": 25889,
+    "fresh_values_per_product": 2,
+    "linear_equations_total": 932004,
+    "mode": "explicit_byte_slack",
+    "native_nonlinear_products": 51778,
+    "per_foreign_product": {
+      "logical_lookup_events": 94,
+      "native_nonlinear_products": 2,
+      "simple_row_equivalent": 96
+    },
+    "quotient_bits": null,
+    "range_model": {
+      "accounting_unit": "logical lookup event",
+      "chunk_bits": 16,
+      "schema": "ranklock-range-lookup-model-v1",
+      "table_rows": 65536
+    },
+    "residue_recomposition_linear_equations": 103556,
+    "schema": "ranklock-crt-bridge-schedule-estimate-v1",
+    "simple_row_equivalent": 2485344,
+    "warning": "The common byte-table commitment/equality proof is not included; this is not a sound end-to-end dual-field construction."
+  },
+  "schema": "ranklock-canonical-byte-binding-results-v2",
+  "warning": "The packed schedule assumes a reusable fixed-width tuple table whose row range-checks one chunk and exposes its constituent bytes. Logical lookup events are not physical proof rows, and cross-PCS equality remains missing."
+}

@@ -1,0 +1,198 @@
+{
+  "claim_boundary": "Executable correctness, canonical retained bytes and storage accounting only; production security and Bitcoin integration remain open.",
+  "committee_frontier": {
+    "bytes_per_contributor": 96,
+    "first_failing_contributor_count": 40,
+    "fixed_manifest_bytes_without_contributors": 556,
+    "margin_at_maximum_contributors": 72,
+    "maximum_contributors_below_one_mib": 39,
+    "rows": [
+      {
+        "complete_retained_bytes": 1044952,
+        "contributors": 2,
+        "fits_one_mib": true,
+        "manifest_bytes": 748,
+        "margin_to_one_mib": 3624
+      },
+      {
+        "complete_retained_bytes": 1045048,
+        "contributors": 3,
+        "fits_one_mib": true,
+        "manifest_bytes": 844,
+        "margin_to_one_mib": 3528
+      },
+      {
+        "complete_retained_bytes": 1045240,
+        "contributors": 5,
+        "fits_one_mib": true,
+        "manifest_bytes": 1036,
+        "margin_to_one_mib": 3336
+      },
+      {
+        "complete_retained_bytes": 1045720,
+        "contributors": 10,
+        "fits_one_mib": true,
+        "manifest_bytes": 1516,
+        "margin_to_one_mib": 2856
+      },
+      {
+        "complete_retained_bytes": 1046296,
+        "contributors": 16,
+        "fits_one_mib": true,
+        "manifest_bytes": 2092,
+        "margin_to_one_mib": 2280
+      },
+      {
+        "complete_retained_bytes": 1047832,
+        "contributors": 32,
+        "fits_one_mib": true,
+        "manifest_bytes": 3628,
+        "margin_to_one_mib": 744
+      },
+      {
+        "complete_retained_bytes": 1048504,
+        "contributors": 39,
+        "fits_one_mib": true,
+        "manifest_bytes": 4300,
+        "margin_to_one_mib": 72
+      },
+      {
+        "complete_retained_bytes": 1048600,
+        "contributors": 40,
+        "fits_one_mib": false,
+        "manifest_bytes": 4396,
+        "margin_to_one_mib": -24
+      }
+    ]
+  },
+  "compileall": true,
+  "focused_changed_path_tests": {
+    "failed": 0,
+    "passed": 31,
+    "skipped_designated_heavy_fixture": 1
+  },
+  "generated_at_utc": "2026-08-11T22:29:52.225400+00:00",
+  "manifest_file_entries": 398,
+  "retained_object_verification": {
+    "canonical_roundtrip": true,
+    "claim_boundary": "Correctness, format and exact bytes only; this does not prove the open correlated-lift, uniform-pad, adaptive-q=2, active-MPC or Bitcoin-integration security gates.",
+    "manifest_bytes": 748,
+    "manifest_verified": true,
+    "margin_to_one_mib_bytes": 3624,
+    "profile_prime_count": 91,
+    "public_replay_without_generator_state": true,
+    "retained_object_bytes": 1044952,
+    "retained_object_sha256": "6d2a20d1a7f5a98531511f230e7b8444dc8e19c92e77ae941a71cb5a885af212",
+    "schema": "ranklock-v023-retained-object-verification-v1",
+    "slots": [
+      {
+        "curve_check_valid": true,
+        "direct_hidden_scalar_check": true,
+        "generator_state_supplied_to_replay": false,
+        "input_label_bytes": 8192,
+        "input_label_root": "6eb4cae9b940bedd05ebd02e9510388cfe69d81a7b813d293bf1663e85cf46a4",
+        "maps_evaluated": 256,
+        "output_point": "abc0762c868315893b8b98db602ad4988c96b9776c2335d4a3c93e87b5422e99",
+        "slot_bytes": 522102,
+        "slot_id": 0,
+        "slot_sha256": "88883cc94af23eca4fa33f12d3a831022657e63b7e0a771571fcac3f680d9dc4"
+      },
+      {
+        "curve_check_valid": true,
+        "direct_hidden_scalar_check": true,
+        "generator_state_supplied_to_replay": false,
+        "input_label_bytes": 8192,
+        "input_label_root": "e2b0b77cde8e5696bfd5ed258de949f5926953ee7e0f3ce6676b3e9e14b43be7",
+        "maps_evaluated": 256,
+        "output_point": "8d8641200e68004586d4f6a999b11936c1baf050d0b0995c3a5187836ef560a9",
+        "slot_bytes": 522102,
+        "slot_id": 1,
+        "slot_sha256": "a002bcab18edbc9690b377b8a7cc656dce682b69498cce6d72d0d607eb965e8d"
+      }
+    ],
+    "verified": true,
+    "verified_at_utc": "2026-08-11T22:27:53.627449+00:00"
+  },
+  "schema": "ranklock-v023-final-release-verification-v1",
+  "source_verification": {
+    "claim_boundary": "Executable correctness, canonical format and exact retained bytes only; security theorem and Bitcoin integration remain open.",
+    "compileall": true,
+    "focused_changed_path_tests": "31 passed, 1 designated heavy fixture skipped",
+    "nonzero_files": 0,
+    "retained_object_bytes": 1044952,
+    "retained_object_sha256": "6d2a20d1a7f5a98531511f230e7b8444dc8e19c92e77ae941a71cb5a885af212",
+    "retained_object_verified": true,
+    "schema": "ranklock-v023-independent-source-verification-v1",
+    "shard_count": 6,
+    "shards": [
+      {
+        "failed": 0,
+        "files": 13,
+        "nonzero_files": 0,
+        "passed": 43,
+        "shard_index": 0,
+        "wall_seconds": 13.952
+      },
+      {
+        "failed": 0,
+        "files": 13,
+        "nonzero_files": 0,
+        "passed": 63,
+        "shard_index": 1,
+        "wall_seconds": 28.436
+      },
+      {
+        "failed": 0,
+        "files": 13,
+        "nonzero_files": 0,
+        "passed": 48,
+        "shard_index": 2,
+        "wall_seconds": 16.222
+      },
+      {
+        "failed": 0,
+        "files": 13,
+        "nonzero_files": 0,
+        "passed": 52,
+        "shard_index": 3,
+        "wall_seconds": 24.532
+      },
+      {
+        "failed": 0,
+        "files": 12,
+        "nonzero_files": 0,
+        "passed": 46,
+        "shard_index": 4,
+        "wall_seconds": 17.858
+      },
+      {
+        "failed": 0,
+        "files": 12,
+        "nonzero_files": 0,
+        "passed": 47,
+        "shard_index": 5,
+        "wall_seconds": 25.303
+      }
+    ],
+    "test_files": 76,
+    "tests_failed": 0,
+    "tests_passed": 299,
+    "tests_skipped": 1,
+    "timeout_per_file_seconds": 180,
+    "verified_at_utc": "2026-08-11T22:24:05.065965+00:00",
+    "wall_seconds_sum": 126.303,
+    "workers_per_shard": 2
+  },
+  "storage_hard_answer": {
+    "production_replacement_ready": false,
+    "public_replay_without_generator_state": true,
+    "reason_not_production_ready": [
+      "readout-correlated intercept-lift security proof is not established",
+      "DFB future-input adaptive two-instance privacy is not established",
+      "uniform Z_p body-pad sampler is not implemented",
+      "active n-1-corrupt MPC execution of this fused generator is not implemented",
+      "Bitcoin authenticated one-label-per-bit release and regtest are not implemented"
+    ],
+    "two_complete_instances_plus_current_lock_manifest_below_one_mib": true
+  }
+}

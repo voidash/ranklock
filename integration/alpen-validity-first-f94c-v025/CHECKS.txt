@@ -1,0 +1,9 @@
+$ cd /mnt/data/alpen-validity-first && ./run_bundle_checks.sh
+..........                                                               [100%]
+10 passed in 0.08s
+
+$ cd /mnt/data/ranklock-v0.22.1/ranklock-v0.22.1-security-audit && PYTHONPATH=src pytest -q tests/test_validity_first_graph.py
+......                                                                   [100%]
+6 passed in 0.08s
+
+Not executed: cargo check/test and Bitcoin Core regtest (toolchain/binary unavailable).

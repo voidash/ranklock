@@ -1,0 +1,62 @@
+{
+  "context_encoding": {
+    "executable_one_scalar_collision": {
+      "common_field_image": 0,
+      "first_hex": "0000000000000000000000000000000000000000000000000000000000000000",
+      "second_hex": "73eda753299d7d483339d80809a1d80553bda402fffe5bfeffffffff00000001"
+    },
+    "injective_on_digest_values": true,
+    "method": "split SHA-256 digest into two canonical 128-bit scalars",
+    "one_scalar_modular_reduction_is_injective": false
+  },
+  "dynamic_predicate": {
+    "pairing_product_equations": 1,
+    "public_context_bits": 256,
+    "public_context_scalars": 2,
+    "witness_group_elements": {
+      "G1": 2,
+      "G2": 1,
+      "names": [
+        "A",
+        "B",
+        "C"
+      ]
+    }
+  },
+  "generated_at_utc": "2026-08-06T19:32:57.636487+00:00",
+  "legacy_input_comparison": {
+    "choice_count_reduction": 66.0,
+    "digest_bit_value_choices": 512,
+    "digest_catalog_bytes": 786432,
+    "digest_catalog_components": 8192,
+    "legacy_byte_value_choices": 33792,
+    "legacy_one_component_per_byte_value_bytes": 3244032,
+    "legacy_selected_bytes": 132,
+    "warning": "Choice-count comparison only. The two catalogs have different cryptographic component semantics and security amplification."
+  },
+  "reduction_claim": "After transparent proof recursion, the conditional-disclosure layer no longer consumes the full trace or sparse R1CS. It consumes one Groth16 PPE and a 256-bit replay-bound context.",
+  "remaining_assumptions": [
+    "knowledge-sound transparent proof for the complete RankVM relation",
+    "knowledge-sound recursive Groth16 wrapper over BLS12-381 Fr",
+    "maliciously secure projective conditional disclosure / witness encryption for one PPE",
+    "distributed or otherwise acceptable setup security for the wrapper and lock"
+  ],
+  "retained_material_envelope_ESTIMATE": {
+    "algebraic_public_input_scalars": 2,
+    "cap_bytes": 1048576,
+    "catalog_bytes": 786432,
+    "component_bytes": 96,
+    "components_per_bit": 32,
+    "digest_bits": 256,
+    "fits_cap": true,
+    "fixed_overhead_bytes": 65536,
+    "groth16_verifying_key_bytes": 480,
+    "maximum_components_per_bit_under_cap": 39,
+    "schema": "ranklock-projective-input-envelope-v1",
+    "total_bytes": 852448,
+    "warning": "This is a byte envelope, not a construction or security proof for the projective input catalog. The component count must be justified by the eventual maliciously secure PPE conditional-disclosure protocol."
+  },
+  "schema": "ranklock-groth16-projective-ppe-reduction-v1",
+  "status": "FORMAL_RECURSIVE_REDUCTION_CANDIDATE",
+  "warning": "The exponent-space equation and digest encoding are executable. The projective component count is an estimate, and no production transparent proof, wrapper SNARK, or PPE conditional-disclosure scheme is implemented here."
+}

@@ -1,0 +1,40 @@
+{
+  "canonical_roundtrip": true,
+  "claim_boundary": "Correctness, format and exact bytes only; this does not prove the open correlated-lift, uniform-pad, adaptive-q=2, active-MPC or Bitcoin-integration security gates.",
+  "manifest_bytes": 748,
+  "manifest_verified": true,
+  "margin_to_one_mib_bytes": 3624,
+  "profile_prime_count": 91,
+  "public_replay_without_generator_state": true,
+  "retained_object_bytes": 1044952,
+  "retained_object_sha256": "6d2a20d1a7f5a98531511f230e7b8444dc8e19c92e77ae941a71cb5a885af212",
+  "schema": "ranklock-v023-retained-object-verification-v1",
+  "slots": [
+    {
+      "curve_check_valid": true,
+      "direct_hidden_scalar_check": true,
+      "generator_state_supplied_to_replay": false,
+      "input_label_bytes": 8192,
+      "input_label_root": "6eb4cae9b940bedd05ebd02e9510388cfe69d81a7b813d293bf1663e85cf46a4",
+      "maps_evaluated": 256,
+      "output_point": "abc0762c868315893b8b98db602ad4988c96b9776c2335d4a3c93e87b5422e99",
+      "slot_bytes": 522102,
+      "slot_id": 0,
+      "slot_sha256": "88883cc94af23eca4fa33f12d3a831022657e63b7e0a771571fcac3f680d9dc4"
+    },
+    {
+      "curve_check_valid": true,
+      "direct_hidden_scalar_check": true,
+      "generator_state_supplied_to_replay": false,
+      "input_label_bytes": 8192,
+      "input_label_root": "e2b0b77cde8e5696bfd5ed258de949f5926953ee7e0f3ce6676b3e9e14b43be7",
+      "maps_evaluated": 256,
+      "output_point": "8d8641200e68004586d4f6a999b11936c1baf050d0b0995c3a5187836ef560a9",
+      "slot_bytes": 522102,
+      "slot_id": 1,
+      "slot_sha256": "a002bcab18edbc9690b377b8a7cc656dce682b69498cce6d72d0d607eb965e8d"
+    }
+  ],
+  "verified": true,
+  "verified_at_utc": "2026-08-11T22:27:53.627449+00:00"
+}

@@ -1,0 +1,64 @@
+{
+  "archive": "ranklock-v0.21-bounded-mpc-embryo-candidate.zip",
+  "archive_sha256_before_final_metadata_refresh": "6b31f1de318e62cc58a7ab01e700833fe57f73e4b009241d1d2617aa98698ab0",
+  "compileall": true,
+  "generated_at_utc": "2026-08-10T10:43:29.550420+00:00",
+  "manifest_verified": true,
+  "nonzero_files": 0,
+  "note": "All tests were executed from a fresh extraction. The first over-parallelized attempt was discarded; the recorded shards are clean sequential reruns.",
+  "schema": "ranklock-v021-clean-archive-verification-v1",
+  "shard_count": 6,
+  "shards": [
+    {
+      "failed": 0,
+      "files": 13,
+      "index": 0,
+      "nonzero_files": 0,
+      "passed": 46,
+      "wall_seconds": 15.966
+    },
+    {
+      "failed": 0,
+      "files": 13,
+      "index": 1,
+      "nonzero_files": 0,
+      "passed": 50,
+      "wall_seconds": 26.733
+    },
+    {
+      "failed": 0,
+      "files": 12,
+      "index": 2,
+      "nonzero_files": 0,
+      "passed": 43,
+      "wall_seconds": 13.437
+    },
+    {
+      "failed": 0,
+      "files": 12,
+      "index": 3,
+      "nonzero_files": 0,
+      "passed": 41,
+      "wall_seconds": 22.074
+    },
+    {
+      "failed": 0,
+      "files": 12,
+      "index": 4,
+      "nonzero_files": 0,
+      "passed": 52,
+      "wall_seconds": 14.729
+    },
+    {
+      "failed": 0,
+      "files": 12,
+      "index": 5,
+      "nonzero_files": 0,
+      "passed": 45,
+      "wall_seconds": 7.665
+    }
+  ],
+  "test_files": 74,
+  "tests_failed": 0,
+  "tests_passed": 277
+}

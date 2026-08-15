@@ -1,0 +1,4 @@
+.......s.....                                                            [100%]
+=========================== short test summary info ============================
+SKIPPED [1] tests/test_real_dfb_embryo.py:238: heavy 128-bit fixture is regenerated and checked by scripts/generate_v0221_security_results.py
+12 passed, 1 skipped in 1.14s

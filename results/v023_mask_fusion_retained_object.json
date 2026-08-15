@@ -1,0 +1,310 @@
+{
+  "claim_boundary": {
+    "adaptive_two_instance_proof": false,
+    "executable_correctness_and_byte_accounting": true,
+    "public_replay_without_generator_state": true,
+    "safe_for_funds": false,
+    "selective_privacy_proof_for_correlated_lifts": false
+  },
+  "construction": {
+    "body_join_encoding": "one 649-bit canonical CRT integer instead of 91 independently padded residues totaling 692 bits",
+    "curve_mask_rule": "choose the random curve-check secret so the two terminal masks sum to zero",
+    "no_wrap_rule": "every DFB readout R satisfies R + (q-1)^2 < CRT primorial",
+    "nonterminal_mask_rule": "transmitted affine intercept equals DFB readout modulo BN254",
+    "retained_curve_masks": 0,
+    "retained_map_masks": 768,
+    "terminal_mask_rule": "retain one aggregate BN254 mask per final X/Y/Z polynomial"
+  },
+  "decision": "EXECUTABLE_STORAGE_TARGET_MET_SECURITY_THEOREM_STILL_OPEN",
+  "generated_at_utc": "2026-08-11T22:27:30.396938+00:00",
+  "hard_answer": {
+    "production_replacement_ready": false,
+    "public_replay_without_generator_state": true,
+    "reason_not_production_ready": [
+      "readout-correlated intercept-lift security proof is not established",
+      "DFB future-input adaptive two-instance privacy is not established",
+      "uniform Z_p body-pad sampler is not implemented",
+      "active n-1-corrupt MPC execution of this fused generator is not implemented",
+      "Bitcoin authenticated one-label-per-bit release and regtest are not implemented"
+    ],
+    "two_complete_instances_plus_current_lock_manifest_below_one_mib": true
+  },
+  "manifest": {
+    "breakdown": {
+      "context_generator_transcript_digests_bytes": 96,
+      "manifest_checksum_bytes": 32,
+      "manifest_header_bytes": 16,
+      "positive_lock_bytes": 196,
+      "two_bip340_signatures_bytes": 128,
+      "two_contributor_pubkeys_bytes": 64,
+      "two_slot_descriptors_bytes": 216
+    },
+    "committee_frontier": {
+      "bytes_per_contributor": 96,
+      "first_failing_contributor_count": 40,
+      "fixed_manifest_bytes_without_contributors": 556,
+      "margin_at_maximum_contributors": 72,
+      "maximum_contributors_below_one_mib": 39,
+      "rows": [
+        {
+          "complete_retained_bytes": 1044952,
+          "contributors": 2,
+          "fits_one_mib": true,
+          "manifest_bytes": 748,
+          "margin_to_one_mib": 3624
+        },
+        {
+          "complete_retained_bytes": 1045048,
+          "contributors": 3,
+          "fits_one_mib": true,
+          "manifest_bytes": 844,
+          "margin_to_one_mib": 3528
+        },
+        {
+          "complete_retained_bytes": 1045240,
+          "contributors": 5,
+          "fits_one_mib": true,
+          "manifest_bytes": 1036,
+          "margin_to_one_mib": 3336
+        },
+        {
+          "complete_retained_bytes": 1045720,
+          "contributors": 10,
+          "fits_one_mib": true,
+          "manifest_bytes": 1516,
+          "margin_to_one_mib": 2856
+        },
+        {
+          "complete_retained_bytes": 1046296,
+          "contributors": 16,
+          "fits_one_mib": true,
+          "manifest_bytes": 2092,
+          "margin_to_one_mib": 2280
+        },
+        {
+          "complete_retained_bytes": 1047832,
+          "contributors": 32,
+          "fits_one_mib": true,
+          "manifest_bytes": 3628,
+          "margin_to_one_mib": 744
+        },
+        {
+          "complete_retained_bytes": 1048504,
+          "contributors": 39,
+          "fits_one_mib": true,
+          "manifest_bytes": 4300,
+          "margin_to_one_mib": 72
+        },
+        {
+          "complete_retained_bytes": 1048600,
+          "contributors": 40,
+          "fits_one_mib": false,
+          "manifest_bytes": 4396,
+          "margin_to_one_mib": -24
+        }
+      ]
+    },
+    "encoded_bytes": 748,
+    "encoded_sha256": "d37b49e2a16f7383c1d4a0532130c121c8bafcf657fe7e49ae8d46f88d792419",
+    "positive_lock_payload_bytes": 32,
+    "positive_lock_vk_binding": "32-byte digest; full fixed VK is treated as globally deployed bridge data",
+    "verified": true
+  },
+  "parameter_frontier": [
+    {
+      "compact_program_bytes": 480518,
+      "conservative_two_slot_vector_bits": 102.41269127166646,
+      "crt_residue_width_bits": 665,
+      "fits_one_mib": true,
+      "fused_mask_bytes": 24384,
+      "largest_prime": 457,
+      "margin_to_one_mib": 38024,
+      "per_component_smudging_bits": 115,
+      "prime_count": 88,
+      "primorial_width_bits": 623,
+      "standard_program_bytes": 496672,
+      "two_slot_plus_manifest_bytes": 1010552
+    },
+    {
+      "compact_program_bytes": 486379,
+      "conservative_two_slot_vector_bits": 110.41269127166646,
+      "crt_residue_width_bits": 674,
+      "fits_one_mib": true,
+      "fused_mask_bytes": 24384,
+      "largest_prime": 461,
+      "margin_to_one_mib": 26302,
+      "per_component_smudging_bits": 123,
+      "prime_count": 89,
+      "primorial_width_bits": 632,
+      "standard_program_bytes": 502534,
+      "two_slot_plus_manifest_bytes": 1022274
+    },
+    {
+      "compact_program_bytes": 492241,
+      "conservative_two_slot_vector_bits": 119.41269127166646,
+      "crt_residue_width_bits": 683,
+      "fits_one_mib": true,
+      "fused_mask_bytes": 24384,
+      "largest_prime": 463,
+      "margin_to_one_mib": 14578,
+      "per_component_smudging_bits": 132,
+      "prime_count": 90,
+      "primorial_width_bits": 641,
+      "standard_program_bytes": 508395,
+      "two_slot_plus_manifest_bytes": 1033998
+    },
+    {
+      "compact_program_bytes": 497718,
+      "conservative_two_slot_vector_bits": 128.41269127166646,
+      "crt_residue_width_bits": 692,
+      "fits_one_mib": true,
+      "fused_mask_bytes": 24384,
+      "largest_prime": 467,
+      "margin_to_one_mib": 3624,
+      "per_component_smudging_bits": 141,
+      "prime_count": 91,
+      "primorial_width_bits": 649,
+      "standard_program_bytes": 514257,
+      "two_slot_plus_manifest_bytes": 1044952
+    }
+  ],
+  "profile": {
+    "body_join_bits": 2129284,
+    "body_pad_max_total_variation_distance": 0.1715728591160221,
+    "body_pad_sampler": "reference nibble-width raw slice; nonuniform modulo odd CRT primes",
+    "body_pad_worst_prime": 181,
+    "chunk_join_bits_per_coordinate": 118784,
+    "chunk_size": 8,
+    "crt_bits": 692,
+    "dimensions": [
+      1795,
+      1282
+    ],
+    "ell": 22,
+    "extract_join_bits_per_coordinate": 710528,
+    "fold_bits": 14,
+    "fold_join_bits_per_coordinate": 163072,
+    "input_bits": 256,
+    "largest_prime": 467,
+    "num_chunks": 32,
+    "prime_count": 91,
+    "primorial_width_bits": 649,
+    "program_bits": 4114052,
+    "program_boundary": "join payload only; output masks are separate decode state",
+    "program_bytes": 514257,
+    "reference_revision": "e2b45be8ceaea0d51e4e7a9ef862b91b59ff255e",
+    "schema": "ranklock-dfb-reference-profile-v1",
+    "standalone_bundle_bits": 6243336,
+    "standalone_bundle_bytes": 780417,
+    "standalone_decode_bits": 2129284,
+    "standalone_decode_bytes": 266161,
+    "sub_widths": [
+      8,
+      8,
+      6
+    ],
+    "uniform_body_pad_sampling_implemented": false,
+    "whole_two_slot_conservative_smudging_bits": 128.41269127166646
+  },
+  "retained_object": {
+    "canonical_roundtrip": true,
+    "encoded_bytes": 1044952,
+    "manifest_first": true,
+    "path": "artifacts/ranklock-v023-two-slot-retained-object.bin",
+    "sha256": "6d2a20d1a7f5a98531511f230e7b8444dc8e19c92e77ae941a71cb5a885af212",
+    "slot_count": 2
+  },
+  "schema": "ranklock-v023-mask-fusion-retained-object-v1",
+  "slots": [
+    {
+      "artifact_root": "29c7e5b74942687c69d16801879302f18e88e2b086e0c0dcfe83d3012f99441a",
+      "compact_crt_savings_bytes": 16539,
+      "conditional_maps_verified": 256,
+      "expected_point": "abc0762c868315893b8b98db602ad4988c96b9776c2335d4a3c93e87b5422e99",
+      "fused_mask_bytes": 24384,
+      "fused_mask_sha256": "33ed26aefadf31330802e4a87d31610f42059d34e984540d1522658597a5024e",
+      "hidden_scalar": 37,
+      "individual_affine_masks": 3077,
+      "input_label_fixture_bytes": 8192,
+      "input_label_fixture_path_x": "artifacts/embryo-v023-slot-0-input-labels-x.bin",
+      "input_label_fixture_path_y": "artifacts/embryo-v023-slot-0-input-labels-y.bin",
+      "input_label_fixture_sha256_x": "dc2d7297a871589805ac1d2d5c390f744c9642eb4876d4e5b934b4c34718d811",
+      "input_label_fixture_sha256_y": "78010d489322974fc2c797ace27c36f25439e5322648c33ba8c140c93f654cbf",
+      "input_label_root": "6eb4cae9b940bedd05ebd02e9510388cfe69d81a7b813d293bf1663e85cf46a4",
+      "input_labels_are_runtime_not_retained": true,
+      "input_point": "8ba173a9155665e0f39b925d3118c2e68a63e5da3563e34603ffc5eb3e638584",
+      "nonzero_terminal_affine_masks": 2050,
+      "output_matches": true,
+      "output_point": "abc0762c868315893b8b98db602ad4988c96b9776c2335d4a3c93e87b5422e99",
+      "program_bytes_compact": 497718,
+      "program_bytes_standard_residue_encoding": 514257,
+      "program_sha256": "b7deb84799f4c1e9833cc2867125738877722bae4da98d503c2f05dc77bbfcf4",
+      "public_replay_output_point": "abc0762c868315893b8b98db602ad4988c96b9776c2335d4a3c93e87b5422e99",
+      "public_replay_without_generator_state": true,
+      "retained_final_polynomial_masks": 768,
+      "retained_slot_bytes": 522102,
+      "slot_id": 0,
+      "slot_sha256": "88883cc94af23eca4fa33f12d3a831022657e63b7e0a771571fcac3f680d9dc4",
+      "timings_seconds": {
+        "crt_reconstruct_seconds": 0.04297216000031767,
+        "dfb_raw_label_evaluation_seconds": 3.6061001429998214,
+        "embryo_fused_evaluation_seconds": 1.2325659649995941,
+        "generate_fused_template_seconds": 5.15173073599999
+      }
+    },
+    {
+      "artifact_root": "35e5eb4a48beece62771b4ba53d92a6a87cecef1b0f1c43d54446da074f00324",
+      "compact_crt_savings_bytes": 16539,
+      "conditional_maps_verified": 256,
+      "expected_point": "8d8641200e68004586d4f6a999b11936c1baf050d0b0995c3a5187836ef560a9",
+      "fused_mask_bytes": 24384,
+      "fused_mask_sha256": "4baa757f857ee3400e01d82fd1f3e057465bde1ad2e286f6fa84dbb6c92478d9",
+      "hidden_scalar": 37,
+      "individual_affine_masks": 3077,
+      "input_label_fixture_bytes": 8192,
+      "input_label_fixture_path_x": "artifacts/embryo-v023-slot-1-input-labels-x.bin",
+      "input_label_fixture_path_y": "artifacts/embryo-v023-slot-1-input-labels-y.bin",
+      "input_label_fixture_sha256_x": "f5b7d0cfa60a52fb414e0e5c541cc8a353f75f0778e9ba5fe482523419928ce3",
+      "input_label_fixture_sha256_y": "5c3d3b47f72a99c2cbc8f5f0ff8ce07b13a3f121f85477522b788bcb8237b949",
+      "input_label_root": "e2b0b77cde8e5696bfd5ed258de949f5926953ee7e0f3ce6676b3e9e14b43be7",
+      "input_labels_are_runtime_not_retained": true,
+      "input_point": "a20506af1674bdcf5ba4a9aa588f1ffd85913f5dc02defb836927752410f8108",
+      "nonzero_terminal_affine_masks": 2050,
+      "output_matches": true,
+      "output_point": "8d8641200e68004586d4f6a999b11936c1baf050d0b0995c3a5187836ef560a9",
+      "program_bytes_compact": 497718,
+      "program_bytes_standard_residue_encoding": 514257,
+      "program_sha256": "73d3ccee2d93edc9bf39bc3df15765801e4d5d958488fafaa0a20dbe98b7ae3e",
+      "public_replay_output_point": "8d8641200e68004586d4f6a999b11936c1baf050d0b0995c3a5187836ef560a9",
+      "public_replay_without_generator_state": true,
+      "retained_final_polynomial_masks": 768,
+      "retained_slot_bytes": 522102,
+      "slot_id": 1,
+      "slot_sha256": "a002bcab18edbc9690b377b8a7cc656dce682b69498cce6d72d0d607eb965e8d",
+      "timings_seconds": {
+        "crt_reconstruct_seconds": 0.040530346000196005,
+        "dfb_raw_label_evaluation_seconds": 3.5849015309995593,
+        "embryo_fused_evaluation_seconds": 1.1818562929993277,
+        "generate_fused_template_seconds": 5.18709146800029
+      }
+    }
+  ],
+  "storage": {
+    "compact_crt_join_savings_bytes_per_slot": 16539,
+    "complete_retained_bytes": 1044952,
+    "complete_slot_bytes": 522102,
+    "crt_bits": 692,
+    "fused_mask_bytes_per_slot": 24384,
+    "fused_output_mask_savings_bytes_per_slot": 241777,
+    "manifest_and_positive_lock_bytes": 748,
+    "margin_after_deleting_entire_manifest_bytes": 4372,
+    "margin_bytes": 3624,
+    "prime_count": 91,
+    "program_bytes_per_slot": 497718,
+    "slot_count": 2,
+    "slots_bytes": 1044204,
+    "standalone_decode_state_bytes_old_91_prime": 266161,
+    "target_bytes": 1048576,
+    "target_met": true
+  }
+}

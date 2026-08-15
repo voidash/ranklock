@@ -1,0 +1,157 @@
+{
+  "breakthrough_gates": {
+    "all_future_group_elements_in_G1": true,
+    "breakthrough_target_met": false,
+    "ciphertext_share_consistency_proof": false,
+    "complete_RankVM_invalidity_circuit": false,
+    "concrete_outer_curve_parameters_and_library": false,
+    "fixed_G2_rank_two": true,
+    "linear_response_LVA_audit": false,
+    "malicious_n_minus_1_activation": false,
+    "native_BN254_Fq_outer_curve_source_candidate": true,
+    "static_LVA_WE_compiler_instantiated": false
+  },
+  "breakthrough_target_met": false,
+  "changed_final_G1_rejected": true,
+  "circuit_scenarios": [
+    {
+      "DFB_leading_expression_plus_proof_bytes": 9568,
+      "circuit_gate_assumption": 25889,
+      "combined_prover_MSM_terms": 569558,
+      "current_projective_layer_plus_proof_bytes": 258698,
+      "name": "known sparse BN254-Fq product subtotal only",
+      "proof_bytes": 1280,
+      "proof_size_optimised_shared_CRS_MiB": 4.74066162109375,
+      "proof_size_optimised_shared_CRS_bytes": 4970944,
+      "prover_time_optimised_shared_CRS_MiB": 1.58038330078125,
+      "prover_time_optimised_shared_CRS_bytes": 1657152
+    },
+    {
+      "DFB_leading_expression_plus_proof_bytes": 9568,
+      "circuit_gate_assumption": 103556,
+      "combined_prover_MSM_terms": 2278232,
+      "current_projective_layer_plus_proof_bytes": 258698,
+      "name": "4x subtotal envelope",
+      "proof_bytes": 1280,
+      "proof_size_optimised_shared_CRS_MiB": 18.9619140625,
+      "proof_size_optimised_shared_CRS_bytes": 19883008,
+      "prover_time_optimised_shared_CRS_MiB": 6.32080078125,
+      "prover_time_optimised_shared_CRS_bytes": 6627840
+    },
+    {
+      "DFB_leading_expression_plus_proof_bytes": 9568,
+      "circuit_gate_assumption": 414224,
+      "combined_prover_MSM_terms": 9112928,
+      "current_projective_layer_plus_proof_bytes": 258698,
+      "name": "16x subtotal envelope",
+      "proof_bytes": 1280,
+      "proof_size_optimised_shared_CRS_MiB": 75.846923828125,
+      "proof_size_optimised_shared_CRS_bytes": 79531264,
+      "prover_time_optimised_shared_CRS_MiB": 25.282470703125,
+      "prover_time_optimised_shared_CRS_bytes": 26510592
+    },
+    {
+      "DFB_leading_expression_plus_proof_bytes": 9568,
+      "circuit_gate_assumption": 1656896,
+      "combined_prover_MSM_terms": 36451712,
+      "current_projective_layer_plus_proof_bytes": 258698,
+      "name": "64x subtotal envelope",
+      "proof_bytes": 1280,
+      "proof_size_optimised_shared_CRS_MiB": 303.386962890625,
+      "proof_size_optimised_shared_CRS_bytes": 318124288,
+      "prover_time_optimised_shared_CRS_MiB": 101.129150390625,
+      "prover_time_optimised_shared_CRS_bytes": 106041600
+    }
+  ],
+  "critical_boundary": "The proof shape passes, but a setup-time static lock still requires either a real LVA-WE compiler for the underlying interactive protocol or a relation that verifies Fiat-Shamir/beacon consistency. Neither is constructed.",
+  "dynamic_G2_proof_elements": 0,
+  "encoding_assumptions": {
+    "measured_curve_parameters": false,
+    "outer_curve_G1_compressed_bytes": 64,
+    "outer_curve_G2_compressed_bytes": 128,
+    "scalar_bytes": 32
+  },
+  "evidence_class": "REAL BN254 final-equation model + exact parameterised cost formulas; external SNARK/LVA-WE implementation not present",
+  "final_pairing_equation": {
+    "coefficient_matrix": [
+      [
+        1,
+        20736230089110892315812384390243734294414239958288874641398298703071818574795
+      ],
+      [
+        0,
+        21888242871839275222246405745257275088548364400416034343698204186575808495616
+      ]
+    ],
+    "direct_static_lock": false,
+    "dynamic_G1_terms": 2,
+    "dynamic_G2_terms": 0,
+    "fixed_G2_anchor_rank": 2,
+    "normalised_target": "identity",
+    "reason_direct_lock_fails": "Both sides of the identity-normalised pairing equation are future proof elements. A statement-specific KZG-WE session is not known at activation.",
+    "schema": "ranklock-one-sided-final-pairing-v1",
+    "static_witness_lift_candidate": true
+  },
+  "fixed_G2_anchor_rank": 2,
+  "next_decisive_task": "Audit the interactive monomial-basis prover message by message for linear response to hidden verifier queries. If it passes, instantiate the 2025 LVA-WE compiler on a small native-Fq RankVM invalidity circuit; otherwise kill this wrapper candidate.",
+  "positive_result": "A native-BN254-Fq outer wrapper can plausibly reduce the known 25,889-product kernel to a roughly 1.6 MiB shared CRS in prover-time mode under the explicit 64-byte-G1 planning assumption, while retaining a ~1.25 KiB proof and a rank-two fixed-G2 final verifier.",
+  "profile": {
+    "LVA_hidden_challenge_compiler_constructed": false,
+    "combined_MSM_terms_per_gate": 22,
+    "fixed_G2_anchor_rank": 2,
+    "implementation_in_repository": false,
+    "name": "flexible monomial-basis one-sided pairing SNARK profile",
+    "one_sided_pairing_interface_holds": true,
+    "outer_curve_to_BN254_claimed_by_source": true,
+    "proof_G1_elements": 10,
+    "proof_scalar_elements": 20,
+    "proof_size_CRS_multiplier": 3,
+    "prover_defined_G2_elements": 0,
+    "prover_time_CRS_multiplier": 1,
+    "public_Fiat_Shamir_transcript": true,
+    "schema": "ranklock-one-sided-snark-profile-v1",
+    "universal_updateable_CRS": true,
+    "verification_pairings": 2,
+    "verifier_storage_constant_in_circuit_size": true
+  },
+  "real_final_equation_accepts": true,
+  "schema": "ranklock-one-sided-wrapper-frontier-v1",
+  "transcript_strategies": [
+    {
+      "authentic_future_beacon_required": false,
+      "blockers": [
+        "Fiat-Shamir hash consistency must be verified inside the lock",
+        "strategy is not constructed for complete RankVM invalidity"
+      ],
+      "constructed": false,
+      "hash_inside_lock_required": true,
+      "hidden_linear_response_audit_required": false,
+      "name": "public Fiat-Shamir proof as witness",
+      "static_ciphertext_compatible": true
+    },
+    {
+      "authentic_future_beacon_required": false,
+      "blockers": [
+        "prover responses must be linear in encoded hidden verifier challenges",
+        "strategy is not constructed for complete RankVM invalidity"
+      ],
+      "constructed": false,
+      "hash_inside_lock_required": false,
+      "hidden_linear_response_audit_required": true,
+      "name": "underlying interactive LVA with hidden verifier challenges",
+      "static_ciphertext_compatible": true
+    },
+    {
+      "authentic_future_beacon_required": true,
+      "blockers": [
+        "future beacon authenticity must be enforced inside the relation",
+        "strategy is not constructed for complete RankVM invalidity"
+      ],
+      "constructed": false,
+      "hash_inside_lock_required": false,
+      "hidden_linear_response_audit_required": false,
+      "name": "future Bitcoin beacon replaces Fiat-Shamir",
+      "static_ciphertext_compatible": true
+    }
+  ]
+}

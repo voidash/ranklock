@@ -1,0 +1,84 @@
+{
+  "all_checks_passed": true,
+  "artifact_comparisons": [
+    {
+      "byte_identical": true,
+      "bytes": 522102,
+      "path": "artifacts/embryo-v0241-slot-0.bin",
+      "run1_sha256": "c9ed779df7df392d0b4231ea4e6dd319e24baa25f0ac6ff7140e02d9f56ae2d9",
+      "run2_sha256": "c9ed779df7df392d0b4231ea4e6dd319e24baa25f0ac6ff7140e02d9f56ae2d9"
+    },
+    {
+      "byte_identical": true,
+      "bytes": 522102,
+      "path": "artifacts/embryo-v0241-slot-1.bin",
+      "run1_sha256": "aa2c0ef1c31d9400e0d79907dda1ad981a52dd5863e5f844ca19e91861d5dca8",
+      "run2_sha256": "aa2c0ef1c31d9400e0d79907dda1ad981a52dd5863e5f844ca19e91861d5dca8"
+    },
+    {
+      "byte_identical": true,
+      "bytes": 24836,
+      "path": "artifacts/ranklock-v0241-slot-0-authorized-label-release.bin",
+      "run1_sha256": "30b2e36f7cd2936723b4437e2fd8f36e1f09ad83f456a9f9117cbcb8a8a0c82d",
+      "run2_sha256": "30b2e36f7cd2936723b4437e2fd8f36e1f09ad83f456a9f9117cbcb8a8a0c82d"
+    },
+    {
+      "byte_identical": true,
+      "bytes": 24836,
+      "path": "artifacts/ranklock-v0241-slot-1-authorized-label-release.bin",
+      "run1_sha256": "994cde513998be70e4f784eb024baa0ae4323e917e54785edf8f49a7b7c70f56",
+      "run2_sha256": "994cde513998be70e4f784eb024baa0ae4323e917e54785edf8f49a7b7c70f56"
+    },
+    {
+      "byte_identical": true,
+      "bytes": 748,
+      "path": "artifacts/ranklock-v0241-two-slot-manifest.bin",
+      "run1_sha256": "40ef51b65508f96d412b6d2070007637af88e67b5afac82c374b1550bf143c4a",
+      "run2_sha256": "40ef51b65508f96d412b6d2070007637af88e67b5afac82c374b1550bf143c4a"
+    },
+    {
+      "byte_identical": true,
+      "bytes": 1044952,
+      "path": "artifacts/ranklock-v0241-two-slot-retained-object.bin",
+      "run1_sha256": "68fb0193121ec7935f67c101915f06bbea65642163eec79585562a101d626ec1",
+      "run2_sha256": "68fb0193121ec7935f67c101915f06bbea65642163eec79585562a101d626ec1"
+    }
+  ],
+  "checks": {
+    "compileall": true,
+    "full_test_suite": true,
+    "independent_public_replay": true,
+    "locked_environment": true,
+    "normalized_reports_equal": true,
+    "retained_object_below_one_mib": true,
+    "safe_for_funds_remains_false": true,
+    "two_deterministic_generations_byte_identical": true
+  },
+  "generated_at_utc": "2026-08-14T14:17:26.198615+00:00",
+  "package_version": "0.24.1",
+  "public_conformance_seed_fingerprint": "942e47085235bedd0598f51e99843fa30e46b683b62aa17e5227c1281cf584ab",
+  "python": "3.13.5",
+  "remaining_production_gates": [
+    "actively secure dishonest-majority MPC execution of this exact fused and sealed generator",
+    "Bitcoin witness extraction plus Bitcoin Core regtest for atomic seed/label release and burn semantics",
+    "constant-time implementation, denial-of-service hardening and independent cryptographic audit"
+  ],
+  "report_comparisons": [
+    {
+      "normalized_equal": true,
+      "path": "results/v0241_security_qualification.json"
+    },
+    {
+      "normalized_equal": true,
+      "path": "results/v0241_independent_verification.json"
+    }
+  ],
+  "safe_for_funds": false,
+  "schema": "ranklock-v0241-reproducibility-run-v1",
+  "tests": {
+    "failed": 0,
+    "files": 78,
+    "nonzero_files": 0,
+    "passed": 305
+  }
+}

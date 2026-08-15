@@ -1,0 +1,32 @@
+{
+  "activation_nizk_statement": "prove knowledge of the setup scale binding every G2 anchor and the hash-derived secp256k1 public key",
+  "activation_relation_executable": true,
+  "activation_zero_knowledge_proof_constructed": false,
+  "breakthrough_target_met": false,
+  "ciphertext_substitution_attack_eliminated": true,
+  "committee_ciphertext_bytes": 0,
+  "committee_retained_bytes": null,
+  "committee_size": 0,
+  "derived_fault_public_key_hex": "02981a082c7efb6e03f2658ce0f5b5e9c57a6fc464fd20d1708a8c595fda6440c5",
+  "evidence_class": "REAL BN254 pairing sessions + real secp256k1 key derivation",
+  "fault_key_context_bound_to": [
+    "pairing session",
+    "relation digest",
+    "32-byte epoch",
+    "signer id"
+  ],
+  "fault_scalar_recovered_from_accepting_session": true,
+  "reference_anchor_rank": 2,
+  "reference_relation_bytes": 1062,
+  "reference_relation_terms": 11,
+  "reference_setup_key_bytes": 416,
+  "schema": "ranklock-ciphertext-free-fault-key-frontier-v1",
+  "security_boundary": [
+    "Hash-to-scalar is modelled with SHA-256 and must be domain-separated in production.",
+    "Committee key aggregation is MuSig-style rogue-key-resistant hashing, not a proof of BIP327 conformance.",
+    "Without the public activation NIZK a malicious contributor can publish a key that never unlocks.",
+    "All committee shares are required for liveness; one honest hidden scale is sufficient for pre-witness key secrecy."
+  ],
+  "single_share_ciphertext_bytes": 0,
+  "single_share_retained_bytes": 1553
+}
