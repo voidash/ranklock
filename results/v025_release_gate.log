@@ -8,23 +8,23 @@
     },
     "bitcoin_policy": {
       "path": "results/v025_bitcoin_policy_envelope.json",
-      "sha256": "0314b82e8fe21b820b7a8d34b3ba3372346b71b3b76b80e5d96ba26747875aca"
+      "sha256": "d27de56dfe0e5871844a465061d3b1a498276f818c05ded23761d8f17bb6f12b"
     },
     "committee": {
       "path": "results/v025_committee_qualification.json",
-      "sha256": "96df0dc308c01e3798417d44b1398d8cfaf1c576ed5bf284fc9eb1d5a11fdb52"
+      "sha256": "c7a05bb9680d7e5042312bf8724d439aad0a0897910401997e42cfb04ca160e3"
     },
     "hardening": {
       "path": "results/v0251_security_hardening.json",
-      "sha256": "505f18539455ea8419f753f7bc82071780236a9eaa2ac3c288954480fceacd78"
+      "sha256": "720d2a1a3f4f41647e8cc5a418856cce82c2472b88d232864765d2625b33892a"
     },
     "split_scalar": {
       "path": "results/v025_split_scalar_qualification.json",
-      "sha256": "7f61770b1e267936db7fda096024c43127dcc0ae995263a3085b2ae4f84865f7"
+      "sha256": "da7af5eb596952b0039e88299df0cadb789f5ccb416ba8326a9d6c299bd0bae7"
     },
     "tests": {
       "path": "results/v025_test_files.json",
-      "sha256": "5a336890cd61177383373e7fd6475f63f16b25717af19aeed202d828f77bb878"
+      "sha256": "9e03d95ae1876c9e50e4c6f4eb2d4f8535898a4ec62427222ac00661983ac491"
     }
   },
   "external_attestations_must_be_verified_by": "ranklock.deployment_policy.evaluate_deployment",

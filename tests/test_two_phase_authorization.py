@@ -37,6 +37,12 @@ from ranklock.two_phase_authorization import (
 )
 
 
+# The two-phase protocol tests exercise share reconstruction and ledger
+# ordering, not consensus signature validity, so a structurally valid
+# 64-byte placeholder is sufficient for the witness layout here.
+PLACEHOLDER_SIGNATURE = bytes(64)
+
+
 def _encoding(bits: int, offset: int) -> CoordinateInputEncoding:
     words = (np.arange(bits * 2, dtype=np.uint64) + np.uint64(offset)).reshape(bits, 2)
     return CoordinateInputEncoding(
@@ -62,7 +68,10 @@ def _fixture(tmp_path):
         program_seed=program_seed,
     )
     rules = witness_rules_from_label_pairs(tree.label_pairs, input_bits=input_bits)
-    script = selector_validation_tapscript(rules)
+    authorizer_secret = 41
+    script = selector_validation_tapscript(
+        rules, authorizer_pubkey=public_key(authorizer_secret)
+    )
     control = b"\xc0" + sha256(b"two-phase/control").digest()
     selected = tuple(
         tree.label_pairs[coordinate * input_bits + bit][
@@ -78,7 +87,7 @@ def _fixture(tmp_path):
         previous_vout=0,
         output_value_sat=100_000,
         output_script=output_script,
-        witness_stack=selected + (script, control),
+        witness_stack=selected + (PLACEHOLDER_SIGNATURE, script, control),
     )
     parsed = parse_bitcoin_transaction(raw)
     artifact = b"sealed two-phase program" * 16
@@ -89,7 +98,6 @@ def _fixture(tmp_path):
         independence_nonce=b"two-phase-independent-slot",
     )
     participant_secrets = (11, 13, 17)
-    authorizer_secret = 41
     activation, guide, participants = dealer_split_fixture(
         tree,
         chain_genesis_hash=chain,
@@ -109,6 +117,7 @@ def _fixture(tmp_path):
             input_bits=input_bits,
             tapscript_hash=witness_script_hash(script),
             control_block_hash=witness_control_hash(control),
+            authorizer_pubkey=public_key(authorizer_secret),
             rules=rules,
         ),
         activation=activation,
@@ -290,7 +299,8 @@ def test_seed_share_is_withheld_for_tampered_or_point_mismatched_confirmation(tm
         previous_vout=0,
         output_value_sat=parse_bitcoin_transaction(row["raw"]).output_values[0],
         output_script=parse_bitcoin_transaction(row["raw"]).output_scripts[0],
-        witness_stack=tuple(tampered_items) + (row["script"], row["control"]),
+        witness_stack=tuple(tampered_items)
+        + (PLACEHOLDER_SIGNATURE, row["script"], row["control"]),
     )
     # Witness mutation preserves txid/stripped plan but selects a different point.
     assert parse_bitcoin_transaction(tampered_raw).txid == parse_bitcoin_transaction(row["raw"]).txid

@@ -34,10 +34,12 @@ from ranklock.bitcoin_witness_selection import (
     SignedBitcoinWitnessPolicy,
     UnsignedBitcoinWitnessPolicy,
     selector_validation_tapscript,
+    sign_authorization_witness,
     witness_control_hash,
     witness_rules_from_label_pairs,
     witness_script_hash,
 )
+from ranklock.predicate_locked_hashlock import NUMS_INTERNAL_KEY
 from ranklock.bn254_real import (
     CURVE_ORDER,
     G1,
@@ -97,6 +99,9 @@ OUT = ROOT / "artifacts" / "v025-committee-conformance"
 RESULTS = ROOT / "results"
 SEED = b"ranklock-v025-public-committee-conformance-seed"
 DEPOSIT_INPUT_VALUE_SAT = 160_000
+# Structural stand-in while a transaction is being precommitted; replaced
+# by the real signature once the exact sighash is known.
+_PLACEHOLDER_SIGNATURE = bytes(64)
 SLOT_OUTPUT_VALUES_SAT = (130_000, 100_000)
 
 
@@ -139,8 +144,14 @@ def _compact(value: int) -> bytes:
     return b"\xff" + value.to_bytes(8, "little")
 
 
-def _taproot_script_output(script: bytes, *, internal_secret: int) -> tuple[bytes, bytes]:
-    internal_key = public_key(internal_secret)
+def _taproot_script_output(script: bytes) -> tuple[bytes, bytes]:
+    """Commit ``script`` under the shared unspendable NUMS internal key.
+
+    A derivable internal key would leave a key-path spend that bypasses the
+    authorization script entirely.
+    """
+
+    internal_key = NUMS_INTERNAL_KEY
     merkle_root = tapleaf_hash(script)
     internal_point = lift_x(int.from_bytes(internal_key, "big"))
     tweak = int.from_bytes(tagged_hash("TapTweak", internal_key + merkle_root), "big")
@@ -156,16 +167,15 @@ def _taproot_script_output(script: bytes, *, internal_secret: int) -> tuple[byte
 
 def _selector_template(
     tree: LabelCommitmentTree,
+    *,
+    authorizer_pubkey: bytes,
 ) -> tuple[tuple[object, ...], bytes, bytes, bytes]:
     rules = witness_rules_from_label_pairs(
         tree.label_pairs,
         input_bits=tree.input_bits,
     )
-    tapscript = selector_validation_tapscript(rules)
-    output_script, control = _taproot_script_output(
-        tapscript,
-        internal_secret=0x250000 + tree.slot_id,
-    )
+    tapscript = selector_validation_tapscript(rules, authorizer_pubkey=authorizer_pubkey)
+    output_script, control = _taproot_script_output(tapscript)
     return tuple(rules), tapscript, control, output_script
 
 
@@ -192,8 +202,15 @@ def _counterproof_transaction(
     witness_items: tuple[bytes, ...],
     tapscript: bytes,
     control: bytes,
+    authorizer_signature: bytes = _PLACEHOLDER_SIGNATURE,
 ) -> bytes:
-    """Canonical one-input SegWit transaction; witness does not affect txid."""
+    """Canonical one-input SegWit transaction; witness does not affect txid.
+
+    ``authorizer_signature`` sits between the selector items and the tapscript
+    so the script's leading OP_CHECKSIGVERIFY consumes it first.  Because the
+    BIP341 script-path sighash excludes the spending input's own witness, the
+    placeholder default yields the same txid as the finally-signed transaction.
+    """
 
     if len(previous_txid) != 32:
         raise ValueError("previous transaction id must be 32 bytes")
@@ -207,7 +224,11 @@ def _counterproof_transaction(
     if not 0 <= int(output_value_sat) < 2**64:
         raise ValueError("output value must fit u64")
     txout = int(output_value_sat).to_bytes(8, "little") + _compact(len(output_script)) + output_script
-    stack = tuple(witness_items) + (bytes(tapscript), bytes(control))
+    stack = tuple(witness_items) + (
+        bytes(authorizer_signature),
+        bytes(tapscript),
+        bytes(control),
+    )
     witness = _compact(len(stack)) + b"".join(
         _compact(len(item)) + item for item in stack
     )
@@ -362,7 +383,10 @@ def main() -> None:
             }
         )
 
-    selector_templates = tuple(_selector_template(tree) for tree in trees)
+    authorizer_pubkey = public_key(authorizer_secret)
+    selector_templates = tuple(
+        _selector_template(tree, authorizer_pubkey=authorizer_pubkey) for tree in trees
+    )
     final_output_script = b"\x51\x20" + _sha(
         b"ranklock/v025/final-output-key/v1\x00", b"positive-lock"
     )
@@ -446,6 +470,7 @@ def main() -> None:
                 input_bits=input_bits,
                 tapscript_hash=witness_script_hash(selector_templates[slot_id][1]),
                 control_block_hash=witness_control_hash(selector_templates[slot_id][2]),
+                authorizer_pubkey=authorizer_pubkey,
                 rules=selector_templates[slot_id][0],
             ),
             activation=activations[slot_id],
@@ -526,14 +551,33 @@ def main() -> None:
                 policy=witness_policies[slot_id],
                 responses=tuple(witness_responses),
             )
-            raw_tx = _counterproof_transaction(
-                previous_txid=deposit_txid if slot_id == 0 else planned_txids[0],
-                previous_vout=0,
-                output_script=selector_templates[1][3] if slot_id == 0 else final_output_script,
-                output_value_sat=SLOT_OUTPUT_VALUES_SAT[slot_id],
-                witness_items=reconstructed_witness.witness_stack_items,
+            transaction_fields = {
+                "previous_txid": deposit_txid if slot_id == 0 else planned_txids[0],
+                "previous_vout": 0,
+                "output_script": (
+                    selector_templates[1][3] if slot_id == 0 else final_output_script
+                ),
+                "output_value_sat": SLOT_OUTPUT_VALUES_SAT[slot_id],
+                "witness_items": reconstructed_witness.witness_stack_items,
+                "tapscript": selector_templates[slot_id][1],
+                "control": selector_templates[slot_id][2],
+            }
+            # Sign the exact precommitted transaction, then splice the
+            # signature in.  The BIP341 script-path sighash excludes the
+            # spending input's own witness, so the txid is unchanged.
+            unsigned_tx = _counterproof_transaction(**transaction_fields)
+            authorizer_signature = sign_authorization_witness(
+                unsigned_tx,
+                authorization_input_index=0,
+                spent_values_sat=(
+                    (DEPOSIT_INPUT_VALUE_SAT, SLOT_OUTPUT_VALUES_SAT[0])[slot_id],
+                ),
+                spent_scripts=(selector_templates[slot_id][3],),
                 tapscript=selector_templates[slot_id][1],
-                control=selector_templates[slot_id][2],
+                request_authorizer_secret=authorizer_secret,
+            )
+            raw_tx = _counterproof_transaction(
+                **transaction_fields, authorizer_signature=authorizer_signature
             )
             parsed_tx = parse_bitcoin_transaction(raw_tx)
             if parsed_tx.txid != planned_txids[slot_id]:

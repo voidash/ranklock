@@ -1,6 +1,6 @@
 {
   "all_checks_passed": true,
-  "authorization_plan_digest": "e21917779e7bea2fafa26b24ad8c47393f9553ce006114711a953774a6ac418c",
+  "authorization_plan_digest": "f341646744b7ee2dbcebd4ed3be866da491e2860edaf15f2fa7d783e75169c0d",
   "bitcoin_core_executed": false,
   "bitcoin_core_passed": false,
   "checks": {
@@ -40,9 +40,9 @@
   },
   "committee_retained_object": {
     "bytes": 1044952,
-    "sha256": "9e4427636b9ea95063244ffc9791b83af06a70853e4a3fee01b38c32b9496bb8"
+    "sha256": "ef95858321ab55ab6b66a2dfd326b0cd1eebd51765f81662b4cfa25421cdeb08"
   },
   "safe_for_funds": false,
   "schema": "ranklock-v025-evidence-verification-v1",
-  "split_scalar_bundle_digest": "bb3959e50810f6ea1fb7b5638c797c550cfb726cba731fcfc46d15280ccdd792"
+  "split_scalar_bundle_digest": "b4aa9feb7175bcb325df86eebbbd835e497f466ef03957ac5ab3b4079cce9662"
 }

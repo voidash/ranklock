@@ -116,6 +116,12 @@ def _select_common_items(
         result.append(pair[(values[coordinate] >> bit) & 1])
     return tuple(result)
 
+# The split-scalar tests cover per-participant policy binding and release
+# ordering, not consensus signature validity, so a structurally valid
+# 64-byte placeholder is sufficient for the witness layout here.
+PLACEHOLDER_SIGNATURE = bytes(64)
+
+
 def _raw_tx(
     *,
     previous_txid: bytes,
@@ -195,7 +201,9 @@ def _fixture(tmp_path):
 
     point = multiply(G1, 777, group="g1")
     rules, selected, selector_alternatives = _common_selector_material(point)
-    tapscript = selector_validation_tapscript(rules)
+    tapscript = selector_validation_tapscript(
+        rules, authorizer_pubkey=public_key(authorizer_secret)
+    )
     control = b"\xc0" + b"I" * 32
     continuation_script = b"\x51\x20" + sha256(b"continuation").digest()
     final_script = b"\x51\x20" + sha256(b"final").digest()
@@ -203,7 +211,7 @@ def _fixture(tmp_path):
     raw0 = _raw_tx(
         previous_txid=deposit_txid,
         previous_vout=2,
-        witness_items=selected + (tapscript, control),
+        witness_items=selected + (PLACEHOLDER_SIGNATURE, tapscript, control),
         output_script=continuation_script,
         output_value=90_000,
     )
@@ -211,7 +219,7 @@ def _fixture(tmp_path):
     raw1 = _raw_tx(
         previous_txid=txid0,
         previous_vout=0,
-        witness_items=selected + (tapscript, control),
+        witness_items=selected + (PLACEHOLDER_SIGNATURE, tapscript, control),
         output_script=final_script,
         output_value=80_000,
     )
@@ -313,6 +321,7 @@ def _fixture(tmp_path):
         input_bits=INPUT_BITS,
         tapscript_hash=witness_script_hash(tapscript),
         control_block_hash=witness_control_hash(control),
+        authorizer_pubkey=public_key(authorizer_secret),
         rules=rules,
     )
     policies = tuple(
@@ -457,7 +466,8 @@ def test_alternate_valid_point_same_txid_is_permanently_rejected(tmp_path):
     alternate_raw = _raw_tx(
         previous_txid=parsed.input_outpoints[0][:32],
         previous_vout=int.from_bytes(parsed.input_outpoints[0][32:], "little"),
-        witness_items=alternate_items + (fixture["tapscript"], fixture["control"]),
+        witness_items=alternate_items
+        + (PLACEHOLDER_SIGNATURE, fixture["tapscript"], fixture["control"]),
         output_script=parsed.output_scripts[0],
         output_value=parsed.output_values[0],
     )
@@ -528,6 +538,7 @@ def test_policy_set_rejects_participant_specific_selector_rules(tmp_path):
         input_bits=base.input_bits,
         tapscript_hash=base.tapscript_hash,
         control_block_hash=base.control_block_hash,
+        authorizer_pubkey=base.authorizer_pubkey,
         rules=tuple(changed_rules),
     )
     divergent = SignedSplitScalarWitnessPolicy.create(

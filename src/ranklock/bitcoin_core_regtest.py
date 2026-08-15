@@ -42,6 +42,7 @@ from .bitcoin_witness_selection import (
     WitnessItemRule,
     derive_witness_selection,
     selector_validation_tapscript,
+    sign_authorization_witness,
     witness_control_hash,
     witness_rules_from_label_pairs,
     witness_script_hash,
@@ -55,6 +56,7 @@ from .committee_authorization import (
 )
 from .dfb_real import CoordinateInputEncoding
 from .durable_slot_ledger import DurableSlotLedger
+from .predicate_locked_hashlock import NUMS_INTERNAL_KEY
 from .rollback_witness import SqliteRollbackWitness
 from .two_phase_authorization import (
     ParticipantSeedResponse,
@@ -77,6 +79,10 @@ BECH32M_CONST = 0x2BC830A3
 INPUT_BITS = 256
 EXPECTED_CORE_VERSION = 310100
 EXPECTED_CORE_RELEASE = "31.1"
+# Structural stand-in used while the precommitted transaction is being built.
+# BIP341 script-path sighashes exclude the spending input's own witness, so
+# replacing this with the real signature leaves the txid unchanged.
+_PLACEHOLDER_SIGNATURE = bytes(64)
 
 
 def _compact(value: int) -> bytes:
@@ -142,8 +148,17 @@ def _segwit_address(hrp: str, version: int, program: bytes) -> str:
     return hrp + "1" + "".join(BECH32_CHARSET[value] for value in data + checksum)
 
 
-def _taproot_script_output(script: bytes, *, internal_secret: int) -> tuple[bytes, bytes, str]:
-    internal_key = public_key(internal_secret)
+def _taproot_script_output(script: bytes) -> tuple[bytes, bytes, str]:
+    """Commit ``script`` under an unspendable NUMS internal key.
+
+    Earlier revisions derived the internal key from a hard-coded secret, which
+    left a key-path spend that bypassed the authorization script entirely.
+    Reusing the shared ``NUMS_INTERNAL_KEY`` (the same nothing-up-my-sleeve key
+    the validity-first connector uses) makes the committed tapleaf the only
+    way to spend the output.
+    """
+
+    internal_key = NUMS_INTERNAL_KEY
     merkle_root = tapleaf_hash(script)
     internal_point = lift_x(int.from_bytes(internal_key, "big"))
     tweak = int.from_bytes(tagged_hash("TapTweak", internal_key + merkle_root), "big")
@@ -492,14 +507,11 @@ def run_bitcoin_core_regtest(
         point0 = multiply(G1, 123456789, group="g1")
         rules0, selected0 = _tree_selector_material(trees[0], point0)
         rules1, placeholder_selected1 = _tree_selector_material(trees[1], G1)
-        script0 = selector_validation_tapscript(rules0)
-        script1 = selector_validation_tapscript(rules1)
-        funding_script, control0, funding_address = _taproot_script_output(
-            script0, internal_secret=0x12345
-        )
-        continuation_script, control1, _continuation_address = _taproot_script_output(
-            script1, internal_secret=0x23456
-        )
+        authorizer_pubkey = public_key(authorizer_secret)
+        script0 = selector_validation_tapscript(rules0, authorizer_pubkey=authorizer_pubkey)
+        script1 = selector_validation_tapscript(rules1, authorizer_pubkey=authorizer_pubkey)
+        funding_script, control0, funding_address = _taproot_script_output(script0)
+        continuation_script, control1, _continuation_address = _taproot_script_output(script1)
         funding_txid = str(rpc.call("sendtoaddress", funding_address, 0.02))
         rpc.call("generatetoaddress", 1, mining_address)
         funding = rpc.call("getrawtransaction", funding_txid, True)
@@ -520,12 +532,16 @@ def run_bitcoin_core_regtest(
             raise BitcoinCoreRegtestError("destination address info is malformed")
         final_script = bytes.fromhex(str(destination_info["scriptPubKey"]))
 
+        # The authorizer signature commits to the BIP341 sighash, which does
+        # not include the spending input's own witness.  The plan therefore
+        # commits to a transaction built with a placeholder signature and the
+        # real signature is spliced in later without changing the txid.
         raw0 = _serialize_transaction(
             previous_txid=bytes.fromhex(funding_txid),
             previous_vout=previous_vout,
             output_value_sat=previous_value_sat - 30_000,
             output_script=continuation_script,
-            witness_stack=selected0 + (script0, control0),
+            witness_stack=selected0 + (_PLACEHOLDER_SIGNATURE, script0, control0),
         )
         txid0 = parse_bitcoin_transaction(raw0).txid
         placeholder1 = _serialize_transaction(
@@ -533,8 +549,13 @@ def run_bitcoin_core_regtest(
             previous_vout=0,
             output_value_sat=previous_value_sat - 60_000,
             output_script=final_script,
-            witness_stack=placeholder_selected1 + (script1, control1),
+            witness_stack=placeholder_selected1
+            + (_PLACEHOLDER_SIGNATURE, script1, control1),
         )
+        # Value and scriptPubKey of the output each authorization spends; the
+        # sighash commits to both, so the fee cannot be mutated silently.
+        spent_values = (previous_value_sat, previous_value_sat - 30_000)
+        spent_scripts = (funding_script, continuation_script)
         plan = build_authorization_transaction_plan(
             chain_genesis_hash=chain_genesis,
             deposit_outpoint=bytes.fromhex(funding_txid) + previous_vout.to_bytes(4, "little"),
@@ -580,6 +601,7 @@ def run_bitcoin_core_regtest(
                 input_bits=INPUT_BITS,
                 tapscript_hash=witness_script_hash(script),
                 control_block_hash=witness_control_hash(control),
+                authorizer_pubkey=authorizer_pubkey,
                 rules=rules,
             )
             policy = SignedBitcoinWitnessPolicy.create(
@@ -679,14 +701,37 @@ def run_bitcoin_core_regtest(
                 output_script = final_script
                 script = script1
                 control = control1
+            # Build once with the placeholder so the sighash is taken over the
+            # exact precommitted transaction, then splice in the real
+            # signature.  The txid is identical either way.
+            unsigned_raw = _serialize_transaction(
+                previous_txid=previous_txid,
+                previous_vout=previous_index,
+                output_value_sat=output_value,
+                output_script=output_script,
+                witness_stack=reconstructed_witness.witness_stack_items
+                + (_PLACEHOLDER_SIGNATURE, script, control),
+            )
+            authorization_signature = sign_authorization_witness(
+                unsigned_raw,
+                authorization_input_index=0,
+                spent_values_sat=(spent_values[slot_id],),
+                spent_scripts=(spent_scripts[slot_id],),
+                tapscript=script,
+                request_authorizer_secret=authorizer_secret,
+            )
             raw = _serialize_transaction(
                 previous_txid=previous_txid,
                 previous_vout=previous_index,
                 output_value_sat=output_value,
                 output_script=output_script,
                 witness_stack=reconstructed_witness.witness_stack_items
-                + (script, control),
+                + (authorization_signature, script, control),
             )
+            if parse_bitcoin_transaction(raw).txid != parse_bitcoin_transaction(unsigned_raw).txid:
+                raise BitcoinCoreRegtestError(
+                    "authorization signature changed the precommitted txid"
+                )
             if not plan.verify_raw_transaction(slot_id, raw):
                 raise BitcoinCoreRegtestError(
                     "adaptive witness changed the precommitted stripped transaction"

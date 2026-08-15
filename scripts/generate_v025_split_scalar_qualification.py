@@ -33,10 +33,20 @@ from ranklock.bitcoin_witness_selection import (
     WitnessItemRule,
     UnsignedBitcoinWitnessPolicy,
     selector_validation_tapscript,
+    sign_authorization_witness,
     verify_request_matches_witness,
     witness_control_hash,
     witness_script_hash,
 )
+from ranklock.predicate_locked_hashlock import NUMS_INTERNAL_KEY
+
+# Split-scalar keeps label *release* N-of-N: every participant must contribute
+# a scalar share before any label is reconstructed.  Authorizing the Bitcoin
+# carrier transaction is a separate concern, and the ACK leaf's
+# OP_CHECKSIGVERIFY takes exactly one key, so this deterministic fixture uses a
+# single designated carrier authorizer.  Like every other secret in this
+# conformance fixture it is public by construction and must never be funded.
+CARRIER_AUTHORIZER_SECRET = 0x251000
 from ranklock.bn254_real import CURVE_ORDER, affine, compress_g1, decompress_g1, eq_points, multiply
 from ranklock.bounded_mpc_embryo import (
     BoundedSlotLedger,
@@ -107,8 +117,10 @@ def _generator_code_hash(profile: DfbProfile, *, namespace_base: int) -> bytes:
     return h.digest()
 
 
-def _taproot_script_output(script: bytes, *, internal_secret: int) -> tuple[bytes, bytes]:
-    internal_key = public_key(internal_secret)
+def _taproot_script_output(script: bytes) -> tuple[bytes, bytes]:
+    """Commit ``script`` under the shared unspendable NUMS internal key."""
+
+    internal_key = NUMS_INTERNAL_KEY
     merkle_root = tapleaf_hash(script)
     internal_point = lift_x(int.from_bytes(internal_key, "big"))
     tweak = int.from_bytes(tagged_hash("TapTweak", internal_key + merkle_root), "big")
@@ -143,11 +155,10 @@ def _selector_template(*, slot_id: int, input_bits: int) -> tuple[
                     one_item=one,
                 )
             )
-    tapscript = selector_validation_tapscript(rules)
-    output_script, control = _taproot_script_output(
-        tapscript,
-        internal_secret=0x251000 + slot_id,
+    tapscript = selector_validation_tapscript(
+        rules, authorizer_pubkey=public_key(CARRIER_AUTHORIZER_SECRET)
     )
+    output_script, control = _taproot_script_output(tapscript)
     return tuple(rules), tuple(alternatives), tapscript, control, output_script
 
 
@@ -291,6 +302,7 @@ def _split_scalar_policy_set(
         input_bits=input_bits,
         tapscript_hash=witness_script_hash(tapscript),
         control_block_hash=witness_control_hash(control),
+        authorizer_pubkey=public_key(CARRIER_AUTHORIZER_SECRET),
         rules=rules,
     )
     messages = tuple(
@@ -644,18 +656,30 @@ def main() -> None:
                 alternatives=selector_templates[slot_id][1],
                 input_bits=profile.input_bits,
             )
-            raw_tx = _counterproof_transaction(
-                previous_txid=deposit_txid if slot_id == 0 else planned_txids[0],
-                previous_vout=0,
-                output_script=(
-                    selector_templates[1][4]
-                    if slot_id == 0
-                    else final_output_script
+            transaction_fields = {
+                "previous_txid": deposit_txid if slot_id == 0 else planned_txids[0],
+                "previous_vout": 0,
+                "output_script": (
+                    selector_templates[1][4] if slot_id == 0 else final_output_script
                 ),
-                output_value_sat=SLOT_OUTPUT_VALUES_SAT[slot_id],
-                witness_items=selected,
+                "output_value_sat": SLOT_OUTPUT_VALUES_SAT[slot_id],
+                "witness_items": selected,
+                "tapscript": selector_templates[slot_id][2],
+                "control": selector_templates[slot_id][3],
+            }
+            unsigned_tx = _counterproof_transaction(**transaction_fields)
+            carrier_signature = sign_authorization_witness(
+                unsigned_tx,
+                authorization_input_index=0,
+                spent_values_sat=(
+                    (DEPOSIT_INPUT_VALUE_SAT, SLOT_OUTPUT_VALUES_SAT[0])[slot_id],
+                ),
+                spent_scripts=(selector_templates[slot_id][4],),
                 tapscript=selector_templates[slot_id][2],
-                control=selector_templates[slot_id][3],
+                request_authorizer_secret=CARRIER_AUTHORIZER_SECRET,
+            )
+            raw_tx = _counterproof_transaction(
+                **transaction_fields, authorizer_signature=carrier_signature
             )
             parsed_tx = parse_bitcoin_transaction(raw_tx)
             if parsed_tx.txid != planned_txids[slot_id]:

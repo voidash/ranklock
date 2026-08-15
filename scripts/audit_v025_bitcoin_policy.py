@@ -75,9 +75,14 @@ def main() -> None:
         parsed = parse_bitcoin_transaction(raw)
         input_index = policy.unsigned.authorization_input_index
         stack = parsed.witness_stacks[input_index]
-        selector_items = stack[:-2]
+        # Layout: selector items, authorizer signature, tapscript, control block.
+        selector_items = stack[:-3]
+        authorizer_signature = stack[-3]
         script, control = stack[-2:]
-        expected_script = selector_validation_tapscript(policy.unsigned.rules)
+        expected_script = selector_validation_tapscript(
+            policy.unsigned.rules,
+            authorizer_pubkey=policy.unsigned.authorizer_pubkey,
+        )
         weight = transaction_weight(raw, parsed.stripped)
         virtual_bytes = (weight + 3) // 4
         total_output_value = sum(parsed.output_values)
@@ -91,7 +96,16 @@ def main() -> None:
         checks = {
             "script_is_exact_hash_check_program": script == expected_script,
             "independent_tapscript_stack_model_accepts": execute_selector_tapscript_model(
+                script, selector_items + (authorizer_signature,)
+            ),
+            # A witness without the authorizer signature is the pre-v0.25.2
+            # shape, under which revealed labels were a reusable spending
+            # capability. It must not satisfy the script.
+            "unsigned_witness_is_rejected": not execute_selector_tapscript_model(
                 script, selector_items
+            ),
+            "authorizer_signature_is_sighash_default_length": (
+                len(authorizer_signature) == 64
             ),
             "script_matches_signed_policy": witness_script_hash(script)
             == policy.unsigned.tapscript_hash,

@@ -69,6 +69,12 @@ def _witness_for_point(point):
     return input_bits, tuple(rules), tuple(selected), tapscript, control
 
 
+# These sidecar tests cover ledger ordering, Core cross-checks and atomic
+# output, not consensus signature validity, so a structurally valid 64-byte
+# placeholder is sufficient for the witness layout here.
+PLACEHOLDER_SIGNATURE = bytes(64)
+
+
 def _raw_tx(witness_items: tuple[bytes, ...]) -> bytes:
     script = b"\x51\x20" + b"P" * 32
     witness = _compact(len(witness_items)) + b"".join(
@@ -101,7 +107,7 @@ def _encoding(bits: int, offset: int) -> CoordinateInputEncoding:
 def _fixture(tmp_path):
     point = multiply(G1, 777, group="g1")
     input_bits, rules, selected, tapscript, control = _witness_for_point(point)
-    raw = _raw_tx(selected + (tapscript, control))
+    raw = _raw_tx(selected + (PLACEHOLDER_SIGNATURE, tapscript, control))
     parsed = parse_bitcoin_transaction(raw)
     chain = sha256(b"regtest genesis").digest()
     context = sha256(b"sidecar context").digest()
@@ -149,6 +155,7 @@ def _fixture(tmp_path):
             input_bits=input_bits,
             tapscript_hash=witness_script_hash(tapscript),
             control_block_hash=witness_control_hash(control),
+            authorizer_pubkey=public_key(authorizer_secret),
             rules=rules,
         ),
         activation=activation,

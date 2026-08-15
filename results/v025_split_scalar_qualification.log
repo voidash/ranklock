@@ -45,8 +45,8 @@
     "bitcoin_core_rpc_semantics_exercised_with_deterministic_oracle": true,
     "common_selector_policy_sets": 2,
     "confirmed_wtxids": [
-      "dae7e2f8fd3c2b01b1e005064303d83e1d5919aaec5741de197d7ad43384300a",
-      "fdda7533c7a725df252e7507700fde29ebab60bc968644212ea985904b7a768b"
+      "011e4857c77e52e1a8ba1e8acba98fc1b719e11ca6b223ef9a17f75b8b3cd934",
+      "3f8e0be9fb6b518749b48e37940d89fc132532f1e0b029c1cc9f549509ed83b5"
     ],
     "durable_final_states": [
       [
@@ -151,9 +151,9 @@
     "below_one_mib": false,
     "complete_split_scalar_retained_bytes": 2090910,
     "participant_0_bytes": 1044952,
-    "participant_0_sha256": "943e15442e6716d01778803ed28394f6bd1fd6f76939587a6023a79bfb741f04",
+    "participant_0_sha256": "00bd5871554d188b72c6d93c0712073bae62c99cc11c054c8d904938ea8ebe11",
     "participant_1_bytes": 1044952,
-    "participant_1_sha256": "5aa534d0bfed701bb0b1e5c030697fbb278797fd11266a126d1def1d8c69a94f",
+    "participant_1_sha256": "2897fa1fb00cdf9a747eb46dca9d0af617f63b3a907ba8a199ca83a2e9cd5261",
     "signed_bundle_bytes": 1006,
     "size_tradeoff": "approximately linear in independently generated scalar-share artifacts",
     "unsigned_bundle_bytes": 864

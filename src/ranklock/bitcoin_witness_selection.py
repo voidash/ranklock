@@ -20,8 +20,14 @@ from dataclasses import dataclass
 from hashlib import sha256
 from typing import Sequence
 
-from .bip340 import sign, verify
+from .bip340 import BIP340Error, lift_x, sign, tapleaf_hash, verify
 from .bitcoin_authorization import ParsedBitcoinTransaction, parse_bitcoin_transaction
+from .bitcoin_tx import (
+    SIGHASH_DEFAULT,
+    TxOut,
+    parse_transaction,
+    taproot_script_path_sighash,
+)
 from .bn254_real import B, FIELD_MODULUS, FQ, affine, compress_g1, decompress_g1, is_on_curve
 from .committee_authorization import (
     CommitteeAuthorizationRequest,
@@ -29,7 +35,10 @@ from .committee_authorization import (
 )
 
 
-_MAGIC = b"RLWP2501"
+# v2 adds the mandatory request-authorizer key to the policy body.  The magic
+# is bumped so a v1 policy (whose tapscript had no signature requirement) fails
+# to parse loudly rather than being silently accepted under the new rules.
+_MAGIC = b"RLWP2502"
 _POLICY_DOMAIN = b"ranklock/bitcoin-witness-policy/v1\x00"
 _POLICY_SIGN_DOMAIN = b"ranklock/bitcoin-witness-policy-sign/v1\x00"
 _SCRIPT_DOMAIN = b"ranklock/bitcoin-witness-script/v1\x00"
@@ -38,6 +47,11 @@ _SIG_BYTES = 64
 _HASH_BYTES = 32
 _SELECTOR = 1
 _FIXED = 0
+_RULE_BYTES = 68
+# magic + context + activation + slot id + input index + input bits +
+# tapscript hash + control-block hash + authorizer pubkey + rule count.
+# Shared by both the unsigned and signed parsers so the two cannot drift.
+_POLICY_FIXED_BYTES = 8 + 32 + 32 + 4 + 4 + 2 + 32 + 32 + 32 + 2
 
 
 class BitcoinWitnessSelectionError(ValueError):
@@ -172,7 +186,11 @@ def witness_rules_from_label_pairs(
     return tuple(rules)
 
 
-def selector_validation_tapscript(rules: Sequence[WitnessItemRule]) -> bytes:
+def selector_validation_tapscript(
+    rules: Sequence[WitnessItemRule],
+    *,
+    authorizer_pubkey: bytes,
+) -> bytes:
     """Build a tapscript that validates every secret selector preimage.
 
     Witness elements are consumed from the top of the stack, so rules are
@@ -180,9 +198,28 @@ def selector_validation_tapscript(rules: Sequence[WitnessItemRule]) -> bytes:
     Tapscript removes the legacy script-size and non-push-opcode limits; the
     512-item construction remains bounded by transaction weight and the 1000
     initial-stack-element limit.
+
+    The script opens with ``OP_CHECKSIGVERIFY`` against the request
+    authorizer's x-only key.  Hash-locking the labels alone is not sufficient
+    for a funded protocol: the selected labels become public the moment the
+    authorization transaction is broadcast, so a script that only checks label
+    preimages lets any observer re-spend the same input in a transaction with
+    different outputs or fee.  Requiring a BIP340 signature over the exact
+    BIP341 sighash binds the spend to the precommitted outputs, amounts,
+    sequences, version and locktime, so revealed labels are not a reusable
+    spending capability.  The signature is the topmost witness item and is
+    therefore checked before any of the 512 hash comparisons run.
     """
 
+    pubkey = bytes(authorizer_pubkey)
+    if len(pubkey) != 32:
+        raise BitcoinWitnessSelectionError(
+            "authorizer public key must be a 32-byte BIP340 x-only key"
+        )
+
     script = bytearray()
+    # PUSH32(authorizer pubkey) OP_CHECKSIGVERIFY
+    script.extend(b"\x20" + pubkey + b"\xad")
     for rule in reversed(tuple(rules)):
         if rule.kind == _FIXED:
             # OP_SHA256 PUSH32(hash) OP_EQUALVERIFY
@@ -201,6 +238,75 @@ def selector_validation_tapscript(rules: Sequence[WitnessItemRule]) -> bytes:
     return bytes(script)
 
 
+def authorization_sighash(
+    raw_transaction: bytes,
+    *,
+    authorization_input_index: int,
+    spent_values_sat: Sequence[int],
+    spent_scripts: Sequence[bytes],
+    tapscript: bytes,
+) -> bytes:
+    """Return the BIP341 script-path sighash the authorizer must sign.
+
+    The message commits to the transaction version, locktime, every input
+    outpoint and sequence, every spent amount and scriptPubKey, and every
+    output.  Consequently the fee (inputs minus outputs) is committed too, so
+    a third party holding the revealed labels cannot redirect value, change
+    the fee, or replace the transaction under BIP125.
+    """
+
+    transaction = parse_transaction(bytes(raw_transaction))
+    values = tuple(int(value) for value in spent_values_sat)
+    scripts = tuple(bytes(script) for script in spent_scripts)
+    if len(values) != len(scripts):
+        raise BitcoinWitnessSelectionError(
+            "spent value and script counts differ"
+        )
+    if len(values) != len(transaction.inputs):
+        raise BitcoinWitnessSelectionError(
+            "one spent output is required for every transaction input"
+        )
+    spent_outputs = tuple(
+        TxOut(value=value, script_pubkey=script)
+        for value, script in zip(values, scripts, strict=True)
+    )
+    return taproot_script_path_sighash(
+        transaction,
+        input_index=int(authorization_input_index),
+        spent_outputs=spent_outputs,
+        tapleaf_hash=tapleaf_hash(bytes(tapscript)),
+        hash_type=SIGHASH_DEFAULT,
+    )
+
+
+def sign_authorization_witness(
+    raw_transaction: bytes,
+    *,
+    authorization_input_index: int,
+    spent_values_sat: Sequence[int],
+    spent_scripts: Sequence[bytes],
+    tapscript: bytes,
+    request_authorizer_secret: int,
+    aux_rand: bytes | None = None,
+) -> bytes:
+    """Sign the exact authorization transaction with the request authorizer key.
+
+    The signature is over :func:`authorization_sighash`, so it is only valid
+    for this exact precommitted transaction.  ``aux_rand=None`` keeps the
+    deterministic BIP340 mode used by the rest of the research code; a
+    production signer should supply independent randomness.
+    """
+
+    message = authorization_sighash(
+        raw_transaction,
+        authorization_input_index=authorization_input_index,
+        spent_values_sat=spent_values_sat,
+        spent_scripts=spent_scripts,
+        tapscript=tapscript,
+    )
+    return sign(message, int(request_authorizer_secret), aux_rand)
+
+
 @dataclass(frozen=True, slots=True)
 class UnsignedBitcoinWitnessPolicy:
     context_digest: bytes
@@ -210,8 +316,9 @@ class UnsignedBitcoinWitnessPolicy:
     input_bits: int
     tapscript_hash: bytes
     control_block_hash: bytes
+    authorizer_pubkey: bytes
     rules: tuple[WitnessItemRule, ...]
-    schema: str = "ranklock-unsigned-bitcoin-witness-policy-v1"
+    schema: str = "ranklock-unsigned-bitcoin-witness-policy-v2"
 
     def __post_init__(self) -> None:
         for value, name in (
@@ -219,9 +326,19 @@ class UnsignedBitcoinWitnessPolicy:
             (self.activation_digest, "activation digest"),
             (self.tapscript_hash, "tapscript hash"),
             (self.control_block_hash, "control-block hash"),
+            (self.authorizer_pubkey, "authorizer public key"),
         ):
             if len(bytes(value)) != _HASH_BYTES:
                 raise BitcoinWitnessSelectionError(f"{name} must be 32 bytes")
+        try:
+            # An unliftable x-only key would make the committed tapleaf
+            # permanently unspendable; reject it at policy-construction time
+            # rather than after the funding output already exists.
+            lift_x(int.from_bytes(bytes(self.authorizer_pubkey), "big"))
+        except BIP340Error as exc:
+            raise BitcoinWitnessSelectionError(
+                "authorizer public key is not a valid secp256k1 x-only key"
+            ) from exc
         if not 0 <= int(self.slot_id) < 2**32:
             raise BitcoinWitnessSelectionError("slot id does not fit u32")
         if not 0 <= int(self.authorization_input_index) < 2**32:
@@ -272,6 +389,7 @@ class UnsignedBitcoinWitnessPolicy:
             + _u(self.input_bits, 2, "input bits")
             + bytes(self.tapscript_hash)
             + bytes(self.control_block_hash)
+            + bytes(self.authorizer_pubkey)
             + _u(len(self.rules), 2, "witness rule count")
             + b"".join(rule.encoded for rule in self.rules)
         )
@@ -287,7 +405,7 @@ class UnsignedBitcoinWitnessPolicy:
     @classmethod
     def parse(cls, raw: bytes) -> "UnsignedBitcoinWitnessPolicy":
         raw = bytes(raw)
-        fixed = 8 + 32 + 32 + 4 + 4 + 2 + 32 + 32 + 2
+        fixed = _POLICY_FIXED_BYTES
         if len(raw) < fixed or raw[:8] != _MAGIC:
             raise BitcoinWitnessSelectionError("invalid witness-policy framing")
         cursor = 8
@@ -298,11 +416,14 @@ class UnsignedBitcoinWitnessPolicy:
         input_bits = int.from_bytes(raw[cursor : cursor + 2], "big"); cursor += 2
         script_hash = raw[cursor : cursor + 32]; cursor += 32
         control_hash = raw[cursor : cursor + 32]; cursor += 32
+        authorizer_pubkey = raw[cursor : cursor + 32]; cursor += 32
         count = int.from_bytes(raw[cursor : cursor + 2], "big"); cursor += 2
-        if len(raw) != fixed + count * 68:
+        if len(raw) != fixed + count * _RULE_BYTES:
             raise BitcoinWitnessSelectionError("witness-policy length mismatch")
         rules = tuple(
-            WitnessItemRule.parse(raw[cursor + 68 * i : cursor + 68 * (i + 1)])
+            WitnessItemRule.parse(
+                raw[cursor + _RULE_BYTES * i : cursor + _RULE_BYTES * (i + 1)]
+            )
             for i in range(count)
         )
         result = cls(
@@ -313,6 +434,7 @@ class UnsignedBitcoinWitnessPolicy:
             input_bits,
             script_hash,
             control_hash,
+            authorizer_pubkey,
             rules,
         )
         if result.encoded != raw:
@@ -383,11 +505,11 @@ class SignedBitcoinWitnessPolicy:
     @classmethod
     def parse_compact(cls, raw: bytes) -> "SignedBitcoinWitnessPolicy":
         raw = bytes(raw)
-        unsigned_fixed = 8 + 32 + 32 + 4 + 4 + 2 + 32 + 32 + 2
+        unsigned_fixed = _POLICY_FIXED_BYTES
         if len(raw) < unsigned_fixed + 2 or raw[:8] != _MAGIC:
             raise BitcoinWitnessSelectionError("invalid signed witness-policy framing")
         count = int.from_bytes(raw[unsigned_fixed - 2 : unsigned_fixed], "big")
-        unsigned_len = unsigned_fixed + 68 * count
+        unsigned_len = unsigned_fixed + _RULE_BYTES * count
         if len(raw) < unsigned_len + 2:
             raise BitcoinWitnessSelectionError("truncated signed witness policy")
         unsigned = UnsignedBitcoinWitnessPolicy.parse(raw[:unsigned_len])
@@ -435,9 +557,20 @@ def derive_unsigned_witness_selection(
     stack = parsed.witness_stacks[index]
     if stack and stack[-1][:1] == b"\x50":
         raise BitcoinWitnessSelectionError("Taproot annexes are forbidden by RankLock policy")
-    if len(stack) != len(unsigned.rules) + 2:
+    # Layout: selector items, then the authorizer signature, then the
+    # tapscript and control block.  The signature is topmost so the script's
+    # leading OP_CHECKSIGVERIFY runs before any label hashing.
+    if len(stack) != len(unsigned.rules) + 3:
         raise BitcoinWitnessSelectionError("witness stack does not match policy layout")
     script, control = stack[-2], stack[-1]
+    authorizer_signature = stack[-3]
+    if len(authorizer_signature) != _SIG_BYTES:
+        # RankLock mandates SIGHASH_DEFAULT, whose BIP341 signature is exactly
+        # 64 bytes.  A 65-byte signature carries an explicit sighash flag and
+        # would let a spender re-scope what the signature commits to.
+        raise BitcoinWitnessSelectionError(
+            "authorization witness signature must be 64 bytes (SIGHASH_DEFAULT)"
+        )
     if witness_script_hash(script) != unsigned.tapscript_hash:
         raise BitcoinWitnessSelectionError("witness tapscript differs from signed policy")
     if witness_control_hash(control) != unsigned.control_block_hash:
@@ -450,7 +583,7 @@ def derive_unsigned_witness_selection(
     coordinates = [0, 0]
     selected: list[int] = []
     seen: set[tuple[int, int]] = set()
-    for item, rule in zip(stack[:-2], unsigned.rules, strict=True):
+    for item, rule in zip(stack[:-3], unsigned.rules, strict=True):
         digest = witness_item_hash(item)
         if rule.kind == _FIXED:
             if digest != rule.zero_hash:
@@ -536,6 +669,8 @@ def verify_request_matches_witness(
 def execute_selector_tapscript_model(
     script: bytes,
     witness_items: Sequence[bytes],
+    *,
+    checksig_valid: bool = True,
 ) -> bool:
     """Execute the exact opcode subset emitted by
     :func:`selector_validation_tapscript`.
@@ -545,6 +680,12 @@ def execute_selector_tapscript_model(
     consensus implementation; the release gate still requires Bitcoin Core.
     Unsupported opcodes, malformed pushes, stack underflow, failed VERIFY, or a
     non-clean final stack return ``False``.
+
+    ``checksig_valid`` stands in for the BIP340 verification the model cannot
+    perform: it has no transaction, no sighash and no signing key.  The model
+    still enforces the *stack mechanics* of ``OP_CHECKSIGVERIFY`` (a 32-byte
+    key above a 64-byte signature), so a witness-ordering regression is caught
+    here even though the cryptographic check itself belongs to Bitcoin Core.
     """
 
     code = bytes(script)
@@ -605,6 +746,15 @@ def execute_selector_tapscript_model(
                 if not stack:
                     return False
                 stack.append(sha256(stack.pop()).digest())
+            elif opcode == 0xAD:  # OP_CHECKSIGVERIFY
+                if len(stack) < 2:
+                    return False
+                pubkey = stack.pop()
+                signature = stack.pop()
+                if len(pubkey) != _HASH_BYTES or len(signature) != _SIG_BYTES:
+                    return False
+                if not checksig_valid:
+                    return False
             else:
                 return False
     except Exception:

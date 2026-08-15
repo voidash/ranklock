@@ -16,8 +16,11 @@ from ranklock.bitcoin_core_regtest import (
 )
 from ranklock.authorized_labels import LabelCommitmentTree
 from ranklock.bitcoin_authorization import parse_bitcoin_transaction
+from ranklock.bip340 import public_key
 from ranklock.bitcoin_witness_selection import selector_validation_tapscript
 from ranklock.bn254_real import G1, multiply
+
+AUTHORIZER_PUBKEY = public_key(211)
 
 
 def test_regtest_builder_emits_canonical_full_width_taproot_witness():
@@ -25,8 +28,8 @@ def test_regtest_builder_emits_canonical_full_width_taproot_witness():
     rules, selected = _selector_material(point, slot_id=0)
     assert len(rules) == len(selected) == 2 * INPUT_BITS == 512
     assert all(len(item) == 64 for item in selected)
-    script = selector_validation_tapscript(rules)
-    script_pubkey, control, address = _taproot_script_output(script, internal_secret=0x12345)
+    script = selector_validation_tapscript(rules, authorizer_pubkey=AUTHORIZER_PUBKEY)
+    script_pubkey, control, address = _taproot_script_output(script)
     assert script_pubkey[:2] == b"\x51\x20"
     assert len(control) == 33 and control[0] & 0xFE == 0xC0
     assert address.startswith("bcrt1p")
@@ -36,10 +39,11 @@ def test_regtest_builder_emits_canonical_full_width_taproot_witness():
         previous_vout=2,
         output_value_sat=900_000,
         output_script=b"\x51\x20" + bytes(32),
-        witness_stack=selected + (script, control),
+        witness_stack=selected + (bytes(64), script, control),
     )
     parsed = parse_bitcoin_transaction(raw)
-    assert len(parsed.witness_stacks[0]) == 514
+    # 512 selector items + authorizer signature + tapscript + control block.
+    assert len(parsed.witness_stacks[0]) == 515
     assert parsed.witness_stacks[0][-2:] == (script, control)
     assert parsed.has_witness
 
@@ -72,19 +76,17 @@ def test_real_regtest_selector_uses_activated_16_byte_dfb_labels():
     assert len(rules) == len(selected) == 512
     assert all(len(item) == 16 for item in selected)
     assert all(item in pair for item, pair in zip(selected, tree.label_pairs, strict=True))
-    script = selector_validation_tapscript(rules)
-    _script_pubkey, control, _address = _taproot_script_output(
-        script, internal_secret=0x12345
-    )
+    script = selector_validation_tapscript(rules, authorizer_pubkey=AUTHORIZER_PUBKEY)
+    _script_pubkey, control, _address = _taproot_script_output(script)
     raw = _serialize_transaction(
         previous_txid=bytes.fromhex("12" * 32),
         previous_vout=0,
         output_value_sat=100_000,
         output_script=b"\x51\x20" + bytes(32),
-        witness_stack=selected + (script, control),
+        witness_stack=selected + (bytes(64), script, control),
     )
     parsed = parse_bitcoin_transaction(raw)
-    assert parsed.witness_stacks[0][:-2] == selected
+    assert parsed.witness_stacks[0][:-3] == selected
 
 
 def test_missing_bitcoind_fails_explicitly(tmp_path):

@@ -67,6 +67,14 @@ def _selector_material(point):
     return input_bits, tuple(rules), tuple(selected), tuple(alternatives), tapscript, control
 
 
+# These parser tests only exercise the witness *layout*; the policy commits to
+# the tapscript's hash rather than its bytes, so a structurally valid 64-byte
+# signature placeholder is sufficient here.  Signature validity itself is a
+# consensus concern and is proven against real Bitcoin Core in
+# tests/test_authorization_carrier_binding.py.
+PLACEHOLDER_SIGNATURE = bytes(range(64))
+
+
 def _raw_tx(items: tuple[bytes, ...]) -> bytes:
     version = (3).to_bytes(4, "little")
     txin = bytes(range(32)) + (1).to_bytes(4, "little") + b"\x00" + bytes.fromhex("fdffffff")
@@ -79,7 +87,7 @@ def _raw_tx(items: tuple[bytes, ...]) -> bytes:
 def _fixture():
     point = multiply(G1, 123_456, group="g1")
     input_bits, rules, selected, alternatives, tapscript, control = _selector_material(point)
-    raw = _raw_tx(selected + (tapscript, control))
+    raw = _raw_tx(selected + (PLACEHOLDER_SIGNATURE, tapscript, control))
     parsed = parse_bitcoin_transaction(raw)
     chain = sha256(b"witness-policy-regtest").digest()
     context = sha256(b"witness-policy-context").digest()
@@ -128,6 +136,7 @@ def _fixture():
         input_bits=input_bits,
         tapscript_hash=witness_script_hash(tapscript),
         control_block_hash=witness_control_hash(control),
+        authorizer_pubkey=public_key(authorizer_secret),
         rules=rules,
     )
     policy = SignedBitcoinWitnessPolicy.create(
@@ -192,7 +201,9 @@ def test_unauthorized_selector_item_and_wrong_control_block_are_rejected():
     row = _fixture()
     changed = list(row["selected"])
     changed[0] = b"not one of the signed alternatives"
-    bad_selector = _raw_tx(tuple(changed) + (row["tapscript"], row["control"]))
+    bad_selector = _raw_tx(
+        tuple(changed) + (PLACEHOLDER_SIGNATURE, row["tapscript"], row["control"])
+    )
     with pytest.raises(BitcoinWitnessSelectionError, match="neither authorized alternative"):
         derive_witness_selection(
             bad_selector,
@@ -201,7 +212,8 @@ def test_unauthorized_selector_item_and_wrong_control_block_are_rejected():
         )
 
     bad_control = _raw_tx(
-        tuple(row["selected"]) + (row["tapscript"], b"\xc0" + b"X" * 32)
+        tuple(row["selected"])
+        + (PLACEHOLDER_SIGNATURE, row["tapscript"], b"\xc0" + b"X" * 32)
     )
     with pytest.raises(BitcoinWitnessSelectionError, match="control block"):
         derive_witness_selection(
@@ -222,6 +234,7 @@ def test_policy_cannot_redirect_selection_to_another_transaction_input():
         input_bits=unsigned.input_bits,
         tapscript_hash=unsigned.tapscript_hash,
         control_block_hash=unsigned.control_block_hash,
+        authorizer_pubkey=unsigned.authorizer_pubkey,
         rules=unsigned.rules,
     )
     signatures = tuple(
@@ -251,6 +264,7 @@ def test_selector_rules_must_use_canonical_coordinate_major_order():
             input_bits=unsigned.input_bits,
             tapscript_hash=unsigned.tapscript_hash,
             control_block_hash=unsigned.control_block_hash,
+            authorizer_pubkey=unsigned.authorizer_pubkey,
             rules=tuple(reversed(unsigned.rules)),
         )
 
@@ -259,7 +273,7 @@ def test_annex_and_non_tapscript_leaf_are_rejected():
     row = _fixture()
     annexed = _raw_tx(
         tuple(row["selected"])
-        + (row["tapscript"], row["control"], b"\x50annex")
+        + (PLACEHOLDER_SIGNATURE, row["tapscript"], row["control"], b"\x50annex")
     )
     with pytest.raises(BitcoinWitnessSelectionError, match="annex"):
         derive_witness_selection(
@@ -269,7 +283,8 @@ def test_annex_and_non_tapscript_leaf_are_rejected():
         )
 
     wrong_leaf = _raw_tx(
-        tuple(row["selected"]) + (row["tapscript"], b"\x80" + b"T" * 32)
+        tuple(row["selected"])
+        + (PLACEHOLDER_SIGNATURE, row["tapscript"], b"\x80" + b"T" * 32)
     )
     # The signed control-block commitment fails before the leaf-version check.
     with pytest.raises(BitcoinWitnessSelectionError, match="control block"):
@@ -287,15 +302,43 @@ def test_independent_selector_tapscript_stack_model():
     rules = row["policy"].unsigned.rules
     selected = tuple(row["selected"])
     assert len(rules) == len(selected) > 1
-    script = selector_validation_tapscript(rules)
-    assert execute_selector_tapscript_model(script, selected)
-    assert not execute_selector_tapscript_model(script, selected[:-1])
-    assert not execute_selector_tapscript_model(script, selected + (b"extra",))
+    authorizer_pubkey = row["policy"].unsigned.authorizer_pubkey
+    script = selector_validation_tapscript(rules, authorizer_pubkey=authorizer_pubkey)
+    stack = selected + (PLACEHOLDER_SIGNATURE,)
+    assert execute_selector_tapscript_model(script, stack)
+    assert not execute_selector_tapscript_model(script, stack[:-1])
+    assert not execute_selector_tapscript_model(script, stack + (b"extra",))
 
-    wrong = list(selected)
+    wrong = list(stack)
     wrong[len(wrong) // 2] = b"not-an-authorized-selector"
     assert not execute_selector_tapscript_model(script, tuple(wrong))
 
     mutated = bytearray(script)
     mutated[len(mutated) // 2] = 0x6A  # OP_RETURN is outside the allowed subset.
-    assert not execute_selector_tapscript_model(bytes(mutated), selected)
+    assert not execute_selector_tapscript_model(bytes(mutated), stack)
+
+
+def test_selector_tapscript_model_requires_a_valid_authorizer_signature():
+    """The leading OP_CHECKSIGVERIFY must gate the whole script.
+
+    Without it, revealing the labels would hand any observer a reusable
+    spending capability -- the exact bug this prefix closes.
+    """
+
+    from ranklock.bitcoin_witness_selection import execute_selector_tapscript_model
+
+    row = _fixture()
+    rules = row["policy"].unsigned.rules
+    selected = tuple(row["selected"])
+    script = selector_validation_tapscript(
+        rules, authorizer_pubkey=row["policy"].unsigned.authorizer_pubkey
+    )
+    stack = selected + (PLACEHOLDER_SIGNATURE,)
+
+    assert execute_selector_tapscript_model(script, stack, checksig_valid=True)
+    # Correct labels but a signature Bitcoin Core would reject must still fail.
+    assert not execute_selector_tapscript_model(script, stack, checksig_valid=False)
+    # A witness that omits the signature entirely (the pre-fix shape) must fail.
+    assert not execute_selector_tapscript_model(script, selected)
+    # A wrong-length signature must fail the stack-mechanics check.
+    assert not execute_selector_tapscript_model(script, selected + (b"\x01" * 63,))

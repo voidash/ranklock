@@ -34,7 +34,7 @@
   "source_digests": {
     "bitcoin_core_regtest": {
       "path": "src/ranklock/bitcoin_core_regtest.py",
-      "sha256": "3ca239bdb538168316be4f0b2c46719f183ffa953de9735ca9118c0e6b37107f"
+      "sha256": "4b119a87470ed47249247e0003190c25ec9e1e8468b712ab0bd2b1ffaf391841"
     },
     "ceremony_core_binding": {
       "path": "src/ranklock/setup_ceremony_evidence.py",
@@ -63,7 +63,7 @@
   },
   "tests": {
     "failed": 0,
-    "files": 100,
-    "passed": 423
+    "files": 103,
+    "passed": 442
   }
 }
