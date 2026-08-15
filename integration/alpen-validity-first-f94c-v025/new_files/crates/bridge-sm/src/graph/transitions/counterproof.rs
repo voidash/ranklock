@@ -39,8 +39,8 @@ impl GraphSM {
                 payout_connector_spent,
                 ..
             } => {
-                let (ack_duties, completed_signatures) =
-                    self.validate_counterproof_and_resolve_ack(
+                let (ack_duties, completed_signatures) = self
+                    .validate_counterproof_and_resolve_ack(
                         &cfg,
                         &event,
                         &graph_data,
@@ -88,8 +88,8 @@ impl GraphSM {
                 payout_connector_spent,
                 ..
             } => {
-                let (ack_duties, completed_signatures) =
-                    self.validate_counterproof_and_resolve_ack(
+                let (ack_duties, completed_signatures) = self
+                    .validate_counterproof_and_resolve_ack(
                         &cfg,
                         &event,
                         &graph_data,
@@ -144,8 +144,8 @@ impl GraphSM {
                 let bridge_proof_txid = refuted_bridge_proof
                     .as_ref()
                     .map(|(tx, _)| tx.compute_txid());
-                let (ack_duties, completed_signatures) =
-                    self.validate_counterproof_and_resolve_ack(
+                let (ack_duties, completed_signatures) = self
+                    .validate_counterproof_and_resolve_ack(
                         &cfg,
                         &event,
                         &graph_data,
@@ -195,20 +195,19 @@ impl GraphSM {
         let counterproof_txid = event.tx.compute_txid();
 
         let graph_owner_idx = self.context().operator_idx();
-        let watchtower_slot = watchtower_slot_for_operator(
-            graph_owner_idx,
-            event.counterprover_idx,
-        )
-        .ok_or_else(|| {
-            GSMError::rejected(
-                self.state.clone(),
-                event.clone().into(),
-                format!(
-                    "operator {} has no counterproof slot in graph owned by {}",
-                    event.counterprover_idx, graph_owner_idx,
-                ),
-            )
-        })?;
+        let watchtower_slot =
+            watchtower_slot_for_operator(graph_owner_idx, event.counterprover_idx).ok_or_else(
+                || {
+                    GSMError::rejected(
+                        self.state.clone(),
+                        event.clone().into(),
+                        format!(
+                            "operator {} has no counterproof slot in graph owned by {}",
+                            event.counterprover_idx, graph_owner_idx,
+                        ),
+                    )
+                },
+            )?;
         let expected_counterproof_txid = graph_summary
             .counterproofs
             .get(watchtower_slot)

@@ -211,12 +211,10 @@ mod tests {
         ) -> <Self::Connector as Connector>::Witness {
             let signature = signing_info.sign(&self.n_of_n_keypair);
             match spend_path {
-                ValidityFirstCounterproofSpendPath::Ack => {
-                    ValidityFirstCounterproofWitness::Ack {
-                        n_of_n_signature: signature,
-                        preimage: self.preimage,
-                    }
-                }
+                ValidityFirstCounterproofSpendPath::Ack => ValidityFirstCounterproofWitness::Ack {
+                    n_of_n_signature: signature,
+                    preimage: self.preimage,
+                },
                 ValidityFirstCounterproofSpendPath::NackTimeout => {
                     ValidityFirstCounterproofWitness::NackTimeout {
                         n_of_n_signature: signature,
@@ -320,9 +318,7 @@ mod tests {
 
     #[test]
     fn immediate_ack_spend() {
-        ValidityFirstSigner::assert_connector_is_spendable(
-            ValidityFirstCounterproofSpendPath::Ack,
-        );
+        ValidityFirstSigner::assert_connector_is_spendable(ValidityFirstCounterproofSpendPath::Ack);
     }
 
     #[test]
@@ -382,14 +378,7 @@ mod tests {
 
         let outpoint_b = fund_connector(&mut node, connector);
         let (tx_b, prevouts_b) = ack_template(&mut node, connector, outpoint_b);
-        let replay = finalize_ack(
-            &node,
-            tx_b,
-            prevouts_b,
-            connector,
-            signature_a,
-            preimage,
-        );
+        let replay = finalize_ack(&node, tx_b, prevouts_b, connector, signature_a, preimage);
         assert!(
             node.client().send_raw_transaction(&replay).is_err(),
             "Core accepted an N/N signature copied from another exact ACK template"
@@ -405,14 +394,7 @@ mod tests {
         let outpoint = fund_connector(&mut node, connector);
         let (tx, prevouts) = ack_template(&mut node, connector, outpoint);
         let signature = ack_signature(&tx, &prevouts, connector, &keypair);
-        let mut malformed = finalize_ack(
-            &node,
-            tx,
-            prevouts,
-            connector,
-            signature,
-            preimage,
-        );
+        let mut malformed = finalize_ack(&node, tx, prevouts, connector, signature, preimage);
         let mut witness_items = malformed.input[0].witness.to_vec();
         witness_items[0].pop();
         malformed.input[0].witness = Witness::from_slice(&witness_items);

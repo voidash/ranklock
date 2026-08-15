@@ -9,8 +9,8 @@
 use std::{env, fs, io::ErrorKind, path::PathBuf};
 
 use bitcoin::{
-    hashes::{sha256, Hash},
     Transaction, Txid, XOnlyPublicKey,
+    hashes::{Hash, sha256},
 };
 use btc_tracker::event::TxStatus;
 use musig2::secp256k1::schnorr::Signature;
@@ -30,11 +30,7 @@ fn root() -> Result<PathBuf, ExecutorError> {
         .ok_or_else(|| ExecutorError::RanklockErr(format!("{ROOT_ENV} is not configured")))
 }
 
-fn setup_name(
-    graph_idx: GraphIdx,
-    game_index: GameIndex,
-    watchtower_idx: OperatorIdx,
-) -> String {
+fn setup_name(graph_idx: GraphIdx, game_index: GameIndex, watchtower_idx: OperatorIdx) -> String {
     format!(
         "owner{}-deposit{}-game{}-watchtower{}.commitment",
         graph_idx.operator, graph_idx.deposit, game_index, watchtower_idx,
@@ -78,7 +74,10 @@ fn decode_32(bytes: &[u8], label: &str) -> Result<[u8; 32], ExecutorError> {
 
 fn read_required(path: PathBuf, label: &str) -> Result<[u8; 32], ExecutorError> {
     let bytes = fs::read(&path).map_err(|err| {
-        ExecutorError::RanklockErr(format!("failed to read {label} at {}: {err}", path.display()))
+        ExecutorError::RanklockErr(format!(
+            "failed to read {label} at {}: {err}",
+            path.display()
+        ))
     })?;
     decode_32(&bytes, label)
 }
@@ -116,13 +115,11 @@ pub(super) fn load_ack_preimage(
     counterproof_ack_txid: Txid,
     expected_hash: [u8; 32],
 ) -> Result<Option<[u8; 32]>, ExecutorError> {
-    let path = root()?
-        .join("unlock")
-        .join(unlock_name(
-            bridge_proof_txid,
-            counterproof_txid,
-            counterproof_ack_txid,
-        ));
+    let path = root()?.join("unlock").join(unlock_name(
+        bridge_proof_txid,
+        counterproof_txid,
+        counterproof_ack_txid,
+    ));
     let bytes = match fs::read(&path) {
         Ok(bytes) => bytes,
         Err(err) if err.kind() == ErrorKind::NotFound => return Ok(None),
@@ -130,7 +127,7 @@ pub(super) fn load_ack_preimage(
             return Err(ExecutorError::RanklockErr(format!(
                 "failed to read RankLock ACK preimage at {}: {err}",
                 path.display()
-            )))
+            )));
         }
     };
     let preimage = decode_32(&bytes, "RankLock ACK preimage")?;
@@ -160,7 +157,8 @@ pub(super) async fn resolve_and_publish_counterproof_ack(
         counterproof_txid,
         counterproof_ack_txid,
         expected_hash,
-    )? else {
+    )?
+    else {
         info!(
             %bridge_proof_txid,
             %counterproof_txid,
@@ -224,13 +222,23 @@ mod tests {
     fn setup_and_unlock_names_bind_full_context() {
         use strata_bridge_primitives::types::{DepositIdx, GraphIdx};
 
-        let a = GraphIdx { operator: 2, deposit: DepositIdx::from(7u32) };
-        let b = GraphIdx { operator: 2, deposit: DepositIdx::from(8u32) };
+        let a = GraphIdx {
+            operator: 2,
+            deposit: DepositIdx::from(7u32),
+        };
+        let b = GraphIdx {
+            operator: 2,
+            deposit: DepositIdx::from(8u32),
+        };
         let game = GameIndex::try_from(7u32).unwrap();
         assert_ne!(setup_name(a, game, 3), setup_name(b, game, 3));
         assert_ne!(
             unlock_name(Txid::all_zeros(), Txid::all_zeros(), Txid::all_zeros()),
-            unlock_name(Txid::all_zeros(), Txid::all_zeros(), Txid::from_byte_array([1u8; 32])),
+            unlock_name(
+                Txid::all_zeros(),
+                Txid::all_zeros(),
+                Txid::from_byte_array([1u8; 32])
+            ),
         );
     }
 }

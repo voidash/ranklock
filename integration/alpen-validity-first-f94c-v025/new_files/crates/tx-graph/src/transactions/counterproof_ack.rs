@@ -71,8 +71,7 @@ impl CounterproofAckTx {
                     txid: data.counterproof_txid,
                     vout: CounterproofTx::ACK_NACK_VOUT,
                 },
-                sequence: counterproof_connector
-                    .sequence(ValidityFirstCounterproofSpendPath::Ack),
+                sequence: counterproof_connector.sequence(ValidityFirstCounterproofSpendPath::Ack),
                 ..Default::default()
             },
             TxIn {

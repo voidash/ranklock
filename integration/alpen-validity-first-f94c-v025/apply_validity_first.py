@@ -341,8 +341,8 @@ def patch_game_graph(repo: Path, dry_run: bool) -> None:
             "immediate ack regtest",
         ),
         (
-            "            node.submit_package_invalid(&package);\n            node.mine_blocks(1);\n            since_contest += 1;\n            node.submit_package(&package);\n\n            // ┌───────────────────────────────────────────────────────────────┐\n            // │                            Slash",
-            "            node.submit_package(&package);\n            node.mine_blocks(1);\n            since_contest += 1;\n\n            // ┌───────────────────────────────────────────────────────────────┐\n            // │                            Slash",
+            "            let package = [counterproof_ack, child];\n\n            node.submit_package_invalid(&package);\n            node.mine_blocks(1);\n            since_contest += 1;\n            node.submit_package(&package);\n\n            // ┌───────────────────────────────────────────────────────────────┐\n            // │                            Slash",
+            "            let package = [counterproof_ack, child];\n\n            node.submit_package(&package);\n            node.mine_blocks(1);\n            since_contest += 1;\n\n            // ┌───────────────────────────────────────────────────────────────┐\n            // │                            Slash",
             "ACK no CSV wait",
         ),
     ])
@@ -577,8 +577,8 @@ def patch_retry(repo: Path, dry_run: bool) -> None:
     )
     text = replace_once(
         text,
-        "        machine::{GSMOutput, GraphSM, generate_game_graph},",
-        "        machine::{GSMOutput, GraphSM, generate_game_graph, unpack_game},",
+        "    machine::{GSMOutput, GraphSM, generate_game_graph},",
+        "    machine::{GSMOutput, GraphSM, generate_game_graph, unpack_game},",
         f"{rel}: unpack game import",
     )
     start_marker = "            GraphState::CounterProofPosted {\n"
@@ -762,6 +762,80 @@ def patch_executor(repo: Path, dry_run: bool) -> None:
     write(repo, rel, text, dry_run)
 
 
+# Every .rs path this installer creates or edits.  The pinned base tree is
+# rustfmt-clean, so formatting exactly these files normalizes the text this
+# installer inserts without touching anything outside the declared scope.
+TOUCHED_RUST_FILES = (
+    "crates/connectors/src/validity_first_counterproof.rs",
+    "crates/connectors/src/lib.rs",
+    "crates/connectors/src/prelude.rs",
+    "crates/tx-graph/src/transactions/counterproof_nack.rs",
+    "crates/tx-graph/src/transactions/counterproof.rs",
+    "crates/tx-graph/src/transactions/counterproof_ack.rs",
+    "crates/tx-graph/src/transactions/mod.rs",
+    "crates/tx-graph/src/transactions/prelude.rs",
+    "crates/tx-graph/src/fee.rs",
+    "crates/tx-graph/src/musig_functor.rs",
+    "crates/tx-graph/src/game_graph.rs",
+    "crates/bridge-exec/src/graph/ranklock.rs",
+    "crates/bridge-exec/src/graph/mod.rs",
+    "crates/bridge-exec/src/graph/common.rs",
+    "crates/bridge-exec/src/errors.rs",
+    "crates/bridge-sm/src/graph/transitions/counterproof.rs",
+    "crates/bridge-sm/src/graph/transitions/contested.rs",
+    "crates/bridge-sm/src/graph/transitions/common.rs",
+    "crates/bridge-sm/src/graph/duties.rs",
+    "crates/bridge-sm/src/graph/machine.rs",
+    "crates/bridge-sm/src/graph/handlers/retry.rs",
+    "crates/bridge-sm/src/graph/tx_classifier.rs",
+    "crates/bridge-sm/src/tx_classifier.rs",
+)
+
+
+def format_touched(repo: Path) -> None:
+    """Normalize the files this installer wrote with the repo's own rustfmt.
+
+    The replacement strings above are written for readability, not to match
+    rustfmt byte-for-byte, so without this step `cargo fmt --all -- --check`
+    (STRATA-004) fails on a freshly patched tree.  rustfmt is invoked through
+    rustup so the channel pinned by rust-toolchain.toml is used.
+    """
+
+    # Use `cargo fmt --all` rather than invoking rustfmt on a file list: it
+    # picks up the workspace edition, rustfmt.toml and the toolchain pinned by
+    # rust-toolchain.toml, none of which a bare rustfmt call would honour.
+    proc = subprocess.run(
+        ["cargo", "fmt", "--all"],
+        cwd=repo,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    if proc.returncode:
+        raise PatchError(
+            "cargo fmt failed on the patched tree; it is applied but not "
+            f"formatted: {proc.stderr.strip()}"
+        )
+
+    # `--all` formats the whole workspace, which is only safe because the
+    # pinned base is rustfmt-clean.  Assert that rather than assume it: if the
+    # caller's tree had pre-existing formatting drift we must not silently
+    # widen the patch beyond its declared scope.
+    declared = set(TOUCHED_RUST_FILES)
+    changed = {
+        line.strip()
+        for line in run(repo, "git", "diff", "--name-only").splitlines()
+        if line.strip()
+    }
+    outside = {rel for rel in changed if rel not in declared}
+    if outside:
+        raise PatchError(
+            "cargo fmt modified files outside the declared patch scope, which "
+            "means the base checkout was not rustfmt-clean before patching: "
+            f"{sorted(outside)}"
+        )
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("repo", type=Path, help="clean strata-bridge checkout")
@@ -775,6 +849,7 @@ def main() -> int:
             # Verify every exact anchor before performing the first write.
             apply(repo, True)
             apply(repo, False)
+            format_touched(repo)
     except PatchError as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2
