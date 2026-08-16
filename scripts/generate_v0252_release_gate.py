@@ -28,6 +28,10 @@ from pathlib import Path
 
 from ranklock.release_qualification import LocalReleaseFacts
 
+# The release this gate qualifies. Companion evidence must be for the same
+# version, so this is a constant rather than a literal repeated per use.
+PACKAGE_VERSION = "0.25.2"
+
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -87,6 +91,27 @@ def main() -> int:
     if hardening.get("all_local_checks_passed") is not True:
         raise RuntimeError("v0.25.1 security hardening report did not pass")
 
+    # The clean-archive report closes `complete_source_archive_reproducible`,
+    # which is a funds blocker, yet it was consumed with no schema or version
+    # check at all -- only `all_checks_passed` was read.  The report currently
+    # sitting in results/ is a v0.18.0 artifact; it fails closed today only
+    # because its `all_checks_passed` happens to be null.  A stale report that
+    # said `true` would silently have closed a v0.25.2 release fact with
+    # evidence from a different release.  Pin both the schema and the version.
+    if clean is not None:
+        clean_schema = clean.get("schema")
+        if clean_schema != "ranklock-clean-archive-verification-v1":
+            raise RuntimeError(
+                f"{args.clean_archive_report}: unexpected schema {clean_schema!r}"
+            )
+        clean_version = str(clean.get("version", ""))
+        if clean_version != PACKAGE_VERSION:
+            raise RuntimeError(
+                f"{args.clean_archive_report}: clean-archive evidence is for version "
+                f"{clean_version!r}, but this gate qualifies {PACKAGE_VERSION!r}; "
+                "regenerate the clean-archive reproduction against this release"
+            )
+
     if verification is not None and verification.get("schema") != "ranklock-v0252-evidence-verification-v1":
         raise RuntimeError(
             f"{args.evidence_verification}: unexpected schema {verification.get('schema')!r}"
@@ -137,7 +162,7 @@ def main() -> int:
     document.update(
         {
             "schema": "ranklock-v0252-release-gate-v1",
-            "package_version": "0.25.2",
+            "package_version": PACKAGE_VERSION,
             "claim_boundary": (
                 "hash-pinned Bitcoin Core and the pinned Strata validity-first path were "
                 "executed and passed the stated matrix, to the extent bitcoin_core_regtest_passed "

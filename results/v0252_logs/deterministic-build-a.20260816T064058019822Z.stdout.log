@@ -1,0 +1,12 @@
+{
+  "archive": "ranklock-v0.25.1-reproducible-source.zip",
+  "archive_bytes": 17561080,
+  "archive_sha256": "bc5aa1a95ee6da1f6ce578d4b6ad4e5a837f213d37478f3d82889927a5f3d5c2",
+  "fixed_zip_timestamp": "2026-08-14T00:00:00Z",
+  "integration_archive": "alpen-validity-first-f94c-v025.zip",
+  "integration_archive_bytes": 63300,
+  "integration_archive_sha256": "98a9ff16f2ce1e944376461460107c08385fc132c0125f694a191f7843518869",
+  "manifest_entries": 582,
+  "package_version": "0.25.1",
+  "schema": "ranklock-v0251-release-build-v1"
+}

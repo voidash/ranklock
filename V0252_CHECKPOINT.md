@@ -281,6 +281,41 @@ against an authority outside the implementation:
   `tx_drive_idempotence` test. The duty is therefore an idempotent
   "ensure published", not a "broadcast now", and re-emission is safe.
 
+## Resolved: two evidence-integrity holes
+
+**A checksum ledger nothing verified.** The bundle's `MANIFEST.sha256` had
+drifted from `apply_validity_first.py` — and had done so *before* this
+session's edits. Nothing in `run_bundle_checks.sh` or `CHECKS.txt` ever
+checked it, so a ledger recording nothing was indistinguishable from one
+recording everything. All 23 entries were regenerated and
+`shasum -a 256 -c --quiet` was added to the bundle check, so drift now fails
+closed. The mechanism was confirmed by watching it reject an edit to the
+bundle script before the manifest was regenerated.
+
+**A fail-open version hole in the release gate.** The gate validates the
+schema of the evidence-verification report, but consumed the optional
+clean-archive report with *no* schema or version check — it read only
+`all_checks_passed`. That report closes
+`complete_source_archive_reproducible`, which is a funds blocker. The report
+currently in `results/` is a **v0.18.0** artifact whose decision string is
+`CLEAN_FULL_SUITE_ORCHESTRATION_INCOMPLETE_DUE_RUNTIME_CEILING`; it fails
+closed today only because its `all_checks_passed` happens to be null. A
+stale report saying `true` would silently have closed a v0.25.2 funds
+blocker with evidence from a different release. The gate now pins both the
+schema and the version, and the guard was verified by confirming it rejects
+that exact report with exit code 1 while the normal path still produces
+`safe_for_funds: false`, `maximum_mode: observe`.
+
+Consequently `complete_source_archive_reproducible` remains **false**, which
+is the correct reading: no clean-extraction reproduction has been run
+against this release. The narrower EVID-007 claim *is* closed —
+`verify_v0252_deterministic_build.py` builds the release twice into separate
+clean directories and all **4 of 4** artifacts are byte-identical
+(`alpen-validity-first-f94c-v025.zip`,
+`ranklock-v0.25.1-reproducible-source.zip`, the SHA256SUMS and the build
+JSON). Two builds on one machine is a strictly weaker claim than
+cross-machine reproducibility, and the two are deliberately not conflated.
+
 ## Remaining open items
 
 1. **STRATA-005 / 009** — need the FoundationDB client library. Fully

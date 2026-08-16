@@ -2,36 +2,36 @@
   "artifact_count": 4,
   "artifacts": [
     {
-      "bytes": 49198,
-      "first_sha256": "67bdd5d7ab259f3c0a2750a80ca2cc908876fc8a88d0664c80f07ee8ef764846",
+      "bytes": 63300,
+      "first_sha256": "98a9ff16f2ce1e944376461460107c08385fc132c0125f694a191f7843518869",
       "identical": true,
       "name": "alpen-validity-first-f94c-v025.zip",
-      "second_sha256": "67bdd5d7ab259f3c0a2750a80ca2cc908876fc8a88d0664c80f07ee8ef764846",
-      "sha256": "67bdd5d7ab259f3c0a2750a80ca2cc908876fc8a88d0664c80f07ee8ef764846"
+      "second_sha256": "98a9ff16f2ce1e944376461460107c08385fc132c0125f694a191f7843518869",
+      "sha256": "98a9ff16f2ce1e944376461460107c08385fc132c0125f694a191f7843518869"
     },
     {
       "bytes": 310,
-      "first_sha256": "a8046ec533e3969cf961150293b40707d7c59bc4bc9cd2988459bfd378356ab4",
+      "first_sha256": "8ffcfb08c0b2d4bf20c30f2c23c7455d908389ffc1cbf8e27fc984ac3c16b76b",
       "identical": true,
       "name": "ranklock-v0.25.1-SHA256SUMS.txt",
-      "second_sha256": "a8046ec533e3969cf961150293b40707d7c59bc4bc9cd2988459bfd378356ab4",
-      "sha256": "a8046ec533e3969cf961150293b40707d7c59bc4bc9cd2988459bfd378356ab4"
+      "second_sha256": "8ffcfb08c0b2d4bf20c30f2c23c7455d908389ffc1cbf8e27fc984ac3c16b76b",
+      "sha256": "8ffcfb08c0b2d4bf20c30f2c23c7455d908389ffc1cbf8e27fc984ac3c16b76b"
     },
     {
       "bytes": 532,
-      "first_sha256": "5ef011b6379b6c96f8ec29d03cbddf175378c789101df07fd94c6026ef7579b4",
+      "first_sha256": "edbfffc04c775708805afc1d6f452926e34066c912b1a6a50d8a0a4fde84d78d",
       "identical": true,
       "name": "ranklock-v0.25.1-release-build.json",
-      "second_sha256": "5ef011b6379b6c96f8ec29d03cbddf175378c789101df07fd94c6026ef7579b4",
-      "sha256": "5ef011b6379b6c96f8ec29d03cbddf175378c789101df07fd94c6026ef7579b4"
+      "second_sha256": "edbfffc04c775708805afc1d6f452926e34066c912b1a6a50d8a0a4fde84d78d",
+      "sha256": "edbfffc04c775708805afc1d6f452926e34066c912b1a6a50d8a0a4fde84d78d"
     },
     {
-      "bytes": 17530814,
-      "first_sha256": "4b7cbb7783aa22c0a756d15febe736b368341bd9f28f073e10c88c595c29b884",
+      "bytes": 17561080,
+      "first_sha256": "bc5aa1a95ee6da1f6ce578d4b6ad4e5a837f213d37478f3d82889927a5f3d5c2",
       "identical": true,
       "name": "ranklock-v0.25.1-reproducible-source.zip",
-      "second_sha256": "4b7cbb7783aa22c0a756d15febe736b368341bd9f28f073e10c88c595c29b884",
-      "sha256": "4b7cbb7783aa22c0a756d15febe736b368341bd9f28f073e10c88c595c29b884"
+      "second_sha256": "bc5aa1a95ee6da1f6ce578d4b6ad4e5a837f213d37478f3d82889927a5f3d5c2",
+      "sha256": "bc5aa1a95ee6da1f6ce578d4b6ad4e5a837f213d37478f3d82889927a5f3d5c2"
     }
   ],
   "byte_identical": true,
@@ -41,19 +41,19 @@
         "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/.venv/bin/python",
         "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/scripts/build_v025_release.py",
         "--output-dir",
-        "/var/folders/q_/9s2d9ctj6rq165znhnrj6wz40000gn/T/ranklock-v0252-determinism-5bwibmdd/build-a"
+        "/var/folders/q_/9s2d9ctj6rq165znhnrj6wz40000gn/T/ranklock-v0252-determinism-kp0twour/build-a"
       ],
       "cwd": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1",
-      "duration_ms": 617,
-      "env_digest": "b6ff0f5eeec3e13b4dd84b4b6945cbe3ffd54c31502b3e6e3e0ddadb7cde0f1f",
+      "duration_ms": 836,
+      "env_digest": "f33dc391c0596772de13a463f6a7dec20c56a62d6110e95c019a3bbf64f0e13f",
       "exit_code": 0,
-      "finished_at_utc": "2026-08-15T21:13:55.583421Z",
+      "finished_at_utc": "2026-08-16T06:40:58.856843Z",
       "schema": "ranklock-v0252-command-record-v1",
-      "started_at_utc": "2026-08-15T21:13:54.966123Z",
-      "stderr_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/results/v0252_logs/deterministic-build-a.20260815T211354965742Z.stderr.log",
+      "started_at_utc": "2026-08-16T06:40:58.020020Z",
+      "stderr_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/results/v0252_logs/deterministic-build-a.20260816T064058019822Z.stderr.log",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "stdout_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/results/v0252_logs/deterministic-build-a.20260815T211354965742Z.stdout.log",
-      "stdout_sha256": "5ef011b6379b6c96f8ec29d03cbddf175378c789101df07fd94c6026ef7579b4",
+      "stdout_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/results/v0252_logs/deterministic-build-a.20260816T064058019822Z.stdout.log",
+      "stdout_sha256": "edbfffc04c775708805afc1d6f452926e34066c912b1a6a50d8a0a4fde84d78d",
       "timed_out": false
     },
     {
@@ -61,19 +61,19 @@
         "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/.venv/bin/python",
         "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/scripts/build_v025_release.py",
         "--output-dir",
-        "/var/folders/q_/9s2d9ctj6rq165znhnrj6wz40000gn/T/ranklock-v0252-determinism-5bwibmdd/build-b"
+        "/var/folders/q_/9s2d9ctj6rq165znhnrj6wz40000gn/T/ranklock-v0252-determinism-kp0twour/build-b"
       ],
       "cwd": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1",
-      "duration_ms": 605,
-      "env_digest": "b6ff0f5eeec3e13b4dd84b4b6945cbe3ffd54c31502b3e6e3e0ddadb7cde0f1f",
+      "duration_ms": 706,
+      "env_digest": "f33dc391c0596772de13a463f6a7dec20c56a62d6110e95c019a3bbf64f0e13f",
       "exit_code": 0,
-      "finished_at_utc": "2026-08-15T21:13:56.189470Z",
+      "finished_at_utc": "2026-08-16T06:40:59.564126Z",
       "schema": "ranklock-v0252-command-record-v1",
-      "started_at_utc": "2026-08-15T21:13:55.583858Z",
-      "stderr_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/results/v0252_logs/deterministic-build-b.20260815T211355583804Z.stderr.log",
+      "started_at_utc": "2026-08-16T06:40:58.857322Z",
+      "stderr_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/results/v0252_logs/deterministic-build-b.20260816T064058857252Z.stderr.log",
       "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "stdout_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/results/v0252_logs/deterministic-build-b.20260815T211355583804Z.stdout.log",
-      "stdout_sha256": "5ef011b6379b6c96f8ec29d03cbddf175378c789101df07fd94c6026ef7579b4",
+      "stdout_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/results/v0252_logs/deterministic-build-b.20260816T064058857252Z.stdout.log",
+      "stdout_sha256": "edbfffc04c775708805afc1d6f452926e34066c912b1a6a50d8a0a4fde84d78d",
       "timed_out": false
     }
   ],
