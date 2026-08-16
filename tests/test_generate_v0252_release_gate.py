@@ -149,3 +149,112 @@ def test_gate_reflects_a_genuinely_passed_core_matrix_via_the_verifier_only(tmp_
     assert document["facts"]["bitcoin_core_regtest_executed"] is True
     assert document["facts"]["bitcoin_core_regtest_passed"] is False
     assert document["safe_for_funds"] is False
+
+
+# ---------------------------------------------------------------------------
+# The clean-archive report closes complete_source_archive_reproducible, which
+# is a funds blocker. It used to be consumed with no schema or version check
+# at all -- only `all_checks_passed` was read -- so evidence from a different
+# release could have closed a v0.25.2 funds blocker. These pin both
+# directions of that guard.
+#
+# Note what is deliberately absent: no fixture here sets
+# `all_checks_passed: true`. Writing one would manufacture the very
+# reproduction the guard exists to protect. The accept-side test instead uses
+# a well-formed report whose result is null, which proves the guard lets a
+# correctly-versioned report through *without* asserting a passing run.
+# ---------------------------------------------------------------------------
+
+CLEAN_SCHEMA = "ranklock-v0251-clean-archive-verification-v1"
+SOURCE_VERSION = "0.25.1"
+
+
+def _clean_report(tmp_path: Path, **overrides: object) -> Path:
+    document: dict[str, object] = {
+        "schema": CLEAN_SCHEMA,
+        "package_version": SOURCE_VERSION,
+        "all_checks_passed": None,
+    }
+    document.update(overrides)
+    path = tmp_path / "clean.json"
+    path.write_text(json.dumps(document, indent=2, sort_keys=True) + "\n")
+    return path
+
+
+def test_clean_archive_report_from_another_release_is_rejected(tmp_path: Path):
+    """A stale report must not close a funds blocker for this release."""
+
+    report = _clean_report(tmp_path, package_version="0.18.0")
+    result = _run_generator(
+        [
+            "--clean-archive-report",
+            str(report),
+            "--output",
+            str(tmp_path / "gate.json"),
+        ]
+    )
+    assert result.returncode != 0
+    assert "0.18.0" in result.stderr
+    assert not (tmp_path / "gate.json").exists(), "a rejected run must write no gate"
+
+
+def test_clean_archive_report_with_a_foreign_schema_is_rejected(tmp_path: Path):
+    """The v0.18-era schema is rejected rather than accepted as a fallback."""
+
+    report = _clean_report(tmp_path, schema="ranklock-clean-archive-verification-v1")
+    result = _run_generator(
+        [
+            "--clean-archive-report",
+            str(report),
+            "--output",
+            str(tmp_path / "gate.json"),
+        ]
+    )
+    assert result.returncode != 0
+    assert "schema" in result.stderr
+
+
+def test_the_real_stale_report_in_results_is_rejected(tmp_path: Path):
+    """The actual artifact sitting in results/ must not be accepted.
+
+    It is a v0.18.0 document. It happens to fail closed on its own because
+    its `all_checks_passed` is null, but the gate must reject it outright
+    rather than depend on that.
+    """
+
+    stale = ROOT / "results" / "clean_archive_verification.json"
+    if not stale.is_file():
+        return
+    result = _run_generator(
+        [
+            "--clean-archive-report",
+            str(stale),
+            "--output",
+            str(tmp_path / "gate.json"),
+        ]
+    )
+    assert result.returncode != 0
+
+
+def test_a_correctly_versioned_clean_report_is_accepted(tmp_path: Path):
+    """The guard must not be fail-closed-too-far.
+
+    A report carrying this release's schema and source version has to get
+    through, or the clean-extraction run that is supposed to close the funds
+    blocker could never do so. Its result here is null, so the fact stays
+    false -- acceptance is about the guard, not about the outcome.
+    """
+
+    report = _clean_report(tmp_path)
+    result = _run_generator(
+        [
+            "--clean-archive-report",
+            str(report),
+            "--output",
+            str(tmp_path / "gate.json"),
+        ]
+    )
+    assert result.returncode == 0, result.stderr
+    document = json.loads((tmp_path / "gate.json").read_text())
+    assert document["facts"]["complete_source_archive_reproducible"] is False
+    assert document["safe_for_funds"] is False

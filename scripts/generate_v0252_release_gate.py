@@ -28,9 +28,16 @@ from pathlib import Path
 
 from ranklock.release_qualification import LocalReleaseFacts
 
-# The release this gate qualifies. Companion evidence must be for the same
-# version, so this is a constant rather than a literal repeated per use.
+# The qualification this gate produces.
 PACKAGE_VERSION = "0.25.2"
+# The source package the clean-archive reproduction runs against. This is the
+# distributed archive's version (pyproject.toml, build_v025_release.py), which
+# is deliberately not the qualification version above.
+SOURCE_PACKAGE_VERSION = "0.25.1"
+# Emitted by scripts/verify_v025_clean_archive.py. The v0.18-era
+# "ranklock-clean-archive-verification-v1" is a different, older schema and is
+# rejected rather than accepted as a fallback.
+CLEAN_ARCHIVE_SCHEMA = "ranklock-v0251-clean-archive-verification-v1"
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -100,16 +107,19 @@ def main() -> int:
     # evidence from a different release.  Pin both the schema and the version.
     if clean is not None:
         clean_schema = clean.get("schema")
-        if clean_schema != "ranklock-clean-archive-verification-v1":
+        if clean_schema != CLEAN_ARCHIVE_SCHEMA:
             raise RuntimeError(
-                f"{args.clean_archive_report}: unexpected schema {clean_schema!r}"
+                f"{args.clean_archive_report}: expected schema "
+                f"{CLEAN_ARCHIVE_SCHEMA!r}, got {clean_schema!r}; the report in "
+                "results/ is a v0.18-era artifact and does not qualify this release"
             )
-        clean_version = str(clean.get("version", ""))
-        if clean_version != PACKAGE_VERSION:
+        clean_version = str(clean.get("package_version", ""))
+        if clean_version != SOURCE_PACKAGE_VERSION:
             raise RuntimeError(
-                f"{args.clean_archive_report}: clean-archive evidence is for version "
-                f"{clean_version!r}, but this gate qualifies {PACKAGE_VERSION!r}; "
-                "regenerate the clean-archive reproduction against this release"
+                f"{args.clean_archive_report}: clean-archive evidence is for source "
+                f"version {clean_version!r}, but this gate qualifies "
+                f"{SOURCE_PACKAGE_VERSION!r}; regenerate the clean-archive "
+                "reproduction against this release"
             )
 
     if verification is not None and verification.get("schema") != "ranklock-v0252-evidence-verification-v1":
