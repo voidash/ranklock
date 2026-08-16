@@ -122,9 +122,9 @@ silently widening the patch.
 
 ## Acceptance matrix status
 
-Executed against real Bitcoin Core (development binary — see the blocker
-below), each negative case pinned to its specific rejection reason so none can
-later pass vacuously:
+Executed against the pinned, signature-verified Bitcoin Core 31.1, each
+negative case pinned to its specific rejection reason so none can later pass
+vacuously:
 
 | Case | Result | Rejection reason pinned |
 |---|---|---|
@@ -142,11 +142,19 @@ later pass vacuously:
 Pinning those reasons was not cosmetic: it caught that CORE-024 would
 otherwise have passed on an invalid signature rather than on the fee floor.
 
+Authoritative counts live in `results/v0252_*.json`; the table below is
+regenerated from them rather than maintained by hand.
+
 | Phase | passed | failed | not_executed | unavailable | |
 |---|---|---|---|---|---|
-| CORE-001..030 | 17 | 0 | 5 | 1 | (+7 `modeled_only`)
-| STRATA-001..009 | 4 | 0 | 0 | 5 | |
+| CORE-001..030 | 18 | 0 | 5 | 0 | (+7 `modeled_only`)
+| STRATA-001..009 | 5 | 2 | 0 | 2 | stale — predates the STRATA-006 fix |
 | STRATA-010..020 | — | — | 11 | — | |
+
+The STRATA row is the last *measured* run and predates the STRATA-006 fix;
+it has not been re-run, so it is reported as measured rather than as
+predicted. STRATA-006 has been verified independently (6/6) but the matrix
+JSON is regenerated only by a full re-run.
 
 Five CORE rows are `modeled_only`: covered by the package suite but not driven through a live node. Per the acceptance matrix only `PASS` closes a release fact, so this records existing coverage without inflating the gate — asserted by a regression test.
 
@@ -166,20 +174,43 @@ wrong — only `--offline` had been tested. `cargo fetch --locked` succeeds,
 which made compiling the patch possible for the first time and surfaced
 defects no static bundle check could catch.
 
+## Resolved: STRATA-006 (a base defect, fixed as a labeled delta)
+
+`logging::init_from_env` installed the global tracing dispatcher with no
+once-guard, so the *second* call in a process aborted the test binary with
+"a global default trace dispatcher has already been set". The pinned base
+tree has **19 unguarded call sites**; any crate whose tests initialize
+logging more than once per binary could not run its suite.
+
+This is not a validity-first regression. The attribution control is
+`claim_payout`, which the installer never touches: it fails 5 tests with the
+identical panic at `f94c06d`, and passes **11/11** once the guard is added.
+
+The fix is a `std::sync::Once` at the single definition site in
+`crates/common/src/logging.rs`, not at the 19 call sites —
+`init_logging_from_config` is re-exported from the `strata_logging`
+dependency and is not editable from this patch. Per handoff rule 4 it is
+carried as a separate, labeled delta (`patch_base_logging_defect`) rather
+than folded into the feature patch, which raises the declared scope from 24
+to **25 modified files**. Tests after the first in a binary now share the
+first test's service label; the second call previously panicked, so nothing
+could have depended on re-initialization.
+
+**STRATA-006 now passes: 6/6 `validity_first_counterproof` tests against
+pinned Core 31.1 regtest.**
+
 ## Remaining open items
 
-1. **STRATA-006** — pre-existing *base* defect, not a validity-first
-   regression: `assert_connector_is_spendable` in `test_utils.rs` (untouched
-   by the patch) calls `logging::init_from_env`, which has no double-init
-   guard. Proven by `claim_payout` — also untouched — failing 5 tests
-   identically. The fix is a one-line `try_init` change to upstream base code,
-   outside the patch's declared scope.
-2. **STRATA-008** — `bridge-sm` went from not compiling to 50/71 passing. The
+1. **STRATA-008** — `bridge-sm` went from not compiling to 50/71 passing. The
    remaining 21 assert the old immediate-NACK polarity. `nack_tx_for_slot` now
    returns the real pre-signed NACK rather than an arbitrary spend, which is
    necessary but not sufficient: the transition regenerates the graph from the
-   SM's own context, so the fixture's context must match it too.
-3. **STRATA-005 / 009** — need the FoundationDB client library;
+   SM's own context, so the fixture's context must match it too. The 21 are
+   not one root cause — at minimum a signature-arity panic in `unpack_game`,
+   a `bridge_proof_txid` fixture divergence, a `tx_classifier` that no longer
+   recognizes an arbitrary NACK, the slot divergence above, and the retry-tick
+   duties.
+2. **STRATA-005 / 009** — need the FoundationDB client library;
    `foundationdb-gen` reads `/usr/local/include/foundationdb/fdb.options`,
    and `/usr/local` is root-owned so installing it requires sudo.
 3. **Per-scenario protocol negatives are not wired into the matrix.**
