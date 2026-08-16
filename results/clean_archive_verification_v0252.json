@@ -1,0 +1,133 @@
+{
+  "all_checks_passed": true,
+  "archive": "/private/tmp/relbuild-final2/ranklock-v0.25.1-reproducible-source.zip",
+  "archive_bytes": 17563560,
+  "archive_sha256": "e470ca49509093d63b750bbb843e5193cb6c198a3af95f49c7841dca3128f6cd",
+  "bitcoin_core": {
+    "evidence": {
+      "executed": true,
+      "passed": true,
+      "result": {
+        "authorization_plan_bytes": 382,
+        "authorization_plan_digest": "2017db9aca4a94daa860502dce8b32ee0586fc11bea8a580f7c9270ad5e5dc9b",
+        "bitcoin_core_version": "/Satoshi:31.1.0/",
+        "bitcoin_core_version_number": 310100,
+        "bitcoind_sha256": "d55c12b0b02001cc16b1481c4075361dcba193100a8143924abda911174c09ec",
+        "exact_phase_one_replay_created_no_second_response": true,
+        "exact_phase_two_replay_created_no_second_response": true,
+        "reorg_never_reopened_consumed_slots": true,
+        "schema": "ranklock-v025-bitcoin-core-regtest-result-v3",
+        "standard_policy_enabled": true,
+        "transactions": [
+          {
+            "block_hash": "43d3bf6e6c739ca46748a004be4af8b5fdec71c01c6ac75b2d38500039beee98",
+            "confirmations": 6,
+            "labels_released_before_broadcast": true,
+            "mempool_policy_allowed": true,
+            "phase_one_response_bytes": 25098,
+            "phase_two_response_bytes": 708,
+            "point_encoding": "942a7688cf05c29f7593351e1b86eb87e3ad5dcb1b0fc3d853e9852040c57019",
+            "program_seed_commitment": "4c112f2906ce605dde0403fc897393203879c0d17fe5f1516feda82b32a9a274",
+            "raw_transaction_sha256": "7d4fdf20c28c7fcae384f4ab73f12a1fcb5c5c587d749bd3f33ec62eeccf6021",
+            "schema": "ranklock-v025-bitcoin-core-regtest-transaction-v3",
+            "seed_released_only_after_confirmation": true,
+            "seed_share_responses": 3,
+            "selector_items": 512,
+            "slot_id": 0,
+            "txid": "2160e5032134d840cda6429fde3125ffd2c10fcd096dfa4153124e19bd84e541",
+            "witness_policy_sha256": "6e784fb648d5ff390f5328786878a5a96b820af8d6abded233e3c89d30a4b96c",
+            "witness_share_responses": 3,
+            "wtxid": "158d673d288888e89cfcec2501f24b94eabf8409bb78af61679e4ee2c3fa5ec7"
+          },
+          {
+            "block_hash": "0ca69e6b53f35ecc34b28b7d9f0783438113261a21593e10be061f1ca96b1449",
+            "confirmations": 6,
+            "labels_released_before_broadcast": true,
+            "mempool_policy_allowed": true,
+            "phase_one_response_bytes": 25098,
+            "phase_two_response_bytes": 708,
+            "point_encoding": "8a5a32e29427a090356b1774d99fc8f305a676b925b2b6515a0b689103b86fca",
+            "program_seed_commitment": "b14902ee63876b8a88a272102726c001f7d02866c82aa80e4ec575fe6196988c",
+            "raw_transaction_sha256": "c02a0f904dd722ffb44e91082ea02a765022e3eb2584eec274f657a4cac1595b",
+            "schema": "ranklock-v025-bitcoin-core-regtest-transaction-v3",
+            "seed_released_only_after_confirmation": true,
+            "seed_share_responses": 3,
+            "selector_items": 512,
+            "slot_id": 1,
+            "txid": "e7058b55bdb4a85c038f77684a4fa885642809cf80914435076778f06f50387f",
+            "witness_policy_sha256": "2a3274f6f091b12599171eaf17ada3d112df2d3e69c3cb3a360a12449f8640cd",
+            "witness_share_responses": 3,
+            "wtxid": "97e6dd1de167d07aef1aafc85d4ff0dc39835f575c8aeb764798d9c291936744"
+          }
+        ]
+      },
+      "schema": "ranklock-v025-bitcoin-core-regtest-evidence-v3"
+    },
+    "executed": true,
+    "passed": true,
+    "runner_exit_code": 0,
+    "supplied": true
+  },
+  "clean_generation_hashes": {
+    "artifacts/v025-committee-conformance/authorization-transaction-plan.bin": "d088c19aed7bfc22faced88ed6d965a90f55eac59780b90601c1b0ed05377ba3",
+    "artifacts/v025-committee-conformance/ranklock-v025-two-slot-manifest.bin": "b08718b98f7de665d83d02e81c54bfd8dc586a356961b21c265ac62bf9301f4d",
+    "artifacts/v025-committee-conformance/ranklock-v025-two-slot-retained-object.bin": "a719c7503276de7744ae9e8ab4badc7d8420155b5ec26ef853a792ef26e96f60",
+    "artifacts/v025-committee-conformance/slot-0-authorization-transaction.bin": "f071bd90c17abd25bfa5d78bd3ad0226327afbe6269afd11265faee620506b3a",
+    "artifacts/v025-committee-conformance/slot-0-witness-policy.bin": "627e9b0be947192e06d67db1e6ea37f418f639c8e8fdf16bfb7c38992960d3b7",
+    "artifacts/v025-committee-conformance/slot-1-authorization-transaction.bin": "90f166a23a7b2f07d35f18bbdf643a2ee132c6316d207fc631decfc8617df75e",
+    "artifacts/v025-committee-conformance/slot-1-witness-policy.bin": "82261d586bf2381545d20c37e947d9856b9702b455cc4ea068fe87cee7615db2",
+    "artifacts/v025-split-scalar-conformance/participant-0-retained-object.bin": "00bd5871554d188b72c6d93c0712073bae62c99cc11c054c8d904938ea8ebe11",
+    "artifacts/v025-split-scalar-conformance/participant-1-retained-object.bin": "2897fa1fb00cdf9a747eb46dca9d0af617f63b3a907ba8a199ca83a2e9cd5261",
+    "artifacts/v025-split-scalar-conformance/ranklock-v025-split-ack-script.bin": "ff52266554f435a38301ece6ab66e51f8aeb4f555edc667885c1f942fbfa9897",
+    "artifacts/v025-split-scalar-conformance/ranklock-v025-split-scalar-bundle.bin": "18aeb173b94f18f78111420308d3a64674926eeb3ca5a604cb660efefc831ebd"
+  },
+  "maximum_mode": "canary",
+  "package_version": "0.25.1",
+  "packaged_artifact_hashes": {
+    "artifacts/v025-committee-conformance/authorization-transaction-plan.bin": "d088c19aed7bfc22faced88ed6d965a90f55eac59780b90601c1b0ed05377ba3",
+    "artifacts/v025-committee-conformance/ranklock-v025-two-slot-manifest.bin": "b08718b98f7de665d83d02e81c54bfd8dc586a356961b21c265ac62bf9301f4d",
+    "artifacts/v025-committee-conformance/ranklock-v025-two-slot-retained-object.bin": "a719c7503276de7744ae9e8ab4badc7d8420155b5ec26ef853a792ef26e96f60",
+    "artifacts/v025-committee-conformance/slot-0-authorization-transaction.bin": "f071bd90c17abd25bfa5d78bd3ad0226327afbe6269afd11265faee620506b3a",
+    "artifacts/v025-committee-conformance/slot-0-witness-policy.bin": "627e9b0be947192e06d67db1e6ea37f418f639c8e8fdf16bfb7c38992960d3b7",
+    "artifacts/v025-committee-conformance/slot-1-authorization-transaction.bin": "90f166a23a7b2f07d35f18bbdf643a2ee132c6316d207fc631decfc8617df75e",
+    "artifacts/v025-committee-conformance/slot-1-witness-policy.bin": "82261d586bf2381545d20c37e947d9856b9702b455cc4ea068fe87cee7615db2",
+    "artifacts/v025-split-scalar-conformance/participant-0-retained-object.bin": "00bd5871554d188b72c6d93c0712073bae62c99cc11c054c8d904938ea8ebe11",
+    "artifacts/v025-split-scalar-conformance/participant-1-retained-object.bin": "2897fa1fb00cdf9a747eb46dca9d0af617f63b3a907ba8a199ca83a2e9cd5261",
+    "artifacts/v025-split-scalar-conformance/ranklock-v025-split-ack-script.bin": "ff52266554f435a38301ece6ab66e51f8aeb4f555edc667885c1f942fbfa9897",
+    "artifacts/v025-split-scalar-conformance/ranklock-v025-split-scalar-bundle.bin": "18aeb173b94f18f78111420308d3a64674926eeb3ca5a604cb660efefc831ebd"
+  },
+  "python": "Python 3.14.6",
+  "remaining_external_gates": [
+    "current strata-bridge compilation and functional/regtest matrix",
+    "production split-scalar or active-MPC ceremony",
+    "native constant-time implementation and secret erasure",
+    "independently administered rollback witnesses",
+    "independent cryptography and implementation audits"
+  ],
+  "reproducibility_checks": {
+    "bitcoin_policy_envelope_passed": true,
+    "clean_target_package_install": true,
+    "committee_harness_passed": true,
+    "compileall": true,
+    "complete_test_suite": true,
+    "evidence_verifier_passed": true,
+    "locked_dependencies_available": true,
+    "packaged_fixtures_match_clean_generation": true,
+    "release_checksum_verified": true,
+    "release_claims_safe_for_funds_false": true,
+    "retained_object_below_one_mib": true,
+    "security_hardening_report_passed": true,
+    "source_manifest_verified": true,
+    "split_scalar_harness_passed": true,
+    "strata_handoff_static_checks_passed": true
+  },
+  "safe_for_funds": false,
+  "schema": "ranklock-v0251-clean-archive-verification-v1",
+  "tests": {
+    "failed": 0,
+    "files": 108,
+    "nonzero_files": 0,
+    "passed": 484
+  },
+  "verified_at_utc": "2026-08-16T06:55:50.336336+00:00"
+}

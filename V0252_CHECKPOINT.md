@@ -306,15 +306,60 @@ schema and the version, and the guard was verified by confirming it rejects
 that exact report with exit code 1 while the normal path still produces
 `safe_for_funds: false`, `maximum_mode: observe`.
 
-Consequently `complete_source_archive_reproducible` remains **false**, which
-is the correct reading: no clean-extraction reproduction has been run
-against this release. The narrower EVID-007 claim *is* closed —
+## Resolved: source reproducibility — the gate advanced to `canary`
+
+Having built the guard, the obvious next step was to run the producer, which
+had never been done for this release. `verify_v025_clean_archive.py` extracts
+the built archive into a clean tree, installs the locked dependencies into a
+fresh interpreter, and re-runs everything from there. Result:
+`all_checks_passed: true`, with all **15** reproducibility checks true —
+including `packaged_fixtures_match_clean_generation`,
+`source_manifest_verified`, `release_checksum_verified`,
+`locked_dependencies_available` and `evidence_verifier_passed` — and **484
+tests passed across 108 files, 0 failed, 0 nonzero exits** from the clean
+extraction, driven against the pinned Core 31.1.
+
+That closes `complete_source_archive_reproducible`, so
+`locally_reproducible` is now true and **`maximum_mode` advances from
+`observe` to `canary`**. The gate reads the report from its default path,
+subject to the schema/version pin above.
+
+The narrower EVID-007 claim is also closed:
 `verify_v0252_deterministic_build.py` builds the release twice into separate
-clean directories and all **4 of 4** artifacts are byte-identical
-(`alpen-validity-first-f94c-v025.zip`,
-`ranklock-v0.25.1-reproducible-source.zip`, the SHA256SUMS and the build
-JSON). Two builds on one machine is a strictly weaker claim than
-cross-machine reproducibility, and the two are deliberately not conflated.
+clean directories and all **4 of 4** artifacts are byte-identical. Two builds
+on one machine remains a strictly weaker claim than cross-machine
+reproducibility, and the two are deliberately not conflated.
+
+## Why `safe_for_funds` cannot be closed here
+
+The blocker list is down from nine to eight, and the FoundationDB step
+closes two more — "Bitcoin Core regtest did not pass" (the five remaining
+CORE rows are all `blocked_by` the Strata ACK/NACK graph, STRATA-012) and
+"current bridge commit was not compiled and tested" (STRATA-009). That
+leaves six, none of which is a matter of further local engineering:
+
+| Blocker | Why local work cannot close it |
+|---|---|
+| independent cryptography audit | a third party must perform and sign it |
+| independent implementation audit | likewise |
+| production rollback witnesses deployed | operational infrastructure run by other parties |
+| production setup gate (split-scalar) | a real multi-party ceremony with secrets nobody holds alone |
+| deterministic fixture secrets absent | the shipped fixtures are public *by design*; only a real ceremony replaces them |
+| native constant-time implementation | a separate engineering program, not a defect to fix |
+
+These six are hardcoded `False` in `generate_v0252_release_gate.py` on
+purpose. That is the fail-closed architecture handoff rule 2 requires, and
+it is now pinned by
+`test_a_fully_passing_local_matrix_still_cannot_open_the_funds_gate`, which
+feeds the generator a **completely green** CORE and STRATA matrix — every
+case passing, the best result any amount of local work could produce — and
+asserts all six remain false and `safe_for_funds` stays false. Without that
+test the boundary would be a convention; with it, it is a property.
+
+Setting any of the six from this machine would mean fabricating an
+attestation — the one thing handoff rules 2 and 5 forbid outright, and the
+thing that would actually endanger funds, because the gate's entire purpose
+is to stop a bridge going live on evidence nobody independent ever checked.
 
 ## Remaining open items
 

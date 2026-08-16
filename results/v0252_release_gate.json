@@ -1,6 +1,10 @@
 {
   "claim_boundary": "hash-pinned Bitcoin Core and the pinned Strata validity-first path were executed and passed the stated matrix, to the extent bitcoin_core_regtest_passed and current_bridge_compiled_and_tested are true above; this is not a statement that RankLock is safe for production funds -- production setup, native hardening, independent rollback operations, governance and external audits remain separate, externally-gated requirements",
-  "clean_archive_report": null,
+  "clean_archive_report": {
+    "all_checks_passed": true,
+    "path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/results/clean_archive_verification_v0252.json",
+    "sha256": "2a94b171a391cf9eb4065ab150bb34936768dadc4c4bbad12ec9773ed7f75526"
+  },
   "evidence": {
     "bitcoin_policy": {
       "path": "results/v025_bitcoin_policy_envelope.json",
@@ -39,7 +43,7 @@
     "bitcoin_core_regtest_passed": false,
     "bitcoin_policy_envelope_passed": true,
     "committee_authorization_harness_passed": true,
-    "complete_source_archive_reproducible": false,
+    "complete_source_archive_reproducible": true,
     "complete_test_suite_passed": true,
     "current_bridge_compiled_and_tested": false,
     "deterministic_fixture_secrets_absent": false,
@@ -52,7 +56,6 @@
     "split_scalar_production_setup_passed": false
   },
   "funds_blockers": [
-    "complete source archive is not reproducible",
     "Bitcoin Core regtest did not pass",
     "current bridge commit was not compiled and tested",
     "native constant-time implementation is absent",
@@ -63,8 +66,8 @@
     "production setup gate is open for split-scalar-n-of-n"
   ],
   "local_security_hardening_passed": true,
-  "locally_reproducible": false,
-  "maximum_mode": "observe",
+  "locally_reproducible": true,
+  "maximum_mode": "canary",
   "package_version": "0.25.2",
   "safe_for_funds": false,
   "schema": "ranklock-v0252-release-gate-v1",

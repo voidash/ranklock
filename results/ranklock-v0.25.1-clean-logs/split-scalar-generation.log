@@ -1,0 +1,189 @@
+{
+  "adaptive_evaluation": {
+    "a2_derived_after_aggregate_y1": true,
+    "aggregate_direct_scalar_checks": 2,
+    "aggregate_output_sha256": [
+      "80ea697e475e5c67370e4e6143d1cbee3bd52d12d9ac9f7213bbb3713e45ab92",
+      "a1f7a883b3a9caa5df3a102be4084e413de930b6ea461892a7541a44b8dbc6a6"
+    ],
+    "all_preimages_required_by_ack_script": true,
+    "cross_slot_output_rejected": true,
+    "full_91_prime_artifacts": 2,
+    "full_91_prime_slots": 4,
+    "participant_maps_per_slot": [
+      [
+        256,
+        256
+      ],
+      [
+        256,
+        256
+      ]
+    ],
+    "participant_output_checks": 4,
+    "positive_lock_preimages_unlocked_per_slot": 2,
+    "slot_count": 2
+  },
+  "bitcoin_ack": {
+    "bitcoin_core_regtest_executed": false,
+    "n_of_n": true,
+    "preimage_count": 2,
+    "script_bytes": 104,
+    "script_sha256": "ff52266554f435a38301ece6ab66e51f8aeb4f555edc667885c1f942fbfa9897"
+  },
+  "bitcoin_bound_participant_release": {
+    "authorized_release_bytes": [
+      [
+        24836,
+        24836
+      ],
+      [
+        24836,
+        24836
+      ]
+    ],
+    "bitcoin_core_rpc_semantics_exercised_with_deterministic_oracle": true,
+    "common_selector_policy_sets": 2,
+    "confirmed_wtxids": [
+      "011e4857c77e52e1a8ba1e8acba98fc1b719e11ca6b223ef9a17f75b8b3cd934",
+      "3f8e0be9fb6b518749b48e37940d89fc132532f1e0b029c1cc9f549509ed83b5"
+    ],
+    "durable_final_states": [
+      [
+        "success",
+        "success"
+      ],
+      [
+        "success",
+        "success"
+      ]
+    ],
+    "durable_participant_ledgers": 2,
+    "independent_rollback_witnesses_in_fixture": 2,
+    "minimum_confirmations": 6,
+    "participant_local_label_trees": true,
+    "participant_local_release_sidecars": 2,
+    "participant_policy_signatures": 4,
+    "real_bitcoin_core_process_executed": false,
+    "rejected_architecture_items_for_two_private_vectors": 1024,
+    "release_files_created": [
+      2,
+      2
+    ],
+    "rollback_receipt_counts": [
+      4,
+      4
+    ],
+    "rollback_receipts_verified": true,
+    "selector_items_per_transaction": 512,
+    "single_common_selector_avoids_bip342_1000_item_limit": true,
+    "witness_items_including_tapscript_and_control": 514
+  },
+  "closed_by_this_qualification": [
+    "dealer-free one-honest conditional safety mode for the hidden scalar",
+    "independent full retained object per scalar share",
+    "independent N-of-N bundle signature messages",
+    "cross-participant DFB nonce namespace separation",
+    "one common 512-bit Bitcoin selector policy signed by every participant",
+    "participant-local durable burn and rollback-witness anchoring",
+    "participant-local labels released only after exact wtxid confirmation checks",
+    "adaptive aggregate A2 selected only after aggregate [r]A1",
+    "N-of-N Bitcoin ACK script requiring every independently locked preimage"
+  ],
+  "decision": "FULL_SIZE_SPLIT_SCALAR_PARTICIPANT_LOCAL_RELEASE_PASS_REAL_CORE_NATIVE_AUDIT_GATES_OPEN",
+  "participant_setup_rows": [
+    [
+      {
+        "artifact_root": "4d792708445679fed384606c00575311e996b75cb5133463c2d04f3638a5de99",
+        "ciphertext_bytes": 522102,
+        "input_label_root": "2a339f9328b0b321db10bb091d9ee1bf01f08a448299796caa8cab72eeb708ad",
+        "no_wrap_limit": 2184388827958183606469810778001988127598000868549577861005755072744428068975255856690811697943785477942723866654074384358453053813661642548143265605444182783396231993995026474142244667488619687045,
+        "nonce_namespace": 0,
+        "participant_index": 0,
+        "plaintext_bytes": 522102,
+        "slot_id": 0
+      },
+      {
+        "artifact_root": "21cd3db71023d33ae4be749e8e7470d79382639b4b8e8182a38712f28f4e16e4",
+        "ciphertext_bytes": 522102,
+        "input_label_root": "522dc865f0d7961abfc6db11a4bbbae4b52cc65b7f6169cf8a48b17cbea139d4",
+        "no_wrap_limit": 2184388827958183606469810778001988127598000868549577861005755072744428068975255856690811697943785477942723866654074384358453053813661642548143265605444182783396231993995026474142244667488619687045,
+        "nonce_namespace": 1,
+        "participant_index": 0,
+        "plaintext_bytes": 522102,
+        "slot_id": 1
+      }
+    ],
+    [
+      {
+        "artifact_root": "16890f426d3517b88cef990b6f4ca65e7f92887a48ed96be64356459857de11c",
+        "ciphertext_bytes": 522102,
+        "input_label_root": "fb9f9ea0b4b6a2cdf5b2eaaa8d87a4a44392b5d6dc72d5d1e5326c29c7bcd3ef",
+        "no_wrap_limit": 2184388827958183606469810778001988127598000868549577861005755072744428068975255856690811697943785477942723866654074384358453053813661642548143265605444182783396231993995026474142244667488619687045,
+        "nonce_namespace": 2,
+        "participant_index": 1,
+        "plaintext_bytes": 522102,
+        "slot_id": 0
+      },
+      {
+        "artifact_root": "a011c08a0f271adb7edc20f3cf6a4423742d359b14154dcbfc031f1f8f2c36f5",
+        "ciphertext_bytes": 522102,
+        "input_label_root": "1e87d2f75b0da96dbbdd6b98d5ea7ddb376f6387de18d4a00763bb6da94e5471",
+        "no_wrap_limit": 2184388827958183606469810778001988127598000868549577861005755072744428068975255856690811697943785477942723866654074384358453053813661642548143265605444182783396231993995026474142244667488619687045,
+        "nonce_namespace": 3,
+        "participant_index": 1,
+        "plaintext_bytes": 522102,
+        "slot_id": 1
+      }
+    ]
+  ],
+  "public_fixture_warning": "all deterministic setup secrets are public; never fund these artifacts",
+  "remaining_safe_for_funds_gates": [
+    "execute ACK/NACK, release, reorg and fee flow against a pinned Bitcoin Core 31.1 regtest daemon",
+    "compile and run the exact current strata-bridge integration",
+    "replace Python variable-time secret setup/evaluation paths with audited native constant-time code",
+    "deploy independently administered sidecars and rollback witnesses with hardware-backed keys",
+    "complete crash/restart/reorg/CPFP tests under real Core and filesystem fault injection",
+    "obtain independent cryptographic, implementation and Bitcoin audits"
+  ],
+  "retained_material": {
+    "artifact_bytes_sum": 2089904,
+    "below_one_mib": false,
+    "complete_split_scalar_retained_bytes": 2090910,
+    "participant_0_bytes": 1044952,
+    "participant_0_sha256": "00bd5871554d188b72c6d93c0712073bae62c99cc11c054c8d904938ea8ebe11",
+    "participant_1_bytes": 1044952,
+    "participant_1_sha256": "2897fa1fb00cdf9a747eb46dca9d0af617f63b3a907ba8a199ca83a2e9cd5261",
+    "signed_bundle_bytes": 1006,
+    "size_tradeoff": "approximately linear in independently generated scalar-share artifacts",
+    "unsigned_bundle_bytes": 864
+  },
+  "safe_for_funds": false,
+  "schema": "ranklock-v025-split-scalar-qualification-v2",
+  "setup_model": {
+    "active_mpc_required_for_this_mode": false,
+    "all_participants_signed_exact_bundle": true,
+    "bundle_assembled_from_reversed_messages": true,
+    "corrupt_participant_can_abort": true,
+    "dealer_knowing_aggregate_scalar_required": false,
+    "independent_bundle_signature_messages": 2,
+    "mode": "split-scalar-n-of-n",
+    "namespace_ranges_disjoint": true,
+    "nonce_namespace_ranges": [
+      [
+        0,
+        2
+      ],
+      [
+        2,
+        4
+      ]
+    ],
+    "one_honest_participant_conditionally_protects_ack_safety": true,
+    "participant_0_tree_migrated_from_public_committee_fixture": false,
+    "participants": 2,
+    "per_participant_artifact_generated_independently": true,
+    "production_tree_reconstruction_across_participants": false,
+    "scale_knowledge_proofs_verified": true
+  }
+}

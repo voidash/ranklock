@@ -258,3 +258,132 @@ def test_a_correctly_versioned_clean_report_is_accepted(tmp_path: Path):
     document = json.loads((tmp_path / "gate.json").read_text())
     assert document["facts"]["complete_source_archive_reproducible"] is False
     assert document["safe_for_funds"] is False
+
+
+# ---------------------------------------------------------------------------
+# Plan section 7.5: prove that even a *completely green* local matrix leaves
+# production ceremony, native hardening, independent rollback operations and
+# the external audits false, so safe_for_funds stays false.
+#
+# tests/test_release_qualification.py already pins this at the model layer,
+# where the facts are constructor arguments. That leaves the question this
+# test answers: can the *generator* be driven to emit those facts as true by
+# any evidence a local run can produce? If it could, the fail-closed boundary
+# would be a convention rather than a property, and the model-layer tests
+# would be guarding a door with no wall attached.
+# ---------------------------------------------------------------------------
+
+EXTERNALLY_ATTESTED_FACTS = (
+    "native_constant_time_implementation",
+    "production_rollback_witnesses_deployed",
+    "deterministic_fixture_secrets_absent",
+    "independent_cryptography_audit_passed",
+    "independent_implementation_audit_passed",
+    "split_scalar_production_setup_passed",
+)
+
+
+def test_a_fully_passing_local_matrix_still_cannot_open_the_funds_gate(tmp_path: Path):
+    from ranklock.acceptance_matrix_v0252 import STRATA_BUILD_CASE_IDS
+    from ranklock.evidence_v0252 import run_recorded_command
+
+    command = run_recorded_command(
+        [sys.executable, "-c", "print('everything green')"],
+        cwd=tmp_path,
+        log_dir=tmp_path / "logs",
+        label="all-green",
+        timeout=30,
+    )
+
+    # Every CORE and every STRATA build case passing -- the best result any
+    # amount of local engineering could ever produce.
+    core_path = tmp_path / "core_matrix.json"
+    MatrixReport(
+        schema_name="ranklock-v0252-core-matrix-v1",
+        required_case_ids=CORE_CASE_IDS,
+        identity={"expected_release": "31.1"},
+        cases=tuple(
+            CaseResult(
+                case_id=cid,
+                status="passed",
+                description="green fixture",
+                commands=(command,),
+                evidence={"note": "test fixture"},
+            )
+            for cid in CORE_CASE_IDS
+        ),
+    ).write(core_path)
+
+    strata_path = tmp_path / "strata_matrix.json"
+    MatrixReport(
+        schema_name="ranklock-v0252-strata-build-matrix-v1",
+        required_case_ids=STRATA_BUILD_CASE_IDS,
+        identity={"strata_commit": "f" * 40},
+        cases=tuple(
+            CaseResult(
+                case_id=cid,
+                status="passed",
+                description="green fixture",
+                commands=(command,),
+                evidence={"note": "test fixture"},
+            )
+            for cid in STRATA_BUILD_CASE_IDS
+        ),
+    ).write(strata_path)
+
+    verification_path = tmp_path / "verification.json"
+    verify = subprocess.run(
+        [
+            sys.executable,
+            str(ROOT / "scripts" / "verify_v0252_evidence.py"),
+            "--core-matrix",
+            str(core_path),
+            "--strata-build-matrix",
+            str(strata_path),
+            "--output",
+            str(verification_path),
+        ],
+        cwd=ROOT,
+        env={**os.environ, "PYTHONPATH": str(ROOT / "src")},
+        capture_output=True,
+        text=True,
+        timeout=120,
+    )
+    assert verify.returncode == 0, verify.stderr
+
+    verification = json.loads(verification_path.read_text())
+    assert verification["bitcoin_core_regtest_all_passed"] is True
+    assert verification["strata_build_all_passed"] is True
+
+    gate = _run_generator(
+        [
+            "--evidence-verification",
+            str(verification_path),
+            "--output",
+            str(tmp_path / "gate.json"),
+        ]
+    )
+    assert gate.returncode == 0, gate.stderr
+    document = json.loads((tmp_path / "gate.json").read_text())
+    facts = document["facts"]
+
+    # The local half really did close.
+    assert facts["bitcoin_core_regtest_passed"] is True
+    assert facts["current_bridge_compiled_and_tested"] is True
+
+    # The external half cannot be reached from here, by construction.
+    for name in EXTERNALLY_ATTESTED_FACTS:
+        assert facts[name] is False, (
+            f"{name} became true from purely local evidence; the funds gate "
+            "must depend on attestations this machine cannot produce"
+        )
+
+    assert document["safe_for_funds"] is False
+    assert document["maximum_mode"] != "enforce"
+    for message in (
+        "independent cryptography audit is absent",
+        "independent implementation audit is absent",
+        "production rollback witnesses are not deployed",
+        "native constant-time implementation is absent",
+    ):
+        assert message in document["funds_blockers"]

@@ -1,0 +1,166 @@
+{
+  "bitcoin_binding": {
+    "adaptive_witness_does_not_change_precommitted_txid": true,
+    "authorization_transaction_plan_bytes": 382,
+    "authorization_transaction_plan_digest": "f341646744b7ee2dbcebd4ed3be866da491e2860edaf15f2fa7d783e75169c0d",
+    "authorization_transaction_plan_roundtrip": true,
+    "bitcoin_core_regtest_executed": false,
+    "protocol": "two-phase labels-before-broadcast, seed-after-confirmation",
+    "slot_1_spends_precommitted_slot_0_output": true,
+    "strict_parser_and_synthetic_transaction_passed": true,
+    "transactions": [
+      {
+        "fee_rate_sat_vb": 2.547121752419766,
+        "fee_sat": 30000,
+        "input_value_sat": 160000,
+        "output_value_sat": 130000,
+        "raw_bytes": 46828,
+        "selector_item_bytes": 16,
+        "selector_items": 512,
+        "slot_id": 0,
+        "stripped_bytes": 94,
+        "txid": "6f1cbc6d7830252eab18155105db772bfa830315417533c0490ea62abd661f4f",
+        "vsize": 11778,
+        "weight": 47110,
+        "witness_digest": "d615c431929b8ecebe49c89c8435fe6ae9680145701ab9cd79bb010ff96a44c8",
+        "witness_policy_sha256": "627e9b0be947192e06d67db1e6ea37f418f639c8e8fdf16bfb7c38992960d3b7",
+        "wtxid": "8161503cdd663af0d268d730d464061f062b7f29e70d1acc618f67dfa1c95ba0"
+      },
+      {
+        "fee_rate_sat_vb": 2.547121752419766,
+        "fee_sat": 30000,
+        "input_value_sat": 130000,
+        "output_value_sat": 100000,
+        "raw_bytes": 46828,
+        "selector_item_bytes": 16,
+        "selector_items": 512,
+        "slot_id": 1,
+        "stripped_bytes": 94,
+        "txid": "96f733713479584c9a6e3c71f1d0b4ef79d427f00d9eb2dd081a4975f468fe79",
+        "vsize": 11778,
+        "weight": 47110,
+        "witness_digest": "cea3e30d2df83b2a5dff20af582246499e70997e6c5dc9d5f9f8011facefa1e3",
+        "witness_policy_sha256": "82261d586bf2381545d20c37e947d9856b9702b455cc4ea068fe87cee7615db2",
+        "wtxid": "db5fe1f5d371901dace817adba9a77880017c565619ca339ffc45dae54fcf67d"
+      }
+    ],
+    "valid_alternate_point_same_txid_conflict_rejected": true,
+    "value_plan": {
+      "deposit_input_value_sat": 160000,
+      "fees_sat": [
+        30000,
+        30000
+      ],
+      "slot_output_values_sat": [
+        130000,
+        100000
+      ]
+    },
+    "witness_selected_point_matches_preauthorization": true
+  },
+  "closed_in_v025": [
+    "phase-one preauthorization releases only selected label shares before broadcast",
+    "phase-two releases only program-seed shares after exact witness confirmation",
+    "wtxid plus exact witness-digest authorization binding",
+    "committee-signed 512-item Taproot validation of the actual 16-byte DFB labels",
+    "two sequential precommitted transaction ids with adaptive witnesses",
+    "positive fees on both authorization transactions",
+    "SQLite FULL/WAL burn before phase-one output with concurrent writer serialization",
+    "witnessed available-to-burned-to-terminal monotonic transitions",
+    "permanent first-binding conflict rejection across restart and reorg observation",
+    "n-of-n XOR-shared program seeds and input labels",
+    "full-size two-slot adaptive valid-proof execution and positive-lock unlock",
+    "signed rollback-witness receipts with restored-snapshot rejection"
+  ],
+  "committee": {
+    "activation_bytes_per_slot": 702,
+    "audit_hash_chains_valid": true,
+    "available_to_terminal_without_witnessed_burn_forbidden": true,
+    "confirmation_request_bytes": 372,
+    "conflicting_same_txid_different_wtxid_fork_rejected": true,
+    "exact_restart_replay_byte_identical": true,
+    "independent_rollback_witnesses": 3,
+    "latest_witness_generation": 9,
+    "missing_one_seed_share_rejected": true,
+    "missing_one_witness_share_rejected": true,
+    "one_fault_can_block_liveness": true,
+    "one_honest_participant_safety": true,
+    "participants": 3,
+    "phase_one_response_bytes_all_per_slot": 25098,
+    "phase_one_witness_share_response_bytes_each": 8366,
+    "phase_two_response_bytes_all_per_slot": 708,
+    "phase_two_seed_response_bytes_each": 236,
+    "preauthorization_bytes": 268,
+    "private_guide_not_required_by_public_evaluator": true,
+    "private_participant_state_bytes_per_slot": 49376,
+    "release_policy": "n-of-n two-phase",
+    "reorg_observation_never_reopens_slot": true,
+    "restored_preburn_snapshot_rejected": true,
+    "rollback_witness_receipts_valid": true
+  },
+  "context_binding": {
+    "activation_binds_each_precommitted_txid": true,
+    "authorization_graph_id": "cfdb6642c9cb30fa71b0b85608f717ae1537f8de381962674e6fca21cb45eab5",
+    "authorization_plan_digest": "f341646744b7ee2dbcebd4ed3be866da491e2860edaf15f2fa7d783e75169c0d",
+    "confirmation_binds_txid_wtxid_and_complete_witness": true,
+    "inner_setup_context_digest": "121aebbd0702954fdefcddcd808d94e1a67576bcec2e455a966c004dff2e92ba",
+    "manifest_transcript_binds_plan": true,
+    "no_hash_fixed_point_between_labels_and_taproot_output": true,
+    "preauthorization_binds_plan_and_stripped_transaction": true
+  },
+  "decision": "FULL_SIZE_COMMITTEE_SAFETY_HARNESS_PASS_PRODUCTION_GATES_OPEN",
+  "full_evaluation": {
+    "conditional_maps_per_slot": [
+      256,
+      256
+    ],
+    "direct_scalar_checks": 2,
+    "positive_lock_payload_unlocks": 2,
+    "same_hidden_scalar": true,
+    "second_valid_groth16_proof_adaptive_after_first_output": true,
+    "two_full_91_prime_slots": true
+  },
+  "public_fixture_warning": "all secrets in this conformance fixture are public; never fund it",
+  "remaining_safe_for_funds_gates": [
+    "replace public dealer fixture with an independently reviewed production setup route",
+    "execute pinned Bitcoin Core 31.1 regtest against the two-phase sidecar",
+    "compile current strata-bridge integration and run its functional/regtest matrix",
+    "deploy independently administered rollback witnesses with mTLS and hardware-backed keys",
+    "constant-time native implementation, input bounds, denial-of-service hardening, and secret erasure",
+    "independent cryptographic, implementation, Bitcoin, and operations review"
+  ],
+  "retained_object": {
+    "bytes": 1044952,
+    "manifest_bytes": 748,
+    "margin_to_one_mib": 3624,
+    "public_committee_metadata_added_to_retained_object": 0,
+    "sha256": "a719c7503276de7744ae9e8ab4badc7d8420155b5ec26ef853a792ef26e96f60",
+    "slot_count": 2
+  },
+  "safe_for_funds": false,
+  "schema": "ranklock-v025-committee-qualification-v2",
+  "setup_rows": [
+    {
+      "artifact_root": "23ae556f0ba2f422340e80711c92fe847a664e6f264fe34e209cf444397e213c",
+      "ciphertext_bytes": 522102,
+      "input_label_root": "53cb2d1d0a21a3fa31efb4b1ea34bb5a137e50dc086f261895e6c7d7b38f9b65",
+      "no_wrap_limit": 2184388827958183606469810778001988127598000868549577861005755072744428068975255856690811697943785477942723866654074384358453053813661642548143265605444182783396231993995026474142244667488619687045,
+      "plaintext_bytes": 522102,
+      "slot_id": 0
+    },
+    {
+      "artifact_root": "26a184392c9650d1016786487310ce0b6bdae553933ac48dd167235624eabaea",
+      "ciphertext_bytes": 522102,
+      "input_label_root": "776724b9aab4ef0e589cd6257c519855ef872c40a46e8c8bb2f6e06b7d83cfb4",
+      "no_wrap_limit": 2184388827958183606469810778001988127598000868549577861005755072744428068975255856690811697943785477942723866654074384358453053813661642548143265605444182783396231993995026474142244667488619687045,
+      "plaintext_bytes": 522102,
+      "slot_id": 1
+    }
+  ],
+  "setup_security": {
+    "active_dishonest_majority_mpc_executed": false,
+    "dealer_fixture_used": true,
+    "safe_setup_for_funds": false
+  },
+  "source_revision": "v0.25.1"
+}

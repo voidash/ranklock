@@ -70,7 +70,13 @@ def main() -> int:
     parser.add_argument(
         "--clean-archive-report",
         type=Path,
-        help="optional companion clean-archive report produced outside the source archive",
+        default=ROOT / "results" / "clean_archive_verification_v0252.json",
+        help=(
+            "clean-archive report produced outside the source archive by "
+            "scripts/verify_v025_clean_archive.py; defaults to the v0.25.2 run. "
+            "Its schema and package_version are pinned, so a report from "
+            "another release is rejected rather than silently consumed."
+        ),
     )
     parser.add_argument("--output", type=Path, default=ROOT / "results" / "v0252_release_gate.json")
     args = parser.parse_args()
