@@ -210,9 +210,42 @@ pinned Core 31.1 regtest.**
    a `bridge_proof_txid` fixture divergence, a `tx_classifier` that no longer
    recognizes an arbitrary NACK, the slot divergence above, and the retry-tick
    duties.
-2. **STRATA-005 / 009** — need the FoundationDB client library;
-   `foundationdb-gen` reads `/usr/local/include/foundationdb/fdb.options`,
-   and `/usr/local` is root-owned so installing it requires sudo.
+2. **STRATA-005 / 009** — need the FoundationDB client library. Fully
+   staged; one privileged copy remains, which is the user's to run.
+
+   The workspace pins `foundationdb` with `features = ["fdb-7_3"]` and
+   deliberately *without* `embedded-fdb-include`, so it expects a real
+   installed 7.3 client. `foundationdb-gen/src/lib.rs:341` resolves the
+   options file with a compile-time
+   `include_bytes!("/usr/local/include/foundationdb/fdb.options")` — an
+   absolute path with no environment override, so it cannot be redirected.
+   (`FDB_CLIENT_LIB_PATH` in `foundationdb-sys/build.rs:63` redirects only
+   the *link* search path, not the headers.) `/usr/local` is `root:wheel`
+   and not writable, so this one step needs sudo.
+
+   Enabling `embedded-fdb-include` would dodge the sudo but silently change
+   the pinned build configuration to compile against vendored headers rather
+   than the client the project actually targets, and would still leave
+   `libfdb_c.dylib` missing for the STRATA-009 test run. Rejected on those
+   grounds rather than taken as a shortcut.
+
+   Staged and verified without privileges:
+   `FoundationDB-7.3.43_arm64.pkg` (native arch, exact pinned 7.3 series),
+   SHA-256 `415088e5c36e22067d20c6da5f849536aaea99e103633fd0e05ce7287e19bab5`,
+   matching Apple's published `.sha256`. Expanded at
+   `/tmp/fdb743/expanded/FoundationDB-clients.pkg/Payload/usr/local`, which
+   contains exactly `include/foundationdb/fdb.options` and an arm64
+   `lib/libfdb_c.dylib`.
+
+   The remaining step deliberately copies only the **clients** component, so
+   no `fdbserver` and no launchd job are installed, and it is reversible by
+   deleting the two paths:
+
+   ```
+   sudo mkdir -p /usr/local/include /usr/local/lib
+   sudo cp -R /tmp/fdb743/expanded/FoundationDB-clients.pkg/Payload/usr/local/include/foundationdb /usr/local/include/
+   sudo cp /tmp/fdb743/expanded/FoundationDB-clients.pkg/Payload/usr/local/lib/libfdb_c.dylib /usr/local/lib/
+   ```
 3. **Per-scenario protocol negatives are not wired into the matrix.**
    Remaining CORE rows are per-scenario burn/anchor/release negatives (wrong
    slot, wrong context, wrong witness) and the Strata ACK/NACK graph
