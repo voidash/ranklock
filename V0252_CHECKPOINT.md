@@ -504,14 +504,48 @@ entirely, so it is a question for the protocol audit, not a patch.
    same defect as STRATA-006 — an unguarded once-per-process global
    initializer called from many tests in one binary.
 
-   Not fixed here, unlike STRATA-006, because the fix is not equivalent in
-   size: that was a one-line `Once` at a single definition site, whereas this
-   needs a process-global `OnceLock` owning the `NetworkAutoStop` guard for
-   the process lifetime — a design change to upstream database code — and the
-   tests may additionally require a live FDB cluster, which the
-   clients-only install deliberately does not provide. Both need verifying
-   before the change is worth trusting. **This is the highest-value item
-   after the exact-NACK witness check.**
+   **Correction: the api-version panic is a symptom, not the cause, and no
+   code fix is warranted.** `crates/db/src/fdb/bridge_db.rs:449` already
+   shares one client through `static FDB_CLIENT: OnceLock<(FdbClient,
+   MustDrop)>`. The real chain is:
+
+   1. `get_client()` calls `FDB_CLIENT.get_or_init(|| … FdbClient::setup(…).unwrap())`.
+   2. `setup()` boots the network, then opens the database and runs a
+      directory-setup transaction — which needs a live cluster.
+   3. No cluster is reachable, so the transaction fails and `.unwrap()` panics.
+   4. `OnceLock::get_or_init` stores nothing when its closure panics, so the
+      next test calls `setup()` again, reaching `boot()` a second time and
+      producing the api-version panic.
+
+   So the requirement is infrastructure, exactly as Bitcoin Core regtest is
+   for the CORE matrix — not a patch. Patching the guard would have masked
+   the real cause.
+
+   **A local cluster is now running, built entirely from the already-verified
+   package and with no privileges:** `fdbserver` and `fdbcli` are executed
+   directly out of `/tmp/fdb743/expanded/` rather than installed, on
+   `127.0.0.1:4689` with data and logs under `/tmp/fdbcluster/`.
+   `configure new single memory` reports *"Database created"* and
+   `status minimal` reports the database available.
+
+   One gap remains, and it is again a privileged path rather than an
+   engineering problem. `Config::default()` takes
+   `foundationdb::default_config_path()`, which on macOS is the compile-time
+   constant `/usr/local/etc/foundationdb/fdb.cluster`; the explicit path is
+   passed to `Database::new`, so `FDB_CLUSTER_FILE` is not consulted.
+   `/usr/local/etc` does not exist and cannot be created unprivileged.
+   Linking the running cluster's file into place is the remaining step:
+
+   ```
+   sudo mkdir -p /usr/local/etc/foundationdb
+   sudo ln -sf /tmp/fdbcluster/fdb.cluster /usr/local/etc/foundationdb/fdb.cluster
+   ```
+
+   A symlink rather than a copy, so the file stays correct when the server
+   rewrites coordinator details. After that STRATA-009 can run against a real
+   cluster; whether it then passes is unknown and must be measured, not
+   predicted — the last two predictions in this document about FoundationDB
+   were both wrong.
 
    The earlier prediction in this document that installing FoundationDB would
    close two blockers was wrong: it closed STRATA-005 and moved STRATA-009
