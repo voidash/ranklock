@@ -252,8 +252,8 @@ adds no `#[ignore]` anywhere, and test counts per touched file held or grew
 
 Proving no test was *weakened* does not prove its new expectation is
 *intended* — a test rewritten to match observed behaviour would enshrine a
-defect. The three flips that changed semantics were therefore checked
-against the handoff spec rather than against the implementation:
+defect. The four flips that changed semantics were therefore each checked
+against an authority outside the implementation:
 
 - **No immediate NACK on counterproof.** `integration_spec.json` states
   `polarity: {immediate: "ACK …", timeout: "CSV NACK …"}`. Matches.
@@ -271,11 +271,15 @@ against the handoff spec rather than against the implementation:
   *later* than consensus requires. The new boundary is correct; the rename
   reflects a real fix, not an accommodation.
 
-One flip is **not** fully closed by either source: the counterprover now
-re-emits the immediate ACK on every retry tick (`…noop…` → `…emits_ack…`).
-That is safe if a duty is an idempotent instruction and wasteful-but-benign
-if not; neither the spec nor BIP68 settles it, and it is recorded here as
-checked-but-unresolved rather than implied to be validated.
+- **ACK re-emitted on every retry tick** (`…noop…` → `…emits_ack…`). Neither
+  the spec nor BIP68 settles this, so it was closed against the executor
+  instead. `resolve_and_publish_counterproof_ack` returns `Ok(())` early when
+  the RankLock preimage is not yet available, so a tick before export is a
+  no-op; the transaction is a fixed pre-signed template finalized with the
+  same preimage, so its txid is identical every tick; and it is published
+  through the `tx_driver`, which the untouched base covers with a
+  `tx_drive_idempotence` test. The duty is therefore an idempotent
+  "ensure published", not a "broadcast now", and re-emission is safe.
 
 ## Remaining open items
 
