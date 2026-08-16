@@ -199,18 +199,59 @@ could have depended on re-initialization.
 **STRATA-006 now passes: 6/6 `validity_first_counterproof` tests against
 pinned Core 31.1 regtest.**
 
+## Resolved: STRATA-008, and a functor regression it exposed
+
+All previously failing `bridge-sm` tests pass. Measured on a tree built by
+cloning the pinned commit, running the installer preflight and apply, and
+running the suites — not on an incrementally edited tree:
+
+| Suite | Result |
+|---|---|
+| `-p strata-bridge-connectors validity_first_counterproof` | 6 passed, 0 failed |
+| `-p strata-bridge-connectors` (whole crate) | 27 passed, 0 failed |
+| `-p strata-bridge-tx-graph game_graph` | 7 passed, 0 failed |
+| `-p strata-bridge-tx-graph --lib` (whole crate) | 46 passed, 0 failed |
+| `-p strata-bridge-sm counterproof` | 71 passed, 0 failed |
+| `-p strata-bridge-sm` (whole crate) | 449 passed, 0 failed |
+
+The 21 failures were five distinct defects, not the single context mismatch
+previously recorded here. The load-bearing one: `test_graph_sm_cfg()` called
+`random_p2tr_desc()` and `generate_xonly_pubkey()` on **every invocation**,
+so a graph built by a fixture and the graph the state machine regenerates
+disagreed on every exact txid. It is now memoized in a `OnceLock`. The
+earlier "the fixture's context must match the SM's" diagnosis was wrong —
+`create_nonpov_sm` sets `graph_idx.operator = TEST_POV_IDX`, so the slots
+already agreed.
+
+One test, `event_rejected_when_tx_is_counterproof_ack`, had been **passing
+by accident** on that same randomness. It was rewritten to feed the real
+counterproof ACK for the slot and assert rejection, which is the strongest
+form of its original premise.
+
+**A regression the `counterproof` filter was hiding.** Running the whole
+`tx-graph` crate rather than the filtered case showed 25 passed / 21 failed.
+The patch widened the production `GAME_WATCHTOWER_LEN` for the new
+per-watchtower fixed NACK but left the test module's parallel `PACKED_LEN`
+constant unchanged, so every functor fixture was one element short per
+watchtower; `unpack` returned `None`, the `expect("enough data")` in
+`get_functor` panicked, and that poisoned the shared `LazyLock` fixtures,
+cascading into 21 of 46 lib tests.
+
+This was **caused by the patch, not pre-existing**: the pinned base is 46
+passed / 0 failed, the patched tree was 25/21, and correcting `PACKED_LEN`
+returns it to 46/0. Establishing that required running the base without the
+patch; the filtered STRATA-007 case (`game_graph`, 7/0) passed throughout
+and would never have revealed it. That is the concrete argument for the
+acceptance matrix's rule that a filtered run must not be recorded as a full
+one.
+
+No test was deleted, ignored, or weakened to reach these numbers: the patch
+adds no `#[ignore]` anywhere, and test counts per touched file held or grew
+(one net-new test pinning the pre-maturity NACK gate).
+
 ## Remaining open items
 
-1. **STRATA-008** — `bridge-sm` went from not compiling to 50/71 passing. The
-   remaining 21 assert the old immediate-NACK polarity. `nack_tx_for_slot` now
-   returns the real pre-signed NACK rather than an arbitrary spend, which is
-   necessary but not sufficient: the transition regenerates the graph from the
-   SM's own context, so the fixture's context must match it too. The 21 are
-   not one root cause — at minimum a signature-arity panic in `unpack_game`,
-   a `bridge_proof_txid` fixture divergence, a `tx_classifier` that no longer
-   recognizes an arbitrary NACK, the slot divergence above, and the retry-tick
-   duties.
-2. **STRATA-005 / 009** — need the FoundationDB client library. Fully
+1. **STRATA-005 / 009** — need the FoundationDB client library. Fully
    staged; one privileged copy remains, which is the user's to run.
 
    The workspace pins `foundationdb` with `features = ["fdb-7_3"]` and
