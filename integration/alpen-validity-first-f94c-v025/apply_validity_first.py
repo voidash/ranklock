@@ -827,6 +827,7 @@ TOUCHED_RUST_FILES = (
     "crates/bridge-sm/src/graph/tests/notify_new_block.rs",
     "crates/bridge-sm/src/graph/tests/contested/process_counterproof.rs",
     "crates/bridge-sm/src/graph/tests/handlers/process_retry_tick.rs",
+    "crates/bridge-sm/src/graph/tests/contested/process_counterproof_nackd.rs",
 )
 
 
@@ -924,6 +925,16 @@ def patch_bridge_sm_nack_tests(repo: Path, dry_run: bool) -> None:
             "no immediate NACK duty on counterproof",
             3,
         ),
+    ], dry_run)
+
+    rel = "crates/bridge-sm/src/graph/tests/contested/process_counterproof_nackd.rs"
+    patch(repo, rel, [
+        (
+            "            test_graph_sm_cfg, test_graph_transition,",
+            "            test_graph_sm_cfg, test_graph_sm_ctx, test_graph_transition,",
+            "import test_graph_sm_ctx",
+        ),
+        ('fn nack_tx_for_slot(slot: usize) -> bitcoin::Transaction {\n    let summary = test_graph_summary();\n    generate_spending_tx(\n        OutPoint {\n            txid: summary.counterproofs[slot].counterproof,\n            vout: CounterproofTx::ACK_NACK_VOUT,\n        },\n        &[],\n    )\n}', 'fn nack_tx_for_slot(slot: usize) -> bitcoin::Transaction {\n    // Validity-first accepts only the exact fixed pre-signed NACK: the\n    // transition regenerates the game graph and compares\n    // counterproof_nack txids. An arbitrary transaction that merely spends\n    // the ACK/NACK outpoint is now correctly rejected, so the fixture must\n    // return the real template. The witness does not affect the txid, so the\n    // unsigned template is sufficient here.\n    let cfg = test_graph_sm_cfg();\n    let ctx = test_graph_sm_ctx();\n    let game = crate::graph::machine::generate_game_graph(&cfg, &ctx, &test_deposit_params());\n    game.counterproofs[slot]\n        .counterproof_nack\n        .as_ref()\n        .clone()\n}', "exact fixed NACK in nackd tests"),
     ], dry_run)
 
     rel = "crates/bridge-sm/src/graph/tests/handlers/process_retry_tick.rs"

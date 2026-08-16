@@ -27,7 +27,7 @@ INSTALLER = ROOT / "integration" / "alpen-validity-first-f94c-v025" / "apply_val
 # Declared patch scope: 23 edited + 4 added. The three extra edits over the
 # original PATCH_SCOPE.md are stale bridge-sm tests retargeted to
 # validity-first semantics, without which the crate does not compile.
-EXPECTED_CHANGED_FILES = 23
+EXPECTED_CHANGED_FILES = 24
 EXPECTED_NEW_FILES = 4
 
 

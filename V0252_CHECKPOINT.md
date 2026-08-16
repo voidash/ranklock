@@ -150,17 +150,38 @@ otherwise have passed on an invalid signature rather than on the fee floor.
 
 Five CORE rows are `modeled_only`: covered by the package suite but not driven through a live node. Per the acceptance matrix only `PASS` closes a release fact, so this records existing coverage without inflating the gate — asserted by a regression test.
 
-## Blockers (why the remaining cases are open)
+## Resolved: both former "blockers"
 
-These are recorded with their actual probe output, never asserted from memory.
+Both were resolvable, and resolving them found four more real defects.
 
-1. **No hash-pinned Bitcoin Core 31.1.** The only local binary is 31.0
-   (`d83bbb59…`). It is usable for development probes but can never produce
-   qualification evidence — there is deliberately no
-   `--allow-unpinned-bitcoind` flag. CORE-001 is `unavailable`.
-2. **The Strata dependency graph is not resolvable here.** `cargo --offline`
-   cannot reach the pinned `mosaic` git rev, and the full workspace also needs
-   a FoundationDB client library. STRATA-005..009 are `unavailable`.
+**Bitcoin Core 31.1 is now pinned and verified.** Tarball SHA-256 matches the
+published manifest, and the manifest's GPG signatures verify: **11 good, 0
+bad**, from independent Core maintainers. Executable
+`d55c12b0b02001cc16b1481c4075361dcba193100a8143924abda911174c09ec`.
+CORE-001 passes, so the CORE matrix is qualification evidence rather than a
+development probe.
+
+**The dependency graph resolves.** The earlier claim that it did not was
+wrong — only `--offline` had been tested. `cargo fetch --locked` succeeds,
+which made compiling the patch possible for the first time and surfaced
+defects no static bundle check could catch.
+
+## Remaining open items
+
+1. **STRATA-006** — pre-existing *base* defect, not a validity-first
+   regression: `assert_connector_is_spendable` in `test_utils.rs` (untouched
+   by the patch) calls `logging::init_from_env`, which has no double-init
+   guard. Proven by `claim_payout` — also untouched — failing 5 tests
+   identically. The fix is a one-line `try_init` change to upstream base code,
+   outside the patch's declared scope.
+2. **STRATA-008** — `bridge-sm` went from not compiling to 50/71 passing. The
+   remaining 21 assert the old immediate-NACK polarity. `nack_tx_for_slot` now
+   returns the real pre-signed NACK rather than an arbitrary spend, which is
+   necessary but not sufficient: the transition regenerates the graph from the
+   SM's own context, so the fixture's context must match it too.
+3. **STRATA-005 / 009** — need the FoundationDB client library;
+   `foundationdb-gen` reads `/usr/local/include/foundationdb/fdb.options`,
+   and `/usr/local` is root-owned so installing it requires sudo.
 3. **Per-scenario protocol negatives are not wired into the matrix.**
    Remaining CORE rows are per-scenario burn/anchor/release negatives (wrong
    slot, wrong context, wrong witness) and the Strata ACK/NACK graph
