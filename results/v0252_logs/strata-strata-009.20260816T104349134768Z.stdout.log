@@ -1,0 +1,44 @@
+
+running 28 tests
+test monoid::tests::concat_is_fold_map_identity ... ok
+test monoid::tests::vec_monoid_laws ... ok
+test predicate::tests::test_pred_eq ... ok
+test predicate::tests::test_pred_gt ... ok
+test predicate::tests::test_pred_gte ... ok
+test predicate::tests::test_pred_lt ... ok
+test predicate::tests::test_pred_lte ... ok
+test predicate::tests::test_pred_neq ... ok
+test req::tests::test_req_basic_usage ... ok
+test req::tests::test_req_dispatch ... ok
+test req::tests::test_req_dropped_receiver ... ok
+test req::tests::test_req_future_wrapper ... ok
+test req::tests::test_req_input_access ... ok
+test req::tests::test_req_into_input ... ok
+test req::tests::test_req_into_input_output ... ok
+test retry::tests::test_error_classification ... ok
+test retry::tests::test_exponential_backoff ... ok
+test retry::tests::test_fixed_delay_strategy ... ok
+test retry::tests::test_max_retries ... ok
+test retry::tests::test_retry_function_combinator ... ok
+test retry::tests::test_strategy_or_combinator ... ok
+test semigroup::tests::option_semigroup_laws ... ok
+test semigroup::tests::result_semigroup_laws ... ok
+test semigroup::tests::sconcat_base_case ... ok
+test semigroup::tests::sconcat_merge_homomorphism ... ok
+test semigroup::tests::unit_semigroup_laws ... ok
+test semigroup::tests::vec_semigroup_laws ... ok
+test state_machine::state_machine_tests::test_sm ... ok
+
+test result: ok. 28 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.22s
+
+
+running 34 tests
+test client::e2e_tests::all_matched_transactions_delivered ... ok
+test client::e2e_tests::basic_subscribe_blocks_functionality ... ok
+test client::e2e_tests::basic_subscribe_transactions_functionality ... ok
+test client::e2e_tests::blocks_are_contiguous ... ok
+test client::e2e_tests::chain_reorg_backfills_replacement_parent_before_later_child ... ok
+test client::e2e_tests::dropped_block_subscriptions_pruned ... ok
+test client::e2e_tests::dropped_tx_subscriptions_pruned ... ok
+test client::e2e_tests::exactly_one_mined_status_per_block ... ok
+test client::e2e_tests::mined_txs_eventually_buried ... 

@@ -571,10 +571,44 @@ entirely, so it is a question for the protocol audit, not a patch.
    the STRATA-006 logging fix repaired the other one. Diagnosing the port
    binding is the remaining work for STRATA-009 and was not attempted here.
 
-   So STRATA-009 is now one pre-existing, environment-dependent test away
-   from passing, rather than blocked on a missing library. Its status stays
-   `failed` because one test does fail; that is the honest reading and it is
-   not being rounded up.
+   **STRATA-009 now passes.** The last failure was not environmental after
+   all — that reading was wrong. `setup_keys_ids_addrs_of_n_operators` gave
+   *every* p2p test the same fixed libp2p memory addresses (`/memory/1`,
+   `/memory/2`, …), and that transport registry is process-global, so a test
+   collided with an earlier test's listeners. Deterministic, and a
+   test-isolation defect in the base tree. Fixed by handing each `Setup` its
+   own address block from a process-global counter, carried as a second
+   labeled base delta (`patch_base_p2p_address_collision`). The crate went
+   3 passed / 1 failed to **4 passed / 0 failed**; pristine base is 2/2.
+
+   Serialized, **the complete workspace is 949 passed / 0 failed**, with zero
+   crate-level failures, including the FoundationDB-backed crate against the
+   live cluster.
+
+   ### Evidence caveat: the full pass is split across two records
+
+   `results/v0252_strata_build_matrix.json` currently shows STRATA-002 as
+   `not_executed`, so the verifier reports `strata_build_all_passed: false`
+   and the funds blocker *"current bridge commit was not compiled and
+   tested"* stays open.
+
+   That is correct and is deliberately not worked around. The record comes
+   from a `--already-applied` run, where the preflight cannot execute because
+   the tree is already patched. STRATA-002 *was* verified independently on a
+   pristine clone in this session — preflight clean, apply clean, 29 modified
+   + 4 new matching the declared scope, `cargo fmt` clean — but that is a
+   separate observation, not part of this JSON.
+
+   Three attempts at a single pristine-clone run covering all nine cases were
+   killed by the execution time limit, twice reaching STRATA-009 before being
+   stopped; a shared `CARGO_TARGET_DIR` to reuse warm artifacts did not bring
+   it inside the window either.
+
+   **The remaining work is one matrix run on a pristine clone with a longer
+   timeout.** The JSON must not be hand-edited to mark STRATA-002 passed: a
+   row that did not execute in a record is not a row that passed in it, and
+   the verifier withholding the flag is the same fail-closed principle
+   applied against this session's own result.
 
    The earlier prediction in this document that installing FoundationDB would
    close two blockers was wrong: it closed STRATA-005 and moved STRATA-009

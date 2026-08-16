@@ -1,0 +1,74 @@
+warning: unused import: `TxOut`
+   --> crates/tx-graph/src/fee.rs:445:49
+    |
+445 |         Amount, Network, OutPoint, Transaction, TxOut, Witness,
+    |                                                 ^^^^^
+    |
+    = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused imports: `CounterproofNackData` and `CounterproofNackTx`
+   --> crates/tx-graph/src/fee.rs:463:57
+    |
+463 |             CooperativePayoutData, CooperativePayoutTx, CounterproofNackData, CounterproofNackTx,
+    |                                                         ^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^
+
+warning: `strata-bridge-tx-graph` (lib test) generated 2 warnings (run `cargo fix --lib -p strata-bridge-tx-graph --tests` to apply 2 suggestions)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.77s
+     Running unittests src/lib.rs (target/debug/deps/algebra-ce9d64d4776f5616)
+     Running unittests src/lib.rs (target/debug/deps/btc_tracker-a5da606cea5072e4)
+     Running unittests src/main.rs (target/debug/deps/dev_cli-bf6e5054b37a43f5)
+     Running unittests src/lib.rs (target/debug/deps/memory_pprof-64549d50637bae57)
+     Running unittests src/lib.rs (target/debug/deps/operator_wallet-597eceb63ebf59ad)
+     Running tests/operator_wallet_e2e.rs (target/debug/deps/operator_wallet_e2e-6b8787b775d6ef72)
+     Running unittests src/main.rs (target/debug/deps/secret_service-ade5bd426ed367b4)
+     Running unittests src/lib.rs (target/debug/deps/secret_service_client-efe60aa18c0de1ab)
+     Running unittests src/lib.rs (target/debug/deps/secret_service_proto-537b475103a7939b)
+     Running unittests src/lib.rs (target/debug/deps/secret_service_server-e5f9b965bc1cbbe9)
+     Running unittests src/main.rs (target/debug/deps/strata_bridge-73448e4484e73b67)
+     Running unittests src/lib.rs (target/debug/deps/strata_bridge_asm_events-b0562c0ff7ba520b)
+     Running unittests src/lib.rs (target/debug/deps/strata_bridge_common-37e549c666667a34)
+     Running unittests src/lib.rs (target/debug/deps/strata_bridge_connectors-7c0ff5be421ee819)
+     Running unittests src/lib.rs (target/debug/deps/strata_bridge_counterproof-67c86e7e04be2047)
+     Running unittests src/lib.rs (target/debug/deps/strata_bridge_db-ed25851fc614a9bc)
+     Running unittests src/lib.rs (target/debug/deps/strata_bridge_exec-be5ba8d1c80844b7)
+     Running unittests src/lib.rs (target/debug/deps/strata_bridge_key_deriv-b17778bccc08ae0f)
+     Running unittests src/lib.rs (target/debug/deps/strata_bridge_orchestrator-f9ccad3fd7691d89)
+     Running unittests src/lib.rs (target/debug/deps/strata_bridge_p2p_service-5f237750b4f4dee8)
+     Running unittests src/lib.rs (target/debug/deps/strata_bridge_p2p_types-8db5344a04523222)
+     Running unittests src/lib.rs (target/debug/deps/strata_bridge_primitives-6a85f017391cfc04)
+     Running unittests src/lib.rs (target/debug/deps/strata_bridge_proof-7c4f783f3f42674c)
+     Running unittests src/lib.rs (target/debug/deps/strata_bridge_proof_common-e331511b4da2e982)
+     Running unittests src/lib.rs (target/debug/deps/strata_bridge_rpc-012da5494b0b999f)
+     Running unittests src/lib.rs (target/debug/deps/strata_bridge_sm-9d27a2fa3b91fc60)
+     Running unittests src/lib.rs (target/debug/deps/strata_bridge_sp1_guest_builder-d9e41b8eec6d5c8f)
+     Running unittests src/lib.rs (target/debug/deps/strata_bridge_test_utils-190ce21ba7079447)
+     Running unittests src/lib.rs (target/debug/deps/strata_bridge_tx_graph-962304ed9b22bd26)
+     Running unittests src/lib.rs (target/debug/deps/strata_mosaic_client-1ae52e43a8f9b9c1)
+     Running unittests src/lib.rs (target/debug/deps/strata_mosaic_client_api-a4b8a29348b5eea2)
+   Doc-tests algebra
+   Doc-tests btc_tracker
+   Doc-tests memory_pprof
+   Doc-tests operator_wallet
+   Doc-tests secret_service_client
+   Doc-tests secret_service_proto
+   Doc-tests secret_service_server
+   Doc-tests strata_bridge_asm_events
+   Doc-tests strata_bridge_common
+   Doc-tests strata_bridge_connectors
+   Doc-tests strata_bridge_counterproof
+   Doc-tests strata_bridge_db
+   Doc-tests strata_bridge_exec
+   Doc-tests strata_bridge_key_deriv
+   Doc-tests strata_bridge_orchestrator
+   Doc-tests strata_bridge_p2p_service
+   Doc-tests strata_bridge_p2p_types
+   Doc-tests strata_bridge_primitives
+   Doc-tests strata_bridge_proof
+   Doc-tests strata_bridge_proof_common
+   Doc-tests strata_bridge_rpc
+   Doc-tests strata_bridge_sm
+   Doc-tests strata_bridge_sp1_guest_builder
+   Doc-tests strata_bridge_test_utils
+   Doc-tests strata_bridge_tx_graph
+   Doc-tests strata_mosaic_client
+   Doc-tests strata_mosaic_client_api

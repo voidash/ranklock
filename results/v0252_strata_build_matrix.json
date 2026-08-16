@@ -1,6 +1,6 @@
 {
   "all_passed": false,
-  "any_failed": true,
+  "any_failed": false,
   "cases": {
     "STRATA-001": {
       "blocked_by": null,
@@ -12,23 +12,23 @@
             "rev-parse",
             "HEAD"
           ],
-          "cwd": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-final-run",
-          "duration_ms": 11,
+          "cwd": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-p2pverify",
+          "duration_ms": 25,
           "env_digest": "e0bf4a45458a20d343fd3d432b7af5c92cd532a6ba6d9d580492534ffabcba83",
           "exit_code": 0,
-          "finished_at_utc": "2026-08-16T08:36:48.531072Z",
+          "finished_at_utc": "2026-08-16T10:24:02.865158Z",
           "schema": "ranklock-v0252-command-record-v1",
-          "started_at_utc": "2026-08-16T08:36:48.519293Z",
-          "stderr_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/results/v0252_logs/strata-head.20260816T083648518865Z.stderr.log",
+          "started_at_utc": "2026-08-16T10:24:02.839503Z",
+          "stderr_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/results/v0252_logs/strata-head.20260816T102402839342Z.stderr.log",
           "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-          "stdout_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/results/v0252_logs/strata-head.20260816T083648518865Z.stdout.log",
+          "stdout_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/results/v0252_logs/strata-head.20260816T102402839342Z.stdout.log",
           "stdout_sha256": "0cf6b93986b3e13ff8e9b4ccbb5c99202ddff8aae23a9f2507821c9e5e488346",
           "timed_out": false
         }
       ],
       "description": "checkout is exactly the pinned base commit",
       "evidence": {
-        "checkout_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-final-run",
+        "checkout_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-p2pverify",
         "clean_before_patch": true,
         "expected_commit": "f94c06d08ff29eee746f3e20bd63078d2949b304",
         "observed_commit": "f94c06d08ff29eee746f3e20bd63078d2949b304"
@@ -37,36 +37,13 @@
       "status": "passed"
     },
     "STRATA-002": {
-      "blocked_by": null,
+      "blocked_by": "checkout was supplied already patched; rerun on a pristine tree",
       "case_id": "STRATA-002",
-      "commands": [
-        {
-          "argv": [
-            "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/.venv/bin/python",
-            "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/integration/alpen-validity-first-f94c-v025/apply_validity_first.py",
-            "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-final-run",
-            "--check"
-          ],
-          "cwd": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1",
-          "duration_ms": 75,
-          "env_digest": "e0bf4a45458a20d343fd3d432b7af5c92cd532a6ba6d9d580492534ffabcba83",
-          "exit_code": 0,
-          "finished_at_utc": "2026-08-16T08:36:48.636303Z",
-          "schema": "ranklock-v0252-command-record-v1",
-          "started_at_utc": "2026-08-16T08:36:48.560457Z",
-          "stderr_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/results/v0252_logs/strata-preflight.20260816T083648560379Z.stderr.log",
-          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-          "stdout_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/results/v0252_logs/strata-preflight.20260816T083648560379Z.stdout.log",
-          "stdout_sha256": "0a9df470faeaf738c8bc3daf680c1b6bf8574e6aa3d3ec18d6d830d834d2c8a5",
-          "timed_out": false
-        }
-      ],
-      "description": "apply_validity_first.py --check passes at the pinned commit",
-      "evidence": {
-        "exit_code": 0
-      },
+      "commands": [],
+      "description": "apply_validity_first.py --check passes",
+      "evidence": {},
       "schema": "ranklock-v0252-case-result-v1",
-      "status": "passed"
+      "status": "not_executed"
     },
     "STRATA-003": {
       "blocked_by": null,
@@ -78,26 +55,26 @@
             "status",
             "--porcelain"
           ],
-          "cwd": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-final-run",
-          "duration_ms": 21,
+          "cwd": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-p2pverify",
+          "duration_ms": 24,
           "env_digest": "e0bf4a45458a20d343fd3d432b7af5c92cd532a6ba6d9d580492534ffabcba83",
           "exit_code": 0,
-          "finished_at_utc": "2026-08-16T08:36:49.332206Z",
+          "finished_at_utc": "2026-08-16T10:24:02.922949Z",
           "schema": "ranklock-v0252-command-record-v1",
-          "started_at_utc": "2026-08-16T08:36:49.311226Z",
-          "stderr_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/results/v0252_logs/strata-scope.20260816T083649311157Z.stderr.log",
+          "started_at_utc": "2026-08-16T10:24:02.898258Z",
+          "stderr_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/results/v0252_logs/strata-scope.20260816T102402898164Z.stderr.log",
           "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-          "stdout_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/results/v0252_logs/strata-scope.20260816T083649311157Z.stdout.log",
-          "stdout_sha256": "2601fded7a3ab98c8e6bed8c944b6e75a836d7180a428da9dbb67c97227c644e",
+          "stdout_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/results/v0252_logs/strata-scope.20260816T102402898164Z.stdout.log",
+          "stdout_sha256": "25f07440df11eb753d07903ab282586b5d36a15fdefd8a07925dc171d8a6f570",
           "timed_out": false
         }
       ],
-      "description": "patch changes exactly the declared 28-file scope",
+      "description": "patch changes exactly the declared 29-file scope",
       "evidence": {
-        "expected_modified": 28,
+        "expected_modified": 29,
         "expected_new": 4,
         "git_diff_check_clean": true,
-        "modified_files": 28,
+        "modified_files": 29,
         "new_files": 4,
         "paths": [
           "crates/bridge-exec/src/errors.rs",
@@ -123,6 +100,7 @@
           "crates/connectors/src/lib.rs",
           "crates/connectors/src/prelude.rs",
           "crates/connectors/src/validity_first_counterproof.rs",
+          "crates/p2p-service/src/tests/common.rs",
           "crates/tx-graph/src/fee.rs",
           "crates/tx-graph/src/game_graph.rs",
           "crates/tx-graph/src/musig_functor.rs",
@@ -149,16 +127,16 @@
             "--",
             "--check"
           ],
-          "cwd": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-final-run",
-          "duration_ms": 401,
+          "cwd": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-p2pverify",
+          "duration_ms": 435,
           "env_digest": "e0bf4a45458a20d343fd3d432b7af5c92cd532a6ba6d9d580492534ffabcba83",
           "exit_code": 0,
-          "finished_at_utc": "2026-08-16T08:36:49.750095Z",
+          "finished_at_utc": "2026-08-16T10:24:03.384454Z",
           "schema": "ranklock-v0252-command-record-v1",
-          "started_at_utc": "2026-08-16T08:36:49.348416Z",
-          "stderr_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/results/v0252_logs/strata-fmt.20260816T083649348340Z.stderr.log",
+          "started_at_utc": "2026-08-16T10:24:02.948579Z",
+          "stderr_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/results/v0252_logs/strata-fmt.20260816T102402948497Z.stderr.log",
           "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-          "stdout_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/results/v0252_logs/strata-fmt.20260816T083649348340Z.stdout.log",
+          "stdout_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/results/v0252_logs/strata-fmt.20260816T102402948497Z.stdout.log",
           "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
           "timed_out": false
         }
@@ -183,16 +161,16 @@
             "--locked",
             "--offline"
           ],
-          "cwd": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-final-run",
-          "duration_ms": 95307,
+          "cwd": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-p2pverify",
+          "duration_ms": 1370,
           "env_digest": "e0bf4a45458a20d343fd3d432b7af5c92cd532a6ba6d9d580492534ffabcba83",
           "exit_code": 0,
-          "finished_at_utc": "2026-08-16T08:38:25.057880Z",
+          "finished_at_utc": "2026-08-16T10:24:04.755270Z",
           "schema": "ranklock-v0252-command-record-v1",
-          "started_at_utc": "2026-08-16T08:36:49.750608Z",
-          "stderr_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/results/v0252_logs/strata-strata-005.20260816T083649750524Z.stderr.log",
-          "stderr_sha256": "42ea47f46773803e1ec5906adc505ace3ab976a31450a8c6dcab55cc0eaa3936",
-          "stdout_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/results/v0252_logs/strata-strata-005.20260816T083649750524Z.stdout.log",
+          "started_at_utc": "2026-08-16T10:24:03.384946Z",
+          "stderr_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/results/v0252_logs/strata-strata-005.20260816T102403384887Z.stderr.log",
+          "stderr_sha256": "3e972dbb7008fe59ef4167d176c0392a6d768477f8b74a24b44998dc1353dda8",
+          "stdout_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/results/v0252_logs/strata-strata-005.20260816T102403384887Z.stdout.log",
           "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
           "timed_out": false
         }
@@ -227,17 +205,17 @@
             "--",
             "--test-threads=1"
           ],
-          "cwd": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-final-run",
-          "duration_ms": 70417,
+          "cwd": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-p2pverify",
+          "duration_ms": 46531,
           "env_digest": "e0bf4a45458a20d343fd3d432b7af5c92cd532a6ba6d9d580492534ffabcba83",
           "exit_code": 0,
-          "finished_at_utc": "2026-08-16T08:39:35.481538Z",
+          "finished_at_utc": "2026-08-16T10:24:51.286900Z",
           "schema": "ranklock-v0252-command-record-v1",
-          "started_at_utc": "2026-08-16T08:38:25.059473Z",
-          "stderr_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/results/v0252_logs/strata-strata-006.20260816T083825059363Z.stderr.log",
-          "stderr_sha256": "9d8a4433ec68c6896e17fb632dc48f037fab883b792b6676ca27e769ebbbeecd",
-          "stdout_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/results/v0252_logs/strata-strata-006.20260816T083825059363Z.stdout.log",
-          "stdout_sha256": "b7d217ae19444fbdedc1c2fd199ead0695dd9b14109cfc1c8a5e4386fa8ed5a0",
+          "started_at_utc": "2026-08-16T10:24:04.755731Z",
+          "stderr_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/results/v0252_logs/strata-strata-006.20260816T102404755679Z.stderr.log",
+          "stderr_sha256": "031d98879856675ba125ec566d3ea8952ea50f54e3ad33094de122ec9cac883e",
+          "stdout_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/results/v0252_logs/strata-strata-006.20260816T102404755679Z.stdout.log",
+          "stdout_sha256": "47dd99fc03ba12b26ab8a1de079d0a4e81bd168bfd01649895a3d16d9a76edf4",
           "timed_out": false
         }
       ],
@@ -273,17 +251,17 @@
             "--",
             "--test-threads=1"
           ],
-          "cwd": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-final-run",
-          "duration_ms": 80699,
+          "cwd": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-p2pverify",
+          "duration_ms": 68746,
           "env_digest": "e0bf4a45458a20d343fd3d432b7af5c92cd532a6ba6d9d580492534ffabcba83",
           "exit_code": 0,
-          "finished_at_utc": "2026-08-16T08:40:56.184590Z",
+          "finished_at_utc": "2026-08-16T10:26:00.036644Z",
           "schema": "ranklock-v0252-command-record-v1",
-          "started_at_utc": "2026-08-16T08:39:35.484609Z",
-          "stderr_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/results/v0252_logs/strata-strata-007.20260816T083935484351Z.stderr.log",
-          "stderr_sha256": "e605d376f31c2e6881ff75c6177e1e6234a98204fbcc4c858980dda697fec58a",
-          "stdout_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/results/v0252_logs/strata-strata-007.20260816T083935484351Z.stdout.log",
-          "stdout_sha256": "aa18236b82b471749a0da49b2dc343345aab442e3e4c99e0bd608ebf5fe5752e",
+          "started_at_utc": "2026-08-16T10:24:51.289606Z",
+          "stderr_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/results/v0252_logs/strata-strata-007.20260816T102451289341Z.stderr.log",
+          "stderr_sha256": "0eacd7a267fd4646792019b7c1d220f72e77fbb69cfc32f463e8d7c7ae9af7e5",
+          "stdout_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/results/v0252_logs/strata-strata-007.20260816T102451289341Z.stdout.log",
+          "stdout_sha256": "6dd8ddd1b1cc0b642a7819fd4fb92d3dec5d7013d79599d15d90ece01e1189c7",
           "timed_out": false
         }
       ],
@@ -319,17 +297,17 @@
             "--",
             "--test-threads=1"
           ],
-          "cwd": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-final-run",
-          "duration_ms": 43315,
+          "cwd": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-p2pverify",
+          "duration_ms": 32407,
           "env_digest": "e0bf4a45458a20d343fd3d432b7af5c92cd532a6ba6d9d580492534ffabcba83",
           "exit_code": 0,
-          "finished_at_utc": "2026-08-16T08:41:39.502113Z",
+          "finished_at_utc": "2026-08-16T10:26:32.445203Z",
           "schema": "ranklock-v0252-command-record-v1",
-          "started_at_utc": "2026-08-16T08:40:56.186004Z",
-          "stderr_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/results/v0252_logs/strata-strata-008.20260816T084056185943Z.stderr.log",
-          "stderr_sha256": "3b88f92c46010644e8407ef8136343ddcabbf1b4287b803bddf3d64b0fc48be5",
-          "stdout_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/results/v0252_logs/strata-strata-008.20260816T084056185943Z.stdout.log",
-          "stdout_sha256": "139d2fadd2ce6b443d8685203ce2868d40cb325bd8c7ff6d7136cafeae756693",
+          "started_at_utc": "2026-08-16T10:26:00.037204Z",
+          "stderr_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/results/v0252_logs/strata-strata-008.20260816T102600037147Z.stderr.log",
+          "stderr_sha256": "ff2d32f2c3fd43699b6de09f3df4d3ac13882a31218cbb4afbb8d05ea71e30e7",
+          "stdout_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/results/v0252_logs/strata-strata-008.20260816T102600037147Z.stdout.log",
+          "stdout_sha256": "7ea221d8bbf838b66b3fd856060f5ed93ebe0505fad81bccf3013799c4ee877a",
           "timed_out": false
         }
       ],
@@ -360,35 +338,39 @@
             "test",
             "--workspace",
             "--locked",
-            "--offline"
+            "--offline",
+            "--",
+            "--test-threads=1"
           ],
-          "cwd": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-final-run",
-          "duration_ms": 373315,
+          "cwd": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-p2pverify",
+          "duration_ms": 813904,
           "env_digest": "e0bf4a45458a20d343fd3d432b7af5c92cd532a6ba6d9d580492534ffabcba83",
-          "exit_code": 101,
-          "finished_at_utc": "2026-08-16T08:47:52.819706Z",
+          "exit_code": 0,
+          "finished_at_utc": "2026-08-16T10:40:06.353198Z",
           "schema": "ranklock-v0252-command-record-v1",
-          "started_at_utc": "2026-08-16T08:41:39.502718Z",
-          "stderr_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/results/v0252_logs/strata-strata-009.20260816T084139502653Z.stderr.log",
-          "stderr_sha256": "a9135bb19b8a858c34f4c89fd779f443710f8fa2b9e90caf639fb2c8739e4456",
-          "stdout_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/results/v0252_logs/strata-strata-009.20260816T084139502653Z.stdout.log",
-          "stdout_sha256": "276d170662dfa71255e3c707c67a2f12bf912ae0518d576e1252c5474d2a4b40",
+          "started_at_utc": "2026-08-16T10:26:32.446846Z",
+          "stderr_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/results/v0252_logs/strata-strata-009.20260816T102632446786Z.stderr.log",
+          "stderr_sha256": "1ad4a4539bc7c0bfd11b5b85318752008319a6339cf1aa571cd1ea1c2bcd9136",
+          "stdout_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/results/v0252_logs/strata-strata-009.20260816T102632446786Z.stdout.log",
+          "stdout_sha256": "fcea8a721d83714b78a9ceac832a1c7592f63786fbf875e3552bc3218524c0d1",
           "timed_out": false
         }
       ],
-      "description": "the complete intended workspace test suite passes",
+      "description": "the complete intended workspace test suite passes (serialized)",
       "evidence": {
         "argv": [
           "cargo",
           "test",
           "--workspace",
           "--locked",
-          "--offline"
+          "--offline",
+          "--",
+          "--test-threads=1"
         ],
-        "exit_code": 101
+        "exit_code": 0
       },
       "schema": "ranklock-v0252-case-result-v1",
-      "status": "failed"
+      "status": "passed"
     }
   },
   "identity": {
@@ -398,15 +380,15 @@
       "sha256": "d55c12b0b02001cc16b1481c4075361dcba193100a8143924abda911174c09ec",
       "version": "Bitcoin Core daemon version v31.1.0 bitcoind"
     },
-    "checkout_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-final-run",
+    "checkout_path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-p2pverify",
     "rust_toolchain": "[toolchain]\nchannel = \"nightly-2026-05-01\"\ncomponents = [\n  \"cargo\",\n  \"clippy\",\n  \"rustc\",\n  \"rustfmt\",\n  \"rust-analyzer\",\n  \"rust-docs\",\n  \"rust-src\",\n  \"rust-std\",\n  # \"miri\" # some of the secp256k1 FFIs fail with miri\n]",
     "strata_commit": "f94c06d08ff29eee746f3e20bd63078d2949b304"
   },
   "schema": "ranklock-v0252-strata-build-matrix-v1",
   "status_counts": {
-    "failed": 1,
+    "failed": 0,
     "modeled_only": 0,
-    "not_executed": 0,
+    "not_executed": 1,
     "passed": 8,
     "unavailable": 0
   }

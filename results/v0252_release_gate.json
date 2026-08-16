@@ -34,7 +34,7 @@
       "core",
       "strata_build"
     ],
-    "sha256": "5371677f989d08f4206606f8526089eb4f0001b65d8eca5d68f4e2916ec0e91c"
+    "sha256": "809e633cd926e2c6bb57c551b0be727bc3eaa964b9ddb49f03a33450236815a5"
   },
   "external_attestations_must_be_verified_by": "ranklock.deployment_policy.evaluate_deployment",
   "facts": {

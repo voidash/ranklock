@@ -1,0 +1,46 @@
+    Checking algebra v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-rec3/crates/algebra)
+    Checking strata-bridge-proof-common v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-rec3/crates/proofs/common)
+    Checking strata-bridge-common v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-rec3/crates/common)
+    Checking operator-wallet v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-rec3/crates/operator-wallet)
+   Compiling strata-bridge-sp1-guest-builder v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-rec3/guest-builder/sp1)
+    Checking memory_pprof v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-rec3/crates/memory_pprof)
+    Checking strata-bridge-proof v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-rec3/crates/proofs/bridge-proof)
+    Checking strata-bridge-primitives v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-rec3/crates/primitives)
+    Checking strata-bridge-connectors v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-rec3/crates/connectors)
+    Checking strata-bridge-p2p-types v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-rec3/crates/p2p-types)
+    Checking strata-mosaic-client-api v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-rec3/crates/mosaic-client-api)
+    Checking secret-service-proto v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-rec3/crates/secret-service-proto)
+    Checking strata-bridge-test-utils v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-rec3/crates/test-utils)
+    Checking btc-tracker v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-rec3/crates/btc-tracker)
+    Checking strata-bridge-key-deriv v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-rec3/crates/key-deriv)
+    Checking strata-mosaic-client v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-rec3/crates/mosaic-client)
+    Checking strata-bridge-tx-graph v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-rec3/crates/tx-graph)
+    Checking strata-bridge-counterproof v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-rec3/crates/proofs/bridge-counterproof)
+    Checking secret-service-client v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-rec3/crates/secret-service-client)
+    Checking secret-service-server v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-rec3/crates/secret-service-server)
+    Checking strata-bridge-p2p-service v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-rec3/crates/p2p-service)
+warning: unused import: `TxOut`
+   --> crates/tx-graph/src/fee.rs:445:49
+    |
+445 |         Amount, Network, OutPoint, Transaction, TxOut, Witness,
+    |                                                 ^^^^^
+    |
+    = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused imports: `CounterproofNackData` and `CounterproofNackTx`
+   --> crates/tx-graph/src/fee.rs:463:57
+    |
+463 |             CooperativePayoutData, CooperativePayoutTx, CounterproofNackData, CounterproofNackTx,
+    |                                                         ^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^
+
+    Checking secret-service v0.2.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-rec3/bin/secret-service)
+    Checking strata-bridge-asm-events v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-rec3/crates/asm-events)
+    Checking strata-bridge-sm v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-rec3/crates/bridge-sm)
+warning: `strata-bridge-tx-graph` (lib test) generated 2 warnings (run `cargo fix --lib -p strata-bridge-tx-graph --tests` to apply 2 suggestions)
+    Checking strata-bridge-db v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-rec3/crates/db)
+    Checking strata-bridge-rpc v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-rec3/crates/rpc)
+    Checking strata-bridge-exec v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-rec3/crates/bridge-exec)
+    Checking dev-cli v0.2.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-rec3/bin/dev-cli)
+    Checking strata-bridge-orchestrator v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-rec3/crates/orchestrator)
+    Checking strata-bridge v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-rec3/bin/strata-bridge)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 7.83s
