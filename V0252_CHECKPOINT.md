@@ -1,6 +1,6 @@
 # RankLock v0.25.2 checkpoint
 
-**`safe_for_funds` is `false`. Maximum mode is `observe`. This construction is
+**`safe_for_funds` is `false`. Maximum mode is `canary`. This construction is
 not authorized to protect funds.**
 
 ## Headline: a fund-loss bug was found and fixed
@@ -148,12 +148,19 @@ regenerated from them rather than maintained by hand.
 | Phase | passed | failed | not_executed | unavailable | |
 |---|---|---|---|---|---|
 | CORE-001..030 | 18 | 0 | 5 | 0 | (+7 `modeled_only`)
-| STRATA-001..009 | 7 | 0 | 0 | 2 | |
+| STRATA-001..009 | 9 | 0 | 0 | 0 | |
 | STRATA-010..020 | — | — | 11 | — | |
 
-The STRATA row is a full re-run against a pristine clone of the pinned
-commit: STRATA-001..004 and 006..008 pass; only STRATA-005 and STRATA-009
-are `unavailable`, both on the FoundationDB client library and nothing else.
+The STRATA row is a full run against a pristine clone of the pinned commit
+with **every case executing and passing**, including STRATA-009's complete
+workspace suite (949 passed / 0 failed, serialized) against a live
+FoundationDB cluster. `strata_build_all_passed` is therefore `true`, closing
+the funds blocker *"current bridge commit was not compiled and tested"*.
+
+Seven funds blockers remain. One is engineering — `Bitcoin Core regtest did
+not pass`, whose five outstanding CORE rows are each `blocked_by` the Strata
+ACK/NACK E2E (STRATA-012), now unblocked to build but not yet driven. The
+other six require external parties and are enumerated below.
 
 Five CORE rows are `modeled_only`: covered by the package suite but not driven through a live node. Per the acceptance matrix only `PASS` closes a release fact, so this records existing coverage without inflating the gate — asserted by a regression test.
 
