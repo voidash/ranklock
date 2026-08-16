@@ -181,12 +181,12 @@ def patch_fee(repo: Path, dry_run: bool) -> None:
     ))
     edits.append((
         "/// Predicted vsize of [`crate::transactions::counterproof_ack::CounterproofAckTx`].\n///\n/// Structure: 2 inputs (Counterproof timeout script path, ContestPayout normal key path)\n/// + 1 P2TR output (cpfp anchor).\nconst COUNTERPROOF_ACK_VSIZE: u64 = 187;",
-        "/// Predicted vsize of [`crate::transactions::counterproof_ack::CounterproofAckTx`].\n///\n/// Structure: 2 script-path/key-path inputs. Input 0 carries a 32-byte RankLock preimage,\n/// an N/N Schnorr signature, the positive-lock script and a two-leaf control block; input 1\n/// spends ContestPayout normally. The only output is the keyed CPFP anchor.\nconst COUNTERPROOF_ACK_VSIZE: u64 = 211;\n\n/// Exact fixed NACK vsize for a given CSV delay. The transaction has a 94-byte stripped\n/// body. Its witness is one Schnorr signature, the CSV leaf and a two-leaf control block.\nconst fn validity_first_counterproof_nack_vsize(delay: relative::Height) -> u64 {\n    let n = delay.value() as u64;\n    let sequence_push_len: u64 = if n <= 16 {\n        1\n    } else if n <= 0x7f {\n        2\n    } else if n <= 0x7fff {\n        3\n    } else {\n        4\n    };\n    let leaf_script_len: u64 = 36 + sequence_push_len;\n    let weight: u64 = 94 * 4 + 135 + leaf_script_len;\n    (weight + WITNESS_SCALE_FACTOR as u64 - 1) / WITNESS_SCALE_FACTOR as u64\n}",
+        "/// Predicted vsize of [`crate::transactions::counterproof_ack::CounterproofAckTx`].\n///\n/// Structure: 2 script-path/key-path inputs. Input 0 carries a 32-byte RankLock preimage,\n/// an N/N Schnorr signature, the positive-lock script and a two-leaf control block; input 1\n/// spends ContestPayout normally. The only output is the keyed CPFP anchor.\nconst COUNTERPROOF_ACK_VSIZE: u64 = 211;\n\n/// Exact fixed NACK vsize for a given CSV delay. The transaction has a 94-byte stripped\n/// body. Its witness is one Schnorr signature, the CSV leaf and a two-leaf control block.\nfn validity_first_counterproof_nack_vsize(delay: relative::Height) -> u64 {\n    let n = delay.value() as u64;\n    let sequence_push_len: u64 = if n <= 16 {\n        1\n    } else if n <= 0x7f {\n        2\n    } else if n <= 0x7fff {\n        3\n    } else {\n        4\n    };\n    let leaf_script_len: u64 = 36 + sequence_push_len;\n    let weight: u64 = 94 * 4 + 135 + leaf_script_len;\n    (weight + WITNESS_SCALE_FACTOR as u64 - 1) / WITNESS_SCALE_FACTOR as u64\n}",
         "ACK and exact NACK vsize",
     ))
     edits.append((
         "/// Fee for [`crate::transactions::counterproof_ack::CounterproofAckTx`].\npub(crate) const fn counterproof_ack_fee() -> Amount {\n    fee_for_vsize(COUNTERPROOF_ACK_VSIZE)\n}\n",
-        "/// Fee for [`crate::transactions::counterproof_ack::CounterproofAckTx`].\npub(crate) const fn counterproof_ack_fee() -> Amount {\n    fee_for_vsize(COUNTERPROOF_ACK_VSIZE)\n}\n\n/// Fee for [`crate::transactions::counterproof_nack::ValidityFirstCounterproofNackTx`].\npub(crate) const fn validity_first_counterproof_nack_fee(\n    delay: relative::Height,\n) -> Amount {\n    fee_for_vsize(validity_first_counterproof_nack_vsize(delay))\n}\n",
+        "/// Fee for [`crate::transactions::counterproof_ack::CounterproofAckTx`].\npub(crate) const fn counterproof_ack_fee() -> Amount {\n    fee_for_vsize(COUNTERPROOF_ACK_VSIZE)\n}\n\n/// Fee for [`crate::transactions::counterproof_nack::ValidityFirstCounterproofNackTx`].\npub(crate) fn validity_first_counterproof_nack_fee(\n    delay: relative::Height,\n) -> Amount {\n    fee_for_vsize(validity_first_counterproof_nack_vsize(delay))\n}\n",
         "fixed nack fee helper",
     ))
     edits.append((
@@ -204,6 +204,16 @@ def patch_fee(repo: Path, dry_run: bool) -> None:
     edits.append((marker, added, "fixed nack vsize test"))
     # The first edit is an intentional anchor/no-op; drop it to preserve replace_once semantics.
     edits = [e for e in edits if e[0] != e[1]]
+    # Remove the pin for the OLD mutable CounterproofNackTx. Under
+    # validity-first the NACK is a fixed, exact, pre-signed transaction, so
+    # that shape no longer exists and the test cannot even be constructed
+    # from the new connector type. Its replacement pin,
+    # pin_validity_first_counterproof_nack_vsize, is added above.
+    edits.append((
+        '    #[test]\n    fn pin_counterproof_nack_vsize() {\n        // In production, CounterproofNackTx has just the connector input and a single\n        // P2TR operator-wallet output (no wallet-funded extra input). Build that shape.\n        let signer = TestSigner::generate(N_WATCHTOWERS);\n        let (graph, connectors) =\n            GameGraph::new(test_game_data(&signer, N_WATCHTOWERS as u32, N_DATA));\n        let mut nack = CounterproofNackTx::new(\n            CounterproofNackData {\n                counterproof_txid: graph.counterproofs[0].counterproof.as_ref().compute_txid(),\n            },\n            connectors.counterproof[0],\n        );\n        let operator_descriptor =\n            Descriptor::new_p2tr(&signer.operator.x_only_public_key().0.serialize()).unwrap();\n        nack.push_output(TxOut {\n            value: nack.prevouts()[0].value - counterproof_nack_fee(),\n            script_pubkey: operator_descriptor.to_script(),\n        });\n        let signed = nack.finalize_partial(dummy_sig());\n        pin(\n            signed.weight().to_vbytes_ceil(),\n            COUNTERPROOF_NACK_VSIZE,\n            "counterproof_nack",\n        );\n    }\n',
+        "",
+        "remove obsolete mutable-NACK vsize pin",
+    ))
     patch(repo, rel, edits, dry_run)
 
 
