@@ -263,8 +263,18 @@ def main() -> int:
         ("STRATA-008", "counterproof state-machine transition tests pass",
          ["cargo", "test", "--offline", "-p", "strata-bridge-sm",
           "counterproof", "--", "--test-threads=1"]),
-        ("STRATA-009", "the complete intended workspace test suite passes",
-         ["cargo", "test", "--workspace", "--locked", "--offline"]),
+        # `-- --test-threads=1` is a deviation from the handoff's literal
+        # command, recorded here rather than applied quietly. It is an
+        # execution parameter, not a narrower run: the same tests execute,
+        # serially. Without it the workspace suite fails on RPC timeouts
+        # ("must be able to generate blocks: ... TimedOut") because many
+        # tests each start their own bitcoind and running them concurrently
+        # saturates the machine. The same connectors tests pass 27/0 with the
+        # flag and time out without it, so the failures are contention rather
+        # than defects.
+        ("STRATA-009", "the complete intended workspace test suite passes (serialized)",
+         ["cargo", "test", "--workspace", "--locked", "--offline",
+          "--", "--test-threads=1"]),
     ]
     for case_id, description, argv in build_cases:
         record = run_recorded_command(

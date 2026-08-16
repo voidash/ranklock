@@ -1,0 +1,18 @@
+   Compiling num-traits v0.2.19
+   Compiling serde-big-array v0.5.1
+   Compiling proptest v1.11.0
+   Compiling num-integer v0.1.46
+   Compiling ark-std v0.6.0
+   Compiling num-bigint v0.4.6
+   Compiling ark-serialize v0.6.0
+   Compiling mosaic-common v0.1.0 (https://github.com/alpenlabs/mosaic?rev=758492b4af94f56c86b1db4ff2fa74f8c4464f57#758492b4)
+   Compiling algebra v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-final-run/crates/algebra)
+   Compiling strata-bridge-primitives v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-final-run/crates/primitives)
+   Compiling strata-bridge-connectors v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-final-run/crates/connectors)
+   Compiling strata-bridge-p2p-types v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-final-run/crates/p2p-types)
+   Compiling strata-mosaic-client-api v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-final-run/crates/mosaic-client-api)
+   Compiling strata-bridge-test-utils v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-final-run/crates/test-utils)
+   Compiling strata-bridge-tx-graph v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-final-run/crates/tx-graph)
+   Compiling strata-bridge-sm v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-final-run/crates/bridge-sm)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.15s
+     Running unittests src/lib.rs (target/debug/deps/strata_bridge_sm-8db8edd2986fe037)

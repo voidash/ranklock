@@ -1,0 +1,308 @@
+
+running 28 tests
+test predicate::tests::test_pred_lt ... ok
+test predicate::tests::test_pred_eq ... ok
+test predicate::tests::test_pred_gt ... ok
+test predicate::tests::test_pred_lte ... ok
+test predicate::tests::test_pred_neq ... ok
+test predicate::tests::test_pred_gte ... ok
+test req::tests::test_req_input_access ... ok
+test req::tests::test_req_into_input ... ok
+test retry::tests::test_error_classification ... ok
+test req::tests::test_req_into_input_output ... ok
+test req::tests::test_req_dropped_receiver ... ok
+test req::tests::test_req_dispatch ... ok
+test req::tests::test_req_future_wrapper ... ok
+test req::tests::test_req_basic_usage ... ok
+test semigroup::tests::sconcat_base_case ... ok
+test state_machine::state_machine_tests::test_sm ... ok
+test retry::tests::test_exponential_backoff ... ok
+test retry::tests::test_retry_function_combinator ... ok
+test monoid::tests::vec_monoid_laws ... ok
+test retry::tests::test_max_retries ... ok
+test monoid::tests::concat_is_fold_map_identity ... ok
+test semigroup::tests::unit_semigroup_laws ... ok
+test retry::tests::test_strategy_or_combinator ... ok
+test semigroup::tests::sconcat_merge_homomorphism ... ok
+test retry::tests::test_fixed_delay_strategy ... ok
+test semigroup::tests::vec_semigroup_laws ... ok
+test semigroup::tests::option_semigroup_laws ... ok
+test semigroup::tests::result_semigroup_laws ... ok
+
+test result: ok. 28 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s
+
+
+running 34 tests
+test client::tests::disconnecting_only_tracked_block_backfills_replacement_before_child ... ok
+test client::tests::disconnecting_only_tracked_block_rewinds_cursor_for_replacement_block ... ok
+test client::tests::backfills_missing_block_after_reorg_disconnect_rolls_back_state_tip ... ok
+test client::tests::state_tip_realignment_does_not_backfill_before_start_height ... ok
+test state_machine::prop_tests::arb_block_has_height ... ok
+test state_machine::prop_tests::block_disconnect_drops_all_transactions ... ok
+test state_machine::prop_tests::all_matched_transactions_in_diffs ... ok
+test state_machine::prop_tests::filter_rm_inverts_add ... ok
+test state_machine::prop_tests::lone_process_tx_yields_empty_diff ... ok
+test state_machine::prop_tests::mempool_removal_inverts_acceptance ... ok
+test state_machine::prop_tests::duplicate_reorg_reacceptance_before_rawtx_stays_pending ... ok
+test state_machine::prop_tests::only_matched_transactions_in_diffs ... ok
+test state_machine::prop_tests::repeated_seq_before_tx_yields_one_mempool ... ok
+test state_machine::prop_tests::seq_and_tx_make_mempool ... ok
+test state_machine::prop_tests::seq_tx_commutativity ... ok
+test state_machine::prop_tests::block_disconnect_inverts_block ... ok
+test state_machine::prop_tests::tx_after_block_idempotence ... ok
+test state_machine::prop_tests::tx_block_commutativity ... ok
+test client::e2e_tests::blocks_are_contiguous ... ok
+test client::e2e_tests::dropped_tx_subscriptions_pruned ... ok
+test tx_driver::tests::broadcast_options_use_largest_op_return_burn ... ok
+test client::e2e_tests::basic_subscribe_transactions_functionality ... ok
+test tx_driver::e2e_tests::tx_drive_mempool ... ok
+test state_machine::prop_tests::transactions_eventually_buried ... ok
+test tx_driver::e2e_tests::tx_drive_idempotence ... ok
+test client::e2e_tests::all_matched_transactions_delivered has been running for over 60 seconds
+test client::e2e_tests::basic_subscribe_blocks_functionality has been running for over 60 seconds
+test client::e2e_tests::chain_reorg_backfills_replacement_parent_before_later_child has been running for over 60 seconds
+test client::e2e_tests::dropped_block_subscriptions_pruned has been running for over 60 seconds
+test client::e2e_tests::exactly_one_mined_status_per_block has been running for over 60 seconds
+test client::e2e_tests::mined_txs_eventually_buried has been running for over 60 seconds
+test client::e2e_tests::multiple_subscribers_receive_same_events has been running for over 60 seconds
+test client::e2e_tests::only_matched_transactions_delivered has been running for over 60 seconds
+test tx_driver::e2e_tests::tx_drive_op_return_burn ... ok
+test client::e2e_tests::multiple_subscribers_receive_same_events ... ok
+test client::e2e_tests::dropped_block_subscriptions_pruned ... ok
+test client::e2e_tests::mined_txs_eventually_buried ... ok
+test client::e2e_tests::exactly_one_mined_status_per_block ... ok
+test client::e2e_tests::all_matched_transactions_delivered ... ok
+test client::e2e_tests::only_matched_transactions_delivered ... ok
+test client::e2e_tests::chain_reorg_backfills_replacement_parent_before_later_child ... ok
+test client::e2e_tests::basic_subscribe_blocks_functionality ... ok
+
+test result: ok. 34 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 136.96s
+
+
+running 2 tests
+test handlers::defcon::tests::defcon1_signature_verifies_against_derived_council_key ... ok
+test handlers::defcon::tests::defcon1_signature_verifies_for_fixture_operator_0 ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 9 tests
+test create_reserved_utxos_reports_only_unconfirmed_general_utxos ... ok
+test create_reserved_utxos_excludes_unconfirmed_when_confirmed_funds_are_available ... ok
+test reserve_utxo_with_value_filters_by_value ... ok
+test refill_workflow_skips_existing_pool_members ... ok
+test sync_prunes_leases_whose_outpoints_have_been_spent ... ok
+test create_reserved_utxos_can_include_unconfirmed_general_utxos_when_allowed ... ok
+test reserve_utxo_with_value_picks_and_leases_one ... ok
+test create_reserved_utxos_funds_pool_and_leases_inputs has been running for over 60 seconds
+test lease_release_are_idempotent_and_additive has been running for over 60 seconds
+test lease_release_are_idempotent_and_additive ... ok
+test create_reserved_utxos_funds_pool_and_leases_inputs ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 75.20s
+
+
+running 10 tests
+test observability::tests::enabled_label_uses_bounded_values ... ok
+test observability::tests::metrics_exporter_label_reports_effective_exporters ... ok
+test seeded_impl::musig2::tests::identical_params_yield_identical_pubnonce ... ok
+test seeded_impl::musig2::tests::distinct_tweak_yields_distinct_pubnonce ... ok
+test tests::p2p ... ok
+test tests::preimg ... ok
+test seeded_impl::musig2::tests::distinct_sighash_yields_distinct_pubnonce ... ok
+test tests::schnorr_signers_with_key_tweak ... ok
+test tests::musig2 ... ok
+test tests::schnorr_signers ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.42s
+
+
+running 1 test
+test tests::should_reconnect_classifies_errors ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 40 tests
+test health::tests::health_status_maps_to_infra_http_status ... ok
+test health::tests::aggregate_status_prioritizes_unhealthy_then_degraded ... ok
+test health::tests::new_registry_starts_unhealthy_for_all_components ... ok
+test health::tests::asm_rpc_and_assignment_feed_health_are_independent ... ok
+test health::tests::stale_check_preserves_fresh_component_and_marks_missing_success_unhealthy ... ok
+test health::tests::ok_update_records_last_success_and_degraded_preserves_it ... ok
+test health::tests::snapshot_serializes_last_success_time_field ... ok
+test health::tests::health_http_layer_passes_through_non_health_requests ... ok
+test health::tests::health_http_layer_rejects_non_get_health_requests ... ok
+test health::tests::health_http_layer_returns_200_for_degraded_snapshot ... ok
+test health::tests::health_http_layer_returns_503_for_unhealthy_snapshot ... ok
+test mode::rpc_server::tests::da::stake_aggregate_signatures_response_returns_none_before_signing ... ok
+test mode::rpc_server::tests::monitoring::duty_applies_to_operator_matches_withdrawal_assignee ... ok
+test mode::rpc_server::tests::monitoring::active_claim_from_state_returns_contested_phase ... ok
+test mode::rpc_server::tests::monitoring::active_claim_from_state_returns_unfulfilled_claim_in_claimed_state ... ok
+test mode::rpc_server::tests::da::stake_data_response_returns_none_before_stake_data_arrives ... ok
+test mode::rpc_server::tests::monitoring::active_claim_from_state_returns_fulfilled_claim_in_claimed_state ... ok
+test mode::rpc_server::tests::monitoring::active_claim_from_state_returns_none_before_claim ... ok
+test mode::rpc_server::tests::monitoring::aggregate_signatures_response_returns_hex_signatures_for_matching_claim ... ok
+test mode::rpc_server::tests::monitoring::reimbursement_operator_uses_terminal_spent_assignee_without_marking_it_pending ... ok
+test mode::rpc_server::tests::monitoring::aggregate_signatures_response_returns_none_before_graph_is_signed ... ok
+test mode::services::startup_checks::tests::mosaic_must_return_exactly_one_circuit ... ok
+test mode::services::startup_checks::tests::native_vkey_matches_zeroed_mosaic_vkey ... ok
+test mode::services::startup_checks::tests::native_vkey_rejects_nonzero_mosaic_vkey ... ok
+test mode::rpc_server::tests::da::stake_data_response_returns_stake_data_after_generation ... ok
+test mode::rpc_server::tests::monitoring::graph_data_response_returns_none_before_graph_is_generated ... ok
+test mode::rpc_server::tests::da::stake_aggregate_signatures_response_returns_packed_signatures ... ok
+test observability::tests::enabled_label_uses_bounded_values ... ok
+test observability::tests::metrics_exporter_label_reports_effective_exporters ... ok
+test mode::rpc_server::tests::monitoring::bridge_duties_for_operator_pk_does_not_overproduce_deposit_duties ... ok
+test config::tests::test_config_serde_toml ... ok
+test mode::rpc_server::tests::monitoring::reimbursement_status_reports_each_graph_state ... ok
+test mode::rpc_server::tests::monitoring::graph_data_response_returns_graph_data_for_matching_claim ... ok
+test mode::services::startup_checks::tests::missing_bridge_subprotocol_fails ... ok
+test mode::services::startup_checks::tests::withdrawal_fulfillment_window_must_be_less_than_assignment_duration ... ok
+test mode::rpc_server::tests::monitoring::bridge_duties_for_operator_pk_filters_deposit_duties_by_each_operator_table ... ok
+test mode::services::startup_checks::tests::matching_params_pass ... ok
+test mode::rpc_server::tests::monitoring::bridge_duties_for_deposit_reports_each_deposit_state ... ok
+test mode::rpc_server::tests::monitoring::withdrawal_status_reports_each_deposit_state ... ok
+test mode::services::startup_checks::tests::each_mismatched_field_fails_with_its_label ... ok
+
+test result: ok. 40 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+
+running 3 tests
+test client::tests::safe_harbour_delivery_survives_assignment_fetch_failure ... ok
+test client::tests::assignment_delivery_survives_safe_harbour_fetch_failure ... ok
+test client::tests::total_fetch_failure_publishes_nothing_and_recovers ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+
+running 7 tests
+test params::tests::params_reject_zero_admin_threshold ... ok
+test params::tests::params_reject_duplicate_admin_pubkey ... ok
+test params::tests::params_reject_malformed_admin_pubkey ... ok
+test params::tests::params_reject_empty_admin_pubkeys ... ok
+test params::tests::params_reject_invalid_admin_pubkey ... ok
+test params::tests::params_reject_admin_threshold_above_pubkey_count ... ok
+test params::tests::test_params_serde_toml ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+
+running 27 tests
+test claim_payout::tests::admin_burn_witness_ignores_duplicate_indices ... ok
+test claim_payout::tests::admin_burn_witness_truncates_surplus_indexed_signatures ... ok
+test claim_payout::tests::connector_rejects_duplicate_admin_pubkeys - should panic ... ok
+test claim_payout::tests::admin_burn_witness_rejects_below_threshold_signatures - should panic ... ok
+test claim_payout::tests::admin_burn_witness_ignores_out_of_bounds_indices ... ok
+test claim_contest::tests::contested_spend has been running for over 60 seconds
+test claim_contest::tests::uncontested_spend has been running for over 60 seconds
+test claim_payout::tests::admin_burn_spend_1_of_1 has been running for over 60 seconds
+test claim_payout::tests::admin_burn_spend_1_of_3 has been running for over 60 seconds
+test claim_payout::tests::admin_burn_spend_2_of_3 has been running for over 60 seconds
+test claim_payout::tests::admin_burn_spend_3_of_3 has been running for over 60 seconds
+test claim_payout::tests::payout_spend has been running for over 60 seconds
+test claim_payout::tests::unstaking_burn_spend has been running for over 60 seconds
+test contest_counterproof::tests::counterproof_spend has been running for over 60 seconds
+test keyed_anchor::tests::keyed_anchor_spend has been running for over 60 seconds
+test multi_anchor::tests::multi_anchor_spend_first has been running for over 60 seconds
+test multi_anchor::tests::multi_anchor_spend_last has been running for over 60 seconds
+test n_of_n::tests::n_of_n_spend has been running for over 60 seconds
+test timelocked::tests::normal_spend has been running for over 60 seconds
+test n_of_n::tests::n_of_n_spend ... FAILED
+test claim_payout::tests::payout_spend ... FAILED
+test keyed_anchor::tests::keyed_anchor_spend ... FAILED
+test claim_payout::tests::admin_burn_spend_1_of_1 ... FAILED
+test claim_payout::tests::admin_burn_spend_3_of_3 ... FAILED
+test multi_anchor::tests::multi_anchor_spend_first ... FAILED
+test multi_anchor::tests::multi_anchor_spend_last ... FAILED
+test claim_payout::tests::admin_burn_spend_2_of_3 ... FAILED
+test validity_first_counterproof::tests::preimage_commitment_is_exact ... ok
+test contest_counterproof::tests::counterproof_spend ... ok
+test claim_payout::tests::unstaking_burn_spend ... ok
+test claim_payout::tests::admin_burn_spend_1_of_3 ... ok
+test claim_contest::tests::contested_spend ... ok
+test timelocked::tests::normal_spend ... ok
+test claim_contest::tests::uncontested_spend ... ok
+test validity_first_counterproof::tests::malformed_positive_unlock_is_rejected_by_core ... ok
+test validity_first_counterproof::tests::alternate_context_preimage_is_rejected_by_core ... ok
+test validity_first_counterproof::tests::exact_message_signature_replay_is_rejected_by_core ... ok
+test timelocked::tests::timeout_spend ... ok
+test unstaking_intent::tests::unstaking_intent_spend ... ok
+test validity_first_counterproof::tests::immediate_ack_spend ... ok
+test validity_first_counterproof::tests::timeout_nack_spend ... ok
+
+failures:
+
+---- n_of_n::tests::n_of_n_spend stdout ----
+
+thread 'n_of_n::tests::n_of_n_spend' (7160544) panicked at crates/connectors/src/test_utils.rs:261:14:
+must be able to generate blocks: JsonRpc(Transport(Bitreq(IoError(Custom { kind: TimedOut, error: "the timeout of the request was reached" }))))
+
+---- claim_payout::tests::payout_spend stdout ----
+
+thread 'claim_payout::tests::payout_spend' (7160532) panicked at crates/connectors/src/test_utils.rs:261:14:
+must be able to generate blocks: JsonRpc(Transport(Bitreq(IoError(Custom { kind: TimedOut, error: "the timeout of the request was reached" }))))
+
+---- keyed_anchor::tests::keyed_anchor_spend stdout ----
+
+thread 'keyed_anchor::tests::keyed_anchor_spend' (7160536) panicked at crates/connectors/src/test_utils.rs:261:14:
+must be able to generate blocks: JsonRpc(Transport(Bitreq(IoError(Custom { kind: TimedOut, error: "the timeout of the request was reached" }))))
+
+---- claim_payout::tests::admin_burn_spend_1_of_1 stdout ----
+
+thread 'claim_payout::tests::admin_burn_spend_1_of_1' (7160523) panicked at crates/connectors/src/test_utils.rs:261:14:
+must be able to generate blocks: JsonRpc(Transport(Bitreq(IoError(Custom { kind: TimedOut, error: "the timeout of the request was reached" }))))
+
+---- claim_payout::tests::admin_burn_spend_3_of_3 stdout ----
+
+thread 'claim_payout::tests::admin_burn_spend_3_of_3' (7160526) panicked at crates/connectors/src/test_utils.rs:261:14:
+must be able to generate blocks: JsonRpc(Transport(Bitreq(IoError(Custom { kind: TimedOut, error: "the timeout of the request was reached" }))))
+
+---- multi_anchor::tests::multi_anchor_spend_first stdout ----
+
+thread 'multi_anchor::tests::multi_anchor_spend_first' (7160537) panicked at crates/connectors/src/test_utils.rs:261:14:
+must be able to generate blocks: JsonRpc(Transport(Bitreq(IoError(Custom { kind: TimedOut, error: "the timeout of the request was reached" }))))
+
+---- multi_anchor::tests::multi_anchor_spend_last stdout ----
+
+thread 'multi_anchor::tests::multi_anchor_spend_last' (7160538) panicked at crates/connectors/src/test_utils.rs:261:14:
+must be able to generate blocks: JsonRpc(Transport(Bitreq(IoError(Custom { kind: TimedOut, error: "the timeout of the request was reached" }))))
+
+---- claim_payout::tests::admin_burn_spend_2_of_3 stdout ----
+
+thread 'claim_payout::tests::admin_burn_spend_2_of_3' (7160525) panicked at crates/connectors/src/test_utils.rs:261:14:
+must be able to generate blocks: JsonRpc(Transport(Bitreq(IoError(Custom { kind: TimedOut, error: "the timeout of the request was reached" }))))
+
+
+failures:
+    claim_payout::tests::admin_burn_spend_1_of_1
+    claim_payout::tests::admin_burn_spend_2_of_3
+    claim_payout::tests::admin_burn_spend_3_of_3
+    claim_payout::tests::payout_spend
+    keyed_anchor::tests::keyed_anchor_spend
+    multi_anchor::tests::multi_anchor_spend_first
+    multi_anchor::tests::multi_anchor_spend_last
+    n_of_n::tests::n_of_n_spend
+
+test result: FAILED. 19 passed; 8 failed; 0 ignored; 0 measured; 0 filtered out; finished in 101.53s
+

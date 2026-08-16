@@ -542,10 +542,39 @@ entirely, so it is a question for the protocol audit, not a patch.
    ```
 
    A symlink rather than a copy, so the file stays correct when the server
-   rewrites coordinator details. After that STRATA-009 can run against a real
-   cluster; whether it then passes is unknown and must be measured, not
-   predicted — the last two predictions in this document about FoundationDB
-   were both wrong.
+   rewrites coordinator details.
+
+   **Measured outcome, with the cluster live.** `strata-bridge-db` went from
+   **6 passed / 32 failed to 38 passed / 0 failed**, confirming the diagnosis
+   above: it was infrastructure, not code, and patching the `boot()` guard
+   would have masked it.
+
+   STRATA-009 nonetheless still fails, for two further reasons that only
+   became visible once it could execute:
+
+   *Concurrency.* `cargo test --workspace` without a thread limit fails on
+   RPC timeouts — *"must be able to generate blocks: … TimedOut"*. Many tests
+   each start their own `bitcoind`, and running them concurrently saturates
+   the machine. The same connectors tests pass **27/0** with
+   `--test-threads=1` and time out without it, so these are contention, not
+   defects. The runner now serializes STRATA-009; this is a **deviation from
+   the handoff's literal command, recorded rather than applied quietly**. It
+   is an execution parameter, not a narrower run — the same tests execute.
+   Serialized, the workspace is **385 passed / 1 failed**.
+
+   *One genuinely failing test.* `strata-bridge-p2p-service`'s
+   `tests::gossipsub::dispatch_direct_peer` fails with *"Failed to listen: No
+   listener on the given port"*. It is **pre-existing and environmental, not
+   caused by the patch**: the patch touches no file under `p2p-service`, and
+   the crate scores **3 passed / 1 failed patched versus 2 passed / 2 failed
+   on the pristine base** — the patched tree is strictly *better*, because
+   the STRATA-006 logging fix repaired the other one. Diagnosing the port
+   binding is the remaining work for STRATA-009 and was not attempted here.
+
+   So STRATA-009 is now one pre-existing, environment-dependent test away
+   from passing, rather than blocked on a missing library. Its status stays
+   `failed` because one test does fail; that is the honest reading and it is
+   not being rounded up.
 
    The earlier prediction in this document that installing FoundationDB would
    close two blockers was wrong: it closed STRATA-005 and moved STRATA-009
