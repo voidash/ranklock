@@ -34,7 +34,7 @@
       "core",
       "strata_build"
     ],
-    "sha256": "809e633cd926e2c6bb57c551b0be727bc3eaa964b9ddb49f03a33450236815a5"
+    "sha256": "72dde3da6e8180cfbbdc3bf92291c97c7f6b98f523c0eba3d10a4622eb770a2b"
   },
   "external_attestations_must_be_verified_by": "ranklock.deployment_policy.evaluate_deployment",
   "facts": {
@@ -45,7 +45,7 @@
     "committee_authorization_harness_passed": true,
     "complete_source_archive_reproducible": true,
     "complete_test_suite_passed": true,
-    "current_bridge_compiled_and_tested": false,
+    "current_bridge_compiled_and_tested": true,
     "deterministic_fixture_secrets_absent": false,
     "independent_cryptography_audit_passed": false,
     "independent_implementation_audit_passed": false,
@@ -57,7 +57,6 @@
   },
   "funds_blockers": [
     "Bitcoin Core regtest did not pass",
-    "current bridge commit was not compiled and tested",
     "native constant-time implementation is absent",
     "production rollback witnesses are not deployed",
     "deterministic fixture secrets are present",

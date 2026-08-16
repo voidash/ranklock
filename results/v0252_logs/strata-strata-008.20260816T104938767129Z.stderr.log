@@ -1,0 +1,10 @@
+   Compiling algebra v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-rec4/crates/algebra)
+   Compiling strata-bridge-primitives v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-rec4/crates/primitives)
+   Compiling strata-bridge-connectors v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-rec4/crates/connectors)
+   Compiling strata-mosaic-client-api v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-rec4/crates/mosaic-client-api)
+   Compiling strata-bridge-test-utils v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-rec4/crates/test-utils)
+   Compiling strata-bridge-p2p-types v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-rec4/crates/p2p-types)
+   Compiling strata-bridge-tx-graph v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-rec4/crates/tx-graph)
+   Compiling strata-bridge-sm v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-rec4/crates/bridge-sm)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 6.63s
+     Running unittests src/lib.rs (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-p2pverify/target/debug/deps/strata_bridge_sm-8db8edd2986fe037)

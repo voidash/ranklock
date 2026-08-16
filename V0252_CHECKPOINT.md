@@ -585,7 +585,19 @@ entirely, so it is a question for the protocol audit, not a patch.
    crate-level failures, including the FoundationDB-backed crate against the
    live cluster.
 
-   ### Evidence caveat: the full pass is split across two records
+   ### Resolved: all nine cases now pass in one pristine record
+
+   A detached run (surviving the execution-time limit that killed three
+   earlier attempts) with a warm shared `CARGO_TARGET_DIR` completed the full
+   matrix on a pristine clone: **STRATA-001..009 all passed, 0 failed, 0
+   not_executed**.  `strata_build_all_passed` is now `true` and the funds
+   blocker *"current bridge commit was not compiled and tested"* is **closed**,
+   taking the list from eight to seven.
+
+   The caveat below is retained because it records why the record was briefly
+   split, and why hand-editing it was refused rather than merely inconvenient.
+
+   ### Historical: the full pass was briefly split across two records
 
    `results/v0252_strata_build_matrix.json` currently shows STRATA-002 as
    `not_executed`, so the verifier reports `strata_build_all_passed: false`
