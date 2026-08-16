@@ -12,6 +12,7 @@ FoundationDB client library.  When those are absent the cases are recorded
 """
 
 import argparse
+import hashlib
 from pathlib import Path
 import shutil
 import subprocess
@@ -22,6 +23,8 @@ from ranklock.evidence_v0252 import CaseResult, MatrixReport, run_recorded_comma
 
 ROOT = Path(__file__).resolve().parents[1]
 PINNED_COMMIT = "f94c06d08ff29eee746f3e20bd63078d2949b304"
+# The verified Bitcoin Core 31.1 release executable (see CORE-001).
+PINNED_BITCOIND_SHA256 = "d55c12b0b02001cc16b1481c4075361dcba193100a8143924abda911174c09ec"
 INSTALLER = ROOT / "integration" / "alpen-validity-first-f94c-v025" / "apply_validity_first.py"
 
 # Declared patch scope: 28 edited + 4 added. Over the original PATCH_SCOPE.md
@@ -35,6 +38,44 @@ INSTALLER = ROOT / "integration" / "alpen-validity-first-f94c-v025" / "apply_val
 # separate delta rather than folded into the feature patch.
 EXPECTED_CHANGED_FILES = 28
 EXPECTED_NEW_FILES = 4
+
+
+def _bitcoind_identity() -> dict[str, object]:
+    """Record which bitcoind the Strata suites actually resolved.
+
+    STRATA-006 drives real regtest nodes through ``corepc-node``, which finds
+    ``bitcoind`` on PATH.  Recording only the Rust toolchain would leave the
+    consensus-relevant half of the environment untracked, so the resolved
+    path, SHA-256 and self-reported version are captured here.  A missing or
+    unreadable binary is reported as such rather than omitted, so the absence
+    is visible in the evidence instead of being silently indistinguishable
+    from a run that never needed one.
+    """
+
+    resolved = shutil.which("bitcoind")
+    if resolved is None:
+        return {"resolved": None, "note": "no bitcoind on PATH at report time"}
+
+    path = Path(resolved)
+    identity: dict[str, object] = {"resolved": str(path)}
+    try:
+        digest = hashlib.sha256(path.read_bytes()).hexdigest()
+    except OSError as error:
+        identity["sha256_error"] = str(error)
+    else:
+        identity["sha256"] = digest
+        identity["matches_pinned_release"] = digest == PINNED_BITCOIND_SHA256
+
+    try:
+        version = subprocess.run(
+            [str(path), "--version"], text=True, capture_output=True, timeout=60
+        )
+    except (OSError, subprocess.SubprocessError) as error:
+        identity["version_error"] = str(error)
+    else:
+        identity["version"] = version.stdout.splitlines()[0] if version.stdout else ""
+
+    return identity
 
 
 def _git(repo: Path, *args: str) -> subprocess.CompletedProcess[str]:
@@ -263,6 +304,7 @@ def main() -> int:
             "strata_commit": PINNED_COMMIT,
             "checkout_path": str(repo),
             "rust_toolchain": toolchain.strip(),
+            "bitcoind": _bitcoind_identity(),
         },
         cases=tuple(cases),
     )

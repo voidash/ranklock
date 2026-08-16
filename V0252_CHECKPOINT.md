@@ -148,13 +148,12 @@ regenerated from them rather than maintained by hand.
 | Phase | passed | failed | not_executed | unavailable | |
 |---|---|---|---|---|---|
 | CORE-001..030 | 18 | 0 | 5 | 0 | (+7 `modeled_only`)
-| STRATA-001..009 | 5 | 2 | 0 | 2 | stale — predates the STRATA-006 fix |
+| STRATA-001..009 | 7 | 0 | 0 | 2 | |
 | STRATA-010..020 | — | — | 11 | — | |
 
-The STRATA row is the last *measured* run and predates the STRATA-006 fix;
-it has not been re-run, so it is reported as measured rather than as
-predicted. STRATA-006 has been verified independently (6/6) but the matrix
-JSON is regenerated only by a full re-run.
+The STRATA row is a full re-run against a pristine clone of the pinned
+commit: STRATA-001..004 and 006..008 pass; only STRATA-005 and STRATA-009
+are `unavailable`, both on the FoundationDB client library and nothing else.
 
 Five CORE rows are `modeled_only`: covered by the package suite but not driven through a live node. Per the acceptance matrix only `PASS` closes a release fact, so this records existing coverage without inflating the gate — asserted by a regression test.
 
@@ -248,6 +247,35 @@ one.
 No test was deleted, ignored, or weakened to reach these numbers: the patch
 adds no `#[ignore]` anywhere, and test counts per touched file held or grew
 (one net-new test pinning the pre-maturity NACK gate).
+
+### The repurposed tests were checked against the design, not just the code
+
+Proving no test was *weakened* does not prove its new expectation is
+*intended* — a test rewritten to match observed behaviour would enshrine a
+defect. The three flips that changed semantics were therefore checked
+against the handoff spec rather than against the implementation:
+
+- **No immediate NACK on counterproof.** `integration_spec.json` states
+  `polarity: {immediate: "ACK …", timeout: "CSV NACK …"}`. Matches.
+- **Five packed signatures per watchtower.** The same file states
+  `packed_signatures_per_watchtower_before: 4`, `…_after: 5`. This
+  independently confirms the `PACKED_LEN` correction above is the intended
+  arity and not a fixture bent to fit.
+- **ACK viable *at* the nack-timeout boundary** (renamed from
+  `…not_viable_at…`). The spec is **silent** on the boundary, so it was
+  checked against BIP68 instead, which is the stronger authority. The
+  patched code emits the NACK duty when
+  `block_height + 1 >= conf_height + nack_timelock` — exactly when a
+  relative-timelocked spend may enter the next block. The base guard it
+  replaced (`block_height <= conf_height + nack_timelock`) fired two blocks
+  *later* than consensus requires. The new boundary is correct; the rename
+  reflects a real fix, not an accommodation.
+
+One flip is **not** fully closed by either source: the counterprover now
+re-emits the immediate ACK on every retry tick (`…noop…` → `…emits_ack…`).
+That is safe if a duty is an idempotent instruction and wasteful-but-benign
+if not; neither the spec nor BIP68 settles it, and it is recorded here as
+checked-but-unresolved rather than implied to be validated.
 
 ## Remaining open items
 
