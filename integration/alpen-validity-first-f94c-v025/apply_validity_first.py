@@ -187,6 +187,7 @@ def apply(repo: Path, dry_run: bool) -> None:
     patch_notify_new_block_test(repo, dry_run)
     patch_bridge_sm_nack_tests(repo, dry_run)
     patch_base_logging_defect(repo, dry_run)
+    patch_base_p2p_address_collision(repo, dry_run)
 
     if not dry_run:
         scripts_dir = repo / "scripts"
@@ -859,8 +860,10 @@ TOUCHED_RUST_FILES = (
     "crates/bridge-sm/src/graph/tests/contested/process_counterproof.rs",
     "crates/bridge-sm/src/graph/tests/handlers/process_retry_tick.rs",
     "crates/bridge-sm/src/graph/tests/contested/process_counterproof_nackd.rs",
-    # Base defect, not a validity-first change.  See patch_base_logging_defect.
+    # Base defects, not validity-first changes.  See patch_base_logging_defect
+    # and patch_base_p2p_address_collision.
     "crates/common/src/logging.rs",
+    "crates/p2p-service/src/tests/common.rs",
 )
 
 
@@ -1138,6 +1141,55 @@ def patch_base_logging_defect(repo: Path, dry_run: bool) -> None:
             "    });\n"
             "}\n",
             "close the once-guard",
+        ),
+    ], dry_run)
+
+
+def patch_base_p2p_address_collision(repo: Path, dry_run: bool) -> None:
+    """Base-tree defect, recorded as a delta distinct from validity-first.
+
+    The p2p test helpers give every ``Setup`` the same fixed libp2p memory
+    addresses -- ``/memory/1``, ``/memory/2``, ... -- but libp2p's memory
+    transport registry is process-global. A test therefore collides with an
+    earlier test in the same binary whose listeners have not finished tearing
+    down, and fails with "Failed to listen: No listener on the given port".
+
+    Not caused by validity-first: the installer touches no other file under
+    ``crates/p2p-service``, and the crate scores 3 passed / 1 failed on the
+    patched tree against 2 passed / 2 failed on the pinned base (the patched
+    tree already being better because patch_base_logging_defect repairs the
+    other one). With this change the crate is 4 passed / 0 failed.
+
+    The fix hands each ``Setup`` its own block of addresses from a process
+    global counter, so tests cannot collide regardless of teardown timing.
+    This is test-only code; no production path uses these helpers.
+    """
+
+    rel = "crates/p2p-service/src/tests/common.rs"
+    patch(repo, rel, [
+        (
+            "use std::time::Duration;",
+            "use std::{\n"
+            "    sync::atomic::{AtomicU64, Ordering},\n"
+            "    time::Duration,\n"
+            "};",
+            "import atomics for unique memory addresses",
+        ),
+        (
+            "        let multiaddresses = (1..(keypairs.len() + 1) as u16)\n"
+            "            .map(|idx| build_multiaddr!(Memory(idx)))\n"
+            "            .collect::<Vec<_>>();",
+            "        // libp2p's memory transport registry is process-global, so fixed\n"
+            "        // addresses collide between tests in the same binary: a later test\n"
+            "        // fails with \"No listener on the given port\" when an earlier test's\n"
+            "        // listeners have not finished tearing down. Hand each Setup its own\n"
+            "        // block of addresses instead.\n"
+            "        static NEXT_MEMORY_PORT: AtomicU64 = AtomicU64::new(1);\n"
+            "        let base = NEXT_MEMORY_PORT.fetch_add(keypairs.len() as u64, Ordering::Relaxed);\n"
+            "        let multiaddresses = (0..keypairs.len() as u64)\n"
+            "            .map(|offset| build_multiaddr!(Memory(base + offset)))\n"
+            "            .collect::<Vec<_>>();",
+            "unique memory addresses per test",
         ),
     ], dry_run)
 
