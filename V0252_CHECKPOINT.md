@@ -361,6 +361,77 @@ attestation — the one thing handoff rules 2 and 5 forbid outright, and the
 thing that would actually endanger funds, because the gate's entire purpose
 is to stop a bridge going live on evidence nobody independent ever checked.
 
+## Adversarial review findings (machine-assisted, NOT an independent audit)
+
+Three adversarial reviews were run with a second model against the carrier,
+the slot ledger and the Strata patch. **This is engineering, not
+attestation.** A review commissioned and run by the same party on the same
+machine is not what `independent_cryptography_audit_passed` means, and it did
+not move that fact. Its value is that it found real defects before an
+external auditor sees the code.
+
+### Fixed: the slot ledger's audit chain did not bind live slot state
+
+`verify_audit_chain()` hashed only the `audit_events` rows. The events and
+the `slots` rows are separate tables in the same writable file, so the two
+could disagree while verification returned `True`. Two attacks were
+**reproduced against the previous implementation**:
+
+1. Rewrite `slots.state` back to `available`, leaving the audit rows intact.
+   The slot reopened and was burned a second time — two `burn` events for a
+   one-shot slot — and `verify_audit_chain()` still returned `True`.
+2. Delete every `audit_event` and zero `metadata.audit_chain_head`. An empty
+   chain is trivially self-consistent, so verification returned `True`
+   alongside a burned slot.
+
+Fixed by replaying the events into the slot state they imply and comparing
+against every live row, which defeats both: a slot with no events must be
+`available`, so a wiped log no longer agrees with a burned slot. Getting
+this right required modelling each event type rather than taking "last event
+wins" — `exact-replay` is audit-only, and `conflict-rejected` records the
+*rejected* digests, which are deliberately never written to the slot. The
+first attempt did take last-event-wins and broke three existing conflict
+tests, which is what surfaced the distinction.
+
+Four regressions pin it, including one asserting an honest multi-slot ledger
+still verifies so the check cannot be fail-closed-too-far.
+
+**Scope is stated honestly in the docstring:** this is tamper *evidence*, not
+tamper proofing. The hashes are unkeyed and the head sits in the same
+writable database, so an actor who rewrites events, head and slot rows
+consistently still produces a self-consistent file. Detecting that needs an
+external authenticated monotonic witness — which is precisely the
+deployed-rollback-witness release gate, and is not claimed here.
+
+### Open, not fixed: exact-NACK is checked by txid, which omits the witness
+
+`compute_txid()` excludes the witness under BIP141, so txid equality does not
+prove the observed spend used the pre-signed NACK witness. The comment at
+`contested.rs` claims the transition "accepts only the exact fixed
+pre-signed NACK"; the check is weaker than the claim. A spend reusing the
+NACK body but satisfying the *ACK* leaf carries the same txid and would be
+classified as a NACK.
+
+Severity is lower than a unilateral attack: it needs a fresh N/N signature
+over the NACK body for the ACK leaf, so it requires all N signers to
+collude. It is recorded rather than patched because the fix — comparing the
+finalized transaction or wtxid in both `tx_classifier.rs` and
+`contested.rs` — touches consensus-adjacent code and 449 passing tests, and
+was not attempted without the room to verify it properly. **This is the
+single highest-value item for the next session.**
+
+### Assessed and not accepted: "autonomous NACK defeats a valid ACK"
+
+The review reported that after CSV maturity the operator can broadcast the
+signed NACK and double-spend a valid ACK. That describes the intended
+timeout semantics rather than a defect: the CSV delay *is* the ACK's window,
+and the ACK has a D-block head start. The genuine residue is a fee
+competition if a valid ACK exists but is still unconfirmed at maturity,
+which is inherent to any timeout-based design and is mitigated by sizing D
+and fee-bumping the ACK. The proposed remedy — withholding the NACK witness
+until an external attestation — would replace the pre-signed graph model
+entirely, so it is a question for the protocol audit, not a patch.
+
 ## Remaining open items
 
 1. **STRATA-005 / 009** — need the FoundationDB client library. Fully

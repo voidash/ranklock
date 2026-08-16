@@ -1,0 +1,11 @@
+
+running 6 tests
+test validity_first_counterproof::tests::alternate_context_preimage_is_rejected_by_core ... ok
+test validity_first_counterproof::tests::exact_message_signature_replay_is_rejected_by_core ... ok
+test validity_first_counterproof::tests::immediate_ack_spend ... ok
+test validity_first_counterproof::tests::malformed_positive_unlock_is_rejected_by_core ... ok
+test validity_first_counterproof::tests::preimage_commitment_is_exact ... ok
+test validity_first_counterproof::tests::timeout_nack_spend ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 21 filtered out; finished in 48.48s
+

@@ -724,6 +724,33 @@ class DurableSlotLedger:
         )
 
     def verify_audit_chain(self) -> bool:
+        """Verify the audit log *and* that live slot state is what it implies.
+
+        Checking only the event chain is not enough. The chain and the
+        ``slots`` rows are separate tables in the same file, so rewriting a
+        consumed slot back to ``available`` while leaving the audit rows
+        untouched used to leave this returning ``True`` -- and the slot could
+        then be burned a second time, producing two ``burn`` events for a
+        one-shot slot. Truncating the log and zeroing the stored head passed
+        for the same reason: an empty chain is trivially self-consistent.
+
+        Both are caught by replaying the events into the state they imply and
+        comparing that against every live row, which is what
+        ``_replayed_slot_state`` below does. A slot with no events must be
+        ``available`` with no bindings, so a wiped log no longer agrees with a
+        burned slot.
+
+        This is tamper *evidence*, not tamper proofing. The hashes are
+        unkeyed and the head lives in the same writable database, so an actor
+        who rewrites the events, the head and the slot rows consistently still
+        produces a self-consistent file. Detecting that requires an external
+        authenticated monotonic witness -- the deployed-rollback-witness
+        release gate -- and is deliberately not claimed here.
+        """
+
+        if not self._slot_state_matches_audit_log():
+            return False
+
         previous = _ZERO_HASH
         for event in self.events():
             if event.previous_hash != previous:
@@ -751,6 +778,113 @@ class DurableSlotLedger:
             return bytes(row["value"]) == previous
         finally:
             conn.close()
+
+    def _replayed_slot_state(self) -> dict[int, dict[str, object]]:
+        """Fold the audit log into the slot state it implies.
+
+        Each event records the state *after* it was applied, so the last
+        event for a slot determines that slot's expected row.
+        """
+
+        replayed: dict[int, dict[str, object]] = {}
+        for event in self.events():
+            slot_id = int(event.slot_id)
+            event_type = str(event.event_type)
+            current = replayed.get(slot_id)
+
+            if event_type == "exact-replay":
+                # Audit only: an exact replay changes nothing but the latest
+                # event hash, so it must not move the expected slot state.
+                continue
+
+            if event_type == "conflict-rejected":
+                # The event carries the *rejected* digests, which are
+                # deliberately never written to the slot. Only the state moves,
+                # and only when the slot was not already terminal -- exactly
+                # the branch `begin` takes. Comparing these digests against the
+                # slot row would flag every honest conflict as tampering.
+                if current is None:
+                    return {}
+                already_terminal = str(event.state) == current["state"]
+                current["state"] = str(event.state)
+                if not already_terminal:
+                    current["outcome"] = "retry-rejected"
+                continue
+
+            if event_type == "burn":
+                replayed[slot_id] = {
+                    "state": str(event.state),
+                    "input_digest": event.input_digest,
+                    "authorization_digest": event.authorization_digest,
+                    "chain_binding_digest": event.chain_binding_digest,
+                    "outcome": event.outcome,
+                }
+                continue
+
+            # finalize and any future state-moving event: the bindings stay as
+            # the burn established them.
+            if current is None:
+                return {}
+            current["state"] = str(event.state)
+            current["outcome"] = event.outcome
+        return replayed
+
+    def _slot_state_matches_audit_log(self) -> bool:
+        conn = self._connect()
+        try:
+            rows = list(
+                conn.execute(
+                    "SELECT slot_id, state, input_digest, authorization_digest, "
+                    "chain_binding_digest, outcome FROM slots ORDER BY slot_id"
+                )
+            )
+        finally:
+            conn.close()
+
+        replayed = self._replayed_slot_state()
+        for row in rows:
+            slot_id = int(row["slot_id"])
+            expected = replayed.get(slot_id)
+            if expected is None:
+                # No event ever touched this slot, so it must be untouched.
+                # This is what catches a truncated log next to a burned slot.
+                if str(row["state"]) != "available":
+                    return False
+                if any(
+                    row[column] is not None
+                    for column in (
+                        "input_digest",
+                        "authorization_digest",
+                        "chain_binding_digest",
+                        "outcome",
+                    )
+                ):
+                    return False
+                continue
+
+            if str(row["state"]) != expected["state"]:
+                return False
+            for column in (
+                "input_digest",
+                "authorization_digest",
+                "chain_binding_digest",
+            ):
+                live = row[column]
+                want = expected[column]
+                if (live is None) != (want is None):
+                    return False
+                if live is not None and bytes(live) != bytes(want):  # type: ignore[arg-type]
+                    return False
+            live_outcome = row["outcome"]
+            want_outcome = expected["outcome"]
+            if (live_outcome is None) != (want_outcome is None):
+                return False
+            if live_outcome is not None and str(live_outcome) != str(want_outcome):
+                return False
+
+        # An event referring to a slot that no longer exists is also a rewrite.
+        known = {int(row["slot_id"]) for row in rows}
+        return all(slot_id in known for slot_id in replayed)
 
     def checkpoint(self) -> None:
         """Force a full WAL checkpoint for backup/export tooling."""

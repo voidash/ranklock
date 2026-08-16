@@ -205,3 +205,127 @@ def test_finalized_outcome_survives_a_kill_after_the_response(tmp_path: Path):
     assert use.state == "success"
     assert use.terminal
     assert reopened.verify_audit_chain()
+
+
+# ---------------------------------------------------------------------------
+# Tamper evidence: the audit chain must be bound to live slot state.
+#
+# Found by an adversarial review, which reproduced both of these against the
+# previous implementation. verify_audit_chain() used to hash only the event
+# rows, so the chain and the `slots` table -- separate tables in the same
+# writable file -- could disagree while verification still returned True.
+#
+# This is tamper *evidence*, not tamper proofing: the hashes are unkeyed and
+# the head lives in the same database, so a writer who rewrites events, head
+# and slot rows consistently still produces a self-consistent file. Catching
+# that needs an external authenticated witness (the deployed-rollback-witness
+# release gate) and is not claimed here.
+# ---------------------------------------------------------------------------
+
+import sqlite3
+
+
+def _burned_ledger(tmp_path: Path) -> Path:
+    ledger_path = tmp_path / "tamper.sqlite"
+    ledger = DurableSlotLedger(ledger_path, context_digest=_d(b"context"), slot_count=1)
+    ledger.begin(
+        0,
+        context_digest=_d(b"context"),
+        input_digest=_d(b"input"),
+        authorization_digest=_d(b"authorization"),
+        chain_binding_digest=_d(b"wtxid"),
+    )
+    assert ledger.verify_audit_chain(), "an untampered ledger must verify"
+    return ledger_path
+
+
+def test_rewinding_a_burned_slot_is_detected(tmp_path: Path):
+    """Resetting slot state while leaving the audit rows intact must fail.
+
+    Without this the slot reopens and can be burned a second time, leaving
+    two `burn` events for a one-shot slot while verification reports success.
+    """
+
+    ledger_path = _burned_ledger(tmp_path)
+    with sqlite3.connect(ledger_path) as connection:
+        connection.execute(
+            "UPDATE slots SET state=?, input_digest=NULL, authorization_digest=NULL, "
+            "chain_binding_digest=NULL, outcome=NULL, started_at_ns=NULL, "
+            "finalized_at_ns=NULL, first_event_hash=NULL, latest_event_hash=NULL "
+            "WHERE slot_id=0",
+            ("available",),
+        )
+
+    reopened = DurableSlotLedger(ledger_path, context_digest=_d(b"context"), slot_count=1)
+    assert not reopened.verify_audit_chain(), (
+        "a slot rewound behind the audit log must not verify"
+    )
+
+
+def test_truncating_the_audit_log_is_detected(tmp_path: Path):
+    """An emptied log beside a consumed slot must not verify.
+
+    An empty chain is trivially self-consistent, so hashing events alone
+    accepted it. A slot with no events must be `available`.
+    """
+
+    ledger_path = _burned_ledger(tmp_path)
+    with sqlite3.connect(ledger_path) as connection:
+        connection.execute("DELETE FROM audit_events")
+        connection.execute(
+            "UPDATE metadata SET value=? WHERE key=?", (bytes(32), "audit_chain_head")
+        )
+
+    reopened = DurableSlotLedger(ledger_path, context_digest=_d(b"context"), slot_count=1)
+    assert not reopened.verify_audit_chain(), (
+        "a truncated audit log beside a burned slot must not verify"
+    )
+
+
+def test_forging_a_binding_on_a_burned_slot_is_detected(tmp_path: Path):
+    """Swapping the recorded binding must not verify either.
+
+    The slot stays `burned`, so a state-only comparison would miss it; the
+    per-column digest comparison is what catches a redirected authorization.
+    """
+
+    ledger_path = _burned_ledger(tmp_path)
+    with sqlite3.connect(ledger_path) as connection:
+        connection.execute(
+            "UPDATE slots SET chain_binding_digest=? WHERE slot_id=0",
+            (_d(b"attacker wtxid"),),
+        )
+
+    reopened = DurableSlotLedger(ledger_path, context_digest=_d(b"context"), slot_count=1)
+    assert not reopened.verify_audit_chain(), (
+        "a rewritten chain binding must not verify"
+    )
+
+
+def test_an_untampered_multi_slot_ledger_still_verifies(tmp_path: Path):
+    """The check must not be so strict that honest ledgers fail."""
+
+    ledger_path = tmp_path / "honest.sqlite"
+    ledger = DurableSlotLedger(ledger_path, context_digest=_d(b"context"), slot_count=4)
+    ledger.begin(
+        0,
+        context_digest=_d(b"context"),
+        input_digest=_d(b"input-0"),
+        authorization_digest=_d(b"auth-0"),
+        chain_binding_digest=_d(b"wtxid-0"),
+    )
+    ledger.finalize(0, outcome="success")
+    ledger.begin(
+        2,
+        context_digest=_d(b"context"),
+        input_digest=_d(b"input-2"),
+        authorization_digest=_d(b"auth-2"),
+        chain_binding_digest=_d(b"wtxid-2"),
+    )
+    assert ledger.verify_audit_chain()
+
+    reopened = DurableSlotLedger(ledger_path, context_digest=_d(b"context"), slot_count=4)
+    assert reopened.verify_audit_chain()
+    assert reopened.use(0).state == "success"
+    assert reopened.use(2).state == "burned"
+    assert reopened.use(1).state == "available"

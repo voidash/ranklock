@@ -1,0 +1,12 @@
+
+running 7 tests
+test game_graph::tests::admin_burn_payout ... ok
+test game_graph::tests::counterproof_ack_slash ... ok
+test game_graph::tests::counterproof_nack_contested_payout ... ok
+test game_graph::tests::no_counterproof_contested_payout ... ok
+test game_graph::tests::proof_timeout_slash ... ok
+test game_graph::tests::uncontested_payout ... ok
+test game_graph::tests::unstaking_burn_payout ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 39 filtered out; finished in 80.48s
+
