@@ -1,0 +1,397 @@
+   Compiling critical-section v1.2.0
+   Compiling libc v0.2.184
+   Compiling serde_core v1.0.228
+   Compiling typenum v1.18.0
+   Compiling futures-core v0.3.32
+   Compiling strsim v0.11.1
+   Compiling indexmap v2.14.0
+   Compiling futures-io v0.3.32
+   Compiling futures-task v0.3.32
+   Compiling allocator-api2 v0.2.21
+   Compiling toml_datetime v0.6.11
+   Compiling getrandom v0.2.16
+   Compiling serde_spanned v0.6.9
+   Compiling crunchy v0.2.4
+   Compiling portable-atomic v1.11.1
+   Compiling futures-channel v0.3.32
+   Compiling crypto-common v0.1.6
+   Compiling block-buffer v0.10.4
+   Compiling cpufeatures v0.2.17
+   Compiling rand_core v0.6.4
+   Compiling secp256k1-sys v0.10.1
+   Compiling darling_core v0.23.0
+   Compiling hashbrown v0.17.1
+   Compiling digest v0.10.7
+   Compiling spin v0.9.8
+   Compiling num-traits v0.2.19
+   Compiling futures-util v0.3.32
+   Compiling rand_chacha v0.3.1
+   Compiling generic-array v0.14.7
+   Compiling rustc-hash v2.1.1
+   Compiling once_cell v1.21.4
+   Compiling sha2 v0.10.9
+   Compiling getrandom v0.3.3
+   Compiling mio v1.2.0
+   Compiling signal-hook-registry v1.4.5
+   Compiling tracing-core v0.1.36
+   Compiling socket2 v0.6.3
+   Compiling rand v0.8.5
+   Compiling toml_edit v0.22.27
+   Compiling rand_core v0.9.3
+   Compiling ff v0.13.1
+   Compiling crypto-bigint v0.5.5
+   Compiling tracing v0.1.44
+   Compiling group v0.13.0
+   Compiling rand_chacha v0.9.0
+   Compiling hmac v0.12.1
+   Compiling signature v2.2.0
+   Compiling lazy_static v1.5.0
+   Compiling ssz_primitives v0.16.0 (https://github.com/alpenlabs/ssz-gen?tag=v0.16.0#a43cb62e)
+   Compiling constant_time_eq v0.4.2
+   Compiling rand v0.9.2
+   Compiling rfc6979 v0.4.0
+   Compiling curve25519-dalek v4.1.3
+   Compiling ed25519 v2.2.3
+   Compiling serde v1.0.228
+   Compiling const-hex v1.18.1
+   Compiling ssz v0.16.0 (https://github.com/alpenlabs/ssz-gen?tag=v0.16.0#a43cb62e)
+   Compiling serde_json v1.0.149
+   Compiling ring v0.17.14
+   Compiling substrate-bn v0.6.0
+   Compiling aws-lc-rs v1.16.2
+   Compiling aws-lc-sys v0.39.1
+   Compiling hkdf v0.12.4
+   Compiling bytes v1.11.1
+   Compiling smallvec v1.15.1
+   Compiling arrayvec v0.7.6
+   Compiling either v1.15.0
+   Compiling serdect v0.2.0
+   Compiling hex v0.4.3
+   Compiling parking_lot_core v0.9.11
+   Compiling hex-conservative v0.2.2
+   Compiling sec1 v0.7.3
+   Compiling tree_hash v0.16.0 (https://github.com/alpenlabs/ssz-gen?tag=v0.16.0#a43cb62e)
+   Compiling itertools v0.14.0
+   Compiling bitcoin-internals v0.3.0
+   Compiling alloy-rlp v0.3.12
+   Compiling futures-executor v0.3.32
+   Compiling parking_lot v0.12.4
+   Compiling bitcoin_hashes v0.14.0
+   Compiling bitcoin-units v0.1.2
+   Compiling elliptic-curve v0.13.8
+   Compiling ssz_types v0.16.0 (https://github.com/alpenlabs/ssz-gen?tag=v0.16.0#a43cb62e)
+   Compiling ruint v1.20.0
+   Compiling proc-macro-crate v3.3.0
+   Compiling tokio v1.52.3
+   Compiling darling_macro v0.23.0
+   Compiling futures v0.3.32
+   Compiling blake3 v1.8.5
+   Compiling serdect v0.3.0
+   Compiling ecdsa v0.16.9
+   Compiling bincode v1.3.3
+   Compiling ed25519-dalek v2.2.0
+   Compiling rustls v0.23.40
+   Compiling multihash v0.19.3
+   Compiling darling v0.23.0
+   Compiling secp256k1 v0.29.1
+   Compiling base58ck v0.1.0
+   Compiling k256 v0.13.4
+   Compiling borsh-derive v1.6.1
+   Compiling errno v0.3.13
+   Compiling tinystr v0.8.1
+   Compiling zerotrie v0.2.2
+   Compiling rustix v1.1.4
+   Compiling http v1.3.1
+   Compiling icu_locale_core v2.0.0
+   Compiling bitcoin v0.32.9
+   Compiling secp v0.3.0
+   Compiling libp2p-identity v0.2.13
+   Compiling icu_collections v2.0.0
+   Compiling socket2 v0.5.10
+   Compiling musig2 v0.1.1 (https://github.com/alpenlabs/musig2?branch=fix%2Fdeserialization-mismatch#5b831993)
+   Compiling rustls-webpki v0.103.13
+   Compiling icu_provider v2.0.0
+   Compiling crossbeam-utils v0.8.21
+   Compiling borsh v1.6.1
+   Compiling tempfile v3.27.0
+   Compiling wait-timeout v0.2.1
+   Compiling icu_properties v2.0.1
+   Compiling ssz_derive v0.16.0 (https://github.com/alpenlabs/ssz-gen?tag=v0.16.0#a43cb62e)
+   Compiling tree_hash_derive v0.16.0 (https://github.com/alpenlabs/ssz-gen?tag=v0.16.0#a43cb62e)
+   Compiling icu_normalizer v2.0.0
+   Compiling rusty-fork v0.3.0
+   Compiling rand_xorshift v0.4.0
+   Compiling rkyv v0.8.17
+   Compiling hex-conservative v1.2.0
+   Compiling num-integer v0.1.46
+   Compiling proptest v1.11.0
+   Compiling num-bigint v0.4.6
+   Compiling http-body v1.0.1
+   Compiling sync_wrapper v1.0.2
+   Compiling idna_adapter v1.2.1
+   Compiling wasm-bindgen v0.2.100
+   Compiling ahash v0.8.12
+   Compiling ssz_codegen v0.16.0 (https://github.com/alpenlabs/ssz-gen?tag=v0.16.0#a43cb62e)
+   Compiling core-foundation v0.10.1
+   Compiling strata-identifiers v0.1.0 (https://github.com/alpenlabs/strata-common?tag=v0.3.0-rc.2#c3698c0f)
+   Compiling zkaleido v0.1.0 (https://github.com/alpenlabs/zkaleido?tag=v0.3.0-rc.1#b1c3a5a3)
+   Compiling idna v1.0.3
+   Compiling security-framework-sys v2.17.0
+   Compiling security-framework v3.6.0
+   Compiling http-body-util v0.1.3
+   Compiling zkaleido-sp1-groth16-verifier v0.1.0 (https://github.com/alpenlabs/zkaleido?tag=v0.3.0-rc.1#b1c3a5a3)
+   Compiling tokio-util v0.7.18
+   Compiling url v2.5.4
+   Compiling js-sys v0.3.77
+   Compiling httpdate v1.0.3
+   Compiling send_wrapper v0.4.0
+   Compiling bitvec v1.0.1
+   Compiling tower v0.5.2
+   Compiling h2 v0.4.15
+   Compiling algebra v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-final2/crates/algebra)
+   Compiling tokio-stream v0.1.18
+   Compiling zkaleido-logging v0.1.0 (https://github.com/alpenlabs/zkaleido?tag=v0.3.0-rc.1#b1c3a5a3)
+   Compiling bitcoin-bosd v0.11.0 (https://github.com/alpenlabs/bitcoin-bosd?tag=v0.11.0#2fc97b87)
+   Compiling miniscript v13.1.0
+   Compiling strata-l1-txfmt v0.1.0 (https://github.com/alpenlabs/strata-common?tag=v0.3.0-rc.2#c3698c0f)
+   Compiling bitcoin-bosd v0.9.0
+   Compiling tokio-rustls v0.26.4
+   Compiling foldhash v0.2.0
+   Compiling bitreq v0.2.0
+   Compiling hashbrown v0.16.1
+   Compiling tiny-keccak v2.0.2
+   Compiling bitreq v0.3.5
+   Compiling jsonrpc v0.19.0
+   Compiling derive_more v2.0.1
+   Compiling corepc-types v0.12.0
+   Compiling gloo-timers v0.2.6
+   Compiling corepc-types v0.13.0
+   Compiling alloy-primitives v1.5.2
+   Compiling strata-crypto v0.3.0-alpha.1 (https://github.com/alpenlabs/strata-common?tag=v0.3.0-rc.2#c3698c0f)
+   Compiling strata-predicate v0.1.0 (https://github.com/alpenlabs/strata-common?tag=v0.3.0-rc.2#c3698c0f)
+   Compiling strata-btc-types v0.1.0 (https://github.com/alpenlabs/strata-common?tag=v0.3.0-rc.2#c3698c0f)
+   Compiling strata-merkle v0.2.0 (https://github.com/alpenlabs/strata-common?tag=v0.3.0-rc.2#c3698c0f)
+   Compiling futures-timer v3.0.3
+   Compiling strata-asm-manifest-types v0.1.0 (https://github.com/alpenlabs/asm?rev=9d2eb77585ceb3ca414aa7a9113a1cb1b7f7307c#9d2eb775)
+   Compiling strata-btc-verification v0.1.0 (https://github.com/alpenlabs/asm?rev=9d2eb77585ceb3ca414aa7a9113a1cb1b7f7307c#9d2eb775)
+   Compiling script-macro v0.4.0 (https://github.com/BitVM/rust-bitcoin-script#519088c7)
+   Compiling strata-asm-state v0.1.0 (https://github.com/alpenlabs/asm?rev=9d2eb77585ceb3ca414aa7a9113a1cb1b7f7307c#9d2eb775)
+   Compiling bitcoin-script v0.4.0 (https://github.com/BitVM/rust-bitcoin-script#519088c7)
+   Compiling hyper v1.10.1
+   Compiling rustls-platform-verifier v0.6.2
+   Compiling hyper-util v0.1.14
+   Compiling which v3.1.1
+   Compiling minimal-lexical v0.2.1
+   Compiling data-encoding-macro v0.1.18
+   Compiling tinyvec_macros v0.1.1
+   Compiling multibase v0.9.1
+   Compiling tinyvec v1.9.0
+   Compiling multistream-select v0.13.0
+   Compiling multiaddr v0.18.2
+   Compiling rw-stream-sink v0.4.0
+   Compiling ark-std v0.6.0
+   Compiling libm v0.2.15
+   Compiling ark-serialize v0.6.0
+   Compiling strata-asm-proto-bridge-v1-types v0.1.0 (https://github.com/alpenlabs/asm?rev=9d2eb77585ceb3ca414aa7a9113a1cb1b7f7307c#9d2eb775)
+   Compiling libp2p-core v0.43.2
+   Compiling hashbrown v0.14.5
+   Compiling siphasher v1.0.1
+   Compiling strata-ol-logs v0.1.0 (https://github.com/alpenlabs/strata-common?tag=v0.3.0-rc.2#c3698c0f)
+   Compiling fastbloom v0.14.1
+   Compiling crossbeam-channel v0.5.15
+   Compiling lru-slab v0.1.2
+   Compiling time-macros v0.2.27
+   Compiling quinn-proto v0.11.15
+   Compiling quinn-udp v0.5.13
+   Compiling strata-asm-proto-checkpoint-types v0.1.0 (https://github.com/alpenlabs/asm?rev=9d2eb77585ceb3ca414aa7a9113a1cb1b7f7307c#9d2eb775)
+   Compiling hybrid-array v0.4.10
+   Compiling sha1 v0.10.6
+   Compiling strata-l1-envelope-fmt v0.1.0 (https://github.com/alpenlabs/strata-common?tag=v0.3.0-rc.2#c3698c0f)
+   Compiling num_cpus v1.17.0
+   Compiling const-oid v0.10.2
+   Compiling bitflags v1.3.2
+   Compiling threadpool v1.8.1
+   Compiling strata-codec-utils v0.1.0 (https://github.com/alpenlabs/strata-common?tag=v0.3.0-rc.2#c3698c0f)
+   Compiling block-buffer v0.12.0
+   Compiling time v0.3.47
+   Compiling crypto-common v0.2.1
+   Compiling uuid v1.20.0
+   Compiling cpufeatures v0.3.0
+   Compiling libp2p-swarm v0.47.1
+   Compiling crossbeam-epoch v0.9.20
+   Compiling mosaic-common v0.1.0 (https://github.com/alpenlabs/mosaic?rev=758492b4af94f56c86b1db4ff2fa74f8c4464f57#758492b4)
+   Compiling digest v0.11.3
+   Compiling nom v7.1.3
+   Compiling sha2 v0.11.0
+   Compiling quinn v0.11.9
+   Compiling strata-asm-params v0.1.0 (https://github.com/alpenlabs/asm?rev=9d2eb77585ceb3ca414aa7a9113a1cb1b7f7307c#9d2eb775)
+   Compiling strata-bridge-primitives v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-final2/crates/primitives)
+   Compiling rusticata-macros v4.1.0
+   Compiling hyper-rustls v0.27.7
+   Compiling alloy-sol-type-parser v1.5.2
+   Compiling crossbeam-deque v0.8.6
+   Compiling serde_with_macros v3.20.0
+   Compiling jsonrpsee-types v0.26.0
+   Compiling asynchronous-codec v0.7.0
+   Compiling system-configuration-sys v0.6.0
+   Compiling core-foundation v0.9.4
+   Compiling concurrent-queue v2.5.0
+   Compiling alloy-json-abi v1.5.2
+   Compiling strata-asm-common v0.1.0 (https://github.com/alpenlabs/asm?rev=9d2eb77585ceb3ca414aa7a9113a1cb1b7f7307c#9d2eb775)
+   Compiling event-listener v5.4.0
+   Compiling system-configuration v0.6.1
+   Compiling jsonrpsee-core v0.26.0
+   Compiling rayon-core v1.12.1
+   Compiling quick-protobuf-codec v0.3.1
+   Compiling serde_with v3.20.0
+   Compiling futures-bounded v0.2.4
+   Compiling strata-asm-proto-bridge-v1-txs v0.1.0 (https://github.com/alpenlabs/asm?rev=9d2eb77585ceb3ca414aa7a9113a1cb1b7f7307c#9d2eb775)
+   Compiling alloy-sol-macro-input v1.5.2
+   Compiling crossbeam-queue v0.3.12
+   Compiling strata-asm-proto-bridge-v1-msgs v0.1.0 (https://github.com/alpenlabs/asm?rev=9d2eb77585ceb3ca414aa7a9113a1cb1b7f7307c#9d2eb775)
+   Compiling if-addrs v0.10.2
+   Compiling alloy-sol-macro-expander v1.5.2
+   Compiling pem v3.0.5
+   Compiling tagptr v0.2.0
+   Compiling tower-http v0.6.8
+   Compiling if-watch v3.2.1
+   Compiling moka v0.12.10
+   Compiling hickory-proto v0.25.2
+   Compiling crossbeam v0.8.4
+   Compiling rayon v1.10.0
+   Compiling event-listener-strategy v0.5.4
+   Compiling soketto v0.8.1
+   Compiling rustls-platform-verifier v0.5.3
+   Compiling futures-rustls v0.26.0
+   Compiling strata-asm-proto-checkpoint-txs v0.1.0 (https://github.com/alpenlabs/asm?rev=9d2eb77585ceb3ca414aa7a9113a1cb1b7f7307c#9d2eb775)
+   Compiling strata-asm-logs v0.1.0 (https://github.com/alpenlabs/asm?rev=9d2eb77585ceb3ca414aa7a9113a1cb1b7f7307c#9d2eb775)
+   Compiling strata-asm-proto-checkpoint-msgs v0.1.0 (https://github.com/alpenlabs/asm?rev=9d2eb77585ceb3ca414aa7a9113a1cb1b7f7307c#9d2eb775)
+   Compiling resolv-conf v0.7.4
+   Compiling async-channel v2.4.0
+   Compiling snow v0.9.6
+   Compiling yamux v0.13.10
+   Compiling strata-asm-proto-bridge-v1 v0.1.0 (https://github.com/alpenlabs/asm?rev=9d2eb77585ceb3ca414aa7a9113a1cb1b7f7307c#9d2eb775)
+   Compiling yamux v0.12.1
+   Compiling hashlink v0.9.1
+   Compiling moho-types v0.1.0 (https://github.com/alpenlabs/moho?tag=v0.3.0-rc.2#712b41e4)
+   Compiling uint v0.10.0
+   Compiling x25519-dalek v2.0.1
+   Compiling libp2p-gossipsub v0.49.4
+   Compiling serde_urlencoded v0.7.1
+   Compiling libp2p-noise v0.46.1
+   Compiling libp2p-yamux v0.47.0
+   Compiling libp2p-kad v0.48.0
+   Compiling jsonrpsee-client-transport v0.26.0
+   Compiling libp2p-tcp v0.44.0
+   Compiling jwalk v0.8.1
+   Compiling asn1-rs v0.7.1
+   Compiling yasna v0.5.2
+   Compiling alloy-sol-macro v1.5.2
+   Compiling hickory-resolver v0.25.2
+   Compiling dircpy v0.3.19
+   Compiling libp2p-identify v0.47.0
+   Compiling libp2p-request-response v0.29.0
+   Compiling rcgen v0.13.2
+   Compiling alloy-sol-types v1.5.2
+   Compiling strata-mosaic-client-api v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-final2/crates/mosaic-client-api)
+   Compiling strata-bridge-p2p-types v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-final2/crates/p2p-types)
+   Compiling libp2p-connection-limits v0.6.0
+   Compiling der-parser v10.0.0
+   Compiling oid-registry v0.8.1
+   Compiling libp2p-dns v0.44.0
+   Compiling libp2p-allow-block-list v0.6.0
+   Compiling x509-parser v0.17.0
+   Compiling libp2p-ping v0.47.0
+   Compiling toml v0.8.23
+   Compiling route-recognizer v0.3.1
+   Compiling crc-catalog v2.4.0
+   Compiling zeromq-src v0.2.6+4.3.4
+   Compiling crc v3.3.0
+   Compiling jsonrpsee-server v0.26.0
+   Compiling system-deps v6.2.2
+   Compiling jsonrpsee-ws-client v0.26.0
+   Compiling jsonrpsee-http-client v0.26.0
+   Compiling terrors v0.3.3 (https://github.com/alpenlabs/terrors#a387ade7)
+   Compiling jsonrpsee-proc-macros v0.26.0
+   Compiling opentelemetry v0.31.0
+   Compiling jsonrpsee-wasm-client v0.26.0
+   Compiling libp2p-tls v0.6.2
+   Compiling alloy-eip2124 v0.2.0
+   Compiling blst v0.3.15
+   Compiling strata-asm-stf v0.1.0 (https://github.com/alpenlabs/asm?rev=9d2eb77585ceb3ca414aa7a9113a1cb1b7f7307c#9d2eb775)
+   Compiling zmq-sys v0.12.0
+   Compiling strata-asm-proto-txs-test-utils v0.1.0 (https://github.com/alpenlabs/asm?rev=9d2eb77585ceb3ca414aa7a9113a1cb1b7f7307c#9d2eb775)
+   Compiling libp2p-quic v0.13.0
+   Compiling c-kzg v2.1.1
+   Compiling hyper-timeout v0.5.2
+   Compiling alloy-eip7702 v0.6.3
+   Compiling alloy-serde v2.0.4
+   Compiling alloy-eip7928 v0.3.2
+   Compiling alloy-eip2930 v0.2.3
+   Compiling libp2p v0.56.0
+   Compiling strata-checkpoint-verification v0.1.0 (https://github.com/alpenlabs/asm?rev=9d2eb77585ceb3ca414aa7a9113a1cb1b7f7307c#9d2eb775)
+   Compiling zkaleido-native-adapter v0.1.0 (https://github.com/alpenlabs/zkaleido?tag=v0.3.0-rc.1#b1c3a5a3)
+   Compiling jsonrpsee v0.26.0
+   Compiling metrics v0.24.3
+   Compiling nybbles v0.4.6
+   Compiling alloy-eips v2.0.4
+   Compiling prost v0.14.3
+   Compiling tonic v0.14.6
+   Compiling strata-asm-proto-admin-txs v0.1.0 (https://github.com/alpenlabs/asm?rev=9d2eb77585ceb3ca414aa7a9113a1cb1b7f7307c#9d2eb775)
+   Compiling alloy-trie v0.9.2
+   Compiling serde-big-array v0.5.1
+   Compiling tracing-serde v0.2.0
+   Compiling sharded-slab v0.1.7
+   Compiling tracing-log v0.2.0
+   Compiling cfg-if v0.1.10
+   Compiling net2 v0.2.39
+   Compiling moho-recursive-proof v0.1.0 (https://github.com/alpenlabs/moho?tag=v0.3.0-rc.2#712b41e4)
+   Compiling opentelemetry_sdk v0.31.0
+   Compiling tracing-subscriber v0.3.23
+   Compiling reqwest v0.12.28
+   Compiling alloy-tx-macros v2.0.4
+   Compiling iovec v0.1.4
+   Compiling libloading v0.8.8
+   Compiling toml_edit v0.19.15
+   Compiling clang-sys v1.8.1
+   Compiling tonic-prost v0.14.6
+   Compiling bindgen v0.72.1
+   Compiling mio v0.6.23
+   Compiling cexpr v0.6.0
+   Compiling opentelemetry-http v0.31.0
+   Compiling opentelemetry-proto v0.31.0
+   Compiling bitcoind-async-client v0.14.0
+   Compiling corepc-client v0.12.0
+   Compiling alloy-consensus v2.0.4
+   Compiling strata-asm-proto-admin v0.1.0 (https://github.com/alpenlabs/asm?rev=9d2eb77585ceb3ca414aa7a9113a1cb1b7f7307c#9d2eb775)
+   Compiling strata-asm-proto-checkpoint v0.1.0 (https://github.com/alpenlabs/asm?rev=9d2eb77585ceb3ca414aa7a9113a1cb1b7f7307c#9d2eb775)
+   Compiling secret-service-proto v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-final2/crates/secret-service-proto)
+   Compiling moho-runtime-interface v0.1.0 (https://github.com/alpenlabs/moho?tag=v0.3.0-rc.2#712b41e4)
+   Compiling minreq v2.14.0
+   Compiling itertools v0.13.0
+   Compiling base64 v0.13.1
+   Compiling moho-runtime-impl v0.1.0 (https://github.com/alpenlabs/moho?tag=v0.3.0-rc.2#712b41e4)
+   Compiling jsonrpc v0.18.0
+   Compiling strata-asm-spec v0.1.0 (https://github.com/alpenlabs/asm?rev=9d2eb77585ceb3ca414aa7a9113a1cb1b7f7307c#9d2eb775)
+   Compiling opentelemetry-otlp v0.31.1
+   Compiling proc-macro-crate v1.3.1
+   Compiling strata-bridge-proof-common v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-final2/crates/proofs/common)
+   Compiling bdk_core v0.4.1
+   Compiling bitcoincore-rpc-json v0.19.0
+   Compiling tracing-appender v0.2.5
+   Compiling num_enum_derive v0.5.11
+   Compiling ark-ff-macros v0.6.0
+   Compiling strata-asm-proof-impl v0.1.0 (https://github.com/alpenlabs/asm?rev=9d2eb77585ceb3ca414aa7a9113a1cb1b7f7307c#9d2eb775)
+   Compiling educe v0.6.0
+   Compiling foundationdb-gen v0.10.0 (https://github.com/foundationdb-rs/foundationdb-rs?rev=7e02f866ff08153f4309a429fc74515c77ea8f07#7e02f866)
+   Compiling tracing-opentelemetry v0.32.1
+   Compiling alloy-json-rpc v2.0.4
+error: couldn't read `/usr/local/include/foundationdb/fdb.options`: No such file or directory (os error 2)
+   --> /Users/cdjk/.cargo/git/checkouts/foundationdb-rs-3e92fd74234da4dc/7e02f86/foundationdb-gen/src/lib.rs:341:29
+    |
+341 | const OPTIONS_DATA: &[u8] = include_bytes!("/usr/local/include/foundationdb/fdb.options");
+    |                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+   Compiling miniscript v12.3.7
+error: could not compile `foundationdb-gen` (lib) due to 1 previous error
+warning: build failed, waiting for other jobs to finish...

@@ -49,6 +49,21 @@ def write(repo: Path, rel: str, text: str, dry_run: bool) -> None:
         path.write_text(text)
 
 
+def replace_exactly(text: str, old: str, new: str, count: int, label: str) -> str:
+    """Replace an anchor that is expected to appear exactly ``count`` times.
+
+    ``replace_once`` deliberately refuses ambiguous anchors.  Some edits are
+    genuinely repeated -- the same obsolete assertion in several tests -- and
+    for those the count is stated explicitly so an unexpected extra or missing
+    occurrence still fails loudly.
+    """
+
+    found = text.count(old)
+    if found != count:
+        raise PatchError(f"{label}: expected {count} matches, found {found}")
+    return text.replace(old, new)
+
+
 def replace_once(text: str, old: str, new: str, label: str) -> str:
     count = text.count(old)
     if count != 1:
@@ -58,8 +73,13 @@ def replace_once(text: str, old: str, new: str, label: str) -> str:
 
 def patch(repo: Path, rel: str, edits: list[tuple[str, str, str]], dry_run: bool) -> None:
     text = read(repo, rel)
-    for old, new, label in edits:
-        text = replace_once(text, old, new, f"{rel}: {label}")
+    for edit in edits:
+        if len(edit) == 4:
+            old, new, label, count = edit
+            text = replace_exactly(text, old, new, count, f"{rel}: {label}")
+        else:
+            old, new, label = edit
+            text = replace_once(text, old, new, f"{rel}: {label}")
     write(repo, rel, text, dry_run)
 
 
@@ -163,6 +183,8 @@ def apply(repo: Path, dry_run: bool) -> None:
     patch_retry(repo, dry_run)
     patch_classifier(repo, dry_run)
     patch_executor(repo, dry_run)
+    patch_notify_new_block_test(repo, dry_run)
+    patch_bridge_sm_nack_tests(repo, dry_run)
 
     if not dry_run:
         scripts_dir = repo / "scripts"
@@ -799,6 +821,12 @@ TOUCHED_RUST_FILES = (
     "crates/bridge-sm/src/graph/handlers/retry.rs",
     "crates/bridge-sm/src/graph/tx_classifier.rs",
     "crates/bridge-sm/src/tx_classifier.rs",
+    # Stale tests retargeted to validity-first semantics: the ACK duty now
+    # carries an unsigned template, and the NACK is CSV-gated rather than
+    # emitted immediately on counterproof.
+    "crates/bridge-sm/src/graph/tests/notify_new_block.rs",
+    "crates/bridge-sm/src/graph/tests/contested/process_counterproof.rs",
+    "crates/bridge-sm/src/graph/tests/handlers/process_retry_tick.rs",
 )
 
 
@@ -844,6 +872,70 @@ def format_touched(repo: Path) -> None:
             "means the base checkout was not rustfmt-clean before patching: "
             f"{sorted(outside)}"
         )
+
+
+def patch_notify_new_block_test(repo: Path, dry_run: bool) -> None:
+    """Retarget the one stale test that asserts the legacy ACK duty.
+
+    Under validity-first the state machine emits
+    ``ResolveValidityFirstCounterProofAck`` carrying the *unsigned* exact
+    template plus its N/N signatures; the executor finalizes only after the
+    RankLock positive unlock resolves.  The legacy ``PublishCounterProofAck``
+    variant is retained for rollback compatibility but is no longer produced
+    on this path, so the test must assert the new duty.
+    """
+
+    rel = "crates/bridge-sm/src/graph/tests/notify_new_block.rs"
+    patch(repo, rel, [
+        (
+            '                test_completed_signatures, test_deposit_params, test_graph_invalid_transition,',
+            '                test_bridge_proof_tx, test_completed_signatures, test_deposit_params,\n                test_graph_invalid_transition,',
+            "import test_bridge_proof_tx",
+        ),
+        (
+            '        let signed_counter_proof_ack_tx = game_graph.counterproofs[watchtower_slot]\n            .counterproof_ack\n            .clone()\n            .finalize(sigs.watchtowers[watchtower_slot].counterproof_ack);\n',
+            '        // Validity-first emits the unsigned exact ACK template plus its N/N\n        // signatures; the executor finalizes it only once the RankLock\n        // positive unlock is resolved. The duty therefore no longer carries a\n        // finalized transaction.\n        let counterproof_ack_tx = game_graph.counterproofs[watchtower_slot]\n            .counterproof_ack\n            .clone();\n        let counterproof_ack_signatures = sigs.watchtowers[watchtower_slot].counterproof_ack;\n',
+            "unsigned ACK template in test",
+        ),
+        (
+            '                expected_duties: vec![GraphDuty::PublishCounterProofAck {\n                    signed_counter_proof_ack_tx,\n                }],',
+            '                expected_duties: vec![GraphDuty::ResolveValidityFirstCounterProofAck {\n                    bridge_proof_txid: test_bridge_proof_tx().compute_txid(),\n                    counterproof_txid: game_graph.counterproofs[watchtower_slot]\n                        .counterproof\n                        .as_ref()\n                        .compute_txid(),\n                    counterproof_ack_tx,\n                    n_of_n_signatures: counterproof_ack_signatures,\n                }],',
+            "expect validity-first ACK duty",
+        ),
+    ], dry_run)
+
+
+def patch_bridge_sm_nack_tests(repo: Path, dry_run: bool) -> None:
+    """Retarget bridge-sm tests that assert the old immediate-NACK polarity.
+
+    Validity-first inverts the race: the ACK is immediate and the NACK is
+    CSV-gated.  ``process_counterproof`` therefore emits no NACK duty at all
+    (it moved to ``notify_new_block``/``retry``), and where a NACK duty is
+    still emitted it is the fixed, exact, pre-signed
+    ``PublishValidityFirstCounterProofNack`` rather than the old mutable one.
+    """
+
+    rel = "crates/bridge-sm/src/graph/tests/contested/process_counterproof.rs"
+    patch(repo, rel, [
+        ('/// Builds the expected `PublishCounterProofNack` duty that the POV operator should emit.\nfn expected_nack_duty(counterprover_idx: u32) -> GraphDuty {\n    let cfg = test_graph_sm_cfg();\n    let ctx = test_graph_sm_ctx();\n    let deposit_params = test_deposit_params();\n    let setup_params = ctx.generate_setup_params(&cfg, &deposit_params);\n    let connectors = GameConnectors::new(\n        deposit_params.game_index,\n        &cfg.game_graph_params,\n        &setup_params,\n    );\n\n    let watchtower_slot = watchtower_slot_for_operator(TEST_POV_IDX, counterprover_idx)\n        .expect("counterprover should have a watchtower slot");\n\n    let counterproof_connector = connectors.counterproof[watchtower_slot];\n\n    let nack_data = CounterproofNackData {\n        counterproof_txid: TEST_GRAPH_SUMMARY.counterproofs[watchtower_slot].counterproof,\n    };\n    let counterproof_nack_tx = CounterproofNackTx::new(nack_data, counterproof_connector);\n\n    GraphDuty::PublishCounterProofNack {\n        deposit_idx: ctx.deposit_idx(),\n        counterprover_idx,\n        completed_signatures: test_completed_signatures(),\n        counterproof_nack_tx,\n    }\n}\n', "", "drop obsolete immediate-NACK duty helper"),
+        (
+            "        expected_duties: vec![expected_nack_duty(TEST_NONPOV_IDX)],",
+            "        expected_duties: vec![],",
+            "no immediate NACK duty on counterproof",
+            3,
+        ),
+    ], dry_run)
+
+    rel = "crates/bridge-sm/src/graph/tests/handlers/process_retry_tick.rs"
+    patch(repo, rel, [
+        (
+            "    use strata_predicate::PredicateKey;",
+            "    use strata_bridge_tx_graph::musig_functor::GameFunctor;\n"
+            "    use strata_predicate::PredicateKey;",
+            "import GameFunctor",
+        ),
+        ('        let counterproof_connector = connectors.counterproof[watchtower_slot];\n        let nack_data = CounterproofNackData {\n            counterproof_txid: data.txid,\n        };\n        let counterproof_nack_tx = CounterproofNackTx::new(nack_data, counterproof_connector);\n\n        GraphDuty::PublishCounterProofNack {\n            deposit_idx: sm.context().deposit_idx(),\n            counterprover_idx,\n            completed_signatures: data.completed_signatures,\n            counterproof_nack_tx,\n        }\n    }\n', '        let data = counterproofs_and_confs.get(&counterprover_idx).unwrap();\n        let slot = watchtower_slot;\n        let game = crate::graph::machine::generate_game_graph(\n            cfg,\n            sm.context(),\n            &test_deposit_params(),\n        );\n        let sigs = GameFunctor::unpack(\n            mock_game_signatures(&game),\n            sm.context().watchtower_pubkeys().len(),\n        )\n        .expect("failed to unpack signatures");\n        let _ = data;\n\n        GraphDuty::PublishValidityFirstCounterProofNack {\n            signed_counter_proof_nack_tx: game.counterproofs[slot]\n                .counterproof_nack\n                .clone()\n                .finalize(sigs.watchtowers[slot].counterproof_nack[0]),\n        }\n    }\n', "fixed exact NACK duty in retry tests"),
+    ], dry_run)
 
 
 def main() -> int:

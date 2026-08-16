@@ -1,0 +1,65 @@
+   Compiling num-traits v0.2.19
+   Compiling serde-big-array v0.5.1
+   Compiling proptest v1.11.0
+   Compiling num-integer v0.1.46
+   Compiling ark-std v0.6.0
+   Compiling num-bigint v0.4.6
+   Compiling ark-serialize v0.6.0
+   Compiling mosaic-common v0.1.0 (https://github.com/alpenlabs/mosaic?rev=758492b4af94f56c86b1db4ff2fa74f8c4464f57#758492b4)
+   Compiling algebra v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-final2/crates/algebra)
+   Compiling strata-bridge-primitives v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-final2/crates/primitives)
+   Compiling strata-bridge-connectors v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-final2/crates/connectors)
+   Compiling strata-bridge-p2p-types v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-final2/crates/p2p-types)
+   Compiling strata-mosaic-client-api v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-final2/crates/mosaic-client-api)
+   Compiling strata-bridge-test-utils v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-final2/crates/test-utils)
+   Compiling strata-bridge-tx-graph v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-final2/crates/tx-graph)
+   Compiling strata-bridge-sm v0.1.0 (/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-final2/crates/bridge-sm)
+warning: unused import: `bitcoin::Transaction`
+ --> crates/bridge-sm/src/graph/transitions/contested.rs:3:5
+  |
+3 | use bitcoin::Transaction;
+  |     ^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused imports: `CounterproofNackData`, `CounterproofNackTx`, and `game_graph::GameConnectors`
+ --> crates/bridge-sm/src/graph/tests/contested/process_counterproof.rs:8:5
+  |
+8 |     game_graph::GameConnectors,
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+9 |     transactions::prelude::{CounterproofNackData, CounterproofNackTx},
+  |                             ^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^
+
+warning: unused imports: `duties::GraphDuty` and `test_graph_sm_ctx`
+  --> crates/bridge-sm/src/graph/tests/contested/process_counterproof.rs:14:9
+   |
+14 |         duties::GraphDuty,
+   |         ^^^^^^^^^^^^^^^^^
+...
+28 |             test_graph_sm_ctx, test_graph_transition,
+   |             ^^^^^^^^^^^^^^^^^
+
+warning: unused imports: `CounterproofNackData` and `CounterproofNackTx`
+  --> crates/bridge-sm/src/graph/tests/handlers/process_retry_tick.rs:11:33
+   |
+11 |         transactions::prelude::{CounterproofNackData, CounterproofNackTx},
+   |                                 ^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^
+
+warning: unused variable: `connectors`
+   --> crates/bridge-sm/src/graph/tests/handlers/process_retry_tick.rs:486:13
+    |
+486 |         let connectors =
+    |             ^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_connectors`
+    |
+    = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused variable: `data`
+   --> crates/bridge-sm/src/graph/tests/handlers/process_retry_tick.rs:495:13
+    |
+495 |         let data = counterproofs_and_confs.get(&counterprover_idx).unwrap();
+    |             ^^^^ help: if this is intentional, prefix it with an underscore: `_data`
+
+warning: `strata-bridge-sm` (lib test) generated 6 warnings (run `cargo fix --lib -p strata-bridge-sm --tests` to apply 6 suggestions)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.19s
+     Running unittests src/lib.rs (target/debug/deps/strata_bridge_sm-8db8edd2986fe037)
+error: test failed, to rerun pass `-p strata-bridge-sm --lib`
