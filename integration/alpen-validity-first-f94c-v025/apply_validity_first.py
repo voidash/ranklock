@@ -185,6 +185,7 @@ def apply(repo: Path, dry_run: bool) -> None:
     patch_executor(repo, dry_run)
     patch_notify_new_block_test(repo, dry_run)
     patch_bridge_sm_nack_tests(repo, dry_run)
+    patch_base_logging_defect(repo, dry_run)
 
     if not dry_run:
         scripts_dir = repo / "scripts"
@@ -828,6 +829,8 @@ TOUCHED_RUST_FILES = (
     "crates/bridge-sm/src/graph/tests/contested/process_counterproof.rs",
     "crates/bridge-sm/src/graph/tests/handlers/process_retry_tick.rs",
     "crates/bridge-sm/src/graph/tests/contested/process_counterproof_nackd.rs",
+    # Base defect, not a validity-first change.  See patch_base_logging_defect.
+    "crates/common/src/logging.rs",
 )
 
 
@@ -946,6 +949,68 @@ def patch_bridge_sm_nack_tests(repo: Path, dry_run: bool) -> None:
             "import GameFunctor",
         ),
         ('        let counterproof_connector = connectors.counterproof[watchtower_slot];\n        let nack_data = CounterproofNackData {\n            counterproof_txid: data.txid,\n        };\n        let counterproof_nack_tx = CounterproofNackTx::new(nack_data, counterproof_connector);\n\n        GraphDuty::PublishCounterProofNack {\n            deposit_idx: sm.context().deposit_idx(),\n            counterprover_idx,\n            completed_signatures: data.completed_signatures,\n            counterproof_nack_tx,\n        }\n    }\n', '        let data = counterproofs_and_confs.get(&counterprover_idx).unwrap();\n        let slot = watchtower_slot;\n        let game = crate::graph::machine::generate_game_graph(\n            cfg,\n            sm.context(),\n            &test_deposit_params(),\n        );\n        let sigs = GameFunctor::unpack(\n            mock_game_signatures(&game),\n            sm.context().watchtower_pubkeys().len(),\n        )\n        .expect("failed to unpack signatures");\n        let _ = data;\n\n        GraphDuty::PublishValidityFirstCounterProofNack {\n            signed_counter_proof_nack_tx: game.counterproofs[slot]\n                .counterproof_nack\n                .clone()\n                .finalize(sigs.watchtowers[slot].counterproof_nack[0]),\n        }\n    }\n', "fixed exact NACK duty in retry tests"),
+    ], dry_run)
+
+
+def patch_base_logging_defect(repo: Path, dry_run: bool) -> None:
+    """Base-tree defect, recorded as a delta distinct from validity-first.
+
+    ``logging::init_from_env`` installs a global tracing dispatcher with no
+    once-guard, so the *second* call in a process aborts the test binary with
+    "a global default trace dispatcher has already been set".  There are 19
+    call sites in the pinned base tree and none of them guard it, so any crate
+    whose tests call it more than once per binary cannot run its suite.
+
+    This is not caused by validity-first.  The attribution evidence is
+    ``claim_payout``, which this installer never touches: it fails five tests
+    with the identical panic at the pinned commit.  The blocked case here is
+    STRATA-006, whose connector tests reach the same helper through
+    ``assert_connector_is_spendable`` in ``crates/connectors/src/test_utils.rs``.
+
+    The fix goes at the single definition site rather than the 19 call sites.
+    ``init_logging_from_config`` is re-exported from the ``strata_logging``
+    dependency and cannot be edited from here, so ``crates/common`` is the
+    only place the guard can live.  The doc comment already states this
+    helper is for tests and small helpers, and a repeat call previously
+    panicked, so nothing can have depended on re-initialization.  Tests after
+    the first in a binary now share the first test's service label, which is
+    cosmetic.
+    """
+
+    rel = "crates/common/src/logging.rs"
+    patch(repo, rel, [
+        (
+            "use std::env;\n",
+            "use std::{env, sync::Once};\n",
+            "import Once",
+        ),
+        (
+            "pub fn init_from_env(service_base_name: &str) {\n"
+            "    let service_label = get_service_label_from_env();\n"
+            "\n"
+            "    init_logging_from_config(LoggingInitConfig {",
+            "pub fn init_from_env(service_base_name: &str) {\n"
+            "    // The global tracing dispatcher can only be installed once per\n"
+            "    // process; a second attempt panics. Test binaries call this from\n"
+            "    // many tests, so the guard lives here rather than at each site.\n"
+            "    static INIT: Once = Once::new();\n"
+            "\n"
+            "    INIT.call_once(|| {\n"
+            "        let service_label = get_service_label_from_env();\n"
+            "\n"
+            "        init_logging_from_config(LoggingInitConfig {",
+            "once-guard the global dispatcher",
+        ),
+        (
+            "        extra_filter_directives: DEFAULT_EXTRA_FILTER_DIRECTIVES,\n"
+            "    });\n"
+            "}\n",
+            "        extra_filter_directives: DEFAULT_EXTRA_FILTER_DIRECTIVES,\n"
+            "        });\n"
+            "    });\n"
+            "}\n",
+            "close the once-guard",
+        ),
     ], dry_run)
 
 

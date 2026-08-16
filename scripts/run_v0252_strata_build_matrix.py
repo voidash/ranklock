@@ -24,10 +24,15 @@ ROOT = Path(__file__).resolve().parents[1]
 PINNED_COMMIT = "f94c06d08ff29eee746f3e20bd63078d2949b304"
 INSTALLER = ROOT / "integration" / "alpen-validity-first-f94c-v025" / "apply_validity_first.py"
 
-# Declared patch scope: 23 edited + 4 added. The three extra edits over the
-# original PATCH_SCOPE.md are stale bridge-sm tests retargeted to
-# validity-first semantics, without which the crate does not compile.
-EXPECTED_CHANGED_FILES = 24
+# Declared patch scope: 25 edited + 4 added. Over the original PATCH_SCOPE.md
+# this adds three stale bridge-sm tests retargeted to validity-first
+# semantics, without which the crate does not compile, plus one base-defect
+# delta -- crates/common/src/logging.rs, whose unguarded global tracing
+# dispatcher aborts any test binary that initializes logging twice. That
+# defect is pre-existing and unrelated to validity-first (untouched
+# claim_payout tests fail identically at the pinned commit); it is carried
+# here as a labeled separate delta rather than folded into the feature patch.
+EXPECTED_CHANGED_FILES = 25
 EXPECTED_NEW_FILES = 4
 
 
@@ -165,7 +170,7 @@ def main() -> int:
             CaseResult(
                 case_id="STRATA-003",
                 status="passed" if in_scope else "failed",
-                description="patch changes exactly the declared 24-file scope",
+                description="patch changes exactly the declared 25-file scope",
                 commands=(scope_cmd,),
                 evidence=scope_evidence,
             )
