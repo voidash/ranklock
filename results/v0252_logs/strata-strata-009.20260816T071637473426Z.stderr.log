@@ -586,3 +586,18 @@ warning: `strata-bridge-tx-graph` (lib test) generated 2 warnings (run `cargo fi
     Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 28s
      Running unittests src/lib.rs (target/debug/deps/algebra-ce9d64d4776f5616)
      Running unittests src/lib.rs (target/debug/deps/btc_tracker-a5da606cea5072e4)
+     Running unittests src/main.rs (target/debug/deps/dev_cli-bf6e5054b37a43f5)
+     Running unittests src/lib.rs (target/debug/deps/memory_pprof-64549d50637bae57)
+     Running unittests src/lib.rs (target/debug/deps/operator_wallet-597eceb63ebf59ad)
+     Running tests/operator_wallet_e2e.rs (target/debug/deps/operator_wallet_e2e-6b8787b775d6ef72)
+     Running unittests src/main.rs (target/debug/deps/secret_service-ade5bd426ed367b4)
+     Running unittests src/lib.rs (target/debug/deps/secret_service_client-efe60aa18c0de1ab)
+     Running unittests src/lib.rs (target/debug/deps/secret_service_proto-537b475103a7939b)
+     Running unittests src/lib.rs (target/debug/deps/secret_service_server-e5f9b965bc1cbbe9)
+     Running unittests src/main.rs (target/debug/deps/strata_bridge-73448e4484e73b67)
+     Running unittests src/lib.rs (target/debug/deps/strata_bridge_asm_events-b0562c0ff7ba520b)
+     Running unittests src/lib.rs (target/debug/deps/strata_bridge_common-37e549c666667a34)
+     Running unittests src/lib.rs (target/debug/deps/strata_bridge_connectors-7c0ff5be421ee819)
+     Running unittests src/lib.rs (target/debug/deps/strata_bridge_counterproof-67c86e7e04be2047)
+     Running unittests src/lib.rs (target/debug/deps/strata_bridge_db-ed25851fc614a9bc)
+error: test failed, to rerun pass `-p strata-bridge-db --lib`

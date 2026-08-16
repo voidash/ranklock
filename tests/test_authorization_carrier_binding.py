@@ -312,3 +312,52 @@ def test_core_rejects_the_pre_fix_unsigned_witness_shape(carrier_scenario):
     )
     result = scenario["rpc"].call("testmempoolaccept", [unsigned.hex()])[0]
     assert result.get("allowed") is False
+
+
+def test_signing_over_an_annex_bearing_input_is_refused():
+    """BIP341 annex: refuse rather than sign a message the network won't check.
+
+    Found by adversarial review. `authorization_sighash` did not pass an annex
+    through to the sighash helper, so an annex-bearing input was signed over
+    the no-annex message -- a signature that looks valid but can never be
+    spent. The parser already rejects annexes, so refusing here keeps the
+    signer and the parser in agreement.
+    """
+
+    from ranklock.bip340 import public_key
+    from ranklock.bitcoin_core_regtest import _serialize_transaction, _taproot_script_output
+    from ranklock.bitcoin_witness_selection import (
+        BitcoinWitnessSelectionError,
+        WitnessItemRule,
+        authorization_sighash,
+        selector_validation_tapscript,
+    )
+
+    rule = WitnessItemRule.selector(coordinate=0, bit=0, zero_item=b"z", one_item=b"o")
+    script = selector_validation_tapscript((rule,), authorizer_pubkey=public_key(1))
+    spent_script, control, _address = _taproot_script_output(script)
+
+    def raw_with(witness_stack):
+        return _serialize_transaction(
+            previous_txid=bytes.fromhex("11" * 32),
+            previous_vout=0,
+            output_value_sat=90_000,
+            output_script=b"\x51\x20" + b"Z" * 32,
+            witness_stack=witness_stack,
+        )
+
+    kwargs = dict(
+        authorization_input_index=0,
+        spent_values_sat=(100_000,),
+        spent_scripts=(spent_script,),
+        tapscript=script,
+    )
+
+    # Without an annex the helper still works.
+    honest = raw_with((b"z", bytes(64), script, control))
+    assert len(authorization_sighash(honest, **kwargs)) == 32
+
+    # With one it must refuse rather than sign the wrong message.
+    annexed = raw_with((b"z", bytes(64), script, control, b"\x50annex"))
+    with pytest.raises(BitcoinWitnessSelectionError, match="annex"):
+        authorization_sighash(annexed, **kwargs)

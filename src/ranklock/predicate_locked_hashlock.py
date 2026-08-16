@@ -71,6 +71,29 @@ def _scriptnum(value: int) -> bytes:
 
 
 def _nums_internal_key() -> bytes:
+    """Derive an unspendable Taproot internal key, nothing-up-my-sleeve.
+
+    This is deliberately NOT BIP341's example point
+    ``lift_x(0x50929b74...03ac0)``, which is SHA256 of the uncompressed
+    generator. It is a domain-separated hash-to-point over a fixed RankLock
+    seed, tried against an incrementing counter until the candidate x
+    coordinate lifts to a curve point.
+
+    An adversarial review flagged the difference as a provenance defect, so
+    to be explicit about why this is sound: the property required of an
+    internal key is that nobody knows its discrete logarithm, not that it
+    equals a particular published constant. Grinding the counter yields x
+    coordinates, never discrete logs -- recovering one would mean solving
+    ECDLP. The seed is a fixed literal in this file and the search is
+    deterministic, so anyone can recompute the key and confirm no choice was
+    made after seeing the result.
+
+    A project-specific seed is used rather than the BIP341 example because the
+    example point is shared by every project that copies it; a distinct point
+    keeps RankLock outputs from being confused with unrelated ones. Both are
+    equally unspendable.
+    """
+
     seed = b"ranklock/validity-first/nums-internal-key/v1"
     for counter in range(2**32):
         candidate = int.from_bytes(sha256(seed + counter.to_bytes(4, "big")).digest(), "big")

@@ -256,6 +256,25 @@ def authorization_sighash(
     """
 
     transaction = parse_transaction(bytes(raw_transaction))
+    index = int(authorization_input_index)
+    if not 0 <= index < len(transaction.inputs):
+        raise BitcoinWitnessSelectionError(
+            "authorization input index is outside the transaction"
+        )
+    # BIP341: when the witness has at least two elements and the last one
+    # begins with 0x50, that element is the annex and the sighash must commit
+    # to it. This helper does not pass one through, so signing an
+    # annex-bearing input would silently produce a signature over a *different*
+    # message than the one the network validates -- a valid-looking signature
+    # that cannot be spent. The parser already refuses annexes, so the honest
+    # path never carries one; refuse here too rather than sign the wrong
+    # message.
+    witness = transaction.inputs[index].witness
+    if len(witness) >= 2 and witness[-1][:1] == b"\x50":
+        raise BitcoinWitnessSelectionError(
+            "authorization input carries a BIP341 annex, which this carrier "
+            "does not commit to and must not sign over"
+        )
     values = tuple(int(value) for value in spent_values_sat)
     scripts = tuple(bytes(script) for script in spent_scripts)
     if len(values) != len(scripts):

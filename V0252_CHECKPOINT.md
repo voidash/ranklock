@@ -403,6 +403,57 @@ consistently still produces a self-consistent file. Detecting that needs an
 external authenticated monotonic witness — which is precisely the
 deployed-rollback-witness release gate, and is not claimed here.
 
+### Fixed: signing over a BIP341 annex produced an unspendable signature
+
+`authorization_sighash` parsed the transaction but always called the sighash
+helper with `annex=None`. For an annex-bearing input that signs a *different*
+message than the network validates — a signature that looks valid and can
+never be spent. The review demonstrated the divergence directly (the
+no-annex and with-annex digests differ).
+
+The witness parser already refuses annexes, so the honest path never carries
+one; the signer now refuses too, keeping the two in agreement rather than
+silently emitting a wrong signature. Pinned by a regression asserting the
+helper still works without an annex and raises with one.
+
+### Assessed and not accepted: the NUMS internal key's provenance
+
+The review reported `NUMS_INTERNAL_KEY` as a defect for not being BIP341's
+example point `lift_x(0x50929b74…03ac0)`. That is a documentation problem,
+not a cryptographic one, and the finding is not accepted as written.
+
+The property an internal key must have is that nobody knows its discrete
+logarithm — not that it equals a particular published constant.
+`_nums_internal_key()` hashes a fixed, domain-separated seed against an
+incrementing counter and lifts the result to a curve point. Grinding that
+search yields x coordinates, never discrete logs; recovering one would mean
+solving ECDLP. The seed is a literal in the file and the search is
+deterministic, so the key is independently recomputable and no choice could
+have been made after seeing the outcome. A project-specific point also keeps
+RankLock outputs from being confused with every other project that copies
+the BIP341 example.
+
+That a careful reviewer read it as unsound is itself the signal worth
+acting on, so the derivation now carries a docstring stating exactly this.
+Switching to the BIP341 example point would change every Taproot address in
+the fixtures for no security gain.
+
+### Open, not fixed: authorizer signature lacks explicit slot/context binding
+
+The BIP340 message commits to the transaction, the input index and the leaf,
+but neither the leaf nor the SigMsg contains `slot_id` or `context_digest`
+directly. In principle a signature is transferable between two policies that
+share a leaf and a transaction.
+
+Practical severity is low, and lower than the review implies: the leaf
+embeds the per-bit label rules, and labels are slot-separated — pinned by
+`test_a_witness_for_one_slot_does_not_verify_under_another_slots_policy` —
+so two distinct slots do not share a leaf. The suggested hardening (a tagged
+`(context_digest, slot_id, authorization_input_index)` push in the tapscript)
+is nonetheless correct defence in depth. It changes the script, and so every
+address and fixture, and is left as a scoped follow-up rather than attempted
+without room to verify it.
+
 ### Open, not fixed: exact-NACK is checked by txid, which omits the witness
 
 `compute_txid()` excludes the witness under BIP141, so txid equality does not
@@ -434,8 +485,39 @@ entirely, so it is a question for the protocol audit, not a patch.
 
 ## Remaining open items
 
-1. **STRATA-005 / 009** — need the FoundationDB client library. Fully
-   staged; one privileged copy remains, which is the user's to run.
+1. **STRATA-009** — the FoundationDB 7.3.43 client is now **installed**
+   (digests matching the verified package), so this case *executes* instead
+   of being blocked, and **STRATA-005 passes**: the complete intended
+   workspace compiles under `cargo check --workspace --all-targets --locked`.
+
+   STRATA-009 is now `failed` rather than `unavailable`. The failure is a
+   **pre-existing base defect, not a validity-first regression**, established
+   the same way as the tx-graph question: `cargo test -p strata-bridge-db
+   --lib` gives **6 passed / 32 failed on the patched tree and 6 passed / 32
+   failed on the pristine base** — identical — and the patch touches no file
+   under `crates/db`.
+
+   Cause: `crates/db/src/fdb/client.rs:94` calls `network_builder.boot()` per
+   client construction, but FoundationDB's API version can only be selected
+   once per process, so every test after the first panics with *"the fdb
+   select api version can only be run once per process"*. Structurally the
+   same defect as STRATA-006 — an unguarded once-per-process global
+   initializer called from many tests in one binary.
+
+   Not fixed here, unlike STRATA-006, because the fix is not equivalent in
+   size: that was a one-line `Once` at a single definition site, whereas this
+   needs a process-global `OnceLock` owning the `NetworkAutoStop` guard for
+   the process lifetime — a design change to upstream database code — and the
+   tests may additionally require a live FDB cluster, which the
+   clients-only install deliberately does not provide. Both need verifying
+   before the change is worth trusting. **This is the highest-value item
+   after the exact-NACK witness check.**
+
+   The earlier prediction in this document that installing FoundationDB would
+   close two blockers was wrong: it closed STRATA-005 and moved STRATA-009
+   from `unavailable` to `failed`.
+
+   Historical note on the install, retained because the constraint recurs:
 
    The workspace pins `foundationdb` with `features = ["fdb-7_3"]` and
    deliberately *without* `embedded-fdb-include`, so it expects a real
