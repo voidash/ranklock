@@ -340,6 +340,13 @@ def test_a_fully_passing_local_matrix_still_cannot_open_the_funds_gate(tmp_path:
             str(core_path),
             "--strata-build-matrix",
             str(strata_path),
+            # Point the E2E report at a path that does not exist, so this test
+            # is hermetic. Without it the verifier falls back to the real
+            # results/ report and cross-checks its pinned commit against this
+            # fixture's placeholder, which correctly fails -- a verifier
+            # working as designed, but not what this test is about.
+            "--strata-e2e-matrix",
+            str(tmp_path / "no-e2e-report.json"),
             "--output",
             str(verification_path),
         ],
