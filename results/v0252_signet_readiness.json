@@ -1,0 +1,43 @@
+{
+  "checks": [
+    {
+      "description": "garbling entry points require an explicit seed and profile",
+      "detail": "no defaulted secret parameters",
+      "id": "SIGNET-001",
+      "passed": true
+    },
+    {
+      "description": "G2 subgroup membership is enforced",
+      "detail": "enforced in decompress_g2 and pairing_product",
+      "id": "SIGNET-002",
+      "passed": true
+    },
+    {
+      "description": "t-of-n verifiable sharing with resharing exists",
+      "detail": "present",
+      "id": "SIGNET-003",
+      "passed": true
+    },
+    {
+      "description": "share provisioning does not rely on the all-seeing dealer fixture",
+      "detail": "committee_authorization does not import threshold_sharing; two_phase_authorization does not reconstruct via the threshold primitive; two_phase_authorization still reconstructs secrets by XOR only -- wire threshold_sharing into share provisioning and reconstruction before any signet deployment",
+      "id": "SIGNET-004",
+      "passed": false
+    },
+    {
+      "description": "exporter refuses to overwrite a released secret",
+      "detail": "guard is reachable",
+      "id": "SIGNET-005",
+      "passed": true
+    },
+    {
+      "description": "the funds gate remains closed",
+      "detail": "safe_for_funds=False (must be false)",
+      "id": "SIGNET-006",
+      "passed": true
+    }
+  ],
+  "schema": "ranklock-v0252-signet-readiness-v1",
+  "scope_note": "Signet readiness only. Signet coins are valueless; this gate exists to stop a deployment producing evidence that looks like a working bridge while exercising a non-production path. It is not, and must never be cited as, evidence of funds safety.",
+  "signet_ready": false
+}
