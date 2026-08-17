@@ -1,0 +1,679 @@
+diff --git a/crates/bridge-sm/src/graph/events.rs b/crates/bridge-sm/src/graph/events.rs
+index 906521e2..8ab66025 100644
+--- a/crates/bridge-sm/src/graph/events.rs
++++ b/crates/bridge-sm/src/graph/events.rs
+@@ -144,6 +144,15 @@ pub struct CounterProofAckConfirmedEvent {
+     /// The txid of the counterproof ACK transaction.
+     pub counterproof_ack_txid: Txid,
+ 
++    /// The confirmed transaction itself.
++    ///
++    /// Required because a txid does not commit to the witness under BIP141,
++    /// so the txid alone cannot establish that the ACK leaf was the one
++    /// executed. Its sibling `CounterProofConfirmedEvent` already carries
++    /// the transaction; this one did not, which made a witness check
++    /// impossible at the comparison site rather than merely absent.
++    pub tx: bitcoin::Transaction,
++
+     /// The block height at which the counterproof ACK transaction was confirmed.
+     pub counterproof_ack_block_height: BitcoinBlockHeight,
+ 
+diff --git a/crates/bridge-sm/src/graph/machine.rs b/crates/bridge-sm/src/graph/machine.rs
+index 9b475787..56989d22 100644
+--- a/crates/bridge-sm/src/graph/machine.rs
++++ b/crates/bridge-sm/src/graph/machine.rs
+@@ -2,10 +2,10 @@
+ 
+ use std::sync::Arc;
+ 
+-use bitcoin::Transaction;
++use bitcoin::{Transaction, Txid};
+ use musig2::secp256k1::schnorr::Signature;
+ use serde::{Deserialize, Serialize};
+-use strata_bridge_primitives::types::BitcoinBlockHeight;
++use strata_bridge_primitives::types::{BitcoinBlockHeight, OperatorIdx};
+ use strata_bridge_tx_graph::{
+     game_graph::{DepositParams, GameData, GameGraph},
+     musig_functor::GameFunctor,
+@@ -85,8 +85,10 @@ impl StateMachine for GraphSM {
+             GraphEvent::CounterProofConfirmed(counterproof) => {
+                 self.process_counterproof(cfg, counterproof)
+             }
+-            GraphEvent::CounterProofAckConfirmed(ack) => self.process_counterproof_ack(ack),
+-            GraphEvent::CounterProofNackConfirmed(nack) => self.process_counterproof_nackd(nack),
++            GraphEvent::CounterProofAckConfirmed(ack) => self.process_counterproof_ack(cfg, ack),
++            GraphEvent::CounterProofNackConfirmed(nack) => {
++                self.process_counterproof_nackd(cfg, nack)
++            }
+             GraphEvent::StakeSpent(stake_spent) => self.process_stake_spent(stake_spent),
+             GraphEvent::PayoutConfirmed(payout) => self.process_payout(payout),
+             GraphEvent::PayoutConnectorSpent(connector_spent) => {
+@@ -220,6 +222,49 @@ impl GraphSM {
+             operator_table: self.context().operator_table().clone(),
+         })
+     }
++
++    /// Builds the validity-first ACK resolution duty for an already-confirmed counterproof.
++    #[expect(clippy::too_many_arguments)]
++    pub(super) fn validity_first_ack_duty(
++        &self,
++        cfg: &GraphSMCfg,
++        graph_data: &DepositParams,
++        signatures: &[Signature],
++        bridge_proof_txid: Txid,
++        counterprover_idx: OperatorIdx,
++        event: GraphEvent,
++    ) -> GSMResult<GraphDuty> {
++        let graph_owner_idx = self.context().operator_idx();
++        let slot =
++            watchtower_slot_for_operator(graph_owner_idx, counterprover_idx).ok_or_else(|| {
++                GSMError::rejected(
++                    self.state().clone(),
++                    event.clone(),
++                    format!("operator {counterprover_idx} has no watchtower slot"),
++                )
++            })?;
++        let (game, sigs) = unpack_game(cfg, self.context(), graph_data, signatures);
++        let subgraph = game.counterproofs.get(slot).ok_or_else(|| {
++            GSMError::rejected(
++                self.state().clone(),
++                event.clone(),
++                format!("missing counterproof graph for watchtower slot {slot}"),
++            )
++        })?;
++        let watchtower_sigs = sigs.watchtowers.get(slot).ok_or_else(|| {
++            GSMError::rejected(
++                self.state().clone(),
++                event,
++                format!("missing pre-signatures for watchtower slot {slot}"),
++            )
++        })?;
++        Ok(GraphDuty::ResolveValidityFirstCounterProofAck {
++            bridge_proof_txid,
++            counterproof_txid: subgraph.counterproof.as_ref().compute_txid(),
++            counterproof_ack_tx: subgraph.counterproof_ack.clone(),
++            n_of_n_signatures: watchtower_sigs.counterproof_ack,
++        })
++    }
+ }
+ 
+ /// Generates the [`GameGraph`] from the [`GraphSM`] config and deposit params.
+diff --git a/crates/bridge-sm/src/graph/tests/contested/process_counterproof_ack.rs b/crates/bridge-sm/src/graph/tests/contested/process_counterproof_ack.rs
+index 7357d4ec..3f1da766 100644
+--- a/crates/bridge-sm/src/graph/tests/contested/process_counterproof_ack.rs
++++ b/crates/bridge-sm/src/graph/tests/contested/process_counterproof_ack.rs
+@@ -23,12 +23,32 @@ use crate::{
+ 
+ const ACK_BLOCK_HEIGHT: u64 = LATER_BLOCK_HEIGHT + 100;
+ 
++/// A transaction whose witness reveals the committed ACK preimage.
++///
++/// The transition verifies the witness rather than the txid alone, because a
++/// txid does not commit to the witness under BIP141. A fixture that attaches
++/// an arbitrary transaction is asserting on a spend that could not have
++/// executed the ACK leaf, so it must carry the real preimage.
++fn ack_spend_tx() -> bitcoin::Transaction {
++    let slot = crate::graph::watchtower::watchtower_slot_for_operator(
++        crate::graph::tests::TEST_POV_IDX,
++        crate::graph::tests::TEST_NONPOV_IDX,
++    )
++        .expect("counterprover has a watchtower slot");
++    let mut tx = strata_bridge_test_utils::bitcoin::generate_tx(1, 1);
++    let mut witness = bitcoin::Witness::new();
++    witness.push(crate::graph::tests::test_ack_preimage(slot));
++    tx.input[0].witness = witness;
++    tx
++}
++
+ #[test]
+ fn event_accepted() {
+     test_graph_transition(GraphTransition {
+         from_state: counter_proof_posted_state(),
+         event: GraphEvent::CounterProofAckConfirmed(CounterProofAckConfirmedEvent {
+             counterproof_ack_txid: TEST_GRAPH_SUMMARY.counterproofs[0].counterproof_ack,
++            tx: ack_spend_tx(),
+             counterproof_ack_block_height: ACK_BLOCK_HEIGHT,
+             counterprover_idx: TEST_NONPOV_IDX,
+         }),
+@@ -56,7 +76,8 @@ fn event_accepted_nonpov() {
+             from_state: counter_proof_posted_state(),
+             event: GraphEvent::CounterProofAckConfirmed(CounterProofAckConfirmedEvent {
+                 counterproof_ack_txid: TEST_GRAPH_SUMMARY.counterproofs[0].counterproof_ack,
+-                counterproof_ack_block_height: ACK_BLOCK_HEIGHT,
++                tx: ack_spend_tx(),
++            counterproof_ack_block_height: ACK_BLOCK_HEIGHT,
+                 counterprover_idx: TEST_NONPOV_IDX,
+             }),
+             expected_state: GraphState::Acked {
+@@ -80,6 +101,7 @@ fn event_duplicate() {
+         from_state: acked_state(),
+         event: GraphEvent::CounterProofAckConfirmed(CounterProofAckConfirmedEvent {
+             counterproof_ack_txid: TEST_GRAPH_SUMMARY.counterproofs[0].counterproof_ack,
++            tx: ack_spend_tx(),
+             counterproof_ack_block_height: ACK_BLOCK_HEIGHT,
+             counterprover_idx: TEST_NONPOV_IDX,
+         }),
+@@ -93,6 +115,7 @@ fn event_rejected_invalid_txid() {
+         from_state: counter_proof_posted_state(),
+         event: GraphEvent::CounterProofAckConfirmed(CounterProofAckConfirmedEvent {
+             counterproof_ack_txid: Txid::all_zeros(),
++            tx: ack_spend_tx(),
+             counterproof_ack_block_height: ACK_BLOCK_HEIGHT,
+             counterprover_idx: TEST_NONPOV_IDX,
+         }),
+@@ -106,6 +129,7 @@ fn event_rejected_invalid_operator_idx() {
+         from_state: counter_proof_posted_state(),
+         event: GraphEvent::CounterProofAckConfirmed(CounterProofAckConfirmedEvent {
+             counterproof_ack_txid: TEST_GRAPH_SUMMARY.counterproofs[0].counterproof_ack,
++            tx: ack_spend_tx(),
+             counterproof_ack_block_height: ACK_BLOCK_HEIGHT,
+             counterprover_idx: u32::MAX,
+         }),
+@@ -123,7 +147,8 @@ fn event_invalid() {
+             from_state,
+             event: GraphEvent::CounterProofAckConfirmed(CounterProofAckConfirmedEvent {
+                 counterproof_ack_txid: TEST_GRAPH_SUMMARY.counterproofs[0].counterproof_ack,
+-                counterproof_ack_block_height: ACK_BLOCK_HEIGHT,
++                tx: ack_spend_tx(),
++            counterproof_ack_block_height: ACK_BLOCK_HEIGHT,
+                 counterprover_idx: TEST_NONPOV_IDX,
+             }),
+             expected_error: |e| matches!(e, GSMError::InvalidEvent { .. }),
+@@ -155,6 +180,7 @@ fn aborts_when_stake_already_spent() {
+         from_state,
+         event: GraphEvent::CounterProofAckConfirmed(CounterProofAckConfirmedEvent {
+             counterproof_ack_txid: TEST_GRAPH_SUMMARY.counterproofs[0].counterproof_ack,
++            tx: ack_spend_tx(),
+             counterproof_ack_block_height: ACK_BLOCK_HEIGHT,
+             counterprover_idx: TEST_NONPOV_IDX,
+         }),
+@@ -182,6 +208,7 @@ fn payout_connector_spent_alone_does_not_abort() {
+         from_state,
+         event: GraphEvent::CounterProofAckConfirmed(CounterProofAckConfirmedEvent {
+             counterproof_ack_txid: TEST_GRAPH_SUMMARY.counterproofs[0].counterproof_ack,
++            tx: ack_spend_tx(),
+             counterproof_ack_block_height: ACK_BLOCK_HEIGHT,
+             counterprover_idx: TEST_NONPOV_IDX,
+         }),
+@@ -198,3 +225,23 @@ fn payout_connector_spent_alone_does_not_abort() {
+         expected_signals: vec![],
+     });
+ }
++
++#[test]
++fn an_ack_txid_without_the_committed_preimage_is_rejected() {
++    // A txid does not commit to the witness under BIP141, so a transaction
++    // carrying the expected ACK txid but not revealing the preimage did not
++    // execute the ACK leaf. Before this check the state machine accepted it.
++    let mut tx = ack_spend_tx();
++    tx.input[0].witness = bitcoin::Witness::new();
++
++    test_graph_invalid_transition(GraphInvalidTransition {
++        from_state: counter_proof_posted_state(),
++        event: GraphEvent::CounterProofAckConfirmed(CounterProofAckConfirmedEvent {
++            counterproof_ack_txid: TEST_GRAPH_SUMMARY.counterproofs[0].counterproof_ack,
++            tx,
++            counterproof_ack_block_height: ACK_BLOCK_HEIGHT,
++            counterprover_idx: TEST_NONPOV_IDX,
++        }),
++        expected_error: |e| matches!(e, GSMError::Rejected { .. }),
++    });
++}
+diff --git a/crates/bridge-sm/src/graph/tests/mod.rs b/crates/bridge-sm/src/graph/tests/mod.rs
+index d0c2cc19..5ec11dcc 100644
+--- a/crates/bridge-sm/src/graph/tests/mod.rs
++++ b/crates/bridge-sm/src/graph/tests/mod.rs
+@@ -18,7 +18,7 @@ use std::{
+ };
+ 
+ use bitcoin::{
+-    Amount, Network, OutPoint, ScriptBuf, Transaction, TxIn,
++    Amount, Network, OutPoint, ScriptBuf, Transaction, TxIn, Txid,
+     hashes::{Hash, sha256},
+     relative,
+ };
+@@ -38,7 +38,7 @@ use strata_bridge_tx_graph::{
+         ProtocolParams,
+     },
+     musig_functor::GameFunctor,
+-    transactions::prelude::{ClaimTx, ContestTx, CounterproofTx},
++    transactions::prelude::{ClaimTx, ContestTx},
+ };
+ use strata_mosaic_client_api::types::CompletedSignatures;
+ use strata_predicate::PredicateKey;
+@@ -106,32 +106,48 @@ const STAKE_AMOUNT: Amount = Amount::from_sat(100_000_000);
+ 
+ // ===== Configuration Helpers =====
+ 
++/// The single bridge-wide GSM configuration shared by every `test_graph_sm_cfg()` caller.
++///
++/// The randomized fields (`payout_descs`, `admin.pubkeys`) feed `KeyData` and therefore the
++/// txid of every transaction in the generated game graph. Under validity-first the state
++/// machine accepts and emits *exact* pre-signed transactions -- notably the fixed
++/// counterproof NACK, which pays to the graph owner's payout descriptor -- so a fixture
++/// that builds its expectation from one `test_graph_sm_cfg()` while the state machine runs
++/// on another must see byte-identical config. Memoizing mirrors what `TEST_ADAPTOR_PUBKEYS`
++/// and `TEST_FAULT_PUBKEYS` below already do for the per-deposit keys. Tests that need a
++/// variant still clone this value and mutate the clone.
++static TEST_GRAPH_SM_CFG: OnceLock<Arc<GraphSMCfg>> = OnceLock::new();
++
+ /// Creates a test bridge-wide GSM configuration.
+ pub(super) fn test_graph_sm_cfg() -> Arc<GraphSMCfg> {
+-    let payout_descs = (0..N_TEST_OPERATORS).map(|_| random_p2tr_desc()).collect();
+-
+-    Arc::new(GraphSMCfg {
+-        game_graph_params: ProtocolParams {
+-            network: Network::Regtest,
+-            magic_bytes: TEST_MAGIC_BYTES.into(),
+-            contest_timelock: CONTEST_TIMELOCK,
+-            proof_timelock: PROOF_TIMELOCK,
+-            ack_timelock: ACK_TIMELOCK,
+-            nack_timelock: NACK_TIMELOCK,
+-            contested_payout_timelock: CONTESTED_PAYOUT_TIMELOCK,
+-            counterproof_n_data: NonZero::new(128).unwrap(),
+-            deposit_amount: TEST_DEPOSIT_AMOUNT,
+-            stake_amount: STAKE_AMOUNT,
+-        },
+-        admin: AdminMultisig {
+-            pubkeys: vec![generate_xonly_pubkey()],
+-            threshold: 1,
+-        },
+-        operator_fee: TEST_OPERATOR_FEE,
+-        payout_descs,
+-        bridge_proof_predicate: PredicateKey::always_accept(),
+-        counterproof_predicate: PredicateKey::always_accept(),
+-    })
++    TEST_GRAPH_SM_CFG
++        .get_or_init(|| {
++            let payout_descs = (0..N_TEST_OPERATORS).map(|_| random_p2tr_desc()).collect();
++
++            Arc::new(GraphSMCfg {
++                game_graph_params: ProtocolParams {
++                    network: Network::Regtest,
++                    magic_bytes: TEST_MAGIC_BYTES.into(),
++                    contest_timelock: CONTEST_TIMELOCK,
++                    proof_timelock: PROOF_TIMELOCK,
++                    ack_timelock: ACK_TIMELOCK,
++                    nack_timelock: NACK_TIMELOCK,
++                    contested_payout_timelock: CONTESTED_PAYOUT_TIMELOCK,
++                    counterproof_n_data: NonZero::new(128).unwrap(),
++                    deposit_amount: TEST_DEPOSIT_AMOUNT,
++                    stake_amount: STAKE_AMOUNT,
++                },
++                admin: AdminMultisig {
++                    pubkeys: vec![generate_xonly_pubkey()],
++                    threshold: 1,
++                },
++                operator_fee: TEST_OPERATOR_FEE,
++                payout_descs,
++                bridge_proof_predicate: PredicateKey::always_accept(),
++                counterproof_predicate: PredicateKey::always_accept(),
++            })
++        })
++        .clone()
+ }
+ 
+ /// Creates a GraphSM for a POV operator.
+@@ -170,6 +186,33 @@ pub(super) fn test_deposit_outpoint() -> OutPoint {
+ static TEST_ADAPTOR_PUBKEYS: OnceLock<Vec<bitcoin::XOnlyPublicKey>> = OnceLock::new();
+ static TEST_FAULT_PUBKEYS: OnceLock<Vec<bitcoin::XOnlyPublicKey>> = OnceLock::new();
+ 
++/// The ACK preimage a test uses for watchtower slot `index`.
++///
++/// Rejection-sampled so that `sha256(preimage)` is a valid x-only encoding,
++/// because the graph transports the ACK commitment through a field typed as
++/// `XOnlyPublicKey`. This mirrors `derive_setup_payload` on the RankLock side.
++pub(super) fn test_ack_preimage(index: usize) -> [u8; 32] {
++    for counter in 0u32..10_000 {
++        let mut seed = Vec::with_capacity(40);
++        seed.extend_from_slice(b"ranklock-test-ack-preimage");
++        seed.extend_from_slice(&(index as u32).to_be_bytes());
++        seed.extend_from_slice(&counter.to_be_bytes());
++        let preimage = sha256::Hash::hash(&seed).to_byte_array();
++        let commitment = sha256::Hash::hash(&preimage).to_byte_array();
++        if bitcoin::XOnlyPublicKey::from_slice(&commitment).is_ok() {
++            return preimage;
++        }
++    }
++    panic!("failed to sample an x-only-compatible ACK commitment");
++}
++
++/// `sha256(test_ack_preimage(index))` as an x-only key.
++pub(super) fn test_ack_commitment(index: usize) -> bitcoin::XOnlyPublicKey {
++    let commitment = sha256::Hash::hash(&test_ack_preimage(index)).to_byte_array();
++    bitcoin::XOnlyPublicKey::from_slice(&commitment)
++        .expect("test_ack_preimage rejection-samples a valid x-only commitment")
++}
++
+ pub(super) fn test_deposit_params() -> DepositParams {
+     DepositParams {
+         game_index: NonZero::new(1u32).unwrap(),
+@@ -182,10 +225,16 @@ pub(super) fn test_deposit_params() -> DepositParams {
+                     .collect()
+             })
+             .clone(),
++        // Under validity-first this field carries the ACK *commitment*, not a
++        // fault key, so it must be sha256(preimage) for a preimage the test
++        // can actually produce -- mirroring what the tx-graph signer already
++        // does at game_graph.rs. Random x-only keys have no preimage, so a
++        // witness check on the ACK leaf could never be satisfied and the
++        // fixtures would not model a real ACK spend at all.
+         fault_pubkeys: TEST_FAULT_PUBKEYS
+             .get_or_init(|| {
+                 (0..N_TEST_OPERATORS - 1)
+-                    .map(|_| generate_xonly_pubkey())
++                    .map(|index| test_ack_commitment(index))
+                     .collect()
+             })
+             .clone(),
+@@ -317,14 +366,22 @@ pub(super) fn test_counterproof_tx() -> Transaction {
+     )
+ }
+ 
++/// The exact fixed counterproof NACK for watchtower slot 0 of the POV operator's graph.
++///
++/// Validity-first made the NACK a fixed, pre-signed transaction and the state machine now
++/// recognizes it by exact txid, so a hand-rolled spend of the ACK/NACK outpoint is (rightly)
++/// no longer classified. The witness does not contribute to the txid, so the unsigned
++/// template is sufficient for classification.
+ pub(super) fn test_counterproof_nack_tx() -> Transaction {
+-    generate_spending_tx(
+-        OutPoint {
+-            txid: test_graph_summary().counterproofs[0].counterproof,
+-            vout: CounterproofTx::ACK_NACK_VOUT,
+-        },
+-        &[],
++    machine::generate_game_graph(
++        &test_graph_sm_cfg(),
++        &test_graph_sm_ctx(),
++        &test_deposit_params(),
+     )
++    .counterproofs[0]
++        .counterproof_nack
++        .as_ref()
++        .clone()
+ }
+ 
+ pub(super) fn test_deposit_spend_tx() -> Transaction {
+@@ -495,6 +552,77 @@ pub(super) fn expected_potential_counterproof_duty(
+     }
+ }
+ 
++/// The [`GraphDuty::ResolveValidityFirstCounterProofAck`] a counterproving watchtower is
++/// expected to emit for its own confirmed counterproof.
++///
++/// Validity-first makes the ACK immediate and unconditional on the NACK timelock: the duty
++/// carries the *unsigned* exact ACK template plus its N/N signatures, and the executor
++/// finalizes it only once the RankLock positive unlock resolves. Everything here is derived
++/// exactly as [`GraphSM::validity_first_ack_duty`] derives it -- same context, same config,
++/// same signature vector -- so nothing is hard-coded from observed output.
++pub(super) fn expected_validity_first_ack_duty(
++    cfg: &GraphSMCfg,
++    sm: &GraphSM,
++    signatures: &[Signature],
++    bridge_proof_txid: Txid,
++) -> GraphDuty {
++    let (game_graph, sigs, slot) = pov_watchtower_slot_data(cfg, sm, signatures);
++
++    GraphDuty::ResolveValidityFirstCounterProofAck {
++        bridge_proof_txid,
++        counterproof_txid: game_graph.counterproofs[slot]
++            .counterproof
++            .as_ref()
++            .compute_txid(),
++        counterproof_ack_tx: game_graph.counterproofs[slot].counterproof_ack.clone(),
++        n_of_n_signatures: sigs.watchtowers[slot].counterproof_ack,
++    }
++}
++
++/// The [`GraphDuty::PublishValidityFirstCounterProofNack`] the graph owner is expected to
++/// emit once the NACK's CSV delay has matured for `counterprover_idx`.
++///
++/// The NACK is a fixed, exact, pre-signed transaction, so the expectation must be finalized
++/// with the signature taken from the very `signatures` vector held in the state under test.
++pub(super) fn expected_validity_first_nack_duty(
++    cfg: &GraphSMCfg,
++    sm: &GraphSM,
++    signatures: &[Signature],
++    counterprover_idx: OperatorIdx,
++) -> GraphDuty {
++    let game_graph = machine::generate_game_graph(cfg, sm.context(), &test_deposit_params());
++    let sigs = GameFunctor::unpack(signatures.to_vec(), sm.context().watchtower_pubkeys().len())
++        .expect("signature layout matches watchtower count");
++    let slot = watchtower_slot_for_operator(sm.context().operator_idx(), counterprover_idx)
++        .expect("counterprover must have a watchtower slot");
++
++    GraphDuty::PublishValidityFirstCounterProofNack {
++        signed_counter_proof_nack_tx: game_graph.counterproofs[slot]
++            .counterproof_nack
++            .clone()
++            .finalize(sigs.watchtowers[slot].counterproof_nack[0]),
++    }
++}
++
++/// Generates the game graph, unpacks `signatures`, and resolves the watchtower slot that the
++/// POV operator occupies in the graph owned by `sm`'s operator.
++fn pov_watchtower_slot_data(
++    cfg: &GraphSMCfg,
++    sm: &GraphSM,
++    signatures: &[Signature],
++) -> (GameGraph, GameFunctor<Signature>, usize) {
++    let game_graph = machine::generate_game_graph(cfg, sm.context(), &test_deposit_params());
++    let sigs = GameFunctor::unpack(signatures.to_vec(), sm.context().watchtower_pubkeys().len())
++        .expect("signature layout matches watchtower count");
++    let slot = watchtower_slot_for_operator(
++        sm.context().operator_idx(),
++        sm.context().operator_table().pov_idx(),
++    )
++    .expect("non-pov operator must have a watchtower slot");
++
++    (game_graph, sigs, slot)
++}
++
+ /// Creates test musig signers for the operators.
+ pub(super) fn test_operator_signers(num_signers: usize) -> Vec<TestMusigSigner> {
+     (0..num_signers)
+diff --git a/crates/bridge-sm/src/graph/transitions/contested.rs b/crates/bridge-sm/src/graph/transitions/contested.rs
+index 921346be..e7704b52 100644
+--- a/crates/bridge-sm/src/graph/transitions/contested.rs
++++ b/crates/bridge-sm/src/graph/transitions/contested.rs
+@@ -1,7 +1,5 @@
+ use std::sync::Arc;
+ 
+-use bitcoin::Transaction;
+-use strata_bridge_primitives::types::OperatorIdx;
+ use strata_bridge_tx_graph::game_graph::{GameConnectors, GameGraphSummary};
+ 
+ use crate::{
+@@ -17,9 +15,7 @@ use crate::{
+         state::{AbortReason, GraphState},
+         watchtower::watchtower_slot_for_operator,
+     },
+-    tx_classifier::{
+-        spends_contest_proof_connector, spends_counterproof_ack_nack, spends_stake_outpoint,
+-    },
++    tx_classifier::{spends_contest_proof_connector, spends_stake_outpoint},
+ };
+ 
+ impl GraphSM {
+@@ -193,16 +189,27 @@ impl GraphSM {
+ 
+                 let mut duties = Vec::new();
+ 
+-                if is_watchtower && !counterproof_exists {
+-                    duties.push(self.potential_counterproof_duty(
+-                        &cfg,
+-                        &graph_data,
+-                        &signatures,
+-                        event.bridge_proof_block_height,
+-                        &bridge_proof,
+-                        &event.tx,
+-                        event.clone().into(),
+-                    )?);
++                if is_watchtower {
++                    if counterproof_exists {
++                        duties.push(self.validity_first_ack_duty(
++                            &cfg,
++                            &graph_data,
++                            &signatures,
++                            event.tx.compute_txid(),
++                            pov_idx,
++                            event.clone().into(),
++                        )?);
++                    } else {
++                        duties.push(self.potential_counterproof_duty(
++                            &cfg,
++                            &graph_data,
++                            &signatures,
++                            event.bridge_proof_block_height,
++                            &bridge_proof,
++                            &event.tx,
++                            event.clone().into(),
++                        )?);
++                    }
+                 }
+ 
+                 self.state = GraphState::CounterProofPosted {
+@@ -325,6 +332,7 @@ impl GraphSM {
+     /// Processes the event where a counterproof NACK transaction has been confirmed on-chain.
+     pub(crate) fn process_counterproof_nackd(
+         &mut self,
++        cfg: Arc<GraphSMCfg>,
+         event: CounterProofNackConfirmedEvent,
+     ) -> GSMResult<GSMOutput> {
+         self.check_operator_idx(event.counterprover_idx, &event)?;
+@@ -343,14 +351,21 @@ impl GraphSM {
+                 stake_spent,
+                 payout_connector_spent,
+             } => {
+-                // Validate that the NACK tx spends the correct counterproof
+-                // ACK/NACK output and is not a known counterproof ACK.
+-                if !validate_counterproof_nack(
+-                    &graph_summary,
++                // Validate the exact pre-signed fixed NACK txid. This rejects
++                // alternate outputs, replayed deposits/games and fee-wallet mutations.
++                let game =
++                    crate::graph::machine::generate_game_graph(&cfg, self.context(), &graph_data);
++                let slot = watchtower_slot_for_operator(
+                     self.context().operator_idx(),
+                     event.counterprover_idx,
+-                    &event.tx,
+-                ) {
++                );
++                let valid_nack = slot
++                    .and_then(|slot| game.counterproofs.get(slot))
++                    .is_some_and(|subgraph| {
++                        subgraph.counterproof_nack.as_ref().compute_txid()
++                            == event.tx.compute_txid()
++                    });
++                if !valid_nack {
+                     return Err(GSMError::rejected(
+                         self.state.clone(),
+                         event.into(),
+@@ -430,6 +445,7 @@ impl GraphSM {
+     /// Only valid from the `CounterProofPosted` state, transitioning to `Acked`.
+     pub(crate) fn process_counterproof_ack(
+         &mut self,
++        cfg: Arc<GraphSMCfg>,
+         event: CounterProofAckConfirmedEvent,
+     ) -> GSMResult<GSMOutput> {
+         self.check_operator_idx(event.counterprover_idx, &event)?;
+@@ -482,6 +498,35 @@ impl GraphSM {
+                     ));
+                 }
+ 
++                // A txid does not commit to the witness under BIP141, so the
++                // comparison above cannot establish which tapleaf executed.
++                // The ACK leaf is
++                //   <N/N pubkey> OP_CHECKSIGVERIFY OP_SHA256 <hash> OP_EQUAL
++                // so a genuine ACK spend must reveal a preimage hashing to the
++                // connector's commitment. See threat model P4.
++                let expected_preimage_hash =
++                    crate::graph::machine::generate_game_graph(&cfg, self.context(), &graph_data)
++                        .counterproofs
++                        .get(watchtower_slot)
++                        .map(|subgraph| subgraph.counterproof_ack.ack_preimage_hash());
++
++                if let Some(expected_hash) = expected_preimage_hash {
++                    let reveals_preimage = event.tx.input.iter().any(|txin| {
++                        txin.witness.iter().any(|item| {
++                            <bitcoin::hashes::sha256::Hash as bitcoin::hashes::Hash>::to_byte_array(
++                                <bitcoin::hashes::sha256::Hash as bitcoin::hashes::Hash>::hash(item),
++                            ) == expected_hash
++                        })
++                    });
++                    if !reveals_preimage {
++                        return Err(GSMError::rejected(
++                            self.state.clone(),
++                            event.into(),
++                            "counterproof ACK witness does not reveal the committed preimage",
++                        ));
++                    }
++                }
++
+                 // The only path forward from `Acked` is slash. If the stake
+                 // outpoint is already gone, slash is impossible — abort
+                 // directly instead of entering a state with no exit.
+@@ -623,18 +668,3 @@ fn validate_bridge_proof_spend(
+     event.tx.compute_txid() != summary.bridge_proof_timeout
+         && spends_contest_proof_connector(summary.contest, &event.tx)
+ }
+-
+-/// Validates that `tx` spends the NACK output of the counterproof transaction.
+-fn validate_counterproof_nack(
+-    summary: &GameGraphSummary,
+-    graph_owner_idx: OperatorIdx,
+-    counterprover_idx: OperatorIdx,
+-    tx: &Transaction,
+-) -> bool {
+-    watchtower_slot_for_operator(graph_owner_idx, counterprover_idx)
+-        .and_then(|slot| summary.counterproofs.get(slot))
+-        .is_some_and(|cp| {
+-            tx.compute_txid() != cp.counterproof_ack
+-                && spends_counterproof_ack_nack(cp.counterproof, tx)
+-        })
+-}
+diff --git a/crates/bridge-sm/src/graph/tx_classifier.rs b/crates/bridge-sm/src/graph/tx_classifier.rs
+index b1e1a687..a4b5ca78 100644
+--- a/crates/bridge-sm/src/graph/tx_classifier.rs
++++ b/crates/bridge-sm/src/graph/tx_classifier.rs
+@@ -12,7 +12,7 @@ use crate::{
+             CounterProofNackConfirmedEvent, FulfillmentConfirmedEvent, GraphEvent,
+             PayoutConfirmedEvent, PayoutConnectorSpentEvent, StakeSpentEvent,
+         },
+-        machine::GraphSM,
++        machine::{GraphSM, generate_game_graph},
+         state::GraphState,
+     },
+     tx_classifier::{
+@@ -213,7 +213,11 @@ impl TxClassifier for GraphSM {
+ 
+             // expects a bridge proof, another watchtower's counterproof, or counterproof ACK or
+             // NACK or payout burn or a stake spend
+-            GraphState::CounterProofPosted { graph_summary, .. } => {
++            GraphState::CounterProofPosted {
++                graph_data,
++                graph_summary,
++                ..
++            } => {
+                 if txid == graph_summary.bridge_proof_timeout {
+                     Some(GraphEvent::BridgeProofTimeoutConfirmed(
+                         BridgeProofTimeoutConfirmedEvent {
+@@ -241,6 +245,7 @@ impl TxClassifier for GraphSM {
+                     Some(GraphEvent::CounterProofAckConfirmed(
+                         CounterProofAckConfirmedEvent {
+                             counterproof_ack_txid: txid,
++                            tx: tx.clone(),
+                             counterproof_ack_block_height: height,
+                             counterprover_idx,
+                         },
+@@ -256,7 +261,8 @@ impl TxClassifier for GraphSM {
+                 } else if spends_stake_outpoint(&self.context.stake_outpoint(), tx) {
+                     Some(GraphEvent::StakeSpent(StakeSpentEvent { tx: tx.clone() }))
+                 } else {
+-                    nack_counterprover_idx(graph_summary, self.context().operator_idx(), tx).map(
++                    let game = generate_game_graph(config, self.context(), graph_data);
++                    nack_counterprover_idx(&game, self.context().operator_idx(), tx).map(
+                         |counterprover_idx| {
+                             GraphEvent::CounterProofNackConfirmed(CounterProofNackConfirmedEvent {
+                                 tx: tx.clone(),
