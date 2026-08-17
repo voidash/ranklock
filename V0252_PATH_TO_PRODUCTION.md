@@ -56,6 +56,63 @@ STRATA-012).
 
 ---
 
+## Tier 1b — the STRATA-010..020 execution phase: scoped, with a trap
+
+**Owner: engineering. Effort: hours to days, not minutes.**
+
+Blocker closed: `Bitcoin Core regtest did not pass` (its five outstanding
+CORE rows are each `blocked_by` STRATA-012).
+
+This is **not** a test harness to write. `compose.yml` brings up thirteen
+services: `foundationdb`, `asm-runner`, `asm-params-init`, three
+`secret-service` (each with TLS material), three `strata-bridge`, three
+`mosaic`, and `bitcoind`. Driving the eleven cases means operating a real
+multi-operator deployment.
+
+### The trap: the stack is pinned to Bitcoin Core 30, not 31.1
+
+`compose.yml` uses `bitcoin/bitcoin:30`. Every CORE row in this
+qualification is executed against **signature-verified Core 31.1**, and
+`verify_v0252_evidence.py` cross-checks *"Core matrix and Strata E2E matrix
+used the same pinned bitcoind executable"*.
+
+Running the stack as shipped therefore produces E2E evidence on a different
+consensus and policy version, which the verifier will reject **after** the
+build rather than before it. Repoint the stack at 31.1 first, and record
+that repoint as a deviation. Left undetected this would have burned hours
+and then produced unusable evidence.
+
+Also note `foundationdb/foundationdb:7.3.75` against the 7.3.43 client
+installed on this host — same minor series, but worth confirming rather
+than assuming.
+
+### Build constraints found by probing, not by reading
+
+- `docker/asm-runner/Dockerfile` hardcodes `FROM --platform=linux/amd64`,
+  so that image is emulated on an arm64 host **regardless** of the VM's
+  architecture. The `bitcoin` and `foundationdb` images do publish arm64,
+  so only part of the stack is forced into emulation.
+- `mosaic` builds from an external repository
+  (`github.com/alpenlabs/mosaic.git` at a pinned commit), so the build needs
+  network access to a third-party host.
+- A `bridge-base:latest` image must exist before `strata-bridge` builds.
+- Colima **reuses an existing VM profile and silently ignores `--arch`**.
+  Switching architecture needs `colima delete` first, which destroys any
+  other images in that VM — use `--profile <name>` rather than deleting
+  someone else's environment.
+- Budget disk deliberately: a full workspace build in Docker wants 20-30 GB,
+  and this host repeatedly hit 100% during native builds alone.
+
+### A cheaper alternative worth evaluating first
+
+Every service that matters is a binary this workspace already produces
+(`bin/strata-bridge`, `bin/secret-service`), the host already runs a real
+FoundationDB cluster and verified Core 31.1, and the workspace compiles
+natively. Running the bridge natively rather than in Docker would avoid the
+emulation, the external `mosaic` fetch and the Core 30 mismatch in one move.
+It has not been attempted; `asm-runner` and `mosaic` are the two pieces that
+would need resolving, since neither is a binary of this workspace.
+
 ## Tier 2 — an engineering programme, not a defect
 
 ### `native constant-time implementation is absent`
