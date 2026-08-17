@@ -347,13 +347,25 @@ class StrataAckExporter:
             connection.close()
 
         path = self.unlock_path(context)
-        if created or not path.is_file():
-            _atomic_write(path, payload)
-        elif path.read_bytes() != payload:  # pragma: no cover - ledger guards this
-            raise StrataExportError(
-                "an unlock file already exists for this context with different "
-                "content; refusing to overwrite a released secret"
-            )
+        # Compare unconditionally. The previous form was
+        # ``if created or not path.is_file()``, which made the guard below
+        # unreachable for any new commitment -- and `created` is always true
+        # for one. Two contexts that differ only outside the three txids in
+        # `unlock_stem` share a filename, so the second release silently
+        # destroyed the first while the ledger reported both as released.
+        # The Rust reader re-checks SHA-256 and hard-fails, so the effect was
+        # a blocked ACK rather than a wrong one; a destroyed secret should
+        # still be loud.
+        if path.is_file():
+            existing = path.read_bytes()
+            if existing != payload:
+                raise StrataExportError(
+                    "an unlock file already exists for this context with "
+                    "different content; refusing to overwrite a released "
+                    f"secret at {path}"
+                )
+            return path, created
+        _atomic_write(path, payload)
         return path, created
 
     def released_contexts(self) -> int:

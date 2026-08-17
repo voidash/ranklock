@@ -210,3 +210,51 @@ def test_context_digest_covers_every_binding_field():
     )
     for mutated in mutations:
         assert mutated.digest != base
+
+
+def test_a_colliding_context_cannot_silently_destroy_a_released_secret(tmp_path: Path):
+    """Two contexts sharing the three txids must not overwrite each other.
+
+    Found by cryptography review, which demonstrated the destruction. The
+    unlock filename is ``bridge{}-counterproof{}-ack{}.preimage``, built from
+    three txids on both sides of the language boundary -- bridge-exec's
+    graph/ranklock.rs builds the identical string -- while the ledger is keyed
+    on the commitment, a different partition of the context. Two contexts
+    differing only outside those txids therefore share a filename.
+
+    The guard existed but was unreachable: the write was
+    ``if created or not path.is_file()``, and ``created`` is always true for a
+    new commitment, so the second release silently replaced the first while
+    the ledger reported both as released.
+
+    The filename is deliberately NOT changed. It is a cross-language contract
+    with the Rust reader, so binding more of the context into it requires
+    changing both sides together; failing loudly is the correct bounded fix.
+    """
+
+    exporter = StrataAckExporter(tmp_path)
+
+    payload_one, commitment_one = _setup(entropy=b"A" * 32)
+    payload_two, commitment_two = _setup(entropy=b"B" * 32)
+    assert commitment_one != commitment_two
+    assert payload_one != payload_two
+
+    # Same three txids, different slot: identical filename, distinct context.
+    context_one = _context(slot_id=0)
+    context_two = _context(slot_id=1)
+    assert context_one.unlock_stem == context_two.unlock_stem
+    assert context_one.digest != context_two.digest
+
+    path_one, created_one = exporter.export_unlock(
+        payload=payload_one, context=context_one, expected_commitment=commitment_one
+    )
+    assert created_one
+    original = path_one.read_bytes()
+    assert original == payload_one
+
+    with pytest.raises(StrataExportError, match="refusing to overwrite"):
+        exporter.export_unlock(
+            payload=payload_two, context=context_two, expected_commitment=commitment_two
+        )
+
+    assert path_one.read_bytes() == original, "the first released secret must survive"
