@@ -52,3 +52,37 @@ or they will fail for the right reason.
    (currently 29) and the matching description string.
 4. Verify from a pristine clone: preflight, apply, scope count, `cargo fmt
    --all -- --check`, then the bridge-sm suite.
+
+## `p4-ack-witness-check.diff`
+
+**Status: implemented and compiling; blocked on unrealistic test fixtures.**
+
+Completes P4. Threads `Arc<GraphSMCfg>` into `process_counterproof_ack` (one
+dispatch site in `machine.rs`), regenerates the game graph to obtain
+`counterproof_ack.ack_preimage_hash()`, and rejects unless some witness item
+in the confirmed transaction hashes to it.
+
+The check is correct and the lib compiles. **Four tests fail with it applied,
+and they are right to.**
+
+### Why the fixtures cannot satisfy it — the finding
+
+`ack_preimage_hash` is sourced from `wt_fault_pubkeys` (`game_graph.rs:626`),
+the field the ACK commitment was migrated into. Test fixtures populate that
+with **random x-only public keys**. No preimage exists for a random 32-byte
+value, so no witness the tests can construct will ever hash to it.
+
+That is not a fixture bug to paper over. It means **the existing tests never
+modelled a real ACK spend** — they assert on a txid and a commitment for
+which nobody holds the preimage. The check makes that visible, which is what
+a real check should do.
+
+### What has to happen before this lands
+
+The test graph must be built with `wt_fault_pubkeys[i] = sha256(preimage_i)`,
+rejection-sampled so the digest is a valid x-only encoding — exactly what
+`derive_setup_payload` does on the Python side. Then fixtures can attach a
+witness containing `preimage_i` and the four tests pass for the right reason.
+
+Until then, applying this diff produces a red tree, so it is held here rather
+than in the installer. Do not "fix" the four tests by weakening the check.
