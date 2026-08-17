@@ -455,6 +455,7 @@ def main() -> None:
                 public_key(secret) for secret in rollback_witness_secrets
             ),
             deterministic_seed=entropy.bytes(f"slot-{slot_id}/dealer-split".encode()),
+            allow_public_secrets=True,
         )
         activations.append(activation)
         guides.append(guide)

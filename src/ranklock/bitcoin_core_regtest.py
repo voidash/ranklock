@@ -592,6 +592,9 @@ def run_bitcoin_core_regtest(
                 ),
                 deterministic_seed=b"ranklock-v025-core-regtest-dealer-v3-"
                 + bytes((slot_id,)),
+                # Conformance fixture: these shares are public by design and
+                # this harness must never be funded (handoff rule 1).
+                allow_public_secrets=True,
             )
             unsigned_policy = UnsignedBitcoinWitnessPolicy(
                 context_digest=context,

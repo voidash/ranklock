@@ -136,6 +136,7 @@ def _fixture(tmp_path):
         request_authorizer_pubkey=public_key(authorizer_secret),
         rollback_witness_pubkeys=(public_key(59),),
         deterministic_seed=b"sidecar deterministic fixture",
+        allow_public_secrets=True,
     )
     binding = BitcoinAuthorizationBinding.from_raw_transaction(
         raw, chain_genesis_hash=chain, authorization_input_index=0

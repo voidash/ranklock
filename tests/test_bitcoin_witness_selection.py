@@ -116,6 +116,7 @@ def _fixture():
         request_authorizer_pubkey=public_key(authorizer_secret),
         rollback_witness_pubkeys=(public_key(307),),
         deterministic_seed=b"witness-policy-dealer-fixture",
+        allow_public_secrets=True,
     )
     binding = BitcoinAuthorizationBinding.from_raw_transaction(
         raw,

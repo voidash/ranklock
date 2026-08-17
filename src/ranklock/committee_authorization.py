@@ -653,12 +653,23 @@ def dealer_split_fixture(
     rollback_witness_pubkeys: Sequence[bytes],
     minimum_confirmations: int = 6,
     deterministic_seed: bytes | None = None,
+    allow_public_secrets: bool = False,
 ) -> tuple[SignedCommitteeActivation, CommitteeLabelGuide, tuple[ParticipantSlotSecrets, ...]]:
     """Split one trusted tree for tests; **not** a production setup ceremony."""
 
     count = len(participant_secrets)
     if count < 2:
         raise CommitteeAuthorizationError("dealer fixture requires at least two participants")
+    # A deterministic seed makes every share a public value. That is correct
+    # for conformance fixtures -- handoff rule 1 says never fund one -- but it
+    # must never happen because a caller wanted reproducibility and did not
+    # realise the shares stop being secret. Require saying so out loud.
+    if deterministic_seed is not None and not allow_public_secrets:
+        raise CommitteeAuthorizationError(
+            "deterministic_seed makes every participant share public; pass "
+            "allow_public_secrets=True to confirm this is a conformance "
+            "fixture that will never hold value"
+        )
     random_bytes: Callable[[int], bytes]
     random_bytes = secrets.token_bytes if deterministic_seed is None else _DeterministicEntropy(deterministic_seed)
     seed_shares = _split_value(tree.program_seed, count, random_bytes)

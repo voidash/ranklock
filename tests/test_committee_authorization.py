@@ -89,6 +89,7 @@ def _fixture(tmp_path, *, bits: int = 8, participants: int = 3):
         request_authorizer_pubkey=public_key(authorizer_secret),
         rollback_witness_pubkeys=(public_key(307),),
         deterministic_seed=b"ranklock-v025-dealer-test-seed",
+        allow_public_secrets=True,
     )
     binding = BitcoinAuthorizationBinding.from_raw_transaction(
         raw,

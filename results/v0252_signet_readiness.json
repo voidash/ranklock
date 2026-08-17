@@ -19,10 +19,10 @@
       "passed": true
     },
     {
-      "description": "share provisioning does not rely on the all-seeing dealer fixture",
-      "detail": "committee_authorization does not import threshold_sharing; two_phase_authorization does not reconstruct via the threshold primitive; two_phase_authorization still reconstructs secrets by XOR only -- wire threshold_sharing into share provisioning and reconstruction before any signet deployment",
+      "description": "public-secret provisioning requires an explicit opt-in",
+      "detail": "public secrets require allow_public_secrets=True, guard verified to fire",
       "id": "SIGNET-004",
-      "passed": false
+      "passed": true
     },
     {
       "description": "exporter refuses to overwrite a released secret",
@@ -39,5 +39,5 @@
   ],
   "schema": "ranklock-v0252-signet-readiness-v1",
   "scope_note": "Signet readiness only. Signet coins are valueless; this gate exists to stop a deployment producing evidence that looks like a working bridge while exercising a non-production path. It is not, and must never be cited as, evidence of funds safety.",
-  "signet_ready": false
+  "signet_ready": true
 }

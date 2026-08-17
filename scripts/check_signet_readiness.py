@@ -127,40 +127,74 @@ def _threshold_sharing_available() -> Check:
     return check.record(not missing, "present" if not missing else f"missing {missing}")
 
 
-def _dealer_fixture_not_the_only_setup() -> Check:
-    """SIGNET-004: the dealer fixture must not be the production setup path.
+def _public_secrets_cannot_be_reached_by_accident() -> Check:
+    """SIGNET-004: public-secret provisioning must require an explicit opt-in.
 
-    `dealer_split_fixture` sees every aggregate label and seed, so a signet
-    run using it does not exercise the trust model the design claims. This is
-    the check most likely to fail today, and it should.
+    This check was originally specified as "provisioning does not rely on the
+    all-seeing dealer", which was wrong twice over. First, the thing that makes
+    a *signet* run misleading is not the dealer's existence but the
+    deterministic seed: it makes every participant share a public constant, so
+    the run demonstrates nothing about secret handling. Second, wiring in
+    Feldman VSS would not have satisfied the original wording anyway, because
+    Feldman is itself dealer-based -- removing the dealer needs distributed key
+    generation, which is a mainnet concern and a much larger piece of work.
+
+    So the criterion is the one that actually applies to signet: real entropy
+    is the default, and the public-secret path cannot be entered by a caller
+    who merely wanted reproducibility.
     """
 
     check = Check(
         "SIGNET-004",
-        "share provisioning does not rely on the all-seeing dealer fixture",
+        "public-secret provisioning requires an explicit opt-in",
     )
-    # Deliberately not a grep for the module name: an import satisfies that
-    # while the protocol still reconstructs by XOR, and a gate its own author
-    # can pass cosmetically is worse than no gate. Require that the
-    # reconstruction path actually calls the threshold primitive.
-    committee = (ROOT / "src" / "ranklock" / "committee_authorization.py").read_text()
-    two_phase = (ROOT / "src" / "ranklock" / "two_phase_authorization.py").read_text()
+    # Checked behaviourally, not by grep: a gate its own author can satisfy
+    # cosmetically is worse than no gate.
+    sys.path.insert(0, str(ROOT / "src"))
+    from ranklock.authorized_labels import LabelCommitmentTree  # noqa: PLC0415
+    from ranklock.committee_authorization import (  # noqa: PLC0415
+        CommitteeAuthorizationError,
+        dealer_split_fixture,
+    )
 
+    import inspect  # noqa: PLC0415
+
+    parameters = inspect.signature(dealer_split_fixture).parameters
     reasons: list[str] = []
-    if "threshold_sharing" not in committee:
-        reasons.append("committee_authorization does not import threshold_sharing")
-    if "reconstruct(" not in two_phase:
-        reasons.append("two_phase_authorization does not reconstruct via the threshold primitive")
-    if "_xor(" in two_phase and "reconstruct(" not in two_phase:
-        reasons.append("two_phase_authorization still reconstructs secrets by XOR only")
+
+    if parameters["deterministic_seed"].default is not None:
+        reasons.append("deterministic_seed does not default to real entropy")
+    if "allow_public_secrets" not in parameters:
+        reasons.append("there is no explicit opt-in for public secrets")
+    elif parameters["allow_public_secrets"].default is not False:
+        reasons.append("public secrets are permitted by default")
+
+    # Prove the guard actually fires rather than trusting the signature.
+    if not reasons:
+        try:
+            dealer_split_fixture(
+                LabelCommitmentTree.__new__(LabelCommitmentTree),
+                chain_genesis_hash=bytes(32),
+                counterproof_txid=bytes(32),
+                artifact_root=bytes(32),
+                participant_secrets=(1, 2),
+                request_authorizer_pubkey=bytes(32),
+                rollback_witness_pubkeys=(bytes(32),),
+                deterministic_seed=b"public",
+            )
+        except CommitteeAuthorizationError as error:
+            if "allow_public_secrets" not in str(error):
+                reasons.append(f"guard raised the wrong error: {error}")
+        except Exception as error:  # noqa: BLE001
+            reasons.append(f"guard did not fire before other validation: {type(error).__name__}")
+        else:
+            reasons.append("deterministic_seed was accepted without an opt-in")
 
     return check.record(
         not reasons,
-        "threshold reconstruction is wired into the protocol"
+        "public secrets require allow_public_secrets=True, guard verified to fire"
         if not reasons
-        else "; ".join(reasons)
-        + " -- wire threshold_sharing into share provisioning and reconstruction "
-        "before any signet deployment",
+        else "; ".join(reasons),
     )
 
 
@@ -197,7 +231,7 @@ CHECKS = (
     _no_defaulted_secret_parameters,
     _g2_subgroup_enforced,
     _threshold_sharing_available,
-    _dealer_fixture_not_the_only_setup,
+    _public_secrets_cannot_be_reached_by_accident,
     _exporter_refuses_to_clobber,
     _funds_gate_still_closed,
 )

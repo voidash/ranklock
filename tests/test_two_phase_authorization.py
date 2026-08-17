@@ -107,6 +107,7 @@ def _fixture(tmp_path):
         request_authorizer_pubkey=public_key(authorizer_secret),
         rollback_witness_pubkeys=(public_key(97),),
         deterministic_seed=b"two-phase-dealer-fixture",
+        allow_public_secrets=True,
     )
     policy = SignedBitcoinWitnessPolicy.create(
         UnsignedBitcoinWitnessPolicy(

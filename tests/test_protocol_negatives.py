@@ -168,6 +168,7 @@ def test_a_share_opening_that_does_not_reconstruct_the_root_is_rejected():
         request_authorizer_pubkey=public_key(AUTHORIZER_SECRET),
         rollback_witness_pubkeys=(public_key(307),),
         deterministic_seed=b"protocol-negatives-dealer",
+        allow_public_secrets=True,
     )
     state = participants[0]
 
@@ -203,6 +204,7 @@ def test_each_participant_commits_to_a_distinct_share_root():
         request_authorizer_pubkey=public_key(AUTHORIZER_SECRET),
         rollback_witness_pubkeys=(public_key(307),),
         deterministic_seed=b"protocol-negatives-dealer",
+        allow_public_secrets=True,
     )
     roots = [state.share_root for state in participants]
     assert len(set(roots)) == len(roots), "participants must not share an opening root"
