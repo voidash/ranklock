@@ -258,3 +258,92 @@ def test_a_colliding_context_cannot_silently_destroy_a_released_secret(tmp_path:
         )
 
     assert path_one.read_bytes() == original, "the first released secret must survive"
+
+
+# ---------------------------------------------------------------------------
+# The proof-to-ACK binding.
+#
+# Before this existed, no code path conditioned release of the ACK preimage on
+# possession of a valid proof: export_unlock took a caller-supplied payload,
+# derive_setup_payload produced the same value from entropy alone, and every
+# caller of export_unlock was a test. See V0252_THREAT_MODEL.md section 3b.
+# ---------------------------------------------------------------------------
+
+
+def _lock_fixture():
+    from ranklock.babe_positive_lock import deterministic_fixture, setup_positive_lock
+    from ranklock.bn254_real import compress_g1, decompress_g1, multiply
+
+    session = b"ranklock-proof-to-ack-binding-test"
+    vk, public_inputs, proof = deterministic_fixture(context=session)
+    scale = 17
+    payload, commitment = derive_setup_payload(
+        entropy=b"P" * 32, graph_owner=1, deposit_index=2, game_index=3, watchtower_index=4
+    )
+    lock = setup_positive_lock(
+        vk, public_inputs, payload, scale=scale, session_context=session
+    )
+    r_a = compress_g1(multiply(decompress_g1(proof.a_g1), scale, group="g1"))
+    return vk, public_inputs, proof, lock, r_a, session, payload, commitment
+
+
+def test_a_valid_proof_releases_the_ack_preimage(tmp_path: Path):
+    """The payload is produced inside the call, never supplied by the caller."""
+
+    from ranklock.strata_exporter import export_ack_from_verified_unlock
+
+    vk, public_inputs, proof, lock, r_a, session, payload, commitment = _lock_fixture()
+    exporter = StrataAckExporter(tmp_path)
+
+    path, created = export_ack_from_verified_unlock(
+        exporter,
+        vk=vk,
+        public_inputs=public_inputs,
+        proof=proof,
+        lock=lock,
+        r_a_g1=r_a,
+        session_context=session,
+        context=_context(),
+        expected_commitment=commitment,
+    )
+    assert created
+    assert path.read_bytes() == payload
+
+
+def test_a_wrong_projective_output_releases_nothing(tmp_path: Path):
+    """[r]A must be certified; a forged one must not yield the preimage."""
+
+    from ranklock.babe_positive_lock import BabePositiveLockError
+    from ranklock.bn254_real import compress_g1, decompress_g1, multiply
+    from ranklock.strata_exporter import export_ack_from_verified_unlock
+
+    vk, public_inputs, proof, lock, _r_a, session, _payload, commitment = _lock_fixture()
+    exporter = StrataAckExporter(tmp_path)
+
+    # The right shape, the wrong scalar.
+    forged = compress_g1(multiply(decompress_g1(proof.a_g1), 18, group="g1"))
+
+    with pytest.raises((BabePositiveLockError, StrataExportError)):
+        export_ack_from_verified_unlock(
+            exporter,
+            vk=vk,
+            public_inputs=public_inputs,
+            proof=proof,
+            lock=lock,
+            r_a_g1=forged,
+            session_context=session,
+            context=_context(),
+            expected_commitment=commitment,
+        )
+    assert not any(tmp_path.glob("*.preimage")), "nothing may be published"
+
+
+def test_the_binding_takes_no_payload_argument():
+    """Structural: a caller cannot substitute a payload obtained elsewhere."""
+
+    import inspect
+
+    from ranklock.strata_exporter import export_ack_from_verified_unlock
+
+    parameters = inspect.signature(export_ack_from_verified_unlock).parameters
+    assert "payload" not in parameters

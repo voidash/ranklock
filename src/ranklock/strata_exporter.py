@@ -38,7 +38,15 @@ import json
 import os
 from pathlib import Path
 import sqlite3
+from collections.abc import Sequence
 from typing import Final
+
+from .babe_positive_lock import (
+    PositiveGroth16Proof,
+    PositiveGroth16VerifyingKey,
+    PositiveLock,
+    unlock_positive_lock,
+)
 
 from .real_secp import P as SECP_FIELD_MODULUS
 
@@ -377,3 +385,56 @@ class StrataAckExporter:
             return int(row["n"])
         finally:
             connection.close()
+
+
+def export_ack_from_verified_unlock(
+    exporter: StrataAckExporter,
+    *,
+    vk: PositiveGroth16VerifyingKey,
+    public_inputs: Sequence[int],
+    proof: PositiveGroth16Proof,
+    lock: PositiveLock,
+    r_a_g1: bytes,
+    session_context: bytes,
+    context: AckContext,
+    expected_commitment: bytes,
+) -> tuple[Path, bool]:
+    """Release the ACK preimage **only** as the output of a verified unlock.
+
+    This is the proof-to-ACK binding, and until now it did not exist anywhere
+    in the codebase. ``export_unlock`` accepts a caller-supplied payload and
+    can only check that it hashes to the expected commitment; it has no way to
+    know the payload came from a proof rather than from setup entropy, and
+    ``derive_setup_payload`` produces the identical value from entropy alone.
+    Every existing caller of ``export_unlock`` was a test, so no path bound
+    release to proof possession.
+
+    Here the payload is not an argument. It is produced inside this function
+    by ``unlock_positive_lock``, which refuses unless the lock is bound to
+    this exact statement *and* ``certify_projective_output`` confirms the
+    supplied ``[r]A`` is the genuine projective output for this proof. A
+    caller cannot substitute a payload it obtained another way, because there
+    is no parameter through which to pass one.
+
+    What this does NOT do, stated so the boundary is not overread: it does not
+    make setup entropy safe. Whoever holds the entropy can still recompute the
+    preimage via ``derive_setup_payload`` and publish it through
+    ``export_unlock`` directly. Closing that requires removing the
+    entropy-only derivation from the release path entirely, which is a larger
+    change to how commitments are provisioned. This function makes the
+    proof-gated path *exist*; it does not yet make it the only one.
+    """
+
+    payload = unlock_positive_lock(
+        vk,
+        public_inputs,
+        proof,
+        lock,
+        r_a_g1,
+        session_context=session_context,
+    )
+    return exporter.export_unlock(
+        payload=payload,
+        context=context,
+        expected_commitment=expected_commitment,
+    )
