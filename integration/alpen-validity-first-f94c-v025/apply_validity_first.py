@@ -1152,12 +1152,11 @@ def patch_base_logging_defect(repo: Path, dry_run: bool) -> None:
 def patch_p4_ack_witness_check(repo: Path, dry_run: bool) -> None:
     """Verify the ACK witness, not merely its txid.  See threat model P4.
 
-    NOT WIRED INTO ``main`` YET -- see pending/README.md.  Five of the six
-    files apply cleanly after ``format_touched``; ``tx_classifier.rs`` does
-    not, because the shipped diff was generated from a tree whose formatting
-    differs from the installer's intermediate state.  Regenerate the diff
-    against a freshly installed-and-formatted clone before wiring this in.
-    Leaving it wired would abort every install.
+    Applied after ``format_touched`` from a unified diff generated against
+    an already-installed-and-formatted tree.  Generating it any other way
+    does not apply: a diff taken against the pristine base carries the whole
+    installer as context, and one taken from a long-lived scratch clone
+    carries formatting the installer never produces.
 
     Under BIP141 a txid does not commit to the witness, so comparing
     ``event.counterproof_ack_txid`` could not establish that the ACK leaf was
@@ -1188,9 +1187,9 @@ def patch_p4_ack_witness_check(repo: Path, dry_run: bool) -> None:
         raise SystemExit(f"missing P4 diff: {diff}")
 
     # --check is the preflight; it refuses on any context mismatch.
-    run(repo, "git", "apply", "--check", str(diff))
+    run(repo, "git", "apply", "--check", "-p1", str(diff))
     if not dry_run:
-        run(repo, "git", "apply", str(diff))
+        run(repo, "git", "apply", "-p1", str(diff))
 
 
 def patch_base_p2p_address_collision(repo: Path, dry_run: bool) -> None:
@@ -1256,6 +1255,11 @@ def main() -> int:
             apply(repo, True)
             apply(repo, False)
             format_touched(repo)
+            # Applied after formatting: this delta ships as a unified diff
+            # generated against an already-installed-and-formatted tree, so
+            # its context only matches once the anchor edits above have been
+            # normalised.
+            patch_p4_ack_witness_check(repo, False)
     except PatchError as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2

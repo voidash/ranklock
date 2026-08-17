@@ -39,7 +39,7 @@ INSTALLER = ROOT / "integration" / "alpen-validity-first-f94c-v025" / "apply_val
 #   crates/p2p-service/src/tests/common.rs -- every test binds the same fixed
 #     libp2p memory addresses, and that registry is process-global, so tests
 #     collide with each other's listeners.
-EXPECTED_CHANGED_FILES = 29
+EXPECTED_CHANGED_FILES = 31
 EXPECTED_NEW_FILES = 4
 
 
@@ -215,7 +215,7 @@ def main() -> int:
             CaseResult(
                 case_id="STRATA-003",
                 status="passed" if in_scope else "failed",
-                description="patch changes exactly the declared 29-file scope",
+                description="patch changes exactly the declared 31-file scope",
                 commands=(scope_cmd,),
                 evidence=scope_evidence,
             )

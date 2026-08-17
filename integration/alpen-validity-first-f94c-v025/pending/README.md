@@ -4,54 +4,42 @@ Work verified against the patched tree but **not yet ported into
 `apply_validity_first.py`**, so it is not part of the deliverable. Anything
 here must be ported and re-verified from a pristine clone before it counts.
 
-## `p4-complete.diff`
+## `p4-complete.diff` — LANDED
 
-**Status: complete and green. 450 passed / 0 failed, including a negative
-test that proves the check fires.**
+This delta is now applied by `apply_validity_first.py` and is part of the
+deliverable. The file is kept because the installer applies it directly.
 
-Closes P4 in `V0252_THREAT_MODEL.md`. Under BIP141 a txid does not commit to
-the witness, so comparing `event.counterproof_ack_txid` could not establish
-that the ACK leaf was the leaf actually executed — a transaction carrying the
-expected txid but spending via another path was accepted as an ACK.
+Verified from a pristine clone: preflight clean, apply clean, 31 modified +
+4 new matching the declared scope, `cargo fmt --all -- --check` clean, and
+`strata-bridge-sm` **450 passed / 0 failed** including
+`an_ack_txid_without_the_committed_preimage_is_rejected`.
 
-Four parts:
+### How to regenerate it, if it ever needs changing
 
-1. **`events.rs`** — `CounterProofAckConfirmedEvent` gains
-   `pub tx: bitcoin::Transaction`. Its sibling `CounterProofConfirmedEvent`
-   always carried one; without it the check could not be written at the
-   comparison site even in principle.
-2. **`tx_classifier.rs`** — populates it.
-3. **`machine.rs` / `contested.rs`** — threads `Arc<GraphSMCfg>` into
-   `process_counterproof_ack` (one dispatch site), regenerates the graph for
-   `counterproof_ack.ack_preimage_hash()`, and rejects unless some witness
-   item hashes to it. The ACK leaf is
-   `<N/N pubkey> OP_CHECKSIGVERIFY OP_SHA256 <hash> OP_EQUAL`, so a genuine
-   ACK spend must reveal that preimage.
-4. **`tests/mod.rs` + `process_counterproof_ack.rs`** — the fixture change
-   that made the check satisfiable, described below.
+This took three attempts; the constraint is not obvious.
 
-### The finding this surfaced
+The diff must be taken **against an already-installed-and-formatted tree**,
+and applied **after** `format_touched`:
 
-Applying the check initially failed four tests, and they were right to fail.
-`ack_preimage_hash` is sourced from `wt_fault_pubkeys` — the field the ACK
-commitment was migrated into — and bridge-sm's `TEST_FAULT_PUBKEYS`
-populated it with `generate_xonly_pubkey()`. **No preimage exists for a
-random 32-byte value**, so no constructible witness could satisfy the check:
-those fixtures had never modelled a real ACK spend, only a txid and a
-commitment nobody held the preimage for.
+```
+git clone --local <base> /tmp/p4base && cd /tmp/p4base
+git checkout f94c06d0...
+python3 apply_validity_first.py /tmp/p4base      # installs and formats
+cp -r /tmp/p4base /tmp/p4work                    # make the P4 edits in p4work
+cargo fmt --all                                  # in p4work
+cd <parent> && diff -ruN p4base/crates p4work/crates > p4-complete.diff
+```
 
-Note the tx-graph signer (`game_graph.rs`) already did this correctly, as
-`sha256(ack_preimage)`. The gap was specific to the bridge-sm test fixtures.
+Two ways that do **not** work, both tried:
 
-Fixed by deriving test commitments the same way: `test_ack_preimage(index)`
-rejection-samples so `sha256(preimage)` is a valid x-only encoding — mirroring
-`derive_setup_payload` on the RankLock side — and `test_ack_commitment` feeds
-`TEST_FAULT_PUBKEYS`. Event fixtures then attach a transaction whose witness
-reveals that preimage.
+- A `git diff` against the pristine base carries the entire installer as
+  context, so nothing matches mid-stream.
+- A diff from a long-lived scratch clone carries formatting the installer
+  never produces; five of six files applied and `tx_classifier.rs` did not.
 
-The negative test `an_ack_txid_without_the_committed_preimage_is_rejected`
-strips the witness while keeping the txid and asserts rejection, so the check
-is demonstrated to fire rather than merely to be present.
+Also note `diff --label` collapses the per-file paths and `git apply` then
+reports "unable to find filename in patch". Use relative paths from a common
+parent with `-p1`.
 
 ### Porting: attempted, one file short
 
