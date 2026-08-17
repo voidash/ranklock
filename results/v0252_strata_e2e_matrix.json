@@ -1,0 +1,459 @@
+{
+  "all_passed": false,
+  "any_failed": false,
+  "cases": {
+    "STRATA-010": {
+      "blocked_by": "requires a running strata-bridge node driving the pinned game graph; the RankLock ACK exporter wired to that bridge's context",
+      "case_id": "STRATA-010",
+      "commands": [],
+      "description": "Valid proof: Immediate ACK is reconstructed and broadcast",
+      "evidence": {
+        "environment_probe": {
+          "bitcoind": {
+            "present": true,
+            "resolved": "/tmp/core311/bitcoin-31.1/bin/bitcoind"
+          },
+          "bridge_binary": {
+            "present": false,
+            "searched": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-p2pverify/target/debug/strata-bridge"
+          },
+          "foundationdb": {
+            "cluster_file": "/usr/local/etc/foundationdb/fdb.cluster",
+            "fdbcli": "/tmp/fdb743/expanded/FoundationDB-clients.pkg/Payload/usr/local/bin/fdbcli",
+            "present": true,
+            "status": "The database is available."
+          }
+        },
+        "expectation": "Immediate ACK is reconstructed and broadcast",
+        "prerequisites": [
+          {
+            "name": "a running strata-bridge node driving the pinned game graph",
+            "probe": "bin/strata-bridge started against the pinned Core regtest and a reachable FoundationDB cluster"
+          },
+          {
+            "name": "the RankLock ACK exporter wired to that bridge's context",
+            "probe": "StrataAckExporter publishing to the path bridge-exec's graph/ranklock.rs reads via load_ack_preimage"
+          }
+        ],
+        "scenario": "Valid proof",
+        "wording_source": "03_ACCEPTANCE_MATRIX.md (verbatim)"
+      },
+      "schema": "ranklock-v0252-case-result-v1",
+      "status": "not_executed"
+    },
+    "STRATA-011": {
+      "blocked_by": "requires a running strata-bridge node driving the pinned game graph; the RankLock ACK exporter wired to that bridge's context",
+      "case_id": "STRATA-011",
+      "commands": [],
+      "description": "ACK downstream: Existing slash path remains valid",
+      "evidence": {
+        "environment_probe": {
+          "bitcoind": {
+            "present": true,
+            "resolved": "/tmp/core311/bitcoin-31.1/bin/bitcoind"
+          },
+          "bridge_binary": {
+            "present": false,
+            "searched": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-p2pverify/target/debug/strata-bridge"
+          },
+          "foundationdb": {
+            "cluster_file": "/usr/local/etc/foundationdb/fdb.cluster",
+            "fdbcli": "/tmp/fdb743/expanded/FoundationDB-clients.pkg/Payload/usr/local/bin/fdbcli",
+            "present": true,
+            "status": "The database is available."
+          }
+        },
+        "expectation": "Existing slash path remains valid",
+        "prerequisites": [
+          {
+            "name": "a running strata-bridge node driving the pinned game graph",
+            "probe": "bin/strata-bridge started against the pinned Core regtest and a reachable FoundationDB cluster"
+          },
+          {
+            "name": "the RankLock ACK exporter wired to that bridge's context",
+            "probe": "StrataAckExporter publishing to the path bridge-exec's graph/ranklock.rs reads via load_ack_preimage"
+          }
+        ],
+        "scenario": "ACK downstream",
+        "wording_source": "03_ACCEPTANCE_MATRIX.md (verbatim)"
+      },
+      "schema": "ranklock-v0252-case-result-v1",
+      "status": "not_executed"
+    },
+    "STRATA-012": {
+      "blocked_by": "requires a running strata-bridge node driving the pinned game graph; the RankLock ACK exporter wired to that bridge's context",
+      "case_id": "STRATA-012",
+      "commands": [],
+      "description": "Invalid/no proof: No immediate ACK; timeout NACK after CSV",
+      "evidence": {
+        "environment_probe": {
+          "bitcoind": {
+            "present": true,
+            "resolved": "/tmp/core311/bitcoin-31.1/bin/bitcoind"
+          },
+          "bridge_binary": {
+            "present": false,
+            "searched": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-p2pverify/target/debug/strata-bridge"
+          },
+          "foundationdb": {
+            "cluster_file": "/usr/local/etc/foundationdb/fdb.cluster",
+            "fdbcli": "/tmp/fdb743/expanded/FoundationDB-clients.pkg/Payload/usr/local/bin/fdbcli",
+            "present": true,
+            "status": "The database is available."
+          }
+        },
+        "expectation": "No immediate ACK; timeout NACK after CSV",
+        "prerequisites": [
+          {
+            "name": "a running strata-bridge node driving the pinned game graph",
+            "probe": "bin/strata-bridge started against the pinned Core regtest and a reachable FoundationDB cluster"
+          },
+          {
+            "name": "the RankLock ACK exporter wired to that bridge's context",
+            "probe": "StrataAckExporter publishing to the path bridge-exec's graph/ranklock.rs reads via load_ack_preimage"
+          }
+        ],
+        "scenario": "Invalid/no proof",
+        "wording_source": "03_ACCEPTANCE_MATRIX.md (verbatim)"
+      },
+      "schema": "ranklock-v0252-case-result-v1",
+      "status": "not_executed"
+    },
+    "STRATA-013": {
+      "blocked_by": "requires a running strata-bridge node driving the pinned game graph; the RankLock ACK exporter wired to that bridge's context",
+      "case_id": "STRATA-013",
+      "commands": [],
+      "description": "NACK downstream: Existing contested-payout path remains valid",
+      "evidence": {
+        "environment_probe": {
+          "bitcoind": {
+            "present": true,
+            "resolved": "/tmp/core311/bitcoin-31.1/bin/bitcoind"
+          },
+          "bridge_binary": {
+            "present": false,
+            "searched": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-p2pverify/target/debug/strata-bridge"
+          },
+          "foundationdb": {
+            "cluster_file": "/usr/local/etc/foundationdb/fdb.cluster",
+            "fdbcli": "/tmp/fdb743/expanded/FoundationDB-clients.pkg/Payload/usr/local/bin/fdbcli",
+            "present": true,
+            "status": "The database is available."
+          }
+        },
+        "expectation": "Existing contested-payout path remains valid",
+        "prerequisites": [
+          {
+            "name": "a running strata-bridge node driving the pinned game graph",
+            "probe": "bin/strata-bridge started against the pinned Core regtest and a reachable FoundationDB cluster"
+          },
+          {
+            "name": "the RankLock ACK exporter wired to that bridge's context",
+            "probe": "StrataAckExporter publishing to the path bridge-exec's graph/ranklock.rs reads via load_ack_preimage"
+          }
+        ],
+        "scenario": "NACK downstream",
+        "wording_source": "03_ACCEPTANCE_MATRIX.md (verbatim)"
+      },
+      "schema": "ranklock-v0252-case-result-v1",
+      "status": "not_executed"
+    },
+    "STRATA-014": {
+      "blocked_by": "requires a running strata-bridge node driving the pinned game graph; the RankLock ACK exporter wired to that bridge's context",
+      "case_id": "STRATA-014",
+      "commands": [],
+      "description": "Malformed unlock: Hard rejection; no broadcast",
+      "evidence": {
+        "environment_probe": {
+          "bitcoind": {
+            "present": true,
+            "resolved": "/tmp/core311/bitcoin-31.1/bin/bitcoind"
+          },
+          "bridge_binary": {
+            "present": false,
+            "searched": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-p2pverify/target/debug/strata-bridge"
+          },
+          "foundationdb": {
+            "cluster_file": "/usr/local/etc/foundationdb/fdb.cluster",
+            "fdbcli": "/tmp/fdb743/expanded/FoundationDB-clients.pkg/Payload/usr/local/bin/fdbcli",
+            "present": true,
+            "status": "The database is available."
+          }
+        },
+        "expectation": "Hard rejection; no broadcast",
+        "prerequisites": [
+          {
+            "name": "a running strata-bridge node driving the pinned game graph",
+            "probe": "bin/strata-bridge started against the pinned Core regtest and a reachable FoundationDB cluster"
+          },
+          {
+            "name": "the RankLock ACK exporter wired to that bridge's context",
+            "probe": "StrataAckExporter publishing to the path bridge-exec's graph/ranklock.rs reads via load_ack_preimage"
+          }
+        ],
+        "scenario": "Malformed unlock",
+        "wording_source": "03_ACCEPTANCE_MATRIX.md (verbatim)"
+      },
+      "schema": "ranklock-v0252-case-result-v1",
+      "status": "not_executed"
+    },
+    "STRATA-015": {
+      "blocked_by": "requires a running strata-bridge node driving the pinned game graph; the RankLock ACK exporter wired to that bridge's context",
+      "case_id": "STRATA-015",
+      "commands": [],
+      "description": "Wrong hash/context: Hard rejection",
+      "evidence": {
+        "environment_probe": {
+          "bitcoind": {
+            "present": true,
+            "resolved": "/tmp/core311/bitcoin-31.1/bin/bitcoind"
+          },
+          "bridge_binary": {
+            "present": false,
+            "searched": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-p2pverify/target/debug/strata-bridge"
+          },
+          "foundationdb": {
+            "cluster_file": "/usr/local/etc/foundationdb/fdb.cluster",
+            "fdbcli": "/tmp/fdb743/expanded/FoundationDB-clients.pkg/Payload/usr/local/bin/fdbcli",
+            "present": true,
+            "status": "The database is available."
+          }
+        },
+        "expectation": "Hard rejection",
+        "prerequisites": [
+          {
+            "name": "a running strata-bridge node driving the pinned game graph",
+            "probe": "bin/strata-bridge started against the pinned Core regtest and a reachable FoundationDB cluster"
+          },
+          {
+            "name": "the RankLock ACK exporter wired to that bridge's context",
+            "probe": "StrataAckExporter publishing to the path bridge-exec's graph/ranklock.rs reads via load_ack_preimage"
+          }
+        ],
+        "scenario": "Wrong hash/context",
+        "wording_source": "03_ACCEPTANCE_MATRIX.md (verbatim)"
+      },
+      "schema": "ranklock-v0252-case-result-v1",
+      "status": "not_executed"
+    },
+    "STRATA-016": {
+      "blocked_by": "requires a running strata-bridge node driving the pinned game graph; the RankLock ACK exporter wired to that bridge's context",
+      "case_id": "STRATA-016",
+      "commands": [],
+      "description": "Alternate transaction/fee mutation: Exact pre-signatures/classification reject it",
+      "evidence": {
+        "environment_probe": {
+          "bitcoind": {
+            "present": true,
+            "resolved": "/tmp/core311/bitcoin-31.1/bin/bitcoind"
+          },
+          "bridge_binary": {
+            "present": false,
+            "searched": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-p2pverify/target/debug/strata-bridge"
+          },
+          "foundationdb": {
+            "cluster_file": "/usr/local/etc/foundationdb/fdb.cluster",
+            "fdbcli": "/tmp/fdb743/expanded/FoundationDB-clients.pkg/Payload/usr/local/bin/fdbcli",
+            "present": true,
+            "status": "The database is available."
+          }
+        },
+        "expectation": "Exact pre-signatures/classification reject it",
+        "prerequisites": [
+          {
+            "name": "a running strata-bridge node driving the pinned game graph",
+            "probe": "bin/strata-bridge started against the pinned Core regtest and a reachable FoundationDB cluster"
+          },
+          {
+            "name": "the RankLock ACK exporter wired to that bridge's context",
+            "probe": "StrataAckExporter publishing to the path bridge-exec's graph/ranklock.rs reads via load_ack_preimage"
+          }
+        ],
+        "scenario": "Alternate transaction/fee mutation",
+        "wording_source": "03_ACCEPTANCE_MATRIX.md (verbatim)"
+      },
+      "schema": "ranklock-v0252-case-result-v1",
+      "status": "not_executed"
+    },
+    "STRATA-017": {
+      "blocked_by": "requires a running strata-bridge node driving the pinned game graph; the RankLock ACK exporter wired to that bridge's context",
+      "case_id": "STRATA-017",
+      "commands": [],
+      "description": "Replay: Cannot authorize another game, deposit, slot or transaction",
+      "evidence": {
+        "environment_probe": {
+          "bitcoind": {
+            "present": true,
+            "resolved": "/tmp/core311/bitcoin-31.1/bin/bitcoind"
+          },
+          "bridge_binary": {
+            "present": false,
+            "searched": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-p2pverify/target/debug/strata-bridge"
+          },
+          "foundationdb": {
+            "cluster_file": "/usr/local/etc/foundationdb/fdb.cluster",
+            "fdbcli": "/tmp/fdb743/expanded/FoundationDB-clients.pkg/Payload/usr/local/bin/fdbcli",
+            "present": true,
+            "status": "The database is available."
+          }
+        },
+        "expectation": "Cannot authorize another game, deposit, slot or transaction",
+        "prerequisites": [
+          {
+            "name": "a running strata-bridge node driving the pinned game graph",
+            "probe": "bin/strata-bridge started against the pinned Core regtest and a reachable FoundationDB cluster"
+          },
+          {
+            "name": "the RankLock ACK exporter wired to that bridge's context",
+            "probe": "StrataAckExporter publishing to the path bridge-exec's graph/ranklock.rs reads via load_ack_preimage"
+          }
+        ],
+        "scenario": "Replay",
+        "wording_source": "03_ACCEPTANCE_MATRIX.md (verbatim)"
+      },
+      "schema": "ranklock-v0252-case-result-v1",
+      "status": "not_executed"
+    },
+    "STRATA-018": {
+      "blocked_by": "requires a running strata-bridge node driving the pinned game graph; the RankLock ACK exporter wired to that bridge's context; a restartable bridge with durable duty state",
+      "case_id": "STRATA-018",
+      "commands": [],
+      "description": "Bridge restart: Duties resume without duplicate terminal action",
+      "evidence": {
+        "environment_probe": {
+          "bitcoind": {
+            "present": true,
+            "resolved": "/tmp/core311/bitcoin-31.1/bin/bitcoind"
+          },
+          "bridge_binary": {
+            "present": false,
+            "searched": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-p2pverify/target/debug/strata-bridge"
+          },
+          "foundationdb": {
+            "cluster_file": "/usr/local/etc/foundationdb/fdb.cluster",
+            "fdbcli": "/tmp/fdb743/expanded/FoundationDB-clients.pkg/Payload/usr/local/bin/fdbcli",
+            "present": true,
+            "status": "The database is available."
+          }
+        },
+        "expectation": "Duties resume without duplicate terminal action",
+        "prerequisites": [
+          {
+            "name": "a running strata-bridge node driving the pinned game graph",
+            "probe": "bin/strata-bridge started against the pinned Core regtest and a reachable FoundationDB cluster"
+          },
+          {
+            "name": "the RankLock ACK exporter wired to that bridge's context",
+            "probe": "StrataAckExporter publishing to the path bridge-exec's graph/ranklock.rs reads via load_ack_preimage"
+          },
+          {
+            "name": "a restartable bridge with durable duty state",
+            "probe": "bridge stopped and restarted on the same datadir mid-duty"
+          }
+        ],
+        "scenario": "Bridge restart",
+        "wording_source": "03_ACCEPTANCE_MATRIX.md (verbatim)"
+      },
+      "schema": "ranklock-v0252-case-result-v1",
+      "status": "not_executed"
+    },
+    "STRATA-019": {
+      "blocked_by": "requires a running strata-bridge node driving the pinned game graph; the RankLock ACK exporter wired to that bridge's context; controlled reorg capability on the pinned Core",
+      "case_id": "STRATA-019",
+      "commands": [],
+      "description": "Core reorg: State converges and consumed RankLock slots do not reopen",
+      "evidence": {
+        "environment_probe": {
+          "bitcoind": {
+            "present": true,
+            "resolved": "/tmp/core311/bitcoin-31.1/bin/bitcoind"
+          },
+          "bridge_binary": {
+            "present": false,
+            "searched": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-p2pverify/target/debug/strata-bridge"
+          },
+          "foundationdb": {
+            "cluster_file": "/usr/local/etc/foundationdb/fdb.cluster",
+            "fdbcli": "/tmp/fdb743/expanded/FoundationDB-clients.pkg/Payload/usr/local/bin/fdbcli",
+            "present": true,
+            "status": "The database is available."
+          }
+        },
+        "expectation": "State converges and consumed RankLock slots do not reopen",
+        "prerequisites": [
+          {
+            "name": "a running strata-bridge node driving the pinned game graph",
+            "probe": "bin/strata-bridge started against the pinned Core regtest and a reachable FoundationDB cluster"
+          },
+          {
+            "name": "the RankLock ACK exporter wired to that bridge's context",
+            "probe": "StrataAckExporter publishing to the path bridge-exec's graph/ranklock.rs reads via load_ack_preimage"
+          },
+          {
+            "name": "controlled reorg capability on the pinned Core",
+            "probe": "invalidateblock/reconsiderblock around the release point"
+          }
+        ],
+        "scenario": "Core reorg",
+        "wording_source": "03_ACCEPTANCE_MATRIX.md (verbatim)"
+      },
+      "schema": "ranklock-v0252-case-result-v1",
+      "status": "not_executed"
+    },
+    "STRATA-020": {
+      "blocked_by": "requires a running strata-bridge node driving the pinned game graph; the RankLock ACK exporter wired to that bridge's context; two or more watchtower instances racing the same slot",
+      "case_id": "STRATA-020",
+      "commands": [],
+      "description": "Concurrent watchtowers: Exactly one canonical outcome",
+      "evidence": {
+        "environment_probe": {
+          "bitcoind": {
+            "present": true,
+            "resolved": "/tmp/core311/bitcoin-31.1/bin/bitcoind"
+          },
+          "bridge_binary": {
+            "present": false,
+            "searched": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-p2pverify/target/debug/strata-bridge"
+          },
+          "foundationdb": {
+            "cluster_file": "/usr/local/etc/foundationdb/fdb.cluster",
+            "fdbcli": "/tmp/fdb743/expanded/FoundationDB-clients.pkg/Payload/usr/local/bin/fdbcli",
+            "present": true,
+            "status": "The database is available."
+          }
+        },
+        "expectation": "Exactly one canonical outcome",
+        "prerequisites": [
+          {
+            "name": "a running strata-bridge node driving the pinned game graph",
+            "probe": "bin/strata-bridge started against the pinned Core regtest and a reachable FoundationDB cluster"
+          },
+          {
+            "name": "the RankLock ACK exporter wired to that bridge's context",
+            "probe": "StrataAckExporter publishing to the path bridge-exec's graph/ranklock.rs reads via load_ack_preimage"
+          },
+          {
+            "name": "two or more watchtower instances racing the same slot",
+            "probe": "concurrent counterproof submissions against one game"
+          }
+        ],
+        "scenario": "Concurrent watchtowers",
+        "wording_source": "03_ACCEPTANCE_MATRIX.md (verbatim)"
+      },
+      "schema": "ranklock-v0252-case-result-v1",
+      "status": "not_executed"
+    }
+  },
+  "identity": {
+    "bridge_checkout": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-p2pverify",
+    "strata_commit": "f94c06d08ff29eee746f3e20bd63078d2949b304"
+  },
+  "schema": "ranklock-v0252-strata-e2e-matrix-v1",
+  "status_counts": {
+    "failed": 0,
+    "modeled_only": 0,
+    "not_executed": 11,
+    "passed": 0,
+    "unavailable": 0
+  }
+}

@@ -32,9 +32,10 @@
     "path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/results/v0252_evidence_verification.json",
     "reports_present": [
       "core",
-      "strata_build"
+      "strata_build",
+      "strata_e2e"
     ],
-    "sha256": "72dde3da6e8180cfbbdc3bf92291c97c7f6b98f523c0eba3d10a4622eb770a2b"
+    "sha256": "bfb65a0293f4a0d1c8fe941eaf2d4e4b29934c0ec26d409f6ede1ef35026140f"
   },
   "external_attestations_must_be_verified_by": "ranklock.deployment_policy.evaluate_deployment",
   "facts": {
