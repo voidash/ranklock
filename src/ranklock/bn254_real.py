@@ -664,6 +664,8 @@ def pairing_product(pairs: Iterable[tuple[Point, Point]], *, final_exponentiate:
             raise ValueError("G1 point is not on BN254")
         if not is_on_curve(g2_point, B2):
             raise ValueError("G2 point is not on BN254 twist")
+        if not is_in_g2_subgroup(g2_point):
+            raise ValueError("G2 point is outside the order-r subgroup")
         pair_num, pair_den = miller_loop_fraction(twist(g2_point), cast_g1_to_fq12(g1_point))
         numerator = numerator * pair_num
         denominator = denominator * pair_den
@@ -731,6 +733,21 @@ def compress_g1(point: Point) -> bytes:
     return bytes(raw)
 
 
+def is_in_g2_subgroup(point: Point) -> bool:
+    """Whether a twist point has order dividing r (i.e. lies in G2).
+
+    BN254's twist has a cofactor, so being on the curve is strictly weaker
+    than being in the order-r subgroup. The pairing is only bilinear on G2:
+    off-subgroup inputs produce non-trivial outputs for which no soundness
+    argument holds, and e(A, B+T) != e(A,B)*e(A,T) there.
+
+    G1 needs no equivalent check -- BN254 G1 has cofactor 1, so on-curve
+    implies in-subgroup.
+    """
+
+    return is_inf(multiply(point, CURVE_ORDER, group="g2"))
+
+
 def decompress_g2(raw: bytes) -> Point:
     if len(raw) != 64:
         raise ValueError("compressed G2 must be 64 bytes")
@@ -756,6 +773,8 @@ def decompress_g2(raw: bytes) -> Point:
     point = (x, selected, FQ2.one())
     if not is_on_curve(point, B2):
         raise ValueError("G2 decompression produced off-curve point")
+    if not is_in_g2_subgroup(point):
+        raise ValueError("G2 decompression produced a point outside the order-r subgroup")
     return point
 
 

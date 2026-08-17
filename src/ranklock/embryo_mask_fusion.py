@@ -471,7 +471,7 @@ def garble_mask_fused_embryo(
     *,
     readouts_x: Sequence[int],
     readouts_y: Sequence[int],
-    seed: bytes = b"ranklock/embryo-mask-fusion/v1",
+    seed: bytes,
 ) -> tuple[EmbryoGarbling, FusedMaskState, tuple[int, ...], tuple[int, ...]]:
     if len(readouts_x) != EMBRYO_X_DIMENSION or len(readouts_y) != EMBRYO_Y_DIMENSION:
         raise MaskFusionError("DFB readout vector does not match Embryo dimensions")
@@ -880,8 +880,8 @@ def build_mask_fused_template(
     *,
     hidden_scalar: int,
     profile: DfbProfile | None = None,
-    dfb_seed: bytes = b"ranklock/v023/dfb-readout-template/v1",
-    garbling_seed: bytes = b"ranklock/v023/embryo-mask-fusion/v1",
+    dfb_seed: bytes,
+    garbling_seed: bytes,
 ) -> tuple[EmbryoGarbling, DfbGeneration, FusedMaskState, FusedLiftMetadata]:
     if profile is None:
         profile = DfbProfile(primes=FIRST_91_PRIMES)
@@ -1210,8 +1210,8 @@ def execute_mask_fused_embryo(
     *,
     hidden_scalar: int,
     profile: DfbProfile | None = None,
-    dfb_seed: bytes = b"ranklock/v023/dfb-readout-template/v1",
-    garbling_seed: bytes = b"ranklock/v023/embryo-mask-fusion/v1",
+    dfb_seed: bytes,
+    garbling_seed: bytes,
     input_scalar_start: int = 1_234_567,
 ) -> MaskFusedExecution:
     if profile is None:

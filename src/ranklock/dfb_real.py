@@ -435,6 +435,12 @@ def ccrh_golden_vector() -> bytes:
 
 @dataclass(frozen=True, slots=True)
 class DfbProfile:
+    #: WARNING: the default prime list gives only 44 statistical smudging
+    #: bits against a BN254-sized modulus (see statistical_smudging_bits).
+    #: It is retained because conformance fixtures pin it, but every
+    #: library entry point now REQUIRES an explicit profile so this cannot
+    #: be reached by omission. Production paths pass FIRST_91_PRIMES,
+    #: which gives 141 bits.
     input_bits: int = 256
     primes: tuple[int, ...] = FIRST_80_PRIMES
     batch_size: int = RESIDUE_BATCH_SIZE
@@ -1703,8 +1709,8 @@ def generate_program(
     *,
     values: Sequence[int],
     coefficients: Sequence[tuple[Sequence[int], Sequence[int]]],
-    profile: DfbProfile = DfbProfile(),
-    seed: bytes = b"ranklock-dfb-real-default-seed",
+    profile: DfbProfile,
+    seed: bytes,
     field_modulus: int | None = None,
     statistical_security_bits: int = 0,
 ) -> DfbGeneration:
@@ -1797,8 +1803,8 @@ def bind_input_values(generation: DfbGeneration, *, values: Sequence[int]) -> Df
 def generate_program_template(
     *,
     coefficients: Sequence[tuple[Sequence[int], Sequence[int]]],
-    profile: DfbProfile = DfbProfile(),
-    seed: bytes = b"ranklock-dfb-real-default-seed",
+    profile: DfbProfile,
+    seed: bytes,
     field_modulus: int | None = None,
     statistical_security_bits: int = 0,
 ) -> DfbGeneration:
