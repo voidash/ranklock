@@ -150,6 +150,49 @@ slot-separated label rules — pinned by a regression test — so the exposure i
 limited. Explicit binding is nonetheless the correct hardening and is not yet
 applied.
 
+## 3b. The proof-to-ACK chain is not wired, and that is a soundness gap
+
+**(verified by call-graph inspection; this supersedes the milder framing of P6)**
+
+Section 1 describes RankLock as releasing the ACK preimage *conditioned on a
+valid Groth16 proof*, via the BABE lock. **No code path implements that
+binding.** Three independent observations, each checked directly:
+
+1. `strata_exporter.py` — the module that publishes the ACK preimage — never
+   references `babe_positive_lock`, `setup_positive_lock` or
+   `unlock_positive_lock`.
+2. `scripts/generate_v025_committee_qualification.py` does call
+   `setup_positive_lock` / `unlock_positive_lock`, but the payload it protects
+   is `entropy.bytes(b"positive-lock-payload")` — a fixture value. That
+   generator contains no reference to an ACK preimage or ACK commitment at
+   all. The lock and the ACK are two unconnected subsystems.
+3. `StrataAckExporter.export_unlock` — the function that writes the preimage
+   the bridge reads — is called **only from tests**. No production path, no
+   script, no CLI invokes it.
+
+The ACK payload that does exist comes from `derive_setup_payload(entropy=...)`,
+which is a function of setup entropy alone. So today the preimage's
+availability is conditioned on *holding setup entropy*, not on possessing a
+valid proof.
+
+**Consequences, stated separately because they pull in opposite directions:**
+
+- It *lowers* H2's immediate severity. The ~100-bit BABE lock is not currently
+  guarding the ACK preimage, because it is not guarding anything on the ACK
+  path. The curve decision still gates any future wiring, but it is not
+  today's exposure.
+- It *raises* the architectural concern. The cryptographic gate the design
+  relies on is absent from the release path rather than weak in it. Nothing
+  between setup and publication checks that a proof ever existed.
+
+This also reframes STRATA-010..020. Those cases are not merely unexecuted:
+there is **no producer to execute them against**. An end-to-end run cannot be
+built by wiring up a harness, because the middle of the chain — proof to
+unlock to exported preimage — has to be implemented first.
+
+Reviewers should treat "is the proof-to-ACK binding implemented anywhere?" as
+the first question, ahead of any question about how strong it is.
+
 ## 4. What has been executed, and what that does not cover
 
 Executed against pinned Core 31.1: CORE matrix 18 passed / 0 failed with each
