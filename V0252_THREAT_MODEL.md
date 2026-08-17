@@ -108,6 +108,39 @@ colluding quorum — but **the code's comment claims more than the check
 delivers**, and the fix (compare the finalized transaction or wtxid in both
 `tx_classifier.rs` and `contested.rs`) is not yet applied.
 
+**P4 addendum — the ACK side is worse than stated, and the fix is not local.**
+*(verified)*
+
+A second review corroborated P4 and found the ACK direction is weaker still.
+`wtxid` appears **zero times** in the entire bridge tree, so no
+witness-committing identifier is used anywhere. More concretely, in one match
+arm of `crates/bridge-sm/src/graph/tx_classifier.rs`,
+`CounterProofConfirmedEvent` is constructed with `tx: tx.clone()` while
+`CounterProofAckConfirmedEvent` — immediately below it — carries only
+`counterproof_ack_txid`. `process_counterproof_ack` therefore compares a txid
+and nothing else.
+
+The consequence for remediation: the ACK event does not carry the transaction
+at all, so a witness check cannot be added at the comparison site. The event
+must first be changed to carry the `Transaction`. **P4 is not a one-line
+fix on the ACK side**, and any estimate that assumed otherwise was wrong.
+
+**P6 — The exporter cannot tell a real unlock from setup entropy.**
+*(verified, architectural)*
+
+`StrataAckExporter.export_unlock` checks `SHA256(payload) == commitment` and
+enforces one context per commitment, but has no way to know the payload came
+from a successful BABE unlock rather than being recomputed from setup
+entropy. `derive_setup_payload` produces the identical value from entropy
+alone, and its own docstring says whoever reproduces it "can reconstruct the
+ACK preimage without any proof and unilaterally drive the bridge to ACK".
+
+This is defensible layering — the cryptographic gate is `unlock_positive_lock`
+one call upstream, and the exporter is publication plumbing. But it means
+**setup entropy is a standing ACK-forgery capability for the lifetime of the
+graph**, and nothing downstream of setup can detect its misuse. Auditors
+should treat setup-entropy handling as fund-critical, not as configuration.
+
 **P5 — Domain separation across slots and contexts.** **[partial]**
 
 The signed message commits to the transaction, input index and leaf, but
