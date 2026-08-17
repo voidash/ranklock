@@ -290,6 +290,7 @@ class StrataAckExporter:
         payload: bytes,
         context: AckContext,
         expected_commitment: bytes,
+        allow_unverified_payload: bool = False,
     ) -> tuple[Path, bool]:
         """Publish ``payload`` for exactly one ACK context.
 
@@ -298,6 +299,21 @@ class StrataAckExporter:
         payload does not match the commitment the graph was built with, or if
         this commitment already released under a different context.
         """
+
+        # A payload passed in here is only checked against its commitment,
+        # which derive_setup_payload can satisfy from setup entropy alone --
+        # no proof required. The proof-gated entry point is
+        # export_ack_from_verified_unlock, which computes the payload itself.
+        # Callers that genuinely need the raw path (ledger and conflict tests)
+        # must say so, so that a production caller cannot reach it by
+        # forgetting which function to use.
+        if not allow_unverified_payload:
+            raise StrataExportError(
+                "export_unlock publishes a payload it cannot prove came from a "
+                "valid proof; use export_ack_from_verified_unlock, or pass "
+                "allow_unverified_payload=True if this is not a release path"
+            )
+
 
         payload = bytes(payload)
         expected = bytes(expected_commitment)
@@ -437,4 +453,6 @@ def export_ack_from_verified_unlock(
         payload=payload,
         context=context,
         expected_commitment=expected_commitment,
+        # Legitimate: the payload above is the output of a verified unlock.
+        allow_unverified_payload=True,
     )

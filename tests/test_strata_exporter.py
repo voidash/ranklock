@@ -72,7 +72,7 @@ def test_export_publishes_only_to_the_bound_context(tmp_path: Path):
     exporter = StrataAckExporter(tmp_path)
     context = _context()
 
-    path, created = exporter.export_unlock(
+    path, created = exporter.export_unlock(allow_unverified_payload=True, 
         payload=payload, context=context, expected_commitment=commitment
     )
     assert created
@@ -85,10 +85,10 @@ def test_exact_retry_is_idempotent(tmp_path: Path):
     exporter = StrataAckExporter(tmp_path)
     context = _context()
 
-    first, created_first = exporter.export_unlock(
+    first, created_first = exporter.export_unlock(allow_unverified_payload=True, 
         payload=payload, context=context, expected_commitment=commitment
     )
-    second, created_second = exporter.export_unlock(
+    second, created_second = exporter.export_unlock(allow_unverified_payload=True, 
         payload=payload, context=context, expected_commitment=commitment
     )
     assert created_first and not created_second
@@ -102,13 +102,13 @@ def test_a_second_context_is_a_terminal_conflict(tmp_path: Path):
 
     payload, commitment = _setup()
     exporter = StrataAckExporter(tmp_path)
-    exporter.export_unlock(
+    exporter.export_unlock(allow_unverified_payload=True, 
         payload=payload, context=_context(), expected_commitment=commitment
     )
 
     other = _context(counterproof_ack_txid=sha256(b"different ack").digest())
     with pytest.raises(StrataExportError, match="different bridge context"):
-        exporter.export_unlock(
+        exporter.export_unlock(allow_unverified_payload=True, 
             payload=payload, context=other, expected_commitment=commitment
         )
     assert not exporter.unlock_path(other).exists()
@@ -116,7 +116,7 @@ def test_a_second_context_is_a_terminal_conflict(tmp_path: Path):
     # The commitment is now permanently unusable -- even for the original
     # context, which is the fail-closed choice.
     with pytest.raises(StrataExportError, match="permanently unusable"):
-        exporter.export_unlock(
+        exporter.export_unlock(allow_unverified_payload=True, 
             payload=payload, context=_context(), expected_commitment=commitment
         )
 
@@ -127,7 +127,7 @@ def test_payload_not_matching_the_commitment_is_refused(tmp_path: Path):
     wrong = bytes([payload[0] ^ 0xFF]) + payload[1:]
 
     with pytest.raises(StrataExportError, match="does not match the published"):
-        exporter.export_unlock(
+        exporter.export_unlock(allow_unverified_payload=True, 
             payload=wrong, context=_context(), expected_commitment=commitment
         )
     assert not exporter.unlock_path(_context()).exists()
@@ -137,7 +137,7 @@ def test_malformed_payload_length_is_refused(tmp_path: Path):
     _payload, commitment = _setup()
     exporter = StrataAckExporter(tmp_path)
     with pytest.raises(StrataExportError, match="32 bytes"):
-        exporter.export_unlock(
+        exporter.export_unlock(allow_unverified_payload=True, 
             payload=b"\x01" * 31, context=_context(), expected_commitment=commitment
         )
 
@@ -147,11 +147,11 @@ def test_the_payload_never_appears_in_an_error_message(tmp_path: Path):
 
     payload, commitment = _setup()
     exporter = StrataAckExporter(tmp_path)
-    exporter.export_unlock(payload=payload, context=_context(), expected_commitment=commitment)
+    exporter.export_unlock(allow_unverified_payload=True, payload=payload, context=_context(), expected_commitment=commitment)
 
     other = _context(counterproof_ack_txid=sha256(b"another").digest())
     with pytest.raises(StrataExportError) as excinfo:
-        exporter.export_unlock(payload=payload, context=other, expected_commitment=commitment)
+        exporter.export_unlock(allow_unverified_payload=True, payload=payload, context=other, expected_commitment=commitment)
     assert payload.hex() not in str(excinfo.value)
     assert payload not in str(excinfo.value).encode()
 
@@ -163,7 +163,7 @@ def test_no_secret_is_written_outside_the_single_unlock_file(tmp_path: Path):
     exporter = StrataAckExporter(tmp_path)
     context = _context()
     exporter.publish_commitment(context, commitment)
-    unlock, _created = exporter.export_unlock(
+    unlock, _created = exporter.export_unlock(allow_unverified_payload=True, 
         payload=payload, context=context, expected_commitment=commitment
     )
 
@@ -178,7 +178,7 @@ def test_no_secret_is_written_outside_the_single_unlock_file(tmp_path: Path):
 def test_unlock_file_is_not_world_readable(tmp_path: Path):
     payload, commitment = _setup()
     exporter = StrataAckExporter(tmp_path)
-    path, _created = exporter.export_unlock(
+    path, _created = exporter.export_unlock(allow_unverified_payload=True, 
         payload=payload, context=_context(), expected_commitment=commitment
     )
     assert path.stat().st_mode & 0o077 == 0
@@ -245,7 +245,7 @@ def test_a_colliding_context_cannot_silently_destroy_a_released_secret(tmp_path:
     assert context_one.unlock_stem == context_two.unlock_stem
     assert context_one.digest != context_two.digest
 
-    path_one, created_one = exporter.export_unlock(
+    path_one, created_one = exporter.export_unlock(allow_unverified_payload=True, 
         payload=payload_one, context=context_one, expected_commitment=commitment_one
     )
     assert created_one
@@ -253,7 +253,7 @@ def test_a_colliding_context_cannot_silently_destroy_a_released_secret(tmp_path:
     assert original == payload_one
 
     with pytest.raises(StrataExportError, match="refusing to overwrite"):
-        exporter.export_unlock(
+        exporter.export_unlock(allow_unverified_payload=True, 
             payload=payload_two, context=context_two, expected_commitment=commitment_two
         )
 
@@ -347,3 +347,25 @@ def test_the_binding_takes_no_payload_argument():
 
     parameters = inspect.signature(export_ack_from_verified_unlock).parameters
     assert "payload" not in parameters
+
+
+def test_the_unverified_path_cannot_be_reached_by_forgetting_which_function_to_use(
+    tmp_path: Path,
+):
+    """A release path must not accept a payload it cannot attribute to a proof.
+
+    export_unlock validates only that the payload hashes to the expected
+    commitment, which derive_setup_payload satisfies from setup entropy alone.
+    That made the proof-gated path optional: a caller could publish a forged
+    ACK simply by calling the wrong function. It now refuses unless the caller
+    states that this is not a release path.
+    """
+
+    payload, commitment = _setup()
+    exporter = StrataAckExporter(tmp_path)
+
+    with pytest.raises(StrataExportError, match="export_ack_from_verified_unlock"):
+        exporter.export_unlock(
+            payload=payload, context=_context(), expected_commitment=commitment
+        )
+    assert not any(tmp_path.glob("*.preimage")), "nothing may be published"
