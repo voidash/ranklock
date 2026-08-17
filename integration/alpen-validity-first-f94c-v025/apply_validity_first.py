@@ -864,6 +864,10 @@ TOUCHED_RUST_FILES = (
     # and patch_base_p2p_address_collision.
     "crates/common/src/logging.rs",
     "crates/p2p-service/src/tests/common.rs",
+    # P4 witness check, applied from pending/p4-complete.diff.
+    "crates/bridge-sm/src/graph/events.rs",
+    "crates/bridge-sm/src/graph/tests/mod.rs",
+    "crates/bridge-sm/src/graph/tests/contested/process_counterproof_ack.rs",
 )
 
 
@@ -1143,6 +1147,50 @@ def patch_base_logging_defect(repo: Path, dry_run: bool) -> None:
             "close the once-guard",
         ),
     ], dry_run)
+
+
+def patch_p4_ack_witness_check(repo: Path, dry_run: bool) -> None:
+    """Verify the ACK witness, not merely its txid.  See threat model P4.
+
+    NOT WIRED INTO ``main`` YET -- see pending/README.md.  Five of the six
+    files apply cleanly after ``format_touched``; ``tx_classifier.rs`` does
+    not, because the shipped diff was generated from a tree whose formatting
+    differs from the installer's intermediate state.  Regenerate the diff
+    against a freshly installed-and-formatted clone before wiring this in.
+    Leaving it wired would abort every install.
+
+    Under BIP141 a txid does not commit to the witness, so comparing
+    ``event.counterproof_ack_txid`` could not establish that the ACK leaf was
+    the leaf actually executed: a transaction carrying the expected txid but
+    spending via another path was accepted as an ACK.  The ACK event did not
+    even carry the transaction -- its sibling ``CounterProofConfirmedEvent``
+    does -- so the check could not be written at the comparison site.
+
+    This delta is applied from a shipped diff rather than from string anchors,
+    unlike every other function here.  It touches six files and roughly 680
+    lines, and hand-transcribing that many anchors is a worse risk than the
+    loss of anchor-level granularity.  The check-then-apply contract is
+    preserved: ``git apply --check`` is a real preflight and fails for the
+    same reasons a missing anchor would.
+
+    Also corrects a test-fixture defect the check exposed.  ``ack_preimage_hash``
+    is sourced from ``wt_fault_pubkeys``, the field the ACK commitment was
+    migrated into, and bridge-sm's ``TEST_FAULT_PUBKEYS`` filled it with
+    ``generate_xonly_pubkey()``.  No preimage exists for a random 32-byte
+    value, so those fixtures had never modelled a real ACK spend -- only a
+    txid and a commitment nobody held the preimage for.  Test commitments are
+    now ``sha256(preimage)``, rejection-sampled to a valid x-only encoding,
+    matching what the tx-graph signer already did.
+    """
+
+    diff = HERE / "pending" / "p4-complete.diff"
+    if not diff.is_file():
+        raise SystemExit(f"missing P4 diff: {diff}")
+
+    # --check is the preflight; it refuses on any context mismatch.
+    run(repo, "git", "apply", "--check", str(diff))
+    if not dry_run:
+        run(repo, "git", "apply", str(diff))
 
 
 def patch_base_p2p_address_collision(repo: Path, dry_run: bool) -> None:

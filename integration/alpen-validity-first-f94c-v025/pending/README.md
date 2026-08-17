@@ -53,7 +53,31 @@ The negative test `an_ack_txid_without_the_committed_preimage_is_rejected`
 strips the witness while keeping the txid and asserts rejection, so the check
 is demonstrated to fire rather than merely to be present.
 
-### Porting checklist
+### Porting: attempted, one file short
+
+The installer now carries `patch_p4_ack_witness_check`, but it is **not wired
+into `main`**, deliberately. Wiring it in as-is aborts every install.
+
+What was learned:
+
+- The delta must run **after** `format_touched`, not alongside the
+  anchor-based edits. The diff was generated from a formatted tree, so its
+  context only matches once the earlier edits are normalised. Applied
+  mid-stream, four of six files failed.
+- Moved after formatting, five of six apply. `tx_classifier.rs` still fails
+  at hunk `:12` -- the source tree it was generated from
+  (`work/strata-p2pverify`) has accumulated formatting that differs from the
+  installer's own output.
+
+**The fix is one cycle:** install onto a pristine clone, let it format, apply
+the P4 changes to *that* tree, regenerate `p4-complete.diff` from it, then
+wire the call in after `format_touched` and re-verify. Do not regenerate from
+`strata-p2pverify`; that is what produced the mismatch.
+
+Remember to raise `EXPECTED_CHANGED_FILES` to 32 and the description string
+when it lands (it was set back to 29 when this was unwired).
+
+### Original porting checklist
 
 1. Add `patch_p4_ack_witness_check` to the installer, following
    `patch_base_logging_defect` as the model for a labelled delta.
