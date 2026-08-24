@@ -1,5 +1,115 @@
 # Claims and Evidence Policy
 
+## v0.26 funds-safety research claim boundary
+
+### Supported
+
+- “The deployed v0.25 validity-first graph is unsafe under one shared N-of-N
+  release withholder; an executable Rust analyzer produces the owner-payout/no-
+  slash counterexample.”
+- “An EXACT Python model checks the strict shared-selection value/conflict
+  topology and remains non-authorizing.”
+- “The same abstract model enumerates five maximal local traces and seven
+  semantic worlds for its two-alternative fixture, binds both no-ACK worlds to
+  the same timeout trace, and assigns every counterproof reserve in every
+  branch without calling that a protected-value theorem.”
+- “A side-by-side Rust research slice implements typed `C/P/S/R/L`
+  connectors, six exact transaction templates, and a private-field
+  `V026Graph` assembler with an independently reconstructed transaction
+  projection and spender matrix.”
+- “Six real Bitcoin Core cases independently accept both counterproof
+  alternatives, the mature owner branch, ACK, first-valid CSV timeout, and an
+  ACK-descended Slash; reproduce their intended shared-input conflicts; and
+  show that the measured 10,690-WU counterproof requires a confirmed Contest
+  parent under the tested v3 policy.”
+- “A valid competing live-key stake spend is accepted and prevents Slash;
+  stake exclusivity is not established.”
+- “The assembler retains sixteen activation blockers and always reports
+  `funding_eligible = false`.”
+- “The frozen `StructurallyVerifiedFundingBlockedV1` observation remains
+  byte-compatible for the historical fifteen-blocker profile. A separate
+  `StructurallyVerifiedFundingBlockedV2` lane persists the current exact
+  sixteen-blocker set and local txid manifest; neither exposes active admission.
+  Their codecs and pure replay/conflict classifiers are reproduced, while live
+  FoundationDB execution is unverified.”
+- “The threshold-v3 graph and its live admission path each carry seventeen
+  activation blockers — the sixteen-blocker set plus
+  `threshold-ack-witness-adoption-unimplemented`.”
+- “A separate `V026AdmissionRowSpecV3` lane persists the seventeen-blocker
+  observation in its own FoundationDB subspace, keyed by the content-derived
+  funded-setup digest rather than a `GraphIdx`. The frozen fifteen-blocker V1
+  and sixteen-blocker V2 bytes are unchanged and are not read by the V3
+  decoder, which refuses every other envelope version. Its codec, key packing,
+  and fail-closed negatives are reproduced. The row is inert and exposes no
+  active admission.”
+- “The V3 observation read path executes against a real FoundationDB: the
+  `v026_admissions_v3` subspace opens, the 32-byte digest key addresses a row,
+  and an absent key returns `None`. The complete `strata-bridge-db` suite passes
+  live at 69 tests under the default parallel harness, reproduced across
+  repeated runs. No v0.26 observation of any version has been
+  durably written and read back live, because no test constructs a
+  `StructurallyVerifiedFundingBlocked*`; the V1, V2 and V3 observation tests
+  remain pure codec and classifier tests. See
+  `61_LOCAL_FOUNDATIONDB_FOR_V026_ROW_TESTS.md`.”
+- “The subject-bound counterproof research slice pins a versioned SP1 verifier,
+  binds the receipt to the exact BridgeProof transaction id, and exposes a
+  non-serializable, non-cloneable, point-in-time Bitcoin Core confirmation
+  capability. Two real-Core regressions cover mempool/depth/reorg rejection and
+  same-txid/different-witness rejection.”
+- “One valid production Groth16 receipt exists. A fulfilled Succinct reserved
+  request was recovered offline, imported without a host round trip, and
+  verified by `SubjectBoundSp1Groth16VerifierV1` against the pinned program id
+  and SP1 circuit version `v6.1.0`. The receipt is persisted and re-verifies on
+  reload. No runtime path consumes it and funding remains disabled.”
+- “A fail-closed executor helper compares every receipt-authenticated ACK field
+  and the witness-stripped finalized transaction, rechecks Bitcoin before and
+  after selected-commitment witness CAS, accepts only exact create/replay, and
+  rejects conflicts. Two pure regressions cover binding and outcome handling;
+  no valid receipt exercises the composed path and no runtime duty enforces it.”
+
+### Not supported
+
+Do not say:
+
+- “RankLock v0.26 is safe for funds.”
+- “The v0.26 graph is integrated into runtime admission, P2P, persistence, or
+  bridge duties.”
+- “The research NUMS roles or output indices are the canonical wire profile.”
+- “All exact graph signatures were presigned and one honest share, nonce tree,
+  derivation path, and every backup were erased.”
+- “Stake is exclusively reserved, the Slash-v2 ASM profile is activated, or
+  fee-package/reorg liveness is qualified.”
+- “The valid-plus-withholding and invalid-plus-absent timeout worlds have been
+  economically reconciled.”
+- “Local pairwise conflicts prove terminal wealth preservation.”
+- “`AbstractDeclaredPolicySatisfiedV1` is a protected-value theorem.” It is
+  only a result over caller-declared policy inputs, always carries four
+  qualification blockers, and cannot authorize funds.
+- “The subject-bound counterproof is positively verified end to end.” A valid
+  production receipt now verifies standalone, which closes only the
+  deterministic final Groth16 execution/verification evidence gate. Runtime
+  consumption, canonical-chain binding, economic qualification, and ceremony
+  remain open, so end-to-end verification is not established.
+- “The threshold runtime consumes the canonical-chain confirmation capability.”
+  No release, ACK, admission, P2P, or funding path consumes it.
+- “The confirmed ACK CAS helper is the only way to write an ACK witness.” The
+  lower-level store remains independently callable and its durable row is an
+  inert value, not receipt or chain authority.
+- “Receipt verification plus chain confirmation is sufficient to fund.” Setup
+  authority, versioned runtime integration, deterministic final proof
+  qualification, presign/erasure, and the remaining graph/economic blockers
+  are still open.
+
+### Required wording
+
+Call `results/v026_timeout_economics.json` **EXACT abstract graph and terminal-policy evidence** and
+`results/v026_rust_graph_core.json` **REPRODUCED research graph/Core evidence**.
+Call `results/v026_threshold_graph_v3_admission_gap.json` **REPRODUCED
+threshold-v3 blocker and persistence-gap evidence**, and
+`results/v026_subject_bound_sp1_network_receipt_recovery.json` **EXACT
+network-receipt recovery evidence**. State that all four are non-authorizing and
+that safe-for-funds remains false.
+
 ## v0.22 current claim boundary
 
 ### Supported

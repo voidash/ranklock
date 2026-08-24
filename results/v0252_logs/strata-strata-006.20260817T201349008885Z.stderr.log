@@ -1,0 +1,7 @@
+   Compiling algebra v0.1.0 (/private/tmp/ranklock-strata-v0252.YIEMqs/matrix/crates/algebra)
+   Compiling strata-bridge-common v0.1.0 (/private/tmp/ranklock-strata-v0252.YIEMqs/matrix/crates/common)
+   Compiling strata-bridge-primitives v0.1.0 (/private/tmp/ranklock-strata-v0252.YIEMqs/matrix/crates/primitives)
+   Compiling strata-bridge-test-utils v0.1.0 (/private/tmp/ranklock-strata-v0252.YIEMqs/matrix/crates/test-utils)
+   Compiling strata-bridge-connectors v0.1.0 (/private/tmp/ranklock-strata-v0252.YIEMqs/matrix/crates/connectors)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.68s
+     Running unittests src/lib.rs (/Users/cdjk/github/llm/ranklock/tmp/strata-nack-audit.RGdFw5/target/debug/deps/strata_bridge_connectors-7a3ec263f47b24ac)

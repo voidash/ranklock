@@ -1,0 +1,1253 @@
+
+running 28 tests
+test monoid::tests::concat_is_fold_map_identity ... ok
+test monoid::tests::vec_monoid_laws ... ok
+test predicate::tests::test_pred_eq ... ok
+test predicate::tests::test_pred_gt ... ok
+test predicate::tests::test_pred_gte ... ok
+test predicate::tests::test_pred_lt ... ok
+test predicate::tests::test_pred_lte ... ok
+test predicate::tests::test_pred_neq ... ok
+test req::tests::test_req_basic_usage ... ok
+test req::tests::test_req_dispatch ... ok
+test req::tests::test_req_dropped_receiver ... ok
+test req::tests::test_req_future_wrapper ... ok
+test req::tests::test_req_input_access ... ok
+test req::tests::test_req_into_input ... ok
+test req::tests::test_req_into_input_output ... ok
+test retry::tests::test_error_classification ... ok
+test retry::tests::test_exponential_backoff ... ok
+test retry::tests::test_fixed_delay_strategy ... ok
+test retry::tests::test_max_retries ... ok
+test retry::tests::test_retry_function_combinator ... ok
+test retry::tests::test_strategy_or_combinator ... ok
+test semigroup::tests::option_semigroup_laws ... ok
+test semigroup::tests::result_semigroup_laws ... ok
+test semigroup::tests::sconcat_base_case ... ok
+test semigroup::tests::sconcat_merge_homomorphism ... ok
+test semigroup::tests::unit_semigroup_laws ... ok
+test semigroup::tests::vec_semigroup_laws ... ok
+test state_machine::state_machine_tests::test_sm ... ok
+
+test result: ok. 28 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.20s
+
+
+running 34 tests
+test client::e2e_tests::all_matched_transactions_delivered ... ok
+test client::e2e_tests::basic_subscribe_blocks_functionality ... ok
+test client::e2e_tests::basic_subscribe_transactions_functionality ... ok
+test client::e2e_tests::blocks_are_contiguous ... ok
+test client::e2e_tests::chain_reorg_backfills_replacement_parent_before_later_child ... ok
+test client::e2e_tests::dropped_block_subscriptions_pruned ... ok
+test client::e2e_tests::dropped_tx_subscriptions_pruned ... ok
+test client::e2e_tests::exactly_one_mined_status_per_block ... ok
+test client::e2e_tests::mined_txs_eventually_buried ... ok
+test client::e2e_tests::multiple_subscribers_receive_same_events ... ok
+test client::e2e_tests::only_matched_transactions_delivered ... ok
+test client::tests::backfills_missing_block_after_reorg_disconnect_rolls_back_state_tip ... ok
+test client::tests::disconnecting_only_tracked_block_backfills_replacement_before_child ... ok
+test client::tests::disconnecting_only_tracked_block_rewinds_cursor_for_replacement_block ... ok
+test client::tests::state_tip_realignment_does_not_backfill_before_start_height ... ok
+test state_machine::prop_tests::all_matched_transactions_in_diffs ... ok
+test state_machine::prop_tests::arb_block_has_height ... ok
+test state_machine::prop_tests::block_disconnect_drops_all_transactions ... ok
+test state_machine::prop_tests::block_disconnect_inverts_block ... ok
+test state_machine::prop_tests::duplicate_reorg_reacceptance_before_rawtx_stays_pending ... ok
+test state_machine::prop_tests::filter_rm_inverts_add ... ok
+test state_machine::prop_tests::lone_process_tx_yields_empty_diff ... ok
+test state_machine::prop_tests::mempool_removal_inverts_acceptance ... ok
+test state_machine::prop_tests::only_matched_transactions_in_diffs ... ok
+test state_machine::prop_tests::repeated_seq_before_tx_yields_one_mempool ... ok
+test state_machine::prop_tests::seq_and_tx_make_mempool ... ok
+test state_machine::prop_tests::seq_tx_commutativity ... ok
+test state_machine::prop_tests::transactions_eventually_buried ... ok
+test state_machine::prop_tests::tx_after_block_idempotence ... ok
+test state_machine::prop_tests::tx_block_commutativity ... ok
+test tx_driver::e2e_tests::tx_drive_idempotence ... ok
+test tx_driver::e2e_tests::tx_drive_mempool ... ok
+test tx_driver::e2e_tests::tx_drive_op_return_burn ... ok
+test tx_driver::tests::broadcast_options_use_largest_op_return_burn ... ok
+
+test result: ok. 34 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 257.33s
+
+
+running 2 tests
+test handlers::defcon::tests::defcon1_signature_verifies_against_derived_council_key ... ok
+test handlers::defcon::tests::defcon1_signature_verifies_for_fixture_operator_0 ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 9 tests
+test create_reserved_utxos_can_include_unconfirmed_general_utxos_when_allowed ... ok
+test create_reserved_utxos_excludes_unconfirmed_when_confirmed_funds_are_available ... ok
+test create_reserved_utxos_funds_pool_and_leases_inputs ... ok
+test create_reserved_utxos_reports_only_unconfirmed_general_utxos ... ok
+test lease_release_are_idempotent_and_additive ... ok
+test refill_workflow_skips_existing_pool_members ... ok
+test reserve_utxo_with_value_filters_by_value ... ok
+test reserve_utxo_with_value_picks_and_leases_one ... ok
+test sync_prunes_leases_whose_outpoints_have_been_spent ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 76.44s
+
+
+running 10 tests
+test observability::tests::enabled_label_uses_bounded_values ... ok
+test observability::tests::metrics_exporter_label_reports_effective_exporters ... ok
+test seeded_impl::musig2::tests::distinct_sighash_yields_distinct_pubnonce ... ok
+test seeded_impl::musig2::tests::distinct_tweak_yields_distinct_pubnonce ... ok
+test seeded_impl::musig2::tests::identical_params_yield_identical_pubnonce ... ok
+test tests::musig2 ... ok
+test tests::p2p ... ok
+test tests::preimg ... ok
+test tests::schnorr_signers ... ok
+test tests::schnorr_signers_with_key_tweak ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.53s
+
+
+running 1 test
+test tests::should_reconnect_classifies_errors ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 40 tests
+test config::tests::test_config_serde_toml ... ok
+test health::tests::aggregate_status_prioritizes_unhealthy_then_degraded ... ok
+test health::tests::asm_rpc_and_assignment_feed_health_are_independent ... ok
+test health::tests::health_http_layer_passes_through_non_health_requests ... ok
+test health::tests::health_http_layer_rejects_non_get_health_requests ... ok
+test health::tests::health_http_layer_returns_200_for_degraded_snapshot ... ok
+test health::tests::health_http_layer_returns_503_for_unhealthy_snapshot ... ok
+test health::tests::health_status_maps_to_infra_http_status ... ok
+test health::tests::new_registry_starts_unhealthy_for_all_components ... ok
+test health::tests::ok_update_records_last_success_and_degraded_preserves_it ... ok
+test health::tests::snapshot_serializes_last_success_time_field ... ok
+test health::tests::stale_check_preserves_fresh_component_and_marks_missing_success_unhealthy ... ok
+test mode::rpc_server::tests::da::stake_aggregate_signatures_response_returns_none_before_signing ... ok
+test mode::rpc_server::tests::da::stake_aggregate_signatures_response_returns_packed_signatures ... ok
+test mode::rpc_server::tests::da::stake_data_response_returns_none_before_stake_data_arrives ... ok
+test mode::rpc_server::tests::da::stake_data_response_returns_stake_data_after_generation ... ok
+test mode::rpc_server::tests::monitoring::active_claim_from_state_returns_contested_phase ... ok
+test mode::rpc_server::tests::monitoring::active_claim_from_state_returns_fulfilled_claim_in_claimed_state ... ok
+test mode::rpc_server::tests::monitoring::active_claim_from_state_returns_none_before_claim ... ok
+test mode::rpc_server::tests::monitoring::active_claim_from_state_returns_unfulfilled_claim_in_claimed_state ... ok
+test mode::rpc_server::tests::monitoring::aggregate_signatures_response_returns_hex_signatures_for_matching_claim ... ok
+test mode::rpc_server::tests::monitoring::aggregate_signatures_response_returns_none_before_graph_is_signed ... ok
+test mode::rpc_server::tests::monitoring::bridge_duties_for_deposit_reports_each_deposit_state ... ok
+test mode::rpc_server::tests::monitoring::bridge_duties_for_operator_pk_does_not_overproduce_deposit_duties ... ok
+test mode::rpc_server::tests::monitoring::bridge_duties_for_operator_pk_filters_deposit_duties_by_each_operator_table ... ok
+test mode::rpc_server::tests::monitoring::duty_applies_to_operator_matches_withdrawal_assignee ... ok
+test mode::rpc_server::tests::monitoring::graph_data_response_returns_graph_data_for_matching_claim ... ok
+test mode::rpc_server::tests::monitoring::graph_data_response_returns_none_before_graph_is_generated ... ok
+test mode::rpc_server::tests::monitoring::reimbursement_operator_uses_terminal_spent_assignee_without_marking_it_pending ... ok
+test mode::rpc_server::tests::monitoring::reimbursement_status_reports_each_graph_state ... ok
+test mode::rpc_server::tests::monitoring::withdrawal_status_reports_each_deposit_state ... ok
+test mode::services::startup_checks::tests::each_mismatched_field_fails_with_its_label ... ok
+test mode::services::startup_checks::tests::matching_params_pass ... ok
+test mode::services::startup_checks::tests::missing_bridge_subprotocol_fails ... ok
+test mode::services::startup_checks::tests::mosaic_must_return_exactly_one_circuit ... ok
+test mode::services::startup_checks::tests::native_vkey_matches_zeroed_mosaic_vkey ... ok
+test mode::services::startup_checks::tests::native_vkey_rejects_nonzero_mosaic_vkey ... ok
+test mode::services::startup_checks::tests::withdrawal_fulfillment_window_must_be_less_than_assignment_duration ... ok
+test observability::tests::enabled_label_uses_bounded_values ... ok
+test observability::tests::metrics_exporter_label_reports_effective_exporters ... ok
+
+test result: ok. 40 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.19s
+
+
+running 3 tests
+test client::tests::assignment_delivery_survives_safe_harbour_fetch_failure ... ok
+test client::tests::safe_harbour_delivery_survives_assignment_fetch_failure ... ok
+test client::tests::total_fetch_failure_publishes_nothing_and_recovers ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+
+running 7 tests
+test params::tests::params_reject_admin_threshold_above_pubkey_count ... ok
+test params::tests::params_reject_duplicate_admin_pubkey ... ok
+test params::tests::params_reject_empty_admin_pubkeys ... ok
+test params::tests::params_reject_invalid_admin_pubkey ... ok
+test params::tests::params_reject_malformed_admin_pubkey ... ok
+test params::tests::params_reject_zero_admin_threshold ... ok
+test params::tests::test_params_serde_toml ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+
+running 27 tests
+test claim_contest::tests::contested_spend ... ok
+test claim_contest::tests::uncontested_spend ... ok
+test claim_payout::tests::admin_burn_spend_1_of_1 ... ok
+test claim_payout::tests::admin_burn_spend_1_of_3 ... ok
+test claim_payout::tests::admin_burn_spend_2_of_3 ... ok
+test claim_payout::tests::admin_burn_spend_3_of_3 ... ok
+test claim_payout::tests::admin_burn_witness_ignores_duplicate_indices ... ok
+test claim_payout::tests::admin_burn_witness_ignores_out_of_bounds_indices ... ok
+test claim_payout::tests::admin_burn_witness_rejects_below_threshold_signatures - should panic ... ok
+test claim_payout::tests::admin_burn_witness_truncates_surplus_indexed_signatures ... ok
+test claim_payout::tests::connector_rejects_duplicate_admin_pubkeys - should panic ... ok
+test claim_payout::tests::payout_spend ... ok
+test claim_payout::tests::unstaking_burn_spend ... ok
+test contest_counterproof::tests::counterproof_spend ... ok
+test keyed_anchor::tests::keyed_anchor_spend ... ok
+test multi_anchor::tests::multi_anchor_spend_first ... ok
+test multi_anchor::tests::multi_anchor_spend_last ... ok
+test n_of_n::tests::n_of_n_spend ... ok
+test timelocked::tests::normal_spend ... ok
+test timelocked::tests::timeout_spend ... ok
+test unstaking_intent::tests::unstaking_intent_spend ... ok
+test validity_first_counterproof::tests::alternate_context_preimage_is_rejected_by_core ... ok
+test validity_first_counterproof::tests::exact_message_signature_replay_is_rejected_by_core ... ok
+test validity_first_counterproof::tests::immediate_ack_spend ... ok
+test validity_first_counterproof::tests::malformed_positive_unlock_is_rejected_by_core ... ok
+test validity_first_counterproof::tests::preimage_commitment_is_exact ... ok
+test validity_first_counterproof::tests::timeout_nack_spend ... ok
+
+test result: ok. 27 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 201.94s
+
+
+running 33 tests
+test statements::tests::commits_to_different_game_does_not_overflow_on_max_deposit_idx ... ok
+test statements::tests::commits_to_different_game_flags_mismatched_deposit ... ok
+test statements::tests::commits_to_different_game_is_false_for_undecodable_output ... ok
+test statements::tests::extract_bridge_proof_correct_format ... ok
+test statements::tests::extract_bridge_proof_malformed ... ok
+test statements::tests::heavier_chain::counterproof_invalid_if_bridge_proof_malformed - should panic ... ok
+test statements::tests::heavier_chain::counterproof_invalid_if_claim_unlock_same - should panic ... ok
+test statements::tests::heavier_chain::counterproof_invalid_if_heavier_claim_unlock_malformed - should panic ... ok
+test statements::tests::heavier_chain::counterproof_invalid_if_heavier_genesis_state_forged - should panic ... ok
+test statements::tests::heavier_chain::counterproof_invalid_if_heavier_moho_proof_invalid - should panic ... ok
+test statements::tests::heavier_chain::counterproof_invalid_if_inclusion_proof_invalid - should panic ... ok
+test statements::tests::heavier_chain::counterproof_invalid_if_mmr_different - should panic ... ok
+test statements::tests::heavier_chain::counterproof_invalid_if_not_enough_pow - should panic ... ok
+test statements::tests::heavier_chain::counterproof_valid_if_bridge_proof_tx_malformed ... ok
+test statements::tests::heavier_chain::counterproof_valid_if_heavier_chain_is_valid ... ok
+test statements::tests::heavier_chain::counterproof_valid_if_mmr_out_of_bounds ... ok
+test statements::tests::input_sanitization::counterproof_invalid_if_bridge_proof_tx_invalid_encoding - should panic ... ok
+test statements::tests::input_sanitization::counterproof_invalid_if_game_index_zero - should panic ... ok
+test statements::tests::input_sanitization::counterproof_invalid_if_prevouts_invalid_length - should panic ... ok
+test statements::tests::invalid_bridge_proof::counterproof_invalid_if_bridge_proof_valid - should panic ... ok
+test statements::tests::invalid_bridge_proof::counterproof_valid_if_bridge_proof_commits_to_different_game ... ok
+test statements::tests::invalid_bridge_proof::counterproof_valid_if_bridge_proof_invalid ... ok
+test statements::tests::invalid_bridge_proof::counterproof_valid_if_bridge_proof_tx_malformed ... ok
+test statements::tests::leq_little_endian_compares_pow_as_little_endian_integers ... ok
+test statements::tests::op_return_shape_determines_payload ... ok
+test statements::tests::verify_operator_signature_accepts_canonical_signed_tx ... ok
+test statements::tests::verify_operator_signature_rejects_empty_witness - should panic ... ok
+test statements::tests::verify_operator_signature_rejects_malformed_witness - should panic ... ok
+test statements::tests::verify_operator_signature_rejects_tampered_tx - should panic ... ok
+test statements::tests::verify_operator_signature_rejects_wrong_game_idx - should panic ... ok
+test statements::tests::verify_operator_signature_rejects_wrong_n_of_n_pubkey - should panic ... ok
+test statements::tests::verify_operator_signature_rejects_wrong_operator_pubkey - should panic ... ok
+test statements::tests::verify_operator_signature_rejects_wrong_proof_timelock - should panic ... ok
+
+test result: ok. 33 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.11s
+
+
+running 38 tests
+test fdb::bridge_db::tests::claim_funding_outpoint_get_or_set_is_idempotent ... ok
+test fdb::bridge_db::tests::claim_funding_outpoint_roundtrip ... ok
+test fdb::bridge_db::tests::delete_claim_funding_outpoint_roundtrip ... ok
+test fdb::bridge_db::tests::delete_deposit_cascade_test ... ok
+test fdb::bridge_db::tests::delete_deposit_state_roundtrip ... ok
+test fdb::bridge_db::tests::delete_graph_state_roundtrip ... ok
+test fdb::bridge_db::tests::delete_operator_cascade_test ... ok
+test fdb::bridge_db::tests::delete_stake_funding_reservation_roundtrip ... ok
+test fdb::bridge_db::tests::delete_stake_state_roundtrip ... ok
+test fdb::bridge_db::tests::delete_withdrawal_funding_outpoints_roundtrip ... ok
+test fdb::bridge_db::tests::deposit_state_roundtrip ... ok
+test fdb::bridge_db::tests::get_all_deposit_states_test ... ok
+test fdb::bridge_db::tests::get_all_funds_includes_stake_reservation_inputs ... ok
+test fdb::bridge_db::tests::get_all_funds_test ... ok
+test fdb::bridge_db::tests::get_all_graph_states_test ... ok
+test fdb::bridge_db::tests::get_all_stake_states_test ... ok
+test fdb::bridge_db::tests::graph_state_roundtrip ... ok
+test fdb::bridge_db::tests::persist_batch_deposit_only_test ... ok
+test fdb::bridge_db::tests::persist_batch_empty_test ... ok
+test fdb::bridge_db::tests::persist_batch_get_all_consistency_test ... ok
+test fdb::bridge_db::tests::persist_batch_graph_only_test ... ok
+test fdb::bridge_db::tests::persist_batch_multi_entry_test ... ok
+test fdb::bridge_db::tests::persist_batch_overwrite_test ... ok
+test fdb::bridge_db::tests::persist_batch_realistic_state_test ... ok
+test fdb::bridge_db::tests::persist_batch_test ... ok
+test fdb::bridge_db::tests::safe_harbour_roundtrip ... ok
+test fdb::bridge_db::tests::signature_roundtrip ... ok
+test fdb::bridge_db::tests::stake_funding_reservation_get_or_set_is_idempotent ... ok
+test fdb::bridge_db::tests::stake_funding_reservation_roundtrip ... ok
+test fdb::bridge_db::tests::stake_state_roundtrip ... ok
+test fdb::bridge_db::tests::withdrawal_funding_outpoints_get_or_set_is_idempotent ... ok
+test fdb::bridge_db::tests::withdrawal_funding_outpoints_roundtrip ... ok
+test fdb::row_spec::funds::tests::reservation_deserialize_empty_bytes_errors ... ok
+test fdb::row_spec::funds::tests::reservation_deserialize_trailing_bytes_errors ... ok
+test fdb::row_spec::funds::tests::reservation_deserialize_truncated_errors ... ok
+test fdb::row_spec::funds::tests::reservation_multi_input_roundtrip ... ok
+test fdb::row_spec::funds::tests::reservation_single_input_roundtrip ... ok
+test fdb::row_spec::safe_harbour::tests::safe_harbour_address_value_roundtrips_through_postcard ... ok
+
+test result: ok. 38 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 225.10s
+
+
+running 12 tests
+test chain::tests::is_outpoint_unspent_tracks_spending_tx_lifecycle ... ok
+test chain::tests::is_txid_onchain_returns_false_for_missing_and_true_for_mined_transactions ... ok
+test graph::common::tests::reconciliation_prunes_spent_inputs_and_releases_live_inputs ... ok
+test graph::common::tests::reconciliation_retains_input_leases_when_sync_fails ... ok
+test graph::common::tests::watchtower_order_uses_supplied_operator_table_snapshot ... ok
+test graph::counterproof::tests::claim_unlock_compute_hash_matches_raw_hash_of_codec_encoding ... ok
+test graph::counterproof::tests::counterproof_keys_use_supplied_operator_table_snapshot ... ok
+test graph::ranklock::tests::accepts_raw_and_hex ... ok
+test graph::ranklock::tests::rejects_malformed_values ... ok
+test graph::ranklock::tests::setup_and_unlock_names_bind_full_context ... ok
+test graph::unstaking_burn::tests::fee_estimate_matches_final_transaction_shape ... ok
+test graph::unstaking_burn::tests::select_funding_leases_utxo_that_can_fund_non_dust_output ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 25.90s
+
+
+running 3 tests
+test derive::tests::stakechain_preimage_derivation_binds_to_funding_outpoint ... ok
+test derive::tests::stakechain_preimage_derivation_is_deterministic ... ok
+test keys::tests::test_zeroize ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 135 tests
+test applicator::tests::applied_event_marks_sm_as_touched ... ok
+test applicator::tests::applied_graph_event_marks_sm_as_touched ... ok
+test applicator::tests::deposit_request_takeback_signal_aborts_all_deposit_graphs ... ok
+test applicator::tests::duplicate_event_is_ignored_non_fatally ... ok
+test applicator::tests::empty_batch_yields_no_duties_and_no_touched_sms ... ok
+test applicator::tests::insert_deposit_duplicate_does_not_record_duplicate ... ok
+test applicator::tests::insert_deposit_marks_sm_for_persistence_without_any_event ... ok
+test applicator::tests::insert_graph_marks_sm_for_persistence_without_any_event ... ok
+test applicator::tests::registry_reflects_settled_state_between_batches ... ok
+test applicator::tests::successive_batches_accumulate_touched_sms ... ok
+test applicator::tests::unknown_sm_id_is_fatal ... ok
+test events_classifier::drt::tests::candidate_accepts_aligned_drt ... ok
+test events_classifier::drt::tests::candidate_rejects_invalid_recovery_pubkey ... ok
+test events_classifier::drt::tests::candidate_rejects_malformed_aux ... ok
+test events_classifier::drt::tests::candidate_rejects_mismatched_internal_key ... ok
+test events_classifier::drt::tests::candidate_rejects_mismatched_recovery_delay ... ok
+test events_classifier::drt::tests::candidate_rejects_mismatched_recovery_pk_in_script ... ok
+test events_classifier::drt::tests::candidate_rejects_output_value_below_required ... ok
+test events_classifier::drt::tests::envelope_accepts_aligned_drt ... ok
+test events_classifier::drt::tests::envelope_rejects_non_op_return_first_output ... ok
+test events_classifier::drt::tests::envelope_rejects_tx_without_sps50 ... ok
+test events_classifier::drt::tests::envelope_rejects_wrong_magic ... ok
+test events_classifier::drt::tests::envelope_rejects_wrong_subproto ... ok
+test events_classifier::drt::tests::envelope_rejects_wrong_tx_type ... ok
+test events_classifier::offchain::tests::classify_assignment_correct_fields ... ok
+test events_classifier::offchain::tests::classify_assignment_deposit_matching ... ok
+test events_classifier::offchain::tests::classify_assignment_deposit_no_match ... ok
+test events_classifier::offchain::tests::classify_assignment_graph_matching ... ok
+test events_classifier::offchain::tests::classify_assignment_graph_no_match ... ok
+test events_classifier::offchain::tests::classify_block_returns_none ... ok
+test events_classifier::offchain::tests::classify_graph_data_accepts_matching_sender ... ok
+test events_classifier::offchain::tests::classify_graph_data_rejects_sender_operator_mismatch ... ok
+test events_classifier::offchain::tests::classify_graph_data_rejects_unknown_sender ... ok
+test events_classifier::offchain::tests::classify_nag_tick_existing_deposit_returns_nag_tick_event ... ok
+test events_classifier::offchain::tests::classify_nag_tick_existing_graph_returns_nag_tick_event ... ok
+test events_classifier::offchain::tests::classify_nag_tick_missing_deposit_returns_none ... ok
+test events_classifier::offchain::tests::classify_nag_tick_missing_graph_returns_none ... ok
+test events_classifier::offchain::tests::classify_payout_descriptor_accepts_matching_sender_and_idx ... ok
+test events_classifier::offchain::tests::classify_payout_descriptor_rejects_sender_idx_mismatch ... ok
+test events_classifier::offchain::tests::classify_payout_descriptor_rejects_unknown_sender ... ok
+test events_classifier::offchain::tests::classify_retry_tick_existing_deposit_returns_retry_tick_event ... ok
+test events_classifier::offchain::tests::classify_retry_tick_existing_graph_returns_retry_tick_event ... ok
+test events_classifier::offchain::tests::classify_retry_tick_missing_deposit_returns_none ... ok
+test events_classifier::offchain::tests::classify_retry_tick_missing_graph_returns_none ... ok
+test events_classifier::offchain::tests::classify_shutdown_returns_none ... ok
+test events_classifier::offchain::tests::nag_request_tests::classify_graph_nag_request_addressed_to_pov_creates_graph_event ... ok
+test events_classifier::offchain::tests::nag_request_tests::classify_graph_nag_request_not_addressed_to_pov_drops ... ok
+test events_classifier::offchain::tests::nag_request_tests::classify_graph_nag_request_unknown_sender_drops ... ok
+test events_classifier::offchain::tests::nag_request_tests::classify_nag_request_addressed_to_pov_creates_event ... ok
+test events_classifier::offchain::tests::nag_request_tests::classify_nag_request_missing_sm_panics_unreachable_via_router - should panic ... ok
+test events_classifier::offchain::tests::nag_request_tests::classify_nag_request_not_addressed_to_pov_drops ... ok
+test events_classifier::offchain::tests::nag_request_tests::classify_nag_request_unknown_sender_drops ... ok
+test events_classifier::offchain::tests::nag_request_tests::classify_stake_nag_request_addressed_to_pov_creates_stake_event ... ok
+test events_classifier::onchain::tests::new_block_events_correct_height ... ok
+test events_classifier::onchain::tests::new_block_events_deposits_only ... ok
+test events_classifier::onchain::tests::new_block_events_empty_ids ... ok
+test events_classifier::onchain::tests::new_block_events_graphs_only ... ok
+test events_classifier::onchain::tests::new_block_events_mixed ... ok
+test events_classifier::onchain::tests::new_block_events_stakes_only ... ok
+test events_classifier::onchain::tests::try_register_deposit_registers_dsm_for_aligned_drt ... ok
+test events_classifier::onchain::tests::try_register_deposit_silent_on_validate_rejection ... ok
+test events_classifier::onchain::tests::try_register_deposit_silent_when_stakes_not_ready ... ok
+test events_mux::tests::asm_state_events_inactive_safe_harbour_carries_no_address ... ok
+test events_mux::tests::asm_state_events_orders_active_safe_harbour_before_assignment ... ok
+test events_mux::tests::asm_state_events_without_safe_harbour_yields_only_assignment ... ok
+test events_mux::tests::decode_gossip_message_rejects_invalid_inner_signature ... ok
+test events_router::tests::route_assignment_deposit_and_graphs ... ok
+test events_router::tests::route_assignment_multiple_entries ... ok
+test events_router::tests::route_gossip_deposit_nag_known ... ok
+test events_router::tests::route_gossip_deposit_nonce_known ... ok
+test events_router::tests::route_gossip_deposit_nonce_unknown ... ok
+test events_router::tests::route_gossip_graph_nag_known ... ok
+test events_router::tests::route_gossip_graph_nag_unknown ... ok
+test events_router::tests::route_gossip_graph_nonce ... ok
+test events_router::tests::route_gossip_graph_nonce_unknown ... ok
+test events_router::tests::route_gossip_payout_descriptor ... ok
+test events_router::tests::route_nag_tick_returns_all_ids ... ok
+test events_router::tests::route_retry_tick_returns_all_ids ... ok
+test events_router::tests::route_tick_empty_registry ... ok
+test persister::tests::into_batches_empty_returns_empty ... ok
+test persister::tests::into_batches_preserves_all_sms ... ok
+test persister::tests::link_merges_two_groups ... ok
+test persister::tests::link_mixed_sm_types ... ok
+test persister::tests::link_same_group_is_noop ... ok
+test persister::tests::link_transitive_merge ... ok
+test persister::tests::link_unrecorded_source_auto_records ... ok
+test persister::tests::link_unrecorded_target_joins_source_group ... ok
+test persister::tests::record_creates_singleton_group ... ok
+test persister::tests::record_duplicate_is_noop ... ok
+test persister::tests::record_multiple_creates_separate_groups ... ok
+test signals_router::tests::cooperative_payout_failed_ignores_other_graphs ... ok
+test signals_router::tests::cooperative_payout_failed_no_matching_graph ... ok
+test signals_router::tests::cooperative_payout_failed_routes_to_specific_graph ... ok
+test signals_router::tests::deposit_request_taken_back_no_matching_deposit ... ok
+test signals_router::tests::deposit_request_taken_back_routes_to_all_graphs_for_deposit ... ok
+test signals_router::tests::graph_available_no_matching_deposit ... ok
+test signals_router::tests::graph_available_routes_to_deposit ... ok
+test sm_registry::tests::activate_safe_harbour_is_monotonic_first_write_wins ... ok
+test sm_registry::tests::activate_safe_harbour_latches_address ... ok
+test sm_registry::tests::active_operator_snapshot_errors_when_operator_missing_stake_sm ... ok
+test sm_registry::tests::active_operator_snapshot_errors_when_pov_is_not_active ... ok
+test sm_registry::tests::active_operator_snapshot_includes_only_confirmed_operators ... ok
+test sm_registry::tests::all_operators_have_staked_is_false_for_empty_registry ... ok
+test sm_registry::tests::all_operators_have_staked_is_false_for_fresh_bootstrap ... ok
+test sm_registry::tests::all_operators_have_staked_is_false_if_any_configured_operator_has_no_ssm ... ok
+test sm_registry::tests::all_operators_have_staked_is_false_if_any_operator_is_pre_confirmed ... ok
+test sm_registry::tests::all_operators_have_staked_is_true_once_every_operator_is_confirmed ... ok
+test sm_registry::tests::contains_id_false_for_missing ... ok
+test sm_registry::tests::contains_id_true_for_existing ... ok
+test sm_registry::tests::get_all_ids_both_types ... ok
+test sm_registry::tests::graph_cross_sm_context_does_not_use_different_operator_preimage ... ok
+test sm_registry::tests::graph_cross_sm_context_includes_owner_unstaking_preimage ... ok
+test sm_registry::tests::inapplicable_nag_received_maps_to_ignored_outcome ... ok
+test sm_registry::tests::insert_and_get_deposit ... ok
+test sm_registry::tests::insert_and_get_graph ... ok
+test sm_registry::tests::insert_deposit_duplicate_returns_error_and_preserves_original ... ok
+test sm_registry::tests::insert_graph_duplicate_returns_error_and_preserves_original ... ok
+test sm_registry::tests::is_operator_active_tracks_confirmed_state ... ok
+test sm_registry::tests::lookup_operator_missing_sm ... ok
+test sm_registry::tests::lookup_operator_peer_known ... ok
+test sm_registry::tests::lookup_operator_peer_unknown ... ok
+test sm_registry::tests::lookup_operator_pov ... ok
+test sm_registry::tests::new_registry_is_empty ... ok
+test sm_registry::tests::next_deposit_idx_empty_is_zero ... ok
+test sm_registry::tests::next_deposit_idx_non_empty_is_max_plus_one ... ok
+test sm_registry::tests::next_deposit_idx_overflow_errors ... ok
+test sm_registry::tests::next_deposit_idx_sparse_keys_returns_max_plus_one ... ok
+test sm_registry::tests::process_event_appends_graph_post_stf_duties_from_cross_sm_context ... ok
+test sm_registry::tests::process_event_sm_not_found ... ok
+test sm_registry::tests::process_event_type_mismatch ... ok
+test sm_registry::tests::safe_harbour_defaults_to_inactive ... ok
+test sm_registry::tests::sm_error_duplicate_maps_to_ignored_outcome ... ok
+test sm_registry::tests::sm_error_invalid_event_maps_to_fatal_process_error ... ok
+test sm_registry::tests::sm_error_rejected_maps_to_ignored_outcome ... ok
+test sm_registry::tests::stake_inputs_use_stake_vout_from_confirmed_txid ... ok
+
+test result: ok. 135 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.78s
+
+
+running 4 tests
+test config::tests::new_with_secret_key_works ... ok
+test tests::allowlist::bootstrap_enforces_transport_allowlist ... ok
+test tests::gossipsub::dispatch_all_message_types ... ok
+test tests::gossipsub::dispatch_direct_peer ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 14.07s
+
+
+running 45 tests
+test bitcoin::tests::partial_signature_roundtrip ... ok
+test bitcoin::tests::partial_signature_to_bytes ... ok
+test bitcoin::tests::proptests::partial_signature_rkyv_roundtrip ... ok
+test bitcoin::tests::proptests::pubnonce_rkyv_roundtrip ... ok
+test bitcoin::tests::pubnonce_roundtrip ... ok
+test bitcoin::tests::pubnonce_to_bytes ... ok
+test descriptor::tests::display_invalid_descriptor_shows_byte_count ... ok
+test descriptor::tests::empty_descriptor ... ok
+test descriptor::tests::new_and_content_bytes ... ok
+test descriptor::tests::proptests::payout_descriptor_json_roundtrip ... ok
+test descriptor::tests::proptests::payout_descriptor_rkyv_roundtrip ... ok
+test descriptor::tests::valid_op_return_descriptor_roundtrip ... ok
+test descriptor::tests::valid_p2tr_descriptor_roundtrip ... ok
+test descriptor::tests::valid_p2wpkh_descriptor_roundtrip ... ok
+test graph_data::tests::graph_data_rkyv_roundtrip ... ok
+test messages::tests::empty_nonces_graph ... ok
+test messages::tests::empty_nonces_unstake ... ok
+test messages::tests::empty_partials_graph ... ok
+test messages::tests::empty_partials_unstake ... ok
+test messages::tests::gossipsub_msg_content_bytes_delegates_to_unsigned ... ok
+test messages::tests::musig2_nonce_deposit_serializes_correctly ... ok
+test messages::tests::musig2_nonce_graph_serializes_multiple_nonces ... ok
+test messages::tests::musig2_nonce_unstake_serializes_multiple_nonces ... ok
+test messages::tests::musig2_nonce_variant_discriminators_are_stable ... ok
+test messages::tests::musig2_partial_graph_serializes_multiple_partials ... ok
+test messages::tests::musig2_partial_unstake_serializes_multiple_partials ... ok
+test messages::tests::musig2_partial_variant_discriminators_are_stable ... ok
+test messages::tests::nag_payload_deposit_nonce_serializes_correctly ... ok
+test messages::tests::nag_payload_graph_content_bytes_stability ... ok
+test messages::tests::nag_payload_unstaking_content_bytes_stability ... ok
+test messages::tests::nag_request_payload_variant_discriminators_are_stable ... ok
+test messages::tests::nag_request_serializes_correctly ... ok
+test messages::tests::proptests::musig2_nonce_rkyv_roundtrip ... ok
+test messages::tests::proptests::musig2_partial_rkyv_roundtrip ... ok
+test messages::tests::proptests::nag_request_payload_rkyv_roundtrip ... ok
+test messages::tests::proptests::nag_request_rkyv_roundtrip ... ok
+test messages::tests::proptests::unsigned_gossipsub_msg_rkyv_roundtrip ... ok
+test messages::tests::unsigned_gossipsub_msg_variant_discriminators_are_stable ... ok
+test messages::tests::unsigned_msg_graph_data_serializes_all_fields ... ok
+test messages::tests::unsigned_msg_musig2_nonces_exchange_wraps_nested_content ... ok
+test messages::tests::unsigned_msg_musig2_signatures_exchange_wraps_nested_content ... ok
+test messages::tests::unsigned_msg_nag_request_exchange_wraps_nested_content ... ok
+test messages::tests::unsigned_msg_payout_descriptor_serializes_all_fields ... ok
+test messages::tests::unsigned_msg_unstaking_data_serializes_all_fields ... ok
+test unstaking_data::tests::unstaking_input_rkyv_roundtrip ... ok
+
+test result: ok. 45 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.41s
+
+
+running 12 tests
+test scripts::general::tests::test_agg_pubkey_single ... ok
+test scripts::general::tests::threshold_multisig_script_matches_spec_shape ... ok
+test scripts::taproot::tests::test_create_taproot_addr ... ok
+test types::tests::convert_descriptor_to_x_only_pubkey ... ok
+test types::tests::converting_non_x_only_pubkey_descriptor_fails ... ok
+test types::tests::display_shows_hex ... ok
+test types::tests::from_public_key ... ok
+test types::tests::game_index_try_from_deposit_idx ... ok
+test types::tests::proptests::p2p_operator_pub_key_json_roundtrip ... ok
+test types::tests::proptests::p2p_operator_pub_key_rkyv_roundtrip ... ok
+test types::tests::proptests::p2p_operator_pub_key_vec_roundtrip ... ok
+test types::tests::verify_fails_with_invalid_key_bytes ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.19s
+
+
+running 5 tests
+test statements::tests::test_claim_unlock_inclusion_success ... ok
+test statements::tests::test_claim_unlock_inclusion_wrong_claim - should panic ... ok
+test statements::tests::test_process_bridge_proof_inner_forged_genesis_state - should panic ... ok
+test statements::tests::test_process_bridge_proof_inner_non_zero_mmr_idx ... ok
+test statements::tests::test_process_bridge_proof_inner_success ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 452 tests
+test deposit::tests::deposit::process_deposit_confirmed::tests::test_deposit_confirmed_from_nonces_collected ... ok
+test deposit::tests::deposit::process_deposit_confirmed::tests::test_deposit_confirmed_from_partials_collected ... ok
+test deposit::tests::deposit::process_deposit_confirmed::tests::test_deposit_confirmed_invalid_from_other_states ... ok
+test deposit::tests::deposit::process_drt_takeback::tests::test_drt_takeback_duplicate_in_aborted ... ok
+test deposit::tests::deposit::process_drt_takeback::tests::test_drt_takeback_from_created ... ok
+test deposit::tests::deposit::process_drt_takeback::tests::test_drt_takeback_from_deposit_nonces_collected ... ok
+test deposit::tests::deposit::process_drt_takeback::tests::test_drt_takeback_from_deposit_partials_collected ... ok
+test deposit::tests::deposit::process_drt_takeback::tests::test_drt_takeback_from_graph_generated ... ok
+test deposit::tests::deposit::process_drt_takeback::tests::test_drt_takeback_invalid_from_deposited ... ok
+test deposit::tests::deposit::process_drt_takeback::tests::test_wrong_drt_takeback_tx_rejection ... ok
+test deposit::tests::deposit::process_graph_available::tests::test_deposit_confirmed_wrong_tx_rejection_from_deposit_nonces_collected ... ok
+test deposit::tests::deposit::process_graph_available::tests::test_deposit_confirmed_wrong_tx_rejection_from_deposit_partials_collected ... ok
+test deposit::tests::deposit::process_graph_available::tests::test_duplicate_process_graph_available_sequence ... ok
+test deposit::tests::deposit::process_graph_available::tests::test_invalid_deposit_idx_in_process_graph_available ... ok
+test deposit::tests::deposit::process_graph_available::tests::test_invalid_operator_idx_in_process_graph_available ... ok
+test deposit::tests::deposit::process_graph_available::tests::test_process_graph_available_sequence ... ok
+test deposit::tests::deposit::process_nonce_received::tests::test_duplicate_process_nonce_sequence ... ok
+test deposit::tests::deposit::process_nonce_received::tests::test_invalid_operator_idx_in_process_nonce ... ok
+test deposit::tests::deposit::process_nonce_received::tests::test_process_nonce_sequence ... ok
+test deposit::tests::deposit::process_partial_received::tests::test_duplicate_process_partial_sequence ... ok
+test deposit::tests::deposit::process_partial_received::tests::test_invalid_operator_idx_in_process_partial ... ok
+test deposit::tests::deposit::process_partial_received::tests::test_invalid_process_partial_sequence ... ok
+test deposit::tests::deposit::process_partial_received::tests::test_process_partial_sequence ... ok
+test deposit::tests::handlers::process_nag_received::tests::test_nag_received_deposit_nonce_in_deposit_nonces_collected_emits_publish_deposit_nonce ... ok
+test deposit::tests::handlers::process_nag_received::tests::test_nag_received_deposit_nonce_in_graph_generated_emits_publish_deposit_nonce ... ok
+test deposit::tests::handlers::process_nag_received::tests::test_nag_received_deposit_nonce_rejected_in_all_other_states ... ok
+test deposit::tests::handlers::process_nag_received::tests::test_nag_received_deposit_partial_in_deposit_nonces_collected_emits_publish_deposit_partial ... ok
+test deposit::tests::handlers::process_nag_received::tests::test_nag_received_deposit_partial_rejected_in_all_other_states ... ok
+test deposit::tests::handlers::process_nag_received::tests::test_nag_received_payout_nonce_in_payout_descriptor_received_emits_publish_payout_nonce ... ok
+test deposit::tests::handlers::process_nag_received::tests::test_nag_received_payout_nonce_in_payout_nonces_collected_emits_publish_payout_nonce ... ok
+test deposit::tests::handlers::process_nag_received::tests::test_nag_received_payout_nonce_rejected_in_all_other_states ... ok
+test deposit::tests::handlers::process_nag_received::tests::test_nag_received_payout_partial_in_payout_nonces_collected_emits_publish_payout_partial ... ok
+test deposit::tests::handlers::process_nag_received::tests::test_nag_received_payout_partial_rejected_in_all_other_states ... ok
+test deposit::tests::handlers::process_nag_received::tests::test_nag_received_payout_partial_when_pov_is_assignee_rejected_with_reason ... ok
+test deposit::tests::handlers::process_nag_received::tests::test_nag_received_wrong_state_for_nag_type_rejected_with_reason ... ok
+test deposit::tests::handlers::process_nag_tick::tests::test_nag_tick_emits_all_nag_deposit_nonce_when_none_present_in_graph_generated ... ok
+test deposit::tests::handlers::process_nag_tick::tests::test_nag_tick_emits_all_nag_deposit_partial_when_none_present ... ok
+test deposit::tests::handlers::process_nag_tick::tests::test_nag_tick_emits_all_nag_payout_nonce_when_none_present ... ok
+test deposit::tests::handlers::process_nag_tick::tests::test_nag_tick_emits_nag_deposit_nonce_for_missing_operators_in_graph_generated ... ok
+test deposit::tests::handlers::process_nag_tick::tests::test_nag_tick_emits_nag_deposit_partial_for_missing_operators ... ok
+test deposit::tests::handlers::process_nag_tick::tests::test_nag_tick_emits_nag_payout_nonce_for_missing_operators ... ok
+test deposit::tests::handlers::process_nag_tick::tests::test_nag_tick_emits_nag_payout_partial_for_missing_operators ... ok
+test deposit::tests::handlers::process_nag_tick::tests::test_nag_tick_excludes_assignee_from_payout_partial_nag ... ok
+test deposit::tests::handlers::process_nag_tick::tests::test_nag_tick_noop_for_non_naggable_states ... ok
+test deposit::tests::handlers::process_nag_tick::tests::test_nag_tick_noop_when_all_deposit_partials_collected ... ok
+test deposit::tests::handlers::process_nag_tick::tests::test_nag_tick_noop_when_all_non_assignee_partials_collected ... ok
+test deposit::tests::handlers::process_nag_tick::tests::test_nag_tick_noop_when_all_payout_nonces_collected ... ok
+test deposit::tests::handlers::process_nag_tick::tests::test_nag_tick_noop_when_all_present_in_graph_generated ... ok
+test deposit::tests::handlers::process_retry_tick::tests::test_retry_tick_emits_fulfill_withdrawal_request_in_assigned_when_pov_is_assignee ... ok
+test deposit::tests::handlers::process_retry_tick::tests::test_retry_tick_emits_publish_deposit_in_deposit_partials_collected ... ok
+test deposit::tests::handlers::process_retry_tick::tests::test_retry_tick_emits_publish_payout_in_payout_nonces_collected_when_condn_met ... ok
+test deposit::tests::handlers::process_retry_tick::tests::test_retry_tick_emits_request_payout_nonces_in_fulfilled_when_pov_is_assignee ... ok
+test deposit::tests::handlers::process_retry_tick::tests::test_retry_tick_noop_for_non_retriable_states ... ok
+test deposit::tests::handlers::process_retry_tick::tests::test_retry_tick_noop_in_assigned_when_pov_is_not_assignee ... ok
+test deposit::tests::handlers::process_retry_tick::tests::test_retry_tick_noop_in_fulfilled_when_pov_is_not_assignee ... ok
+test deposit::tests::handlers::process_retry_tick::tests::test_retry_tick_noop_in_payout_descriptor_received_when_all_nonces_collected ... ok
+test deposit::tests::handlers::process_retry_tick::tests::test_retry_tick_noop_in_payout_descriptor_received_when_pov_is_not_assignee ... ok
+test deposit::tests::handlers::process_retry_tick::tests::test_retry_tick_noop_in_payout_nonces_collected_when_pov_is_assignee_and_missing_partials ... ok
+test deposit::tests::handlers::process_retry_tick::tests::test_retry_tick_noop_in_payout_nonces_collected_when_pov_is_not_assignee ... ok
+test deposit::tests::handlers::process_retry_tick::tests::test_retry_tick_replays_payout_descriptor_when_missing_nonces ... ok
+test deposit::tests::payout::process_assignment::tests::test_assignment_duplicate_from_post_assignment_states ... ok
+test deposit::tests::payout::process_assignment::tests::test_assignment_from_deposited_pov_is_assignee ... ok
+test deposit::tests::payout::process_assignment::tests::test_assignment_from_deposited_pov_is_not_assignee ... ok
+test deposit::tests::payout::process_assignment::tests::test_assignment_invalid_from_other_states ... ok
+test deposit::tests::payout::process_assignment::tests::test_reassignment_pov_is_not_assignee ... ok
+test deposit::tests::payout::process_assignment::tests::test_reassignment_rejected_when_deadline_decreases ... ok
+test deposit::tests::payout::process_assignment::tests::test_reassignment_rejected_when_recipient_changes ... ok
+test deposit::tests::payout::process_assignment::tests::test_reassignment_to_pov ... ok
+test deposit::tests::payout::process_fulfillment::tests::test_fulfillment_confirmed_from_assigned_pov_is_assignee ... ok
+test deposit::tests::payout::process_fulfillment::tests::test_fulfillment_confirmed_from_assigned_pov_is_not_assignee ... ok
+test deposit::tests::payout::process_fulfillment::tests::test_fulfillment_confirmed_invalid_from_other_states ... ok
+test deposit::tests::payout::process_fulfillment::tests::test_fulfillment_confirmed_no_duty_when_timeout_is_zero ... ok
+test deposit::tests::payout::process_fulfillment::tests::test_fulfillment_rejected_when_deadline_exceeded ... ok
+test deposit::tests::payout::process_payout_confirmed::tests::test_payout_confirmed_duplicate_in_spent ... ok
+test deposit::tests::payout::process_payout_confirmed::tests::test_payout_confirmed_from_cooperative_path_failed_preserves_fulfillment_txid ... ok
+test deposit::tests::payout::process_payout_confirmed::tests::test_payout_confirmed_from_deposited_records_unknown_fulfillment_txid ... ok
+test deposit::tests::payout::process_payout_confirmed::tests::test_payout_confirmed_from_payout_nonces_preserves_fulfillment_txid ... ok
+test deposit::tests::payout::process_payout_confirmed::tests::test_payout_confirmed_invalid_from_other_states ... ok
+test deposit::tests::payout::process_payout_confirmed::tests::test_payout_confirmed_rejected_for_wrong_outpoint_from_valid_states ... ok
+test deposit::tests::payout::process_payout_descriptor_received::tests::test_payout_descriptor_received_from_fulfilled ... ok
+test deposit::tests::payout::process_payout_descriptor_received::tests::test_payout_descriptor_received_invalid_from_other_states ... ok
+test deposit::tests::payout::process_payout_descriptor_received::tests::test_payout_descriptor_received_rejected_from_non_assignee ... ok
+test deposit::tests::payout::process_payout_nonce_received::tests::test_invalid_operator_idx_in_payout_nonce_received ... ok
+test deposit::tests::payout::process_payout_nonce_received::tests::test_payout_nonce_received_all_collected_pov_is_assignee ... ok
+test deposit::tests::payout::process_payout_nonce_received::tests::test_payout_nonce_received_all_collected_pov_is_not_assignee ... ok
+test deposit::tests::payout::process_payout_nonce_received::tests::test_payout_nonce_received_duplicate_different_nonce ... ok
+test deposit::tests::payout::process_payout_nonce_received::tests::test_payout_nonce_received_duplicate_same_nonce ... ok
+test deposit::tests::payout::process_payout_nonce_received::tests::test_payout_nonce_received_invalid_from_other_states ... ok
+test deposit::tests::payout::process_payout_nonce_received::tests::test_payout_nonce_received_partial_collection ... ok
+test deposit::tests::payout::process_payout_nonce_received::tests::test_payout_nonce_received_second_nonce ... ok
+test deposit::tests::payout::process_payout_partial_received::tests::test_invalid_operator_idx_in_payout_partial_received ... ok
+test deposit::tests::payout::process_payout_partial_received::tests::test_payout_partial_received_all_collected_pov_is_assignee ... ok
+test deposit::tests::payout::process_payout_partial_received::tests::test_payout_partial_received_all_collected_pov_is_not_assignee ... ok
+test deposit::tests::payout::process_payout_partial_received::tests::test_payout_partial_received_duplicate_different_signature ... ok
+test deposit::tests::payout::process_payout_partial_received::tests::test_payout_partial_received_duplicate_same_signature ... ok
+test deposit::tests::payout::process_payout_partial_received::tests::test_payout_partial_received_invalid_from_other_states ... ok
+test deposit::tests::payout::process_payout_partial_received::tests::test_payout_partial_received_invalid_signature ... ok
+test deposit::tests::payout::process_payout_partial_received::tests::test_payout_partial_received_partial_collection ... ok
+test deposit::tests::prop_tests::tests::events_transition_or_error ... ok
+test deposit::tests::prop_tests::tests::state_machine_is_deterministic ... ok
+test deposit::tests::prop_tests::tests::terminal_states_reject_all_events ... ok
+test deposit::tests::test_new_blocks::tests::test_new_block_keeps_assigned_when_deadline_not_exceeded ... ok
+test deposit::tests::test_new_blocks::tests::test_new_block_rejects_in_terminal_states ... ok
+test deposit::tests::test_new_blocks::tests::test_new_block_reverts_assigned_to_deposited_when_deadline_exceeded ... ok
+test deposit::tests::test_new_blocks::tests::test_new_block_reverts_assigned_to_deposited_when_deadline_reached ... ok
+test deposit::tests::test_new_blocks::tests::test_new_block_triggers_cooperative_timeout ... ok
+test deposit::tests::test_new_blocks::tests::test_new_block_updates_height_in_deposited ... ok
+test deposit::tests::test_timeout_sequence::tests::test_cooperative_timeout_sequence ... ok
+test deposit::tests::tx_classifier::tests::classify_tx_ignores_deposit_tx_in_early_states ... ok
+test deposit::tests::tx_classifier::tests::classify_tx_ignores_irrelevant_tx_in_all_states ... ok
+test deposit::tests::tx_classifier::tests::classify_tx_ignores_non_spending_tx_in_payout_states ... ok
+test deposit::tests::tx_classifier::tests::classify_tx_ignores_wrong_deposit_idx_fulfillment ... ok
+test deposit::tests::tx_classifier::tests::classify_tx_recognizes_deposit_confirmation ... ok
+test deposit::tests::tx_classifier::tests::classify_tx_recognizes_fulfillment ... ok
+test deposit::tests::tx_classifier::tests::classify_tx_recognizes_op_return_fulfillment ... ok
+test deposit::tests::tx_classifier::tests::classify_tx_recognizes_payout_in_all_payout_pending_states ... ok
+test deposit::tests::tx_classifier::tests::classify_tx_recognizes_takeback_in_all_pre_deposit_states ... ok
+test deposit::tests::tx_classifier::tests::classify_tx_returns_none_in_terminal_states ... ok
+test graph::tests::contested::process_bridge_proof::accepts_bridge_proof_posted_after_counterproof ... ok
+test graph::tests::contested::process_bridge_proof::event_accepted_pov_no_duties ... ok
+test graph::tests::contested::process_bridge_proof::event_duplicate ... ok
+test graph::tests::contested::process_bridge_proof::event_invalid ... ok
+test graph::tests::contested::process_bridge_proof::event_rejected_bridge_proof_timeout_txid_from_contested ... ok
+test graph::tests::contested::process_bridge_proof::event_rejected_bridge_proof_timeout_txid_from_counterproof_posted ... ok
+test graph::tests::contested::process_bridge_proof::event_rejected_wrong_outpoint_from_contested ... ok
+test graph::tests::contested::process_bridge_proof::event_rejected_wrong_outpoint_from_counterproof_posted ... ok
+test graph::tests::contested::process_bridge_proof::pov_skips_counterproof_on_late_invalid_proof ... ok
+test graph::tests::contested::process_bridge_proof::pov_watchtower_skips_counterproof_even_when_proof_invalid ... ok
+test graph::tests::contested::process_bridge_proof::watchtower_emits_potential_counterproof_even_when_proof_invalid ... ok
+test graph::tests::contested::process_bridge_proof::watchtower_emits_potential_counterproof_on_late_proof_even_when_invalid ... ok
+test graph::tests::contested::process_bridge_proof::watchtower_emits_potential_counterproof_when_proof_valid ... ok
+test graph::tests::contested::process_bridge_proof::watchtower_skips_counterproof_when_already_posted_on_late_invalid_proof ... ok
+test graph::tests::contested::process_bridge_proof_timeout::aborts_when_stake_already_spent_in_contested ... ok
+test graph::tests::contested::process_bridge_proof_timeout::aborts_when_stake_already_spent_in_counterproof_posted ... ok
+test graph::tests::contested::process_bridge_proof_timeout::event_accepted ... ok
+test graph::tests::contested::process_bridge_proof_timeout::event_accepted_from_counterproof_posted_without_proof ... ok
+test graph::tests::contested::process_bridge_proof_timeout::event_duplicate ... ok
+test graph::tests::contested::process_bridge_proof_timeout::event_invalid ... ok
+test graph::tests::contested::process_bridge_proof_timeout::event_rejected_invalid_txid ... ok
+test graph::tests::contested::process_bridge_proof_timeout::payout_connector_spent_alone_does_not_abort ... ok
+test graph::tests::contested::process_contest::test_contest_from_claimed_nonpov_no_duty ... ok
+test graph::tests::contested::process_contest::test_contest_from_claimed_pov_emits_duty ... ok
+test graph::tests::contested::process_contest::test_contest_from_invalid_state ... ok
+test graph::tests::contested::process_contest::test_contest_rejected_invalid_txid ... ok
+test graph::tests::contested::process_contest::test_contest_state_fields ... ok
+test graph::tests::contested::process_contest::test_duplicate_contest ... ok
+test graph::tests::contested::process_counterproof::event_accepted_from_bridge_proof_posted_nonpov ... ok
+test graph::tests::contested::process_counterproof::event_accepted_from_bridge_proof_posted_pov ... ok
+test graph::tests::contested::process_counterproof::event_accepted_from_contested_nonpov ... ok
+test graph::tests::contested::process_counterproof::event_accepted_from_contested_pov ... ok
+test graph::tests::contested::process_counterproof::event_accepted_from_counter_proof_posted_pov ... ok
+test graph::tests::contested::process_counterproof::event_duplicate ... ok
+test graph::tests::contested::process_counterproof::event_invalid ... ok
+test graph::tests::contested::process_counterproof::event_rejected_invalid_counterproof_witness ... ok
+test graph::tests::contested::process_counterproof::event_rejected_invalid_operator_idx ... ok
+test graph::tests::contested::process_counterproof::event_rejected_invalid_txid ... ok
+test graph::tests::contested::process_counterproof::event_rejected_malformed_counterproof_signature_nonpov ... ok
+test graph::tests::contested::process_counterproof_ack::aborts_when_stake_already_spent ... ok
+test graph::tests::contested::process_counterproof_ack::an_ack_txid_without_the_committed_preimage_is_rejected ... ok
+test graph::tests::contested::process_counterproof_ack::event_accepted ... ok
+test graph::tests::contested::process_counterproof_ack::event_accepted_nonpov ... ok
+test graph::tests::contested::process_counterproof_ack::event_duplicate ... ok
+test graph::tests::contested::process_counterproof_ack::event_invalid ... ok
+test graph::tests::contested::process_counterproof_ack::event_rejected_invalid_operator_idx ... ok
+test graph::tests::contested::process_counterproof_ack::event_rejected_invalid_txid ... ok
+test graph::tests::contested::process_counterproof_ack::payout_connector_spent_alone_does_not_abort ... ok
+test graph::tests::contested::process_counterproof_nackd::event_duplicate ... ok
+test graph::tests::contested::process_counterproof_nackd::event_duplicate_from_all_nackd ... ok
+test graph::tests::contested::process_counterproof_nackd::event_invalid ... ok
+test graph::tests::contested::process_counterproof_nackd::event_rejected_invalid_operator_idx ... ok
+test graph::tests::contested::process_counterproof_nackd::event_rejected_no_counterproof_posted ... ok
+test graph::tests::contested::process_counterproof_nackd::event_rejected_same_txid_with_modified_witness ... ok
+test graph::tests::contested::process_counterproof_nackd::event_rejected_when_tx_is_counterproof_ack ... ok
+test graph::tests::contested::process_counterproof_nackd::event_rejected_wrong_outpoint ... ok
+test graph::tests::contested::process_counterproof_nackd::final_nack_aborts_when_payout_connector_spent ... ok
+test graph::tests::contested::process_counterproof_nackd::final_nack_does_not_abort_when_only_stake_spent ... ok
+test graph::tests::contested::process_counterproof_nackd::first_nack_stays_in_counter_proof_posted ... ok
+test graph::tests::contested::process_counterproof_nackd::second_nack_transitions_to_all_nackd ... ok
+test graph::tests::contested::process_counterproof_nackd::second_nack_transitions_to_all_nackd_nonpov ... ok
+test graph::tests::contested::process_stake_spent::process_stake_spent_dispatch_table_is_exhaustive ... ok
+test graph::tests::contested::process_stake_spent::rejects_event_whose_tx_does_not_spend_stake_outpoint ... ok
+test graph::tests::deposit_signal::tests::test_coop_payout_failed_from_fulfilled_nonpov_no_duties ... ok
+test graph::tests::deposit_signal::tests::test_coop_payout_failed_from_fulfilled_pov_emits_publish_claim ... ok
+test graph::tests::deposit_signal::tests::test_coop_payout_failed_from_non_fulfilled_states ... ok
+test graph::tests::deposit_signal::tests::test_deposit_request_taken_back_aborts_pre_assignment_states ... ok
+test graph::tests::deposit_signal::tests::test_deposit_request_taken_back_after_pre_assignment_is_invalid ... ok
+test graph::tests::deposit_signal::tests::test_deposit_request_taken_back_for_different_deposit_is_invalid ... ok
+test graph::tests::deposit_signal::tests::test_duplicate_deposit_request_taken_back_is_rejected ... ok
+test graph::tests::deposit_signal::tests::test_stale_coop_payout_failed_after_fulfilled_is_rejected ... ok
+test graph::tests::handlers::process_nag_received::tests::test_nag_received_deposit_domain_payload_is_rejected ... ok
+test graph::tests::handlers::process_nag_received::tests::test_nag_received_graph_data_in_adaptors_verified_emits_generate_graph_data ... ok
+test graph::tests::handlers::process_nag_received::tests::test_nag_received_graph_data_in_created_emits_generate_graph_data ... ok
+test graph::tests::handlers::process_nag_received::tests::test_nag_received_graph_data_in_graph_generated_emits_generate_graph_data ... ok
+test graph::tests::handlers::process_nag_received::tests::test_nag_received_graph_data_rejected_in_all_other_states ... ok
+test graph::tests::handlers::process_nag_received::tests::test_nag_received_graph_nonces_ignores_partial_collection_progress ... ok
+test graph::tests::handlers::process_nag_received::tests::test_nag_received_graph_nonces_in_adaptors_verified_emits_publish_graph_nonces ... ok
+test graph::tests::handlers::process_nag_received::tests::test_nag_received_graph_nonces_in_nonces_collected_emits_publish_graph_nonces ... ok
+test graph::tests::handlers::process_nag_received::tests::test_nag_received_graph_nonces_includes_sender_in_rejection_reason ... ok
+test graph::tests::handlers::process_nag_received::tests::test_nag_received_graph_nonces_rejected_in_graph_signed ... ok
+test graph::tests::handlers::process_nag_received::tests::test_nag_received_graph_nonces_rejected_in_irrelevant_state ... ok
+test graph::tests::handlers::process_nag_received::tests::test_nag_received_graph_partials_in_graph_signed_emits_publish_graph_partials ... ok
+test graph::tests::handlers::process_nag_received::tests::test_nag_received_graph_partials_in_graph_signed_uses_state_agg_nonces ... ok
+test graph::tests::handlers::process_nag_received::tests::test_nag_received_graph_partials_in_nonces_collected_emits_publish_graph_partials ... ok
+test graph::tests::handlers::process_nag_received::tests::test_nag_received_graph_partials_rejected_in_adaptors_verified ... ok
+test graph::tests::handlers::process_nag_received::tests::test_nag_received_graph_partials_rejected_in_irrelevant_state ... ok
+test graph::tests::handlers::process_nag_tick::tests::test_nag_tick_emits_nag_graph_data_for_nonpov_owned_created_graph ... ok
+test graph::tests::handlers::process_nag_tick::tests::test_nag_tick_emits_nag_graph_data_for_pov_owned_created_graph ... ok
+test graph::tests::handlers::process_nag_tick::tests::test_nag_tick_emits_nag_graph_nonces_for_missing_operators_in_adaptors_verified ... ok
+test graph::tests::handlers::process_nag_tick::tests::test_nag_tick_emits_nag_graph_partials_for_missing_operators_in_nonces_collected ... ok
+test graph::tests::handlers::process_nag_tick::tests::test_nag_tick_noop_for_irrelevant_states ... ok
+test graph::tests::handlers::process_nag_tick::tests::test_nag_tick_noop_when_all_graph_nonces_present_in_adaptors_verified ... ok
+test graph::tests::handlers::process_nag_tick::tests::test_nag_tick_noop_when_all_graph_partials_present_in_nonces_collected ... ok
+test graph::tests::handlers::process_retry_tick::tests::test_retry_tick_emits_ack_in_counter_proof_posted_for_nonpov_graph_when_local_counterproof_confirmed ... ok
+test graph::tests::handlers::process_retry_tick::tests::test_retry_tick_emits_ack_in_counter_proof_posted_for_nonpov_graph_when_proof_valid_and_local_counterproof_confirmed ... ok
+test graph::tests::handlers::process_retry_tick::tests::test_retry_tick_emits_bridge_proof_and_nack_in_counter_proof_posted_for_pov_graph ... ok
+test graph::tests::handlers::process_retry_tick::tests::test_retry_tick_emits_bridge_proof_and_nacks_for_multiple_pending_counterproofs ... ok
+test graph::tests::handlers::process_retry_tick::tests::test_retry_tick_emits_bridge_proof_in_contested_for_pov_graph ... ok
+test graph::tests::handlers::process_retry_tick::tests::test_retry_tick_emits_bridge_proof_in_counter_proof_posted_for_pov_graph_when_no_refuted_proof ... ok
+test graph::tests::handlers::process_retry_tick::tests::test_retry_tick_emits_nack_in_counter_proof_posted_for_pov_graph_when_refuted_proof_present ... ok
+test graph::tests::handlers::process_retry_tick::tests::test_retry_tick_emits_nacks_for_multiple_pending_counterproofs_when_refuted_proof_present ... ok
+test graph::tests::handlers::process_retry_tick::tests::test_retry_tick_emits_only_bridge_proof_when_counterproof_already_nacked ... ok
+test graph::tests::handlers::process_retry_tick::tests::test_retry_tick_emits_potential_counterproof_in_bridge_proof_posted_even_with_invalid_proof ... ok
+test graph::tests::handlers::process_retry_tick::tests::test_retry_tick_emits_potential_counterproof_in_bridge_proof_posted_when_proof_valid ... ok
+test graph::tests::handlers::process_retry_tick::tests::test_retry_tick_emits_potential_counterproof_in_counter_proof_posted_even_with_invalid_refuted_proof ... ok
+test graph::tests::handlers::process_retry_tick::tests::test_retry_tick_emits_potential_counterproof_in_counter_proof_posted_for_nonpov_graph_when_proof_valid ... ok
+test graph::tests::handlers::process_retry_tick::tests::test_retry_tick_emits_publish_claim_in_fulfilled_when_failed_for_pov_graph ... ok
+test graph::tests::handlers::process_retry_tick::tests::test_retry_tick_emits_verify_adaptors_in_graph_generated_for_nonpov_graph ... ok
+test graph::tests::handlers::process_retry_tick::tests::test_retry_tick_noop_for_non_retriable_states ... ok
+test graph::tests::handlers::process_retry_tick::tests::test_retry_tick_noop_in_bridge_proof_posted_for_pov_graph ... ok
+test graph::tests::handlers::process_retry_tick::tests::test_retry_tick_noop_in_claimed_with_valid_fulfillment ... ok
+test graph::tests::handlers::process_retry_tick::tests::test_retry_tick_noop_in_contested_for_nonpov_graph ... ok
+test graph::tests::handlers::process_retry_tick::tests::test_retry_tick_noop_in_counter_proof_posted_for_nonpov_graph_when_no_refuted_proof ... ok
+test graph::tests::handlers::process_retry_tick::tests::test_retry_tick_noop_in_counter_proof_posted_for_nonpov_graph_when_pov_counterproof_present ... ok
+test graph::tests::handlers::process_retry_tick::tests::test_retry_tick_noop_in_counter_proof_posted_for_pov_graph_when_refuted_proof_present ... ok
+test graph::tests::handlers::process_retry_tick::tests::test_retry_tick_noop_in_fulfilled_for_nonpov_graph ... ok
+test graph::tests::handlers::process_retry_tick::tests::test_retry_tick_noop_in_fulfilled_for_pov_graph_when_not_assignee ... ok
+test graph::tests::handlers::process_retry_tick::tests::test_retry_tick_noop_in_fulfilled_when_coop_payout_not_failed ... ok
+test graph::tests::handlers::process_retry_tick::tests::test_retry_tick_noop_in_graph_generated_for_pov_graph ... ok
+test graph::tests::handlers::process_retry_tick::tests::test_retry_tick_noop_when_counterproof_already_nacked_and_refuted_proof_present ... ok
+test graph::tests::handlers::process_retry_tick::tests::test_retry_tick_withholds_nack_before_nack_timelock_matures ... ok
+test graph::tests::notify_new_block::tests::acked_already_processed ... ok
+test graph::tests::notify_new_block::tests::acked_nonpov_payout_timeout_triggers_slash ... ok
+test graph::tests::notify_new_block::tests::acked_pov_payout_timeout_no_slash ... ok
+test graph::tests::notify_new_block::tests::acked_simple_update ... ok
+test graph::tests::notify_new_block::tests::all_nackd_already_processed ... ok
+test graph::tests::notify_new_block::tests::all_nackd_nonpov_no_contested_payout ... ok
+test graph::tests::notify_new_block::tests::all_nackd_nonpov_no_slash ... ok
+test graph::tests::notify_new_block::tests::all_nackd_pov_contested_payout ... ok
+test graph::tests::notify_new_block::tests::all_nackd_pov_no_slash_when_both_timelocks_exceeded ... ok
+test graph::tests::notify_new_block::tests::all_nackd_simple_update ... ok
+test graph::tests::notify_new_block::tests::bridge_proof_posted_already_processed ... ok
+test graph::tests::notify_new_block::tests::bridge_proof_posted_nonpov_no_contested_payout ... ok
+test graph::tests::notify_new_block::tests::bridge_proof_posted_nonpov_slash ... ok
+test graph::tests::notify_new_block::tests::bridge_proof_posted_pov_contested_payout ... ok
+test graph::tests::notify_new_block::tests::bridge_proof_posted_pov_no_slash_when_both_timelocks_exceeded ... ok
+test graph::tests::notify_new_block::tests::bridge_proof_posted_simple_update ... ok
+test graph::tests::notify_new_block::tests::bridge_proof_timedout_payout_timeout ... ok
+test graph::tests::notify_new_block::tests::bridge_proof_timedout_simple_update ... ok
+test graph::tests::notify_new_block::tests::contested_payout_timeout ... ok
+test graph::tests::notify_new_block::tests::contested_proof_timelock ... ok
+test graph::tests::notify_new_block::tests::contested_simple_update ... ok
+test graph::tests::notify_new_block::tests::counterproof_posted_already_processed ... ok
+test graph::tests::notify_new_block::tests::counterproof_posted_nonpov_ack_viable_after_nack_timeout ... ok
+test graph::tests::notify_new_block::tests::counterproof_posted_nonpov_ack_viable_at_nack_timeout_boundary ... ok
+test graph::tests::notify_new_block::tests::counterproof_posted_nonpov_no_contested_payout ... ok
+test graph::tests::notify_new_block::tests::counterproof_posted_nonpov_no_proof_timeout_at_timelock_boundary ... ok
+test graph::tests::notify_new_block::tests::counterproof_posted_nonpov_no_proof_timeout_when_claim_valid ... ok
+test graph::tests::notify_new_block::tests::counterproof_posted_nonpov_proof_timeout_when_proof_missing ... ok
+test graph::tests::notify_new_block::tests::counterproof_posted_nonpov_slash ... ok
+test graph::tests::notify_new_block::tests::counterproof_posted_owner_no_ack_before_ack_timeout_even_after_nack_timeout ... ok
+test graph::tests::notify_new_block::tests::counterproof_posted_owner_no_nack_before_nack_timeout ... ok
+test graph::tests::notify_new_block::tests::counterproof_posted_pov_contested_payout ... ok
+test graph::tests::notify_new_block::tests::counterproof_posted_pov_no_proof_timeout_when_proof_missing ... ok
+test graph::tests::notify_new_block::tests::test_new_block_claimed_already_processed ... ok
+test graph::tests::notify_new_block::tests::test_new_block_claimed_earlier_block_rejected ... ok
+test graph::tests::notify_new_block::tests::test_new_block_claimed_no_timeout ... ok
+test graph::tests::notify_new_block::tests::test_new_block_claimed_timeout_triggers_payout ... ok
+test graph::tests::notify_new_block::tests::test_new_block_created_accepted ... ok
+test graph::tests::notify_new_block::tests::test_new_block_keeps_assigned_when_deadline_not_exceeded ... ok
+test graph::tests::notify_new_block::tests::test_new_block_reverts_assigned_to_graph_signed_when_deadline_exceeded ... ok
+test graph::tests::notify_new_block::tests::test_new_block_reverts_assigned_to_graph_signed_when_deadline_reached ... ok
+test graph::tests::post_processor::post_stf_hook_dispatch_table_for_unstaking_burn_is_exhaustive ... ok
+test graph::tests::process_payout::tests::test_duplicate_payout ... ok
+test graph::tests::process_payout::tests::test_payout_from_all_nackd ... ok
+test graph::tests::process_payout::tests::test_payout_from_all_nackd_rejected_invalid_txid ... ok
+test graph::tests::process_payout::tests::test_payout_from_bridge_proof_posted ... ok
+test graph::tests::process_payout::tests::test_payout_from_bridge_proof_posted_rejected_invalid_txid ... ok
+test graph::tests::process_payout::tests::test_payout_from_claimed ... ok
+test graph::tests::process_payout::tests::test_payout_from_contested ... ok
+test graph::tests::process_payout::tests::test_payout_from_contested_rejected_invalid_txid ... ok
+test graph::tests::process_payout::tests::test_payout_from_counter_proof_posted ... ok
+test graph::tests::process_payout::tests::test_payout_from_counter_proof_posted_rejected_invalid_txid ... ok
+test graph::tests::process_payout::tests::test_payout_from_invalid_state ... ok
+test graph::tests::process_payout::tests::test_payout_rejected_invalid_txid ... ok
+test graph::tests::process_payout_connector_spent::process_payout_connector_spent_dispatch_table_is_exhaustive ... ok
+test graph::tests::process_payout_connector_spent::rejects_event_whose_tx_does_not_spend_connector_outpoint ... ok
+test graph::tests::process_payout_connector_spent::rejects_legitimate_payout_tx_misrouted_as_connector_spend ... ok
+test graph::tests::tx_classifier::tests::classify_tx_attributes_counterproof_graph_exhaustively ... ok
+test graph::tests::tx_classifier::tests::classify_tx_ignores_irrelevant_tx_in_all_states ... ok
+test graph::tests::tx_classifier::tests::classify_tx_recognizes_bridge_proof_in_contested ... ok
+test graph::tests::tx_classifier::tests::classify_tx_recognizes_bridge_proof_in_counterproof_posted ... ok
+test graph::tests::tx_classifier::tests::classify_tx_recognizes_bridge_proof_timeout_in_contested ... ok
+test graph::tests::tx_classifier::tests::classify_tx_recognizes_bridge_proof_timeout_in_counterproof_posted ... ok
+test graph::tests::tx_classifier::tests::classify_tx_recognizes_claim ... ok
+test graph::tests::tx_classifier::tests::classify_tx_recognizes_contest_in_claimed ... ok
+test graph::tests::tx_classifier::tests::classify_tx_recognizes_contested_payout ... ok
+test graph::tests::tx_classifier::tests::classify_tx_recognizes_counterproof_ack ... ok
+test graph::tests::tx_classifier::tests::classify_tx_recognizes_counterproof_in_counterproof_detecting_states ... ok
+test graph::tests::tx_classifier::tests::classify_tx_recognizes_counterproof_nack ... ok
+test graph::tests::tx_classifier::tests::classify_tx_recognizes_fulfillment_in_assigned ... ok
+test graph::tests::tx_classifier::tests::classify_tx_recognizes_op_return_fulfillment_in_assigned ... ok
+test graph::tests::tx_classifier::tests::classify_tx_recognizes_payout_connector_spent ... ok
+test graph::tests::tx_classifier::tests::classify_tx_recognizes_slash_in_bridge_proof_timedout ... ok
+test graph::tests::tx_classifier::tests::classify_tx_recognizes_slash_in_slash_detecting_states ... ok
+test graph::tests::tx_classifier::tests::classify_tx_recognizes_uncontested_payout ... ok
+test graph::tests::tx_classifier::tests::classify_tx_rejects_counterproof_nack_with_modified_witness ... ok
+test graph::tests::tx_classifier::tests::classify_tx_returns_none_in_created ... ok
+test graph::tests::tx_classifier::tests::classify_tx_returns_none_in_terminal_states ... ok
+test graph::tests::uncontested::process_adaptors_verification::tests::test_duplicate_process_nonpov_adaptors_verification ... ok
+test graph::tests::uncontested::process_adaptors_verification::tests::test_duplicate_process_pov_adaptors_verification ... ok
+test graph::tests::uncontested::process_adaptors_verification::tests::test_invalid_process_adaptors_verification_from_withdrawn ... ok
+test graph::tests::uncontested::process_adaptors_verification::tests::test_process_adaptors_verification ... ok
+test graph::tests::uncontested::process_assignment::tests::test_assignment_duplicate_from_post_assignment_states ... ok
+test graph::tests::uncontested::process_assignment::tests::test_assignment_from_graph_signed ... ok
+test graph::tests::uncontested::process_assignment::tests::test_assignment_from_graph_signed_rejected_for_non_pov_operator ... ok
+test graph::tests::uncontested::process_assignment::tests::test_assignment_invalid_from_other_states ... ok
+test graph::tests::uncontested::process_assignment::tests::test_reassignment_different_assignee_rejected_when_invalid_deadline ... ok
+test graph::tests::uncontested::process_assignment::tests::test_reassignment_different_assignee_reverts_to_graph_signed ... ok
+test graph::tests::uncontested::process_assignment::tests::test_reassignment_rejected_when_invalid_deadline ... ok
+test graph::tests::uncontested::process_assignment::tests::test_reassignment_rejected_when_recipient_changes ... ok
+test graph::tests::uncontested::process_assignment::tests::test_reassignment_same_assignee_different_deadline ... ok
+test graph::tests::uncontested::process_claim::tests::test_claim_from_fulfilled ... ok
+test graph::tests::uncontested::process_claim::tests::test_claim_invalid_from_other_states ... ok
+test graph::tests::uncontested::process_claim::tests::test_claim_rejected_invalid_txid ... ok
+test graph::tests::uncontested::process_claim::tests::test_duplicate_claim ... ok
+test graph::tests::uncontested::process_claim::tests::test_faulty_claim_emits_contest_for_watchtower ... ok
+test graph::tests::uncontested::process_claim::tests::test_faulty_claim_no_duty_for_pov ... ok
+test graph::tests::uncontested::process_claim::tests::test_faulty_claim_uses_pov_watchtower_slot_after_owner_exclusion ... ok
+test graph::tests::uncontested::process_fulfillment::tests::test_duplicate_fulfillment ... ok
+test graph::tests::uncontested::process_fulfillment::tests::test_fulfillment_from_assigned ... ok
+test graph::tests::uncontested::process_fulfillment::tests::test_fulfillment_from_assigned_nonpov_no_duty ... ok
+test graph::tests::uncontested::process_fulfillment::tests::test_fulfillment_rejected_when_deadline_exceeded ... ok
+test graph::tests::uncontested::process_fulfillment::tests::test_process_fulfillment_from_invalid_state ... ok
+test graph::tests::uncontested::process_graph_data::tests::test_duplicate_process_graph_data_from_nonces_collected ... ok
+test graph::tests::uncontested::process_graph_data::tests::test_duplicate_process_nonpov_graph_data ... ok
+test graph::tests::uncontested::process_graph_data::tests::test_duplicate_process_pov_graph_data ... ok
+test graph::tests::uncontested::process_graph_data::tests::test_invalid_process_graph_data_from_withdrawn ... ok
+test graph::tests::uncontested::process_graph_data::tests::test_process_graph_data_nonpov_operator ... ok
+test graph::tests::uncontested::process_graph_data::tests::test_process_graph_data_pov_operator ... ok
+test graph::tests::uncontested::process_graph_data::tests::test_process_graph_data_rejects_short_adaptor_pubkeys ... ok
+test graph::tests::uncontested::process_graph_data::tests::test_process_graph_data_rejects_short_fault_pubkeys ... ok
+test graph::tests::uncontested::process_nonce_received::tests::test_duplicate_process_nonce_received ... ok
+test graph::tests::uncontested::process_nonce_received::tests::test_invalid_nonce_bundle_in_process_nonce_received ... ok
+test graph::tests::uncontested::process_nonce_received::tests::test_invalid_operator_idx_in_process_nonce_received ... ok
+test graph::tests::uncontested::process_nonce_received::tests::test_nonce_received_in_created_state_is_rejected ... ok
+test graph::tests::uncontested::process_nonce_received::tests::test_nonce_received_in_graph_generated_state_is_rejected ... ok
+test graph::tests::uncontested::process_nonce_received::tests::test_nonce_received_in_nonces_collected_state ... ok
+test graph::tests::uncontested::process_nonce_received::tests::test_process_nonce_received_all_collected ... ok
+test graph::tests::uncontested::process_nonce_received::tests::test_process_nonce_received_partial_collection ... ok
+test graph::tests::uncontested::process_partial_received::tests::final_partial_with_stake_spent_withholds_graph_available ... ok
+test graph::tests::uncontested::process_partial_received::tests::test_duplicate_process_partial_received ... ok
+test graph::tests::uncontested::process_partial_received::tests::test_invalid_operator_idx_in_process_partial_received ... ok
+test graph::tests::uncontested::process_partial_received::tests::test_invalid_partial_bundle_in_process_partial_received ... ok
+test graph::tests::uncontested::process_partial_received::tests::test_invalid_process_partial_received_sequence ... ok
+test graph::tests::uncontested::process_partial_received::tests::test_partials_received_in_adaptors_verified_state_is_rejected ... ok
+test graph::tests::uncontested::process_partial_received::tests::test_process_partial_received_all_collected ... ok
+test graph::tests::uncontested::process_partial_received::tests::test_process_partial_received_partial_collection ... ok
+test graph::watchtower::tests::owner_has_no_slot ... ok
+test graph::watchtower::tests::roundtrip_operator_to_slot_to_operator ... ok
+test graph::watchtower::tests::roundtrip_slot_to_operator_to_slot ... ok
+test graph::watchtower::tests::test_slot_for_operator_exhaustive ... ok
+test graph::watchtower::tests::test_slot_to_operator_exhaustive ... ok
+test stake::tests::introspection::has_staked_includes_slashed ... ok
+test stake::tests::introspection::is_removed_from_future_covenant_includes_slashed ... ok
+test stake::tests::introspection::is_slashed_only_for_slashed_state ... ok
+test stake::tests::introspection::is_stake_available_excludes_slashed ... ok
+test stake::tests::introspection::last_processed_block_height_is_none_in_slashed ... ok
+test stake::tests::introspection::preimage_returned_when_slashed_after_reveal ... ok
+test stake::tests::introspection::preimage_returns_none_when_slashed_before_reveal ... ok
+test stake::tests::nag_received::accept_nag_received_stake_data ... ok
+test stake::tests::nag_received::accept_nag_received_unstaking_nonces ... ok
+test stake::tests::nag_received::accept_nag_received_unstaking_partials ... ok
+test stake::tests::nag_received::reject_nag_received_deposit_domain ... ok
+test stake::tests::nag_received::reject_nag_received_graph_domain ... ok
+test stake::tests::nag_received::reject_nag_received_stake_data ... ok
+test stake::tests::nag_received::reject_nag_received_unstaking_nonces ... ok
+test stake::tests::nag_received::reject_nag_received_unstaking_partials ... ok
+test stake::tests::nag_tick::dont_nag_when_nothing_is_missing ... ok
+test stake::tests::nag_tick::nag_stake_data ... ok
+test stake::tests::nag_tick::nag_unstaking_nonces ... ok
+test stake::tests::nag_tick::nag_unstaking_partials ... ok
+test stake::tests::new_block::accept_new_height ... ok
+test stake::tests::new_block::preimage_revealed_timelock_immature ... ok
+test stake::tests::new_block::preimage_revealed_timelock_mature ... ok
+test stake::tests::new_block::preimage_revealed_timelock_mature_nonpov_no_duty ... ok
+test stake::tests::new_block::reject_old_height ... ok
+test stake::tests::new_block::reject_unstaked_state ... ok
+test stake::tests::preimage_revealed::accept_preimage_revealed ... ok
+test stake::tests::preimage_revealed::accept_preimage_revealed_without_signatures ... ok
+test stake::tests::preimage_revealed::reject_duplicate_preimage_revealed ... ok
+test stake::tests::preimage_revealed::reject_invalid_states ... ok
+test stake::tests::preimage_revealed::reject_mismatching_unstaking_intent_tx ... ok
+test stake::tests::preimage_revealed::reject_missing_preimage_witness ... ok
+test stake::tests::preimage_revealed::reject_rejected_states ... ok
+test stake::tests::prop_tests::events_transition_or_error ... ok
+test stake::tests::prop_tests::state_machine_is_deterministic ... ok
+test stake::tests::prop_tests::terminal_states_reject_all_events ... ok
+test stake::tests::retry_tick::retry_nothing ... ok
+test stake::tests::retry_tick::retry_nothing_for_foreign_stake ... ok
+test stake::tests::retry_tick::retry_publish_stake ... ok
+test stake::tests::slash_confirmed::accept_slash_from_confirmed ... ok
+test stake::tests::slash_confirmed::accept_slash_from_preimage_revealed ... ok
+test stake::tests::slash_confirmed::reject_non_slash_tx_in_confirmed ... ok
+test stake::tests::slash_confirmed::reject_non_slash_tx_in_preimage_revealed ... ok
+test stake::tests::slash_confirmed::reject_slash_in_invalid_states ... ok
+test stake::tests::slash_confirmed::reject_slash_in_terminal_states ... ok
+test stake::tests::slash_confirmed::reject_unstaking_tx_in_preimage_revealed ... ok
+test stake::tests::stake_confirmed::accept_stake_tx_from_nonces_collected_for_nonpov ... ok
+test stake::tests::stake_confirmed::accept_stake_tx_from_signed ... ok
+test stake::tests::stake_confirmed::reject_duplicate_stake_confirmed ... ok
+test stake::tests::stake_confirmed::reject_invalid_event_after_unstaking_observed ... ok
+test stake::tests::stake_confirmed::reject_invalid_states ... ok
+test stake::tests::stake_confirmed::reject_mismatching_stake_tx ... ok
+test stake::tests::stake_confirmed::reject_own_stake_confirmed_before_all_partials_collected ... ok
+test stake::tests::stake_data_received::accept_stake_data ... ok
+test stake::tests::stake_data_received::reject_duplicate_data ... ok
+test stake::tests::stake_data_received::reject_invalid_states ... ok
+test stake::tests::tx_classifier::classify_slash_tx ... ok
+test stake::tests::tx_classifier::classify_stake_tx ... ok
+test stake::tests::tx_classifier::classify_unstaking_intent_tx ... ok
+test stake::tests::tx_classifier::classify_unstaking_tx ... ok
+test stake::tests::tx_classifier::ignore_irrelevant_tx_in_all_states ... ok
+test stake::tests::tx_classifier::ignore_relevant_tx_in_mismatching_states ... ok
+test stake::tests::unstaking_confirmed::accept_unstaking_tx ... ok
+test stake::tests::unstaking_confirmed::reject_invalid_states ... ok
+test stake::tests::unstaking_confirmed::reject_mismatching_unstaking_tx ... ok
+test stake::tests::unstaking_confirmed::reject_rejected_states ... ok
+test stake::tests::unstaking_nonces_received::accept_nonces ... ok
+test stake::tests::unstaking_nonces_received::accept_nonces_all_collected ... ok
+test stake::tests::unstaking_nonces_received::reject_duplicate_in_collected_nonces ... ok
+test stake::tests::unstaking_nonces_received::reject_duplicate_nonces ... ok
+test stake::tests::unstaking_nonces_received::reject_invalid_operator ... ok
+test stake::tests::unstaking_nonces_received::reject_invalid_states ... ok
+test stake::tests::unstaking_partials_received::accept_partials ... ok
+test stake::tests::unstaking_partials_received::accept_partials_all_collected_nonpov ... ok
+test stake::tests::unstaking_partials_received::accept_partials_all_collected_pov ... ok
+test stake::tests::unstaking_partials_received::reject_duplicate_in_signed_partials ... ok
+test stake::tests::unstaking_partials_received::reject_duplicate_partials ... ok
+test stake::tests::unstaking_partials_received::reject_invalid_operator ... ok
+test stake::tests::unstaking_partials_received::reject_invalid_partials ... ok
+test stake::tests::unstaking_partials_received::reject_invalid_states ... ok
+test testing::signer::tests::signing_works_for_1_2_3_operators ... ok
+
+test result: ok. 452 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 81.42s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 1 test
+test bitcoin::tests::even_keypair ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+
+running 46 tests
+test fee::tests::pin_bridge_proof_timeout_vsize ... ok
+test fee::tests::pin_claim_vsize ... ok
+test fee::tests::pin_contest_vsize ... ok
+test fee::tests::pin_contested_payout_vsize ... ok
+test fee::tests::pin_cooperative_payout_vsize ... ok
+test fee::tests::pin_counterproof_ack_vsize ... ok
+test fee::tests::pin_counterproof_vsize ... ok
+test fee::tests::pin_deposit_vsize ... ok
+test fee::tests::pin_slash_vsize ... ok
+test fee::tests::pin_stake_vsize ... ok
+test fee::tests::pin_uncontested_payout_vsize ... ok
+test fee::tests::pin_unstaking_intent_vsize ... ok
+test fee::tests::pin_unstaking_vsize ... ok
+test fee::tests::pin_validity_first_counterproof_nack_vsize ... ok
+test game_graph::tests::admin_burn_payout ... ok
+test game_graph::tests::counterproof_ack_slash ... ok
+test game_graph::tests::counterproof_nack_contested_payout ... ok
+test game_graph::tests::no_counterproof_contested_payout ... ok
+test game_graph::tests::proof_timeout_slash ... ok
+test game_graph::tests::uncontested_payout ... ok
+test game_graph::tests::unstaking_burn_payout ... ok
+test musig_functor::tests::as_ref_cloned_roundtrip ... ok
+test musig_functor::tests::join_all_preserves_structure ... ok
+test musig_functor::tests::join_all_resolves_futures ... ok
+test musig_functor::tests::map_back_roundtrip ... ok
+test musig_functor::tests::semigroup_merge_associative ... ok
+test musig_functor::tests::semigroup_merge_elementwise ... ok
+test musig_functor::tests::sequence_functor ... ok
+test musig_functor::tests::sequence_option_none ... ok
+test musig_functor::tests::sequence_option_some ... ok
+test musig_functor::tests::sequence_result_err ... ok
+test musig_functor::tests::sequence_result_ok ... ok
+test musig_functor::tests::unpack_pack_roundtrip ... ok
+test musig_functor::tests::unpack_too_short ... ok
+test musig_functor::tests::zip3_unzip_roundtrip ... ok
+test musig_functor::tests::zip4_unzip_roundtrip ... ok
+test musig_functor::tests::zip5_unzip_roundtrip ... ok
+test musig_functor::tests::zip_apply_roundtrip ... ok
+test musig_functor::tests::zip_unzip_roundtrip ... ok
+test musig_functor::tests::zip_with_3_roundtrip ... ok
+test musig_functor::tests::zip_with_4_roundtrip ... ok
+test musig_functor::tests::zip_with_5_roundtrip ... ok
+test musig_functor::tests::zip_with_roundtrip ... ok
+test stake_graph::tests::unstake ... ok
+test transactions::cooperative_payout::tests::payout_descriptor_round_trips_from_payout_output ... ok
+test transactions::deposit::tests::finalize_does_not_panic_on_absurd_fee_rate ... ok
+
+test result: ok. 46 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 87.49s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 5 tests
+test crates/algebra/src/req.rs - req::Req (line 24) ... ok
+test crates/algebra/src/req.rs - req::Req<In,Out>::dispatch (line 144) ... ok
+test crates/algebra/src/req.rs - req::Req<In,Out>::into_input_output (line 121) ... ok
+test crates/algebra/src/retry.rs - retry::retry (line 128) ... ok
+test crates/algebra/src/retry.rs - retry::retry_with (line 210) ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.50s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 1 test
+test crates/connectors/src/timelocked.rs - timelocked::impl_timelocked_connector (line 97) ... ignored
+
+test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 1 test
+test crates/db/src/fdb/client.rs - fdb::client::FdbClient::transact (line 155) ... ignored
+
+test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+all doctests ran in 0.65s; merged doctests compilation took 0.18s
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 2 tests
+test crates/key-deriv/src/derive.rs - derive (line 9) ... ignored
+test crates/key-deriv/src/lib.rs - (line 8) ... ignored
+
+test result: ok. 0 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+all doctests ran in 0.61s; merged doctests compilation took 0.14s
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 1 test
+test crates/bridge-sm/src/state_machine.rs - state_machine::StateMachine (line 126) ... ignored
+
+test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+all doctests ran in 0.60s; merged doctests compilation took 0.14s
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 1 test
+test crates/tx-graph/src/game_graph.rs - game_graph::GameGraph::musig_inpoints (line 468) ... ignored
+
+test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 1 test
+test crates/mosaic-client/src/lib.rs - (line 14) ... ignored
+
+test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+all doctests ran in 0.65s; merged doctests compilation took 0.14s
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

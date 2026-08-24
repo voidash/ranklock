@@ -11,17 +11,19 @@
         "environment_probe": {
           "bitcoind": {
             "present": true,
-            "resolved": "/tmp/core311/bitcoin-31.1/bin/bitcoind"
+            "resolved": "/tmp/core311/bitcoin-31.1/bin/bitcoind",
+            "sha256": "d55c12b0b02001cc16b1481c4075361dcba193100a8143924abda911174c09ec",
+            "version": "Bitcoin Core daemon version v31.1.0 bitcoind",
+            "version_exit_code": 0
           },
           "bridge_binary": {
             "present": false,
-            "searched": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-p2pverify/target/debug/strata-bridge"
+            "searched": "/private/tmp/ranklock-strata-v0252.YIEMqs/matrix/target/debug/strata-bridge"
           },
           "foundationdb": {
             "cluster_file": "/usr/local/etc/foundationdb/fdb.cluster",
-            "fdbcli": "/tmp/fdb743/expanded/FoundationDB-clients.pkg/Payload/usr/local/bin/fdbcli",
-            "present": true,
-            "status": "The database is available."
+            "fdbcli": null,
+            "present": true
           }
         },
         "expectation": "Immediate ACK is reconstructed and broadcast",
@@ -50,17 +52,19 @@
         "environment_probe": {
           "bitcoind": {
             "present": true,
-            "resolved": "/tmp/core311/bitcoin-31.1/bin/bitcoind"
+            "resolved": "/tmp/core311/bitcoin-31.1/bin/bitcoind",
+            "sha256": "d55c12b0b02001cc16b1481c4075361dcba193100a8143924abda911174c09ec",
+            "version": "Bitcoin Core daemon version v31.1.0 bitcoind",
+            "version_exit_code": 0
           },
           "bridge_binary": {
             "present": false,
-            "searched": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-p2pverify/target/debug/strata-bridge"
+            "searched": "/private/tmp/ranklock-strata-v0252.YIEMqs/matrix/target/debug/strata-bridge"
           },
           "foundationdb": {
             "cluster_file": "/usr/local/etc/foundationdb/fdb.cluster",
-            "fdbcli": "/tmp/fdb743/expanded/FoundationDB-clients.pkg/Payload/usr/local/bin/fdbcli",
-            "present": true,
-            "status": "The database is available."
+            "fdbcli": null,
+            "present": true
           }
         },
         "expectation": "Existing slash path remains valid",
@@ -89,17 +93,19 @@
         "environment_probe": {
           "bitcoind": {
             "present": true,
-            "resolved": "/tmp/core311/bitcoin-31.1/bin/bitcoind"
+            "resolved": "/tmp/core311/bitcoin-31.1/bin/bitcoind",
+            "sha256": "d55c12b0b02001cc16b1481c4075361dcba193100a8143924abda911174c09ec",
+            "version": "Bitcoin Core daemon version v31.1.0 bitcoind",
+            "version_exit_code": 0
           },
           "bridge_binary": {
             "present": false,
-            "searched": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-p2pverify/target/debug/strata-bridge"
+            "searched": "/private/tmp/ranklock-strata-v0252.YIEMqs/matrix/target/debug/strata-bridge"
           },
           "foundationdb": {
             "cluster_file": "/usr/local/etc/foundationdb/fdb.cluster",
-            "fdbcli": "/tmp/fdb743/expanded/FoundationDB-clients.pkg/Payload/usr/local/bin/fdbcli",
-            "present": true,
-            "status": "The database is available."
+            "fdbcli": null,
+            "present": true
           }
         },
         "expectation": "No immediate ACK; timeout NACK after CSV",
@@ -128,17 +134,19 @@
         "environment_probe": {
           "bitcoind": {
             "present": true,
-            "resolved": "/tmp/core311/bitcoin-31.1/bin/bitcoind"
+            "resolved": "/tmp/core311/bitcoin-31.1/bin/bitcoind",
+            "sha256": "d55c12b0b02001cc16b1481c4075361dcba193100a8143924abda911174c09ec",
+            "version": "Bitcoin Core daemon version v31.1.0 bitcoind",
+            "version_exit_code": 0
           },
           "bridge_binary": {
             "present": false,
-            "searched": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-p2pverify/target/debug/strata-bridge"
+            "searched": "/private/tmp/ranklock-strata-v0252.YIEMqs/matrix/target/debug/strata-bridge"
           },
           "foundationdb": {
             "cluster_file": "/usr/local/etc/foundationdb/fdb.cluster",
-            "fdbcli": "/tmp/fdb743/expanded/FoundationDB-clients.pkg/Payload/usr/local/bin/fdbcli",
-            "present": true,
-            "status": "The database is available."
+            "fdbcli": null,
+            "present": true
           }
         },
         "expectation": "Existing contested-payout path remains valid",
@@ -167,17 +175,19 @@
         "environment_probe": {
           "bitcoind": {
             "present": true,
-            "resolved": "/tmp/core311/bitcoin-31.1/bin/bitcoind"
+            "resolved": "/tmp/core311/bitcoin-31.1/bin/bitcoind",
+            "sha256": "d55c12b0b02001cc16b1481c4075361dcba193100a8143924abda911174c09ec",
+            "version": "Bitcoin Core daemon version v31.1.0 bitcoind",
+            "version_exit_code": 0
           },
           "bridge_binary": {
             "present": false,
-            "searched": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-p2pverify/target/debug/strata-bridge"
+            "searched": "/private/tmp/ranklock-strata-v0252.YIEMqs/matrix/target/debug/strata-bridge"
           },
           "foundationdb": {
             "cluster_file": "/usr/local/etc/foundationdb/fdb.cluster",
-            "fdbcli": "/tmp/fdb743/expanded/FoundationDB-clients.pkg/Payload/usr/local/bin/fdbcli",
-            "present": true,
-            "status": "The database is available."
+            "fdbcli": null,
+            "present": true
           }
         },
         "expectation": "Hard rejection; no broadcast",
@@ -206,17 +216,19 @@
         "environment_probe": {
           "bitcoind": {
             "present": true,
-            "resolved": "/tmp/core311/bitcoin-31.1/bin/bitcoind"
+            "resolved": "/tmp/core311/bitcoin-31.1/bin/bitcoind",
+            "sha256": "d55c12b0b02001cc16b1481c4075361dcba193100a8143924abda911174c09ec",
+            "version": "Bitcoin Core daemon version v31.1.0 bitcoind",
+            "version_exit_code": 0
           },
           "bridge_binary": {
             "present": false,
-            "searched": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-p2pverify/target/debug/strata-bridge"
+            "searched": "/private/tmp/ranklock-strata-v0252.YIEMqs/matrix/target/debug/strata-bridge"
           },
           "foundationdb": {
             "cluster_file": "/usr/local/etc/foundationdb/fdb.cluster",
-            "fdbcli": "/tmp/fdb743/expanded/FoundationDB-clients.pkg/Payload/usr/local/bin/fdbcli",
-            "present": true,
-            "status": "The database is available."
+            "fdbcli": null,
+            "present": true
           }
         },
         "expectation": "Hard rejection",
@@ -245,17 +257,19 @@
         "environment_probe": {
           "bitcoind": {
             "present": true,
-            "resolved": "/tmp/core311/bitcoin-31.1/bin/bitcoind"
+            "resolved": "/tmp/core311/bitcoin-31.1/bin/bitcoind",
+            "sha256": "d55c12b0b02001cc16b1481c4075361dcba193100a8143924abda911174c09ec",
+            "version": "Bitcoin Core daemon version v31.1.0 bitcoind",
+            "version_exit_code": 0
           },
           "bridge_binary": {
             "present": false,
-            "searched": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-p2pverify/target/debug/strata-bridge"
+            "searched": "/private/tmp/ranklock-strata-v0252.YIEMqs/matrix/target/debug/strata-bridge"
           },
           "foundationdb": {
             "cluster_file": "/usr/local/etc/foundationdb/fdb.cluster",
-            "fdbcli": "/tmp/fdb743/expanded/FoundationDB-clients.pkg/Payload/usr/local/bin/fdbcli",
-            "present": true,
-            "status": "The database is available."
+            "fdbcli": null,
+            "present": true
           }
         },
         "expectation": "Exact pre-signatures/classification reject it",
@@ -284,17 +298,19 @@
         "environment_probe": {
           "bitcoind": {
             "present": true,
-            "resolved": "/tmp/core311/bitcoin-31.1/bin/bitcoind"
+            "resolved": "/tmp/core311/bitcoin-31.1/bin/bitcoind",
+            "sha256": "d55c12b0b02001cc16b1481c4075361dcba193100a8143924abda911174c09ec",
+            "version": "Bitcoin Core daemon version v31.1.0 bitcoind",
+            "version_exit_code": 0
           },
           "bridge_binary": {
             "present": false,
-            "searched": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-p2pverify/target/debug/strata-bridge"
+            "searched": "/private/tmp/ranklock-strata-v0252.YIEMqs/matrix/target/debug/strata-bridge"
           },
           "foundationdb": {
             "cluster_file": "/usr/local/etc/foundationdb/fdb.cluster",
-            "fdbcli": "/tmp/fdb743/expanded/FoundationDB-clients.pkg/Payload/usr/local/bin/fdbcli",
-            "present": true,
-            "status": "The database is available."
+            "fdbcli": null,
+            "present": true
           }
         },
         "expectation": "Cannot authorize another game, deposit, slot or transaction",
@@ -323,17 +339,19 @@
         "environment_probe": {
           "bitcoind": {
             "present": true,
-            "resolved": "/tmp/core311/bitcoin-31.1/bin/bitcoind"
+            "resolved": "/tmp/core311/bitcoin-31.1/bin/bitcoind",
+            "sha256": "d55c12b0b02001cc16b1481c4075361dcba193100a8143924abda911174c09ec",
+            "version": "Bitcoin Core daemon version v31.1.0 bitcoind",
+            "version_exit_code": 0
           },
           "bridge_binary": {
             "present": false,
-            "searched": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-p2pverify/target/debug/strata-bridge"
+            "searched": "/private/tmp/ranklock-strata-v0252.YIEMqs/matrix/target/debug/strata-bridge"
           },
           "foundationdb": {
             "cluster_file": "/usr/local/etc/foundationdb/fdb.cluster",
-            "fdbcli": "/tmp/fdb743/expanded/FoundationDB-clients.pkg/Payload/usr/local/bin/fdbcli",
-            "present": true,
-            "status": "The database is available."
+            "fdbcli": null,
+            "present": true
           }
         },
         "expectation": "Duties resume without duplicate terminal action",
@@ -366,17 +384,19 @@
         "environment_probe": {
           "bitcoind": {
             "present": true,
-            "resolved": "/tmp/core311/bitcoin-31.1/bin/bitcoind"
+            "resolved": "/tmp/core311/bitcoin-31.1/bin/bitcoind",
+            "sha256": "d55c12b0b02001cc16b1481c4075361dcba193100a8143924abda911174c09ec",
+            "version": "Bitcoin Core daemon version v31.1.0 bitcoind",
+            "version_exit_code": 0
           },
           "bridge_binary": {
             "present": false,
-            "searched": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-p2pverify/target/debug/strata-bridge"
+            "searched": "/private/tmp/ranklock-strata-v0252.YIEMqs/matrix/target/debug/strata-bridge"
           },
           "foundationdb": {
             "cluster_file": "/usr/local/etc/foundationdb/fdb.cluster",
-            "fdbcli": "/tmp/fdb743/expanded/FoundationDB-clients.pkg/Payload/usr/local/bin/fdbcli",
-            "present": true,
-            "status": "The database is available."
+            "fdbcli": null,
+            "present": true
           }
         },
         "expectation": "State converges and consumed RankLock slots do not reopen",
@@ -409,17 +429,19 @@
         "environment_probe": {
           "bitcoind": {
             "present": true,
-            "resolved": "/tmp/core311/bitcoin-31.1/bin/bitcoind"
+            "resolved": "/tmp/core311/bitcoin-31.1/bin/bitcoind",
+            "sha256": "d55c12b0b02001cc16b1481c4075361dcba193100a8143924abda911174c09ec",
+            "version": "Bitcoin Core daemon version v31.1.0 bitcoind",
+            "version_exit_code": 0
           },
           "bridge_binary": {
             "present": false,
-            "searched": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-p2pverify/target/debug/strata-bridge"
+            "searched": "/private/tmp/ranklock-strata-v0252.YIEMqs/matrix/target/debug/strata-bridge"
           },
           "foundationdb": {
             "cluster_file": "/usr/local/etc/foundationdb/fdb.cluster",
-            "fdbcli": "/tmp/fdb743/expanded/FoundationDB-clients.pkg/Payload/usr/local/bin/fdbcli",
-            "present": true,
-            "status": "The database is available."
+            "fdbcli": null,
+            "present": true
           }
         },
         "expectation": "Exactly one canonical outcome",
@@ -445,7 +467,10 @@
     }
   },
   "identity": {
-    "bridge_checkout": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/strata-p2pverify",
+    "bitcoind_path": "/tmp/core311/bitcoin-31.1/bin/bitcoind",
+    "bitcoind_sha256": "d55c12b0b02001cc16b1481c4075361dcba193100a8143924abda911174c09ec",
+    "bitcoind_version": "Bitcoin Core daemon version v31.1.0 bitcoind",
+    "bridge_checkout": "/private/tmp/ranklock-strata-v0252.YIEMqs/matrix",
     "strata_commit": "f94c06d08ff29eee746f3e20bd63078d2949b304"
   },
   "schema": "ranklock-v0252-strata-e2e-matrix-v1",

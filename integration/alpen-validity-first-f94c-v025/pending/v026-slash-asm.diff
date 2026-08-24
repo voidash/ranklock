@@ -1,0 +1,831 @@
+diff --git a/crates/subprotocols/bridge-v1/subprotocol/src/handler.rs b/crates/subprotocols/bridge-v1/subprotocol/src/handler.rs
+index 2501806..0937744 100644
+--- a/crates/subprotocols/bridge-v1/subprotocol/src/handler.rs
++++ b/crates/subprotocols/bridge-v1/subprotocol/src/handler.rs
+@@ -6,7 +6,9 @@ use strata_asm_logs::{DepositLog, NewExportEntry};
+ use strata_asm_proto_bridge_v1_txs::{
+     BRIDGE_V1_SUBPROTOCOL_ID, deposit_request::parse_drt, parser::ParsedTx,
+ };
++use strata_asm_proto_bridge_v1_types::OperatorIdx;
+ use strata_asm_proto_checkpoint_msgs::CheckpointIncomingMsg;
++use strata_btc_types::BitcoinOutPoint;
+ 
+ use crate::{
+     errors::{BridgeSubprotocolError, DepositValidationError},
+@@ -103,25 +105,20 @@ pub(crate) fn handle_parsed_tx(
+             );
+             Ok(())
+         }
+-        ParsedTx::Slash(info) => {
+-            let outpoint = info.stake_inpoint().outpoint();
+-            let stake_connector_txout = verified_aux_data
+-                .get_bitcoin_txout(outpoint)
+-                .unwrap_or_else(|e| {
+-                    error!(error = %e, %outpoint, "Invalid aux data for slash tx");
+-                    panic!("invalid aux: stake connector tx not provided");
+-                });
+-            let operator_idx = info.header_aux().operator_idx();
+-            validate_slash_stake_connector(
+-                state,
+-                operator_idx,
+-                &stake_connector_txout.script_pubkey,
+-            )?;
+-            state.remove_operator(operator_idx);
+-
+-            info!(operator_idx, "Removed operator via slash");
+-            Ok(())
+-        }
++        ParsedTx::Slash(info) => handle_slash(
++            state,
++            info.header_aux().operator_idx(),
++            info.stake_inpoint(),
++            "v1",
++            verified_aux_data,
++        ),
++        ParsedTx::SlashV2(info) => handle_slash(
++            state,
++            info.header_aux().operator_idx(),
++            info.stake_inpoint(),
++            "v2",
++            verified_aux_data,
++        ),
+         ParsedTx::Unstake(info) => {
+             let outpoint = info.stake_inpoint().outpoint();
+             let stake_connector_txout = verified_aux_data
+@@ -162,6 +159,11 @@ pub(crate) fn preprocess_parsed_tx(
+             // this information to verify the stake connector is locked to a known N/N multisig.
+             collector.request_bitcoin_tx(info.stake_inpoint().0.txid);
+         }
++        ParsedTx::SlashV2(info) => {
++            // SlashV2 has exact input order [L, S, K]; only K at index 2 is the
++            // stake parent used by the existing operator-set validation.
++            collector.request_bitcoin_tx(info.stake_inpoint().0.txid);
++        }
+         ParsedTx::Unstake(info) => {
+             // Request the Bitcoin transaction spent by the stake connector input. The handler
+             // compares its `scriptPubKey` against the canonical stake-connector commitment
+@@ -171,12 +173,37 @@ pub(crate) fn preprocess_parsed_tx(
+     }
+ }
+ 
++fn handle_slash(
++    state: &mut BridgeV1State,
++    operator_idx: OperatorIdx,
++    stake_inpoint: &BitcoinOutPoint,
++    slash_version: &'static str,
++    verified_aux_data: &VerifiedAuxData,
++) -> Result<(), BridgeSubprotocolError> {
++    let outpoint = stake_inpoint.outpoint();
++    let stake_connector_txout = verified_aux_data
++        .get_bitcoin_txout(outpoint)
++        .unwrap_or_else(|error| {
++            error!(error = %error, %outpoint, slash_version, "Invalid aux data for slash tx");
++            panic!("invalid aux: stake connector tx not provided");
++        });
++    validate_slash_stake_connector(state, operator_idx, &stake_connector_txout.script_pubkey)?;
++    state.remove_operator(operator_idx);
++
++    info!(operator_idx, slash_version, "Removed operator via slash");
++    Ok(())
++}
++
+ #[cfg(test)]
+ mod tests {
+     use strata_asm_proto_bridge_v1_txs::{
+         deposit_request::DrtHeaderAux,
+-        parser::ParsedTx,
+-        test_utils::{create_test_withdrawal_fulfillment_tx, parse_sps50_tx},
++        parser::{ParsedTx, parse_tx},
++        slash_v2::SlashV2TxHeaderAux,
++        test_utils::{
++            create_dummy_tx, create_test_withdrawal_fulfillment_tx, overwrite_aux_data,
++            parse_sps50_tx,
++        },
+         withdrawal_fulfillment::parse_withdrawal_fulfillment_tx,
+     };
+     use strata_test_utils_arb::ArbitraryGenerator;
+@@ -291,6 +318,44 @@ mod tests {
+         );
+     }
+ 
++    #[test]
++    fn test_handle_slash_v2_uses_stake_input_two() {
++        let operator_idx = 1;
++        let (mut state, operators) = create_test_state();
++        let (legacy_info, aux) = setup_slash_test(operator_idx, &operators);
++
++        let mut slash_v2_tx = create_dummy_tx(3, 2);
++        let tag = SlashV2TxHeaderAux::new(operator_idx)
++            .build_tag_data()
++            .expect("fixed-size SlashV2 tag must fit");
++        overwrite_aux_data(
++            &mut slash_v2_tx,
++            tag.subproto_id(),
++            tag.tx_type(),
++            tag.as_ref().aux_data().to_vec(),
++        );
++        // Input 1 deliberately has no auxiliary parent. Success therefore
++        // proves the handler obtained K from the parsed input at index 2.
++        slash_v2_tx.input[2].previous_output = legacy_info.stake_inpoint().0;
++
++        let slash_v2_input = parse_sps50_tx(&slash_v2_tx);
++        let parsed_tx = parse_tx(&slash_v2_input).expect("SlashV2 must dispatch");
++        assert!(matches!(&parsed_tx, ParsedTx::SlashV2(_)));
++        assert!(
++            state.operators().is_in_current_multisig(operator_idx),
++            "operator must start active"
++        );
++
++        let mut relayer = MockMsgRelayer;
++        handle_parsed_tx(&mut state, parsed_tx, &aux, &mut relayer)
++            .expect("valid SlashV2 K parent must be accepted");
++
++        assert!(
++            !state.operators().is_in_current_multisig(operator_idx),
++            "SlashV2 must remove the operator"
++        );
++    }
++
+     #[test]
+     fn test_handle_unstake_tx_success() {
+         let operator_idx = 0;
+diff --git a/crates/subprotocols/bridge-v1/txs/src/constants.rs b/crates/subprotocols/bridge-v1/txs/src/constants.rs
+index 7342543..3658bee 100644
+--- a/crates/subprotocols/bridge-v1/txs/src/constants.rs
++++ b/crates/subprotocols/bridge-v1/txs/src/constants.rs
+@@ -27,6 +27,8 @@ pub enum BridgeTxType {
+     Slash = 4,
+     /// Unstake transaction - operator exits the bridge
+     Unstake = 5,
++    /// Versioned slash transaction with exact input order `[L, S, K]`
++    SlashV2 = 6,
+ }
+ 
+ impl From<BridgeTxType> for u8 {
+@@ -46,6 +48,7 @@ impl TryFrom<u8> for BridgeTxType {
+             3 => Ok(BridgeTxType::Commit),
+             4 => Ok(BridgeTxType::Slash),
+             5 => Ok(BridgeTxType::Unstake),
++            6 => Ok(BridgeTxType::SlashV2),
+             invalid => Err(invalid),
+         }
+     }
+@@ -60,6 +63,7 @@ impl fmt::Display for BridgeTxType {
+             BridgeTxType::Commit => write!(f, "Commit"),
+             BridgeTxType::Slash => write!(f, "Slash"),
+             BridgeTxType::Unstake => write!(f, "Unstake"),
++            BridgeTxType::SlashV2 => write!(f, "SlashV2"),
+         }
+     }
+ }
+@@ -82,6 +86,7 @@ mod tests {
+                 Just(BridgeTxType::Commit),
+                 Just(BridgeTxType::Slash),
+                 Just(BridgeTxType::Unstake),
++                Just(BridgeTxType::SlashV2),
+             ]
+             .boxed()
+         }
+@@ -96,6 +101,7 @@ mod tests {
+         assert_eq!(BridgeTxType::Commit as u8, 3);
+         assert_eq!(BridgeTxType::Slash as u8, 4);
+         assert_eq!(BridgeTxType::Unstake as u8, 5);
++        assert_eq!(BridgeTxType::SlashV2 as u8, 6);
+     }
+ 
+     proptest! {
+@@ -109,7 +115,7 @@ mod tests {
+         }
+ 
+         #[test]
+-        fn test_bridge_tx_type_invalid_values(value in 6u8..=255u8) {
++        fn test_bridge_tx_type_invalid_values(value in 7u8..=255u8) {
+             // Test that all invalid u8 values return an error
+             prop_assert!(BridgeTxType::try_from(value).is_err());
+         }
+diff --git a/crates/subprotocols/bridge-v1/txs/src/errors.rs b/crates/subprotocols/bridge-v1/txs/src/errors.rs
+index 1c6be9b..34c9bbb 100644
+--- a/crates/subprotocols/bridge-v1/txs/src/errors.rs
++++ b/crates/subprotocols/bridge-v1/txs/src/errors.rs
+@@ -10,6 +10,10 @@ use crate::constants::BridgeTxType;
+ /// Specific reasons for a structural error when parsing bridge transactions.
+ #[derive(Debug, Error)]
+ pub enum TxStructureErrorKind {
++    /// Transaction input count did not match the exact versioned layout.
++    #[error("invalid input count: expected {expected}, got {actual}")]
++    UnexpectedInputCount { expected: usize, actual: usize },
++
+     /// Missing input at the expected index.
+     #[error("missing input at index {index}")]
+     MissingInput { index: usize },
+@@ -108,6 +112,20 @@ impl TxStructureError {
+         )
+     }
+ 
++    /// Unexpected number of transaction inputs for an exact versioned layout.
++    pub fn unexpected_input_count(
++        tx_type: BridgeTxType,
++        expected: usize,
++        actual: usize,
++        context: &'static str,
++    ) -> Self {
++        Self::new_with_context(
++            tx_type,
++            TxStructureErrorKind::UnexpectedInputCount { expected, actual },
++            Some(context),
++        )
++    }
++
+     /// Missing output at the expected index.
+     pub fn missing_output(tx_type: BridgeTxType, index: usize, context: &'static str) -> Self {
+         Self::new_with_context(
+diff --git a/crates/subprotocols/bridge-v1/txs/src/lib.rs b/crates/subprotocols/bridge-v1/txs/src/lib.rs
+index 74f9b91..3e459c6 100644
+--- a/crates/subprotocols/bridge-v1/txs/src/lib.rs
++++ b/crates/subprotocols/bridge-v1/txs/src/lib.rs
+@@ -12,6 +12,7 @@ pub mod deposit_request;
+ pub mod errors;
+ pub mod parser;
+ pub mod slash;
++pub mod slash_v2;
+ pub mod unstake;
+ pub mod withdrawal_fulfillment;
+ 
+diff --git a/crates/subprotocols/bridge-v1/txs/src/parser.rs b/crates/subprotocols/bridge-v1/txs/src/parser.rs
+index d20e47f..4cc33f0 100644
+--- a/crates/subprotocols/bridge-v1/txs/src/parser.rs
++++ b/crates/subprotocols/bridge-v1/txs/src/parser.rs
+@@ -10,6 +10,7 @@ use crate::{
+     deposit::{DepositInfo, parse_deposit_tx},
+     errors::TxStructureError,
+     slash::{SlashInfo, parse_slash_tx},
++    slash_v2::{SlashV2Info, parse_slash_v2_tx},
+     unstake::{UnstakeInfo, parse_unstake_tx},
+     withdrawal_fulfillment::{WithdrawalFulfillmentInfo, parse_withdrawal_fulfillment_tx},
+ };
+@@ -23,6 +24,8 @@ pub enum ParsedTx {
+     WithdrawalFulfillment(WithdrawalFulfillmentInfo),
+     /// A slash transaction that penalizes a misbehaving operator
+     Slash(SlashInfo),
++    /// A versioned slash transaction with exact input order `[L, S, K]`
++    SlashV2(SlashV2Info),
+     /// An unstake transaction to exit from the bridge
+     Unstake(UnstakeInfo),
+ }
+@@ -39,8 +42,9 @@ pub enum ParsedTx {
+ /// # Returns
+ ///
+ /// Returns `Some(ParsedTx)` for transaction types directly processed by the bridge
+-/// subprotocol (`Deposit`, `WithdrawalFulfillment`, `Slash`, `Unstake`) when the
+-/// transaction structure is well-formed, returns None otherwise.
++/// subprotocol (`Deposit`, `WithdrawalFulfillment`, `Slash`, `SlashV2`,
++/// `Unstake`) when the transaction structure is well-formed, returns `None`
++/// otherwise.
+ pub fn parse_tx<'t>(tx: &'t TxInputRef<'t>) -> Option<ParsedTx> {
+     // Step 1: Decode the SPS-50 tag's tx type byte into a known `BridgeTxType`.
+     // An unknown discriminant means the tag was tagged for the bridge subprotocol but with a
+@@ -69,6 +73,7 @@ pub fn parse_tx<'t>(tx: &'t TxInputRef<'t>) -> Option<ParsedTx> {
+             parse_withdrawal_fulfillment_tx(tx).map(ParsedTx::WithdrawalFulfillment)
+         }
+         BridgeTxType::Slash => parse_slash_tx(tx).map(ParsedTx::Slash),
++        BridgeTxType::SlashV2 => parse_slash_v2_tx(tx).map(ParsedTx::SlashV2),
+         BridgeTxType::Unstake => parse_unstake_tx(tx).map(ParsedTx::Unstake),
+         // DepositRequest transactions are not parsed at this stage. They are requested as
+         // auxiliary input during preprocessing when we encounter a `BridgeTxType::Deposit`
+@@ -105,3 +110,45 @@ pub fn parse_tx<'t>(tx: &'t TxInputRef<'t>) -> Option<ParsedTx> {
+         }
+     }
+ }
++
++#[cfg(test)]
++mod tests {
++    use bitcoin::TxIn;
++    use strata_l1_txfmt::ParseConfig;
++    use strata_test_utils_arb::ArbitraryGenerator;
++
++    use super::*;
++    use crate::{
++        slash::SlashInfo,
++        slash_v2::SlashV2TxHeaderAux,
++        test_utils::{TEST_MAGIC_BYTES, create_dummy_tx, create_test_slash_tx, parse_sps50_tx},
++    };
++
++    #[test]
++    fn dispatch_keeps_legacy_and_v2_slash_wire_types_distinct() {
++        let legacy_info: SlashInfo = ArbitraryGenerator::new().generate();
++        let legacy_tx = create_test_slash_tx(&legacy_info);
++        let legacy_input = parse_sps50_tx(&legacy_tx);
++        assert!(matches!(parse_tx(&legacy_input), Some(ParsedTx::Slash(_))));
++
++        let mut v2_tx = create_dummy_tx(3, 2);
++        let tag = SlashV2TxHeaderAux::new(legacy_info.header_aux().operator_idx())
++            .build_tag_data()
++            .expect("fixed-size SlashV2 tag must fit");
++        v2_tx.output[0].script_pubkey = ParseConfig::new(TEST_MAGIC_BYTES)
++            .encode_script_buf(&tag.as_ref())
++            .expect("SlashV2 SPS-50 script must encode");
++        let v2_input = parse_sps50_tx(&v2_tx);
++        assert!(matches!(parse_tx(&v2_input), Some(ParsedTx::SlashV2(_))));
++    }
++
++    #[test]
++    fn legacy_type_four_is_never_reinterpreted_by_input_count() {
++        let legacy_info: SlashInfo = ArbitraryGenerator::new().generate();
++        let mut legacy_tx = create_test_slash_tx(&legacy_info);
++        legacy_tx.input.push(TxIn::default());
++        let legacy_input = parse_sps50_tx(&legacy_tx);
++
++        assert!(matches!(parse_tx(&legacy_input), Some(ParsedTx::Slash(_))));
++    }
++}
+diff --git a/tests/asm/bridge.rs b/tests/asm/bridge.rs
+index 8cb92db..5a237e9 100644
+--- a/tests/asm/bridge.rs
++++ b/tests/asm/bridge.rs
+@@ -6,7 +6,9 @@
+ )]
+ 
+ use harness::{
+-    bridge::{submit_attacker_keyed_unstake_tx, submit_forged_unstake_tx, BridgeExt},
++    bridge::{
++        submit_attacker_keyed_unstake_tx, submit_forged_unstake_tx, submit_slash_v2_tx, BridgeExt,
++    },
+     test_harness::{AsmTestHarnessBuilder, Setup},
+ };
+ use integration_tests::harness;
+@@ -14,6 +16,42 @@ use strata_asm_common::Subprotocol;
+ use strata_asm_logs::ExportExtraDataUpdate;
+ use strata_asm_proto_bridge_v1::BridgeV1Subproto;
+ 
++/// A Core-accepted type-6 SlashV2 must resolve K from input 2 and apply the
++/// same operator-set transition as legacy Slash, without reinterpreting the S
++/// input at index 1 as stake.
++#[tokio::test(flavor = "multi_thread")]
++async fn test_slash_v2_removes_operator_via_stake_input_two() {
++    let Setup {
++        harness, bridge, ..
++    } = AsmTestHarnessBuilder::default()
++        .with_txindex()
++        .build()
++        .await;
++
++    let operator_idx = 1;
++    assert!(
++        harness
++            .bridge_state()
++            .unwrap()
++            .operators()
++            .is_in_current_multisig(operator_idx),
++        "operator must start active"
++    );
++
++    submit_slash_v2_tx(&harness, &bridge, operator_idx)
++        .await
++        .expect("Core and ASM must accept the exact [L, S, K] SlashV2");
++
++    assert!(
++        !harness
++            .bridge_state()
++            .unwrap()
++            .operators()
++            .is_in_current_multisig(operator_idx),
++        "SlashV2 must remove the operator"
++    );
++}
++
+ /// Regression: a forged unstake transaction must NOT remove an operator.
+ ///
+ /// The exploit spends an attacker-funded P2WSH UTXO whose witnessScript is
+diff --git a/tests/harness/bridge.rs b/tests/harness/bridge.rs
+index 93a03fd..e923fc4 100644
+--- a/tests/harness/bridge.rs
++++ b/tests/harness/bridge.rs
+@@ -39,6 +39,7 @@ use strata_asm_proto_bridge_v1_txs::{
+     deposit_request::{
+         build_deposit_request_spend_info, create_deposit_request_locking_script, DrtHeaderAux,
+     },
++    slash_v2::SlashV2TxHeaderAux,
+     test_utils::create_test_operators,
+     unstake::{stake_connector_script, UnstakeTxHeaderAux},
+ };
+@@ -404,6 +405,112 @@ fn build_trivial_script() -> ScriptBuf {
+     script::Builder::new().push_int(1).into_script()
+ }
+ 
++/// Builds, submits, and mines a valid type-6 SlashV2 transaction with exact
++/// input order `[L, S, K]`.
++///
++/// `L` and `S` are independently funded OP_TRUE tapscript leaves. `K` is a
++/// key-path-only P2TR output controlled by the bridge's current N/N operator
++/// set, matching the historical script that the ASM handler validates.
++pub async fn submit_slash_v2_tx(
++    harness: &AsmTestHarness,
++    ctx: &BridgeContext,
++    operator_idx: OperatorIdx,
++) -> anyhow::Result<BlockHash> {
++    let input_amount = Amount::from_sat(10_000);
++    let (l_txid, l_vout, l_script_pubkey, l_spend_info) =
++        harness.create_trivial_funding_utxo(input_amount).await?;
++    let (s_txid, s_vout, s_script_pubkey, s_spend_info) =
++        harness.create_trivial_funding_utxo(input_amount).await?;
++
++    let (stake_address, _) = derive_musig2_p2tr_address(ctx.operator_privkeys())?;
++    let (k_txid, k_vout) = harness
++        .create_funding_utxo(&stake_address, input_amount)
++        .await?;
++
++    // Confirm every parent so ASM's auxiliary-data fetch can resolve K.
++    harness.mine_block(None).await?;
++
++    let tag = SlashV2TxHeaderAux::new(operator_idx).build_tag_data()?;
++    let header_script =
++        ParseConfig::new(harness.asm_params.magic).encode_script_buf(&tag.as_ref())?;
++    let payout_address = harness.client.get_new_address().await?;
++    let fee = AsmTestHarness::DEFAULT_FEE;
++    let payout_value = input_amount * 3 - fee;
++
++    let prevouts = [
++        TxOut {
++            value: input_amount,
++            script_pubkey: l_script_pubkey,
++        },
++        TxOut {
++            value: input_amount,
++            script_pubkey: s_script_pubkey,
++        },
++        TxOut {
++            value: input_amount,
++            script_pubkey: stake_address.script_pubkey(),
++        },
++    ];
++    let mut slash_v2 = Transaction {
++        version: Version::TWO,
++        lock_time: LockTime::ZERO,
++        input: vec![
++            TxIn {
++                previous_output: OutPoint::new(l_txid, l_vout),
++                script_sig: ScriptBuf::new(),
++                sequence: Sequence::ENABLE_RBF_NO_LOCKTIME,
++                witness: Witness::new(),
++            },
++            TxIn {
++                previous_output: OutPoint::new(s_txid, s_vout),
++                script_sig: ScriptBuf::new(),
++                sequence: Sequence::ENABLE_RBF_NO_LOCKTIME,
++                witness: Witness::new(),
++            },
++            TxIn {
++                previous_output: OutPoint::new(k_txid, k_vout),
++                script_sig: ScriptBuf::new(),
++                sequence: Sequence::ENABLE_RBF_NO_LOCKTIME,
++                witness: Witness::new(),
++            },
++        ],
++        output: vec![
++            TxOut {
++                value: Amount::ZERO,
++                script_pubkey: header_script,
++            },
++            TxOut {
++                value: payout_value,
++                script_pubkey: payout_address.script_pubkey(),
++            },
++        ],
++    };
++
++    let stake_signature = sign_musig2_keypath(
++        &slash_v2,
++        ctx.operator_privkeys(),
++        &prevouts,
++        2,
++        Musig2Tweak::TaprootKeySpend,
++    )?;
++    slash_v2.input[2].witness.push(stake_signature.as_ref());
++
++    let trivial_script = build_trivial_script();
++    for (input_index, spend_info) in [(0, l_spend_info), (1, s_spend_info)] {
++        let control_block = spend_info
++            .control_block(&(trivial_script.clone(), LeafVersion::TapScript))
++            .ok_or_else(|| anyhow::anyhow!("trivial funding control block must exist"))?;
++        slash_v2.input[input_index]
++            .witness
++            .push(trivial_script.as_bytes());
++        slash_v2.input[input_index]
++            .witness
++            .push(control_block.serialize());
++    }
++
++    harness.submit_and_mine_tx(&slash_v2).await
++}
++
+ // ============================================================================
+ // Forged unstake reproduction
+ // ============================================================================
+diff --git a/crates/subprotocols/bridge-v1/txs/src/slash_v2/mod.rs b/crates/subprotocols/bridge-v1/txs/src/slash_v2/mod.rs
+new file mode 100644
+index 0000000..0d3b0b8
+--- /dev/null
++++ b/crates/subprotocols/bridge-v1/txs/src/slash_v2/mod.rs
+@@ -0,0 +1,23 @@
++//! Versioned SlashV2 transaction parser.
++//!
++//! SlashV2 has the exact input order `[L, S, K]`:
++//!
++//! 1. ACK-created slash authorization (`L`),
++//! 2. contest slash gate (`S`), and
++//! 3. operator stake (`K`).
++//!
++//! The distinct [`crate::constants::BridgeTxType::SlashV2`] wire type is
++//! intentional. Legacy type-4 Slash bytes continue to use the legacy parser,
++//! whose stake input is index 1; input counts are never used to reinterpret
++//! one version as the other.
++
++mod aux;
++mod info;
++mod parse;
++
++pub use aux::SlashV2TxHeaderAux;
++pub use info::SlashV2Info;
++pub use parse::{
++    CONTEST_SLASH_INPUT_INDEX, N_INPUTS, SLASH_AUTHORIZATION_INPUT_INDEX, STAKE_INPUT_INDEX,
++    parse_slash_v2_tx,
++};
+diff --git a/crates/subprotocols/bridge-v1/txs/src/slash_v2/aux.rs b/crates/subprotocols/bridge-v1/txs/src/slash_v2/aux.rs
+new file mode 100644
+index 0000000..888685b
+--- /dev/null
++++ b/crates/subprotocols/bridge-v1/txs/src/slash_v2/aux.rs
+@@ -0,0 +1,58 @@
++use arbitrary::Arbitrary;
++use strata_asm_proto_bridge_v1_types::OperatorIdx;
++use strata_codec::{Codec, encode_to_vec};
++use strata_l1_txfmt::TagData;
++
++use crate::{BRIDGE_V1_SUBPROTOCOL_ID, constants::BridgeTxType, errors::TagDataError};
++
++/// Auxiliary data in the SPS-50 header for [`BridgeTxType::SlashV2`].
++#[derive(Debug, Clone, PartialEq, Eq, Arbitrary, Codec)]
++pub struct SlashV2TxHeaderAux {
++    /// Index of the operator being slashed.
++    operator_idx: OperatorIdx,
++}
++
++impl SlashV2TxHeaderAux {
++    /// Creates a SlashV2 header for `operator_idx`.
++    pub fn new(operator_idx: OperatorIdx) -> Self {
++        Self { operator_idx }
++    }
++
++    /// Returns the operator being slashed.
++    pub fn operator_idx(&self) -> OperatorIdx {
++        self.operator_idx
++    }
++
++    /// Builds the distinct type-6 SPS-50 tag without panicking.
++    pub fn build_tag_data(&self) -> Result<TagData, TagDataError> {
++        let aux_data = encode_to_vec(self)?;
++        TagData::new(
++            BRIDGE_V1_SUBPROTOCOL_ID,
++            BridgeTxType::SlashV2 as u8,
++            aux_data,
++        )
++        .map_err(TagDataError::from)
++    }
++}
++
++#[cfg(test)]
++mod tests {
++    use proptest::prelude::*;
++
++    use super::*;
++
++    proptest! {
++        #[test]
++        fn tag_data_is_fallible_and_uses_distinct_v2_type(
++            operator_idx in any::<OperatorIdx>(),
++        ) {
++            let aux = SlashV2TxHeaderAux::new(operator_idx);
++            let tag = aux.build_tag_data().expect("fixed-size SlashV2 tag must fit");
++
++            prop_assert_eq!(tag.subproto_id(), BRIDGE_V1_SUBPROTOCOL_ID);
++            prop_assert_eq!(tag.tx_type(), BridgeTxType::SlashV2 as u8);
++            prop_assert_ne!(tag.tx_type(), BridgeTxType::Slash as u8);
++            prop_assert_eq!(tag.as_ref().aux_data().len(), 4);
++        }
++    }
++}
+diff --git a/crates/subprotocols/bridge-v1/txs/src/slash_v2/info.rs b/crates/subprotocols/bridge-v1/txs/src/slash_v2/info.rs
+new file mode 100644
+index 0000000..b44936b
+--- /dev/null
++++ b/crates/subprotocols/bridge-v1/txs/src/slash_v2/info.rs
+@@ -0,0 +1,50 @@
++use arbitrary::Arbitrary;
++use strata_btc_types::BitcoinOutPoint;
++
++use crate::slash_v2::SlashV2TxHeaderAux;
++
++/// Information extracted from a versioned SlashV2 transaction.
++#[derive(Debug, Clone, PartialEq, Eq, Arbitrary)]
++pub struct SlashV2Info {
++    header_aux: SlashV2TxHeaderAux,
++    slash_authorization_inpoint: BitcoinOutPoint,
++    contest_slash_inpoint: BitcoinOutPoint,
++    stake_inpoint: BitcoinOutPoint,
++}
++
++impl SlashV2Info {
++    /// Creates parsed SlashV2 information in exact `[L, S, K]` order.
++    pub fn new(
++        header_aux: SlashV2TxHeaderAux,
++        slash_authorization_inpoint: BitcoinOutPoint,
++        contest_slash_inpoint: BitcoinOutPoint,
++        stake_inpoint: BitcoinOutPoint,
++    ) -> Self {
++        Self {
++            header_aux,
++            slash_authorization_inpoint,
++            contest_slash_inpoint,
++            stake_inpoint,
++        }
++    }
++
++    /// Returns the versioned SPS-50 auxiliary data.
++    pub fn header_aux(&self) -> &SlashV2TxHeaderAux {
++        &self.header_aux
++    }
++
++    /// Returns the ACK-created `L` input outpoint at index 0.
++    pub fn slash_authorization_inpoint(&self) -> &BitcoinOutPoint {
++        &self.slash_authorization_inpoint
++    }
++
++    /// Returns the contest `S` input outpoint at index 1.
++    pub fn contest_slash_inpoint(&self) -> &BitcoinOutPoint {
++        &self.contest_slash_inpoint
++    }
++
++    /// Returns the stake `K` input outpoint at index 2.
++    pub fn stake_inpoint(&self) -> &BitcoinOutPoint {
++        &self.stake_inpoint
++    }
++}
+diff --git a/crates/subprotocols/bridge-v1/txs/src/slash_v2/parse.rs b/crates/subprotocols/bridge-v1/txs/src/slash_v2/parse.rs
+new file mode 100644
+index 0000000..132b1ef
+--- /dev/null
++++ b/crates/subprotocols/bridge-v1/txs/src/slash_v2/parse.rs
+@@ -0,0 +1,153 @@
++use strata_asm_common::TxInputRef;
++use strata_codec::decode_buf_exact;
++
++use crate::{
++    constants::BridgeTxType,
++    errors::TxStructureError,
++    slash_v2::{SlashV2Info, SlashV2TxHeaderAux},
++};
++
++/// Exact number of SlashV2 transaction inputs.
++pub const N_INPUTS: usize = 3;
++/// ACK-created slash authorization input index (`L`).
++pub const SLASH_AUTHORIZATION_INPUT_INDEX: usize = 0;
++/// Contest slash gate input index (`S`).
++pub const CONTEST_SLASH_INPUT_INDEX: usize = 1;
++/// Stake input index (`K`).
++pub const STAKE_INPUT_INDEX: usize = 2;
++
++/// Parses the distinct type-6 SlashV2 transaction layout.
++pub fn parse_slash_v2_tx(tx: &TxInputRef<'_>) -> Result<SlashV2Info, TxStructureError> {
++    let actual_inputs = tx.tx().input.len();
++    if actual_inputs != N_INPUTS {
++        return Err(TxStructureError::unexpected_input_count(
++            BridgeTxType::SlashV2,
++            N_INPUTS,
++            actual_inputs,
++            "SlashV2 exact [L, S, K] inputs",
++        ));
++    }
++
++    let header_aux: SlashV2TxHeaderAux = decode_buf_exact(tx.tag().aux_data())
++        .map_err(|error| TxStructureError::invalid_auxiliary_data(BridgeTxType::SlashV2, error))?;
++
++    let slash_authorization_inpoint = tx.tx().input[SLASH_AUTHORIZATION_INPUT_INDEX]
++        .previous_output
++        .into();
++    let contest_slash_inpoint = tx.tx().input[CONTEST_SLASH_INPUT_INDEX]
++        .previous_output
++        .into();
++    let stake_inpoint = tx.tx().input[STAKE_INPUT_INDEX].previous_output.into();
++
++    Ok(SlashV2Info::new(
++        header_aux,
++        slash_authorization_inpoint,
++        contest_slash_inpoint,
++        stake_inpoint,
++    ))
++}
++
++#[cfg(test)]
++mod tests {
++    use std::mem;
++
++    use bitcoin::{Transaction, TxIn};
++    use strata_l1_txfmt::ParseConfig;
++    use strata_test_utils_arb::ArbitraryGenerator;
++
++    use super::*;
++    use crate::{
++        BRIDGE_V1_SUBPROTOCOL_ID,
++        errors::TxStructureErrorKind,
++        test_utils::{TEST_MAGIC_BYTES, create_dummy_tx, overwrite_aux_data, parse_sps50_tx},
++    };
++
++    const AUX_LEN: usize = mem::size_of::<SlashV2TxHeaderAux>();
++
++    fn create_test_slash_v2_tx(info: &SlashV2Info) -> Transaction {
++        let mut tx = create_dummy_tx(N_INPUTS, 2);
++        let tag_data = info
++            .header_aux()
++            .build_tag_data()
++            .expect("fixed-size SlashV2 tag must fit");
++        tx.output[0].script_pubkey = ParseConfig::new(TEST_MAGIC_BYTES)
++            .encode_script_buf(&tag_data.as_ref())
++            .expect("SlashV2 SPS-50 script must encode");
++        tx.input[SLASH_AUTHORIZATION_INPUT_INDEX].previous_output =
++            info.slash_authorization_inpoint().0;
++        tx.input[CONTEST_SLASH_INPUT_INDEX].previous_output = info.contest_slash_inpoint().0;
++        tx.input[STAKE_INPUT_INDEX].previous_output = info.stake_inpoint().0;
++        tx
++    }
++
++    #[test]
++    fn parses_exact_l_s_k_order() {
++        let info: SlashV2Info = ArbitraryGenerator::new().generate();
++        let tx = create_test_slash_v2_tx(&info);
++        let input = parse_sps50_tx(&tx);
++
++        let parsed = parse_slash_v2_tx(&input).expect("exact SlashV2 must parse");
++
++        assert_eq!(parsed, info);
++        assert_eq!(
++            parsed.slash_authorization_inpoint().0,
++            tx.input[0].previous_output
++        );
++        assert_eq!(
++            parsed.contest_slash_inpoint().0,
++            tx.input[1].previous_output
++        );
++        assert_eq!(parsed.stake_inpoint().0, tx.input[2].previous_output);
++    }
++
++    #[test]
++    fn rejects_missing_or_extra_inputs() {
++        let info: SlashV2Info = ArbitraryGenerator::new().generate();
++        let mut missing = create_test_slash_v2_tx(&info);
++        missing.input.pop();
++        let missing_input = parse_sps50_tx(&missing);
++        let missing_error = parse_slash_v2_tx(&missing_input).unwrap_err();
++        assert_eq!(missing_error.tx_type(), BridgeTxType::SlashV2);
++        assert!(matches!(
++            missing_error.kind(),
++            TxStructureErrorKind::UnexpectedInputCount {
++                expected: N_INPUTS,
++                actual: 2,
++            }
++        ));
++
++        let mut extra = create_test_slash_v2_tx(&info);
++        extra.input.push(TxIn::default());
++        let extra_input = parse_sps50_tx(&extra);
++        let extra_error = parse_slash_v2_tx(&extra_input).unwrap_err();
++        assert_eq!(extra_error.tx_type(), BridgeTxType::SlashV2);
++        assert!(matches!(
++            extra_error.kind(),
++            TxStructureErrorKind::UnexpectedInputCount {
++                expected: N_INPUTS,
++                actual: 4,
++            }
++        ));
++    }
++
++    #[test]
++    fn rejects_non_exact_auxiliary_data() {
++        let info: SlashV2Info = ArbitraryGenerator::new().generate();
++        for invalid_aux in [vec![0; AUX_LEN - 1], vec![0; AUX_LEN + 1]] {
++            let mut tx = create_test_slash_v2_tx(&info);
++            overwrite_aux_data(
++                &mut tx,
++                BRIDGE_V1_SUBPROTOCOL_ID,
++                BridgeTxType::SlashV2 as u8,
++                invalid_aux,
++            );
++            let input = parse_sps50_tx(&tx);
++            let error = parse_slash_v2_tx(&input).unwrap_err();
++            assert_eq!(error.tx_type(), BridgeTxType::SlashV2);
++            assert!(matches!(
++                error.kind(),
++                TxStructureErrorKind::InvalidAuxiliaryData(_)
++            ));
++        }
++    }
++}

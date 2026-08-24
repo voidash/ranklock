@@ -597,10 +597,14 @@ class ParticipantReleaseSidecar:
                     participant_secret=self.participant.participant_secret,
                     witnesses=self.rollback_witnesses,
                 )
-            except Exception:
-                # No response bytes have been emitted.  Preserve the original
-                # recheck error even if the abort receipt cannot be refreshed.
-                pass
+            except Exception as recovery_exc:
+                raise ReleaseSidecarError(
+                    "Bitcoin recheck failed and abort/rollback-witness "
+                    "recovery also failed"
+                ) from ExceptionGroup(
+                    "release-sidecar primary and fail-closed recovery failures",
+                    [exc, recovery_exc],
+                )
             if isinstance(exc, ReleaseSidecarError):
                 raise
             raise ReleaseSidecarError(

@@ -20,6 +20,7 @@ from ranklock.evidence_v0252 import CaseResult, MatrixReport, run_recorded_comma
 
 ROOT = Path(__file__).resolve().parents[1]
 VERIFIER = ROOT / "scripts" / "verify_v0252_evidence.py"
+PINNED_BITCOIND_SHA256 = "d55c12b0b02001cc16b1481c4075361dcba193100a8143924abda911174c09ec"
 
 
 def _run_verifier(core_matrix: Path, output: Path) -> subprocess.CompletedProcess[str]:
@@ -64,6 +65,38 @@ def test_verifier_accepts_honest_all_unavailable_report(tmp_path: Path):
     assert document["safe_for_funds"] is False
 
 
+def test_verifier_rejects_passing_core_report_without_binary_identity(tmp_path: Path):
+    command = run_recorded_command(
+        [sys.executable, "-c", "print('regtest ok')"],
+        cwd=tmp_path,
+        log_dir=tmp_path / "logs",
+        label="core001-no-identity",
+        timeout=30,
+    )
+    cases = tuple(
+        CaseResult(
+            case_id=case_id,
+            status="passed" if case_id == "CORE-001" else "not_executed",
+            description="identity omission regression",
+            commands=(command,) if case_id == "CORE-001" else (),
+            blocked_by=None if case_id == "CORE-001" else "CORE-001-followups",
+        )
+        for case_id in CORE_CASE_IDS
+    )
+    report = MatrixReport(
+        schema_name="ranklock-v0252-core-matrix-v1",
+        required_case_ids=CORE_CASE_IDS,
+        identity={"expected_release": "31.1"},
+        cases=cases,
+    )
+    report_path = tmp_path / "missing-identity.json"
+    report.write(report_path)
+
+    result = _run_verifier(report_path, tmp_path / "out.json")
+    assert result.returncode != 0
+    assert "identifies the pinned Bitcoin Core executable" in result.stderr
+
+
 def test_verifier_accepts_one_legitimately_passed_case(tmp_path: Path):
     command = run_recorded_command(
         [sys.executable, "-c", "print('regtest ok')"],
@@ -89,7 +122,10 @@ def test_verifier_accepts_one_legitimately_passed_case(tmp_path: Path):
     report = MatrixReport(
         schema_name="ranklock-v0252-core-matrix-v1",
         required_case_ids=CORE_CASE_IDS,
-        identity={"expected_release": "31.1"},
+        identity={
+            "expected_release": "31.1",
+            "bitcoind_sha256": PINNED_BITCOIND_SHA256,
+        },
         cases=tuple(cases),
     )
     report_path = tmp_path / "legit.json"
@@ -139,7 +175,10 @@ def test_verifier_rejects_log_file_edited_after_the_fact(tmp_path: Path):
     report = MatrixReport(
         schema_name="ranklock-v0252-core-matrix-v1",
         required_case_ids=CORE_CASE_IDS,
-        identity={"expected_release": "31.1"},
+        identity={
+            "expected_release": "31.1",
+            "bitcoind_sha256": PINNED_BITCOIND_SHA256,
+        },
         cases=tuple(cases),
     )
     report_path = tmp_path / "legit.json"

@@ -6,6 +6,7 @@ import os
 import numpy as np
 import pytest
 
+import ranklock.release_sidecar as release_sidecar_module
 from ranklock.authorized_labels import LabelCommitmentTree
 from ranklock.bip340 import public_key
 from ranklock.bitcoin_authorization import BitcoinAuthorizationBinding, parse_bitcoin_transaction
@@ -33,7 +34,7 @@ from ranklock.release_sidecar import (
     read_secret_file_secure,
     require_secret_file_permissions,
 )
-from ranklock.rollback_witness import SqliteRollbackWitness
+from ranklock.rollback_witness import RollbackWitnessError, SqliteRollbackWitness
 
 
 def _compact(value: int) -> bytes:
@@ -385,6 +386,51 @@ def test_reorg_race_after_burn_aborts_without_emitting_share(tmp_path):
     assert ledger.use(0).state == "abort"
     assert ledger.remaining == 0
     assert ledger.verify_audit_chain()
+
+
+def test_reorg_abort_anchor_failure_propagates_both_errors(tmp_path, monkeypatch):
+    raw, _parsed, activation, guide, participant, request, ledger, witness, policy = _fixture(
+        tmp_path
+    )
+    block_hash = "13" * 32
+    service = ParticipantReleaseSidecar(
+        activation=activation,
+        label_guide=guide,
+        participant=participant,
+        ledger=ledger,
+        bitcoin_core=ReorgRaceCore(raw, block_hash=block_hash),
+        minimum_confirmations=6,
+        rollback_witnesses=(witness,),
+        witness_policy=policy,
+    )
+
+    real_anchor = release_sidecar_module.anchor_ledger_at_all_witnesses
+    calls = 0
+
+    def fail_abort_anchor(*args, **kwargs):
+        nonlocal calls
+        calls += 1
+        if calls == 2:
+            raise RollbackWitnessError("simulated abort witness outage")
+        return real_anchor(*args, **kwargs)
+
+    monkeypatch.setattr(
+        release_sidecar_module,
+        "anchor_ledger_at_all_witnesses",
+        fail_abort_anchor,
+    )
+    output = tmp_path / "must-not-exist-anchor-fail.bin"
+    with pytest.raises(ReleaseSidecarError, match="recovery also failed") as excinfo:
+        service.issue(
+            request=request,
+            raw_transaction=raw,
+            block_hash=block_hash,
+            output_path=output,
+        )
+    assert isinstance(excinfo.value.__cause__, ExceptionGroup)
+    assert len(excinfo.value.__cause__.exceptions) == 2
+    assert not output.exists()
+    assert ledger.use(0).state == "abort"
 
 
 def test_sidecar_rejects_signed_point_not_selected_by_witness_before_burn(tmp_path):

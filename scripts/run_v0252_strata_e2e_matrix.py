@@ -22,11 +22,10 @@ adding execution later means adding real commands, not editing a status.
 """
 
 import argparse
-import json
+from hashlib import sha256
 from pathlib import Path
 import shutil
 import subprocess
-import sys
 
 from ranklock.acceptance_matrix_v0252 import STRATA_E2E_CASE_IDS
 from ranklock.evidence_v0252 import CaseResult, MatrixReport
@@ -90,7 +89,27 @@ def _probe_fdb() -> dict[str, object]:
 
 def _probe_bitcoind() -> dict[str, object]:
     resolved = shutil.which("bitcoind")
-    return {"resolved": resolved, "present": resolved is not None}
+    probe: dict[str, object] = {"resolved": resolved, "present": resolved is not None}
+    if resolved is None:
+        return probe
+    path = Path(resolved)
+    try:
+        probe["sha256"] = sha256(path.read_bytes()).hexdigest()
+    except OSError as exc:
+        probe["sha256_error"] = str(exc)
+    try:
+        version = subprocess.run(
+            [resolved, "--version"],
+            text=True,
+            capture_output=True,
+            timeout=60,
+        )
+    except (OSError, subprocess.SubprocessError) as exc:
+        probe["version_error"] = str(exc)
+    else:
+        probe["version_exit_code"] = version.returncode
+        probe["version"] = version.stdout.splitlines()[0] if version.stdout else ""
+    return probe
 
 
 def main() -> int:
@@ -108,10 +127,11 @@ def main() -> int:
     )
     args = parser.parse_args()
 
+    bitcoind = _probe_bitcoind()
     environment = {
         "bridge_binary": _probe_bridge_binary(args.bridge_checkout),
         "foundationdb": _probe_fdb(),
-        "bitcoind": _probe_bitcoind(),
+        "bitcoind": bitcoind,
     }
 
     cases: list[CaseResult] = []
@@ -141,6 +161,9 @@ def main() -> int:
         identity={
             "strata_commit": PINNED_COMMIT,
             "bridge_checkout": str(args.bridge_checkout) if args.bridge_checkout else None,
+            "bitcoind_path": bitcoind.get("resolved"),
+            "bitcoind_sha256": bitcoind.get("sha256"),
+            "bitcoind_version": bitcoind.get("version"),
         },
         cases=tuple(cases),
     )

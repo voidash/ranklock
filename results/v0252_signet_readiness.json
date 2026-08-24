@@ -26,7 +26,7 @@
     },
     {
       "description": "exporter refuses to overwrite a released secret",
-      "detail": "guard is reachable",
+      "detail": "colliding publication rejected; first secret remained intact",
       "id": "SIGNET-005",
       "passed": true
     },

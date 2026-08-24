@@ -97,33 +97,39 @@ congestion — the NACK can win the race. **Whether D is sized correctly for
 that, and whether ACK fee-bumping is operationally guaranteed, is a design
 question I could not settle from the code. Please treat P3 as open.**
 
-**P4 — Only the exact pre-signed NACK is accepted.** **[known gap]**
+**P4 — ACK/NACK resolution is witness-bound.** *(locally verified; live E2E pending)*
 
-`process_counterproof_nackd` compares `compute_txid()`. Under BIP141 the txid
-excludes the witness, so txid equality does **not** establish that the spend
-used the pre-signed NACK witness. A spend reusing the NACK body but
-satisfying the ACK leaf carries the same txid and would be classified as a
-NACK. Exploiting it needs a fresh N/N signature, i.e. the out-of-scope
-colluding quorum — but **the code's comment claims more than the check
-delivers**, and the fix (compare the finalized transaction or wtxid in both
-`tx_classifier.rs` and `contested.rs`) is not yet applied.
+The imported handoff claimed this property after fixing only the ACK side.
+That was wrong. `process_counterproof_nackd` and the NACK classifier still
+compared `compute_txid()`, which excludes witness data under BIP141. The
+comment promised the exact pre-signed transaction while the code established
+only the unsigned body.
 
-**P4 addendum — the ACK side is worse than stated, and the fix is not local.**
-*(verified)*
+The local implementation now closes both directions:
 
-A second review corroborated P4 and found the ACK direction is weaker still.
-`wtxid` appears **zero times** in the entire bridge tree, so no
-witness-committing identifier is used anywhere. More concretely, in one match
-arm of `crates/bridge-sm/src/graph/tx_classifier.rs`,
-`CounterProofConfirmedEvent` is constructed with `tx: tx.clone()` while
-`CounterProofAckConfirmedEvent` — immediately below it — carries only
-`counterproof_ack_txid`. `process_counterproof_ack` therefore compares a txid
-and nothing else.
+- ACK events carry the complete transaction. The transition first checks the
+  expected ACK txid, then requires the witness to reveal the preimage committed
+  by the slot's ACK leaf.
+- The NACK classifier unpacks the persisted N/N signatures, reconstructs the
+  finalized fixed NACK for every slot, and compares the complete
+  `Transaction`. `process_counterproof_nackd` independently reconstructs and
+  compares it again at the state-transition boundary.
+- Malformed persisted signature layouts fail closed instead of panicking or
+  accepting a witness-blind match.
 
-The consequence for remediation: the ACK event does not carry the transaction
-at all, so a witness check cannot be added at the comparison site. The event
-must first be changed to carry the `Transaction`. **P4 is not a one-line
-fix on the ACK side**, and any estimate that assumed otherwise was wrong.
+Two adversarial regressions take a genuine finalized NACK, flip a witness byte,
+assert that its `txid` is unchanged and its `wtxid` changed, then prove that
+both classification and direct transition reject it. The pristine installer
+reproduction passes 452 bridge-sm tests and the complete workspace passes 952.
+
+The executable P4 deltas are also inside the standalone integration bundle's
+tamper-evident boundary. Its manifest now covers all 27 distributable files;
+the bundle check compares the complete file set before verifying hashes, so an
+unlisted replacement delta cannot bypass the checksum check.
+
+This is still local implementation evidence. STRATA-010..020 have not run, so
+no claim is made that a production-shaped observer has classified and consumed
+these transactions through the deployed services.
 
 **P6 — The exporter cannot tell a real unlock from setup entropy.**
 *(verified, architectural)*
@@ -150,55 +156,61 @@ slot-separated label rules — pinned by a regression test — so the exposure i
 limited. Explicit binding is nonetheless the correct hardening and is not yet
 applied.
 
-## 3b. The proof-to-ACK chain is not wired, and that is a soundness gap
+## 3b. The proof-to-ACK library and consumer mount exist; the producer does not
 
-**(verified by call-graph inspection; this supersedes the milder framing of P6)**
+**(verified by call-graph inspection and unit tests)**
 
-Section 1 describes RankLock as releasing the ACK preimage *conditioned on a
-valid Groth16 proof*, via the BABE lock. **No code path implements that
-binding.** Three independent observations, each checked directly:
+`export_ack_from_verified_unlock` now implements the missing library boundary.
+It accepts no caller-supplied payload: it calls `unlock_positive_lock`, which
+verifies the statement/proof binding and certified projective output, then
+passes only that returned payload to the exporter. Direct `export_unlock`
+calls fail closed unless the caller explicitly sets
+`allow_unverified_payload=True`.
 
-1. `strata_exporter.py` — the module that publishes the ACK preimage — never
-   references `babe_positive_lock`, `setup_positive_lock` or
-   `unlock_positive_lock`.
-2. `scripts/generate_v025_committee_qualification.py` does call
-   `setup_positive_lock` / `unlock_positive_lock`, but the payload it protects
-   is `entropy.bytes(b"positive-lock-payload")` — a fixture value. That
-   generator contains no reference to an ACK preimage or ACK commitment at
-   all. The lock and the ACK are two unconnected subsystems.
-3. `StrataAckExporter.export_unlock` — the function that writes the preimage
-   the bridge reads — is called **only from tests**. No production path, no
-   script, no CLI invokes it.
+The proof-gated boundary also no longer accepts an independent
+`session_context`. Setup derives the positive-lock session from the complete
+`AckContext`, and release derives the same value internally. This closes a
+split-brain redirect in which a valid unlock for one statement could otherwise
+be published under a different bridge/counterproof/ACK tuple sharing the same
+partial setup-commitment path. The regression leaves the ledger unused and
+publishes no preimage under the substituted context.
 
-The ACK payload that does exist comes from `derive_setup_payload(entropy=...)`,
-which is a function of setup entropy alone. So today the preimage's
-availability is conditioned on *holding setup entropy*, not on possessing a
-valid proof.
+That closes the former absence in the library, but it does not make an E2E
+system. The verified exporter function is still called only from tests; no
+production command or service invokes it. The installer now connects the
+consumer side: all three bridge containers receive
+`STRATA_RANKLOCK_DIR=/var/lib/strata/ranklock`, with a required host export
+root mounted read-only, and compose pins the verified Core 31.1 image by
+multi-architecture digest. `docker compose config` resolves all three mounts
+as read-only. Therefore the proof-to-unlock-to-file path and its deployed
+consumer exist, but the proof-verifying producer is still absent.
 
-**Consequences, stated separately because they pull in opposite directions:**
+The exporter storage boundary is also locally hardened. Its root and SQLite
+ledger must be private, real files owned by the process user; setup
+commitments and unlocks are write-once; a proof-gated export must match the
+commitment already published for graph setup; and concurrent filename
+collisions cannot overwrite a released preimage. If bytes become visible but
+directory durability reporting fails, the context binding remains released
+and the API requires an exact retry instead of falsely marking the visible
+secret as an ordinary failed publication. This is host hardening, not an
+external monotonic witness, and does not close A4.
 
-- It *lowers* H2's immediate severity. The ~100-bit BABE lock is not currently
-  guarding the ACK preimage, because it is not guarding anything on the ACK
-  path. The curve decision still gates any future wiring, but it is not
-  today's exposure.
-- It *raises* the architectural concern. The cryptographic gate the design
-  relies on is absent from the release path rather than weak in it. Nothing
-  between setup and publication checks that a proof ever existed.
+Setup entropy also remains a direct capability: `derive_setup_payload` can
+recompute the ACK preimage without a proof, and the explicit development
+override can publish it. Production provisioning must remove that route, not
+merely promise that operators will avoid it.
 
-This also reframes STRATA-010..020. Those cases are not merely unexecuted:
-there is **no producer to execute them against**. An end-to-end run cannot be
-built by wiring up a harness, because the middle of the chain — proof to
-unlock to exported preimage — has to be implemented first.
-
-Reviewers should treat "is the proof-to-ACK binding implemented anywhere?" as
-the first question, ahead of any question about how strong it is.
+STRATA-010..020 are consequently both unexecuted and deployment-blocked. The
+next local task is to wire the verified exporter into a production-shaped
+sidecar/service boundary and drive the recorded
+ACK/NACK/restart/reorg/concurrency cases without a fixture shortcut.
 
 ## 4. What has been executed, and what that does not cover
 
 Executed against pinned Core 31.1: CORE matrix 18 passed / 0 failed with each
 negative pinned to its specific rejection reason (this caught CORE-024
 passing on an invalid signature rather than the fee floor). Strata workspace
-949 passed / 0 failed. Python 490 passed / 1 skipped. Verifier: 81 integrity
+952 passed / 0 failed. Python 525 passed / 1 skipped. Verifier: 88 integrity
 checks, 0 failing, logs re-hashed from disk.
 
 **Not executed: the entire ACK/NACK execution phase (STRATA-010..020).** No
@@ -222,8 +234,11 @@ Core. **The behavioural core of the system is unproven.**
 ## 6. Suggested review priorities
 
 1. **P2 against A4** — the tamper-evidence boundary is real and documented.
-2. **P4** — a stated invariant the implementation does not enforce.
+2. **Proof-to-ACK deployment and P6** — the verified library path is not yet
+   the only deployed producer, and setup entropy remains a release capability.
 3. **P3** — the ACK/NACK race, the one place I could not distinguish design
    intent from defect.
 4. **P1** — the fix is verified, but it is the property that already failed
    once, so it deserves adversarial attention rather than trust.
+5. **P4** — independently confirm the new full-transaction reconstruction and
+   the two same-txid/different-witness regressions.

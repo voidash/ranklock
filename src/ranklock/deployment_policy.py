@@ -63,6 +63,10 @@ INDEPENDENT_ROLES = frozenset({ROLE_CRYPTO_AUDIT, ROLE_IMPLEMENTATION_AUDIT})
 NETWORK_CODES = {"regtest": 0, "signet": 1, "testnet": 2, "mainnet": 3}
 CODE_NETWORKS = {value: key for key, value in NETWORK_CODES.items()}
 DEPLOYMENT_MODES = {"observe", "canary", "enforce"}
+LEGACY_PROTOCOL_BLOCKER = (
+    "legacy v0.25 safety subject cannot authorize funds; a validated v0.26 "
+    "funding-subject DAG and funds protocol are absent"
+)
 
 
 class DeploymentPolicyError(ValueError):
@@ -500,6 +504,15 @@ def evaluate_deployment(
     # obtains signing material or permission to affect Bitcoin state.
     if mode == "observe":
         return DeploymentDecision(mode, True, False, tuple(), tuple())
+
+    # SafetySubject and UnsignedFundsSafetyPolicy are legacy v0.25 envelopes.
+    # They cannot bind the v0.26 graph, proof-suite, vector-ACK, timeout,
+    # presigning, NUMS-key, or distributed release-state invariants.  Treating
+    # role attestations as a substitute would let correctly signed statements
+    # authorize a protocol that the statements do not identify.  A future
+    # v0.26 evaluator must consume the new typed DAG; this compatibility gate
+    # remains categorically non-authoritative for funds.
+    failures.append(LEGACY_PROTOCOL_BLOCKER)
 
     if policy is None:
         failures.append("governance-signed funds-safety policy is absent")

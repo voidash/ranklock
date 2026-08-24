@@ -1,0 +1,114 @@
+{
+  "schema": "ranklock-v026-threshold-v3-admission-gap-evidence-v1",
+  "evidence_class": "REPRODUCED",
+  "base_commit": "f94c06d08ff29eee746f3e20bd63078d2949b304",
+  "generated_by": "scripts/generate_v026_threshold_v3_gap_results.py; every count parsed from the live Rust sources, every check result from a command run here",
+  "graph_v3": {
+    "source": "crates/tx-graph/src/v026_threshold_graph_v3.rs",
+    "enum": "V026ThresholdActivationBlockerV3",
+    "declared_blocker_count": 17,
+    "blockers": [
+      "research-nums-profile",
+      "canonical-wire-identity-unimplemented",
+      "release-cryptography-evidence-unverified",
+      "controller-domain-evidence-unverified",
+      "slash-header-profile-incompatible",
+      "external-output-evidence-unverified",
+      "fresh-deposit-evidence-unverified",
+      "stake-exclusivity-evidence-unverified",
+      "presign-erasure-evidence-unverified",
+      "legacy-material-exclusion-unverified",
+      "fee-policy-evidence-unverified",
+      "atomic-roster-weight-evidence-unverified",
+      "bitcoin-core-execution-evidence-unverified",
+      "asm-activation-evidence-unverified",
+      "runtime-admission-unimplemented",
+      "validity-withholding-economics-unresolved",
+      "threshold-ack-witness-adoption-unimplemented"
+    ]
+  },
+  "graph_v2": {
+    "source": "crates/tx-graph/src/v026_graph.rs",
+    "declared_blocker_count": 16
+  },
+  "blocker_delta_v2_to_v3": [
+    "threshold-ack-witness-adoption-unimplemented"
+  ],
+  "admission_blocker_counts": {
+    "v1": 15,
+    "v2": 16,
+    "v3": 17
+  },
+  "persistence_gap": {
+    "declared_row_spec_modules": [
+      "v026_ack_witnesses_v3",
+      "v026_admissions",
+      "v026_admissions_v2",
+      "v026_admissions_v3"
+    ],
+    "admission_row_spec_modules": [
+      "v026_admissions",
+      "v026_admissions_v2",
+      "v026_admissions_v3"
+    ],
+    "v026_admissions_v3_present": true,
+    "row_spec_files_on_disk": [
+      "deposits.rs",
+      "funds.rs",
+      "graphs.rs",
+      "kv.rs",
+      "mod.rs",
+      "safe_harbour.rs",
+      "signatures.rs",
+      "stakes.rs",
+      "v026_ack_witnesses_v3.rs",
+      "v026_admissions.rs",
+      "v026_admissions_v2.rs",
+      "v026_admissions_v3.rs"
+    ],
+    "envelopes": {
+      "v026_admissions": {
+        "magic": "RL26ADM",
+        "magic_bytes": 7,
+        "envelope_version": 1
+      },
+      "v026_admissions_v2": {
+        "magic": "RL26ADM",
+        "magic_bytes": 7,
+        "envelope_version": 2
+      },
+      "v026_admissions_v3": {
+        "magic": "RL26ADM",
+        "magic_bytes": 7,
+        "envelope_version": 3
+      }
+    },
+    "finding": "The live v3 admission path validates 17 blockers, and a v026_admissions_v3 row spec now exists alongside v1 (15) and v2 (16). A v3 observation has a persistence envelope in its own subspace. The stored row remains an inert value with no transition to funding, signing, duties, P2P, or broadcast."
+  },
+  "workspace_checks": {
+    "cargo_check_tx_graph": "pass",
+    "cargo_check_bridge_sm": "pass",
+    "cargo_check_db": "pass",
+    "cargo_test_tx_graph": "pass",
+    "cargo_test_bridge_sm": "pass",
+    "cargo_test_db": {
+      "result": "FAIL",
+      "note": "strata-bridge-db's fdb::bridge_db tests call FdbClient::setup and require a live FoundationDB cluster. None runs on this host, so setup panics at crates/db/src/fdb/bridge_db.rs:776 and every later test in the process then panics on 'the fdb select api version can only be run once per process'. This is an environment dependency and a per-process harness limitation, not a regression. It is also the direct reason live FoundationDB execution remains unverified in the claim boundary.",
+      "fdb_api_version_cascade_observed": true
+    }
+  },
+  "source_hashes": {
+    "crates/tx-graph/src/v026_threshold_graph_v3.rs": "c87fe50f2912b909a40a89480945a444995e2693e196cc5de26f03e4919ce2f2",
+    "crates/tx-graph/src/v026_graph.rs": "ce81c357bca47c879360e551fdd5a0406d8bc127e3054add40a4d499c7eacc52",
+    "crates/bridge-sm/src/v026_admission_v3.rs": "e9754171bed698759a861d505d823d6ab57ee1c015952b32504cab0be71bea72",
+    "crates/bridge-sm/src/v026_admission_v2.rs": "cdef0509147a01635ebad40fc9d366df9f34dd2f0476bea52cb9ab2a43e6a8f7",
+    "crates/bridge-sm/src/v026_admission.rs": "d180d5d757345a541d051934a73f84452551fe6d2934290a770991b503b4ad11",
+    "crates/db/src/fdb/row_spec/mod.rs": "ba219c5f81b725b8c18938026d6cb5851e3cfd8ef7e550f24a44f86c9a22cb80",
+    "crates/db/src/fdb/row_spec/v026_admissions.rs": "6364b33da4ca800e6c082f5ab9b45096ec4251f271a28fc6cea6e310b1cdd372",
+    "crates/db/src/fdb/row_spec/v026_admissions_v2.rs": "b5cdf4b5480e39c17849af280818e1eb59030645654fe2d2d78d5f949a2d3121",
+    "crates/db/src/fdb/row_spec/v026_admissions_v3.rs": "1b40001b08adae35217a4df2d78fd6e0d480787d71bd7bc2a68f362baa8b7cf3"
+  },
+  "funding_eligible": false,
+  "safe_for_funds": false,
+  "what_this_establishes": "The exact v3 blocker set and the absence of a v3 persistence envelope, both parsed from the live sources. It establishes no runtime capability and moves no funding obligation."
+}

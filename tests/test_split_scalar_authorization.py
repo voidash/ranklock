@@ -7,6 +7,7 @@ import os
 import numpy as np
 import pytest
 
+import ranklock.split_scalar_authorization as split_scalar_authorization_module
 from ranklock.authorization_transaction_plan import build_authorization_transaction_plan
 from ranklock.authorized_labels import EvaluationContext, LabelCommitmentTree
 from ranklock.babe_positive_lock import deterministic_fixture, setup_positive_lock
@@ -28,7 +29,7 @@ from ranklock.bounded_mpc_embryo import (
 from ranklock.dfb_real import CoordinateInputEncoding
 from ranklock.durable_slot_ledger import DurableSlotLedger
 from ranklock.embryo_mask_fusion import FusedRetainedObject
-from ranklock.rollback_witness import SqliteRollbackWitness
+from ranklock.rollback_witness import RollbackWitnessError, SqliteRollbackWitness
 from ranklock.split_scalar_authorization import (
     SignedSplitScalarWitnessPolicy,
     SplitScalarAuthorizationError,
@@ -259,7 +260,7 @@ def _fixture(tmp_path):
             public_inputs,
             payloads[index],
             scale=scalar_shares[index],
-            session_context=b"split-scalar authorization fixture",
+            session_context=context.digest,
         )
         for index in range(2)
     )
@@ -354,6 +355,8 @@ def _fixture(tmp_path):
         "retained_raw": retained_raw,
         "bundle": bundle,
         "context": context,
+        "vk": vk,
+        "public_inputs": public_inputs,
         "plan": plan,
         "tree": trees[0],
         "policy": policy,
@@ -378,6 +381,8 @@ def _service(fixture, core):
         retained_object_bytes=fixture["retained_raw"],
         required_manifest_pubkeys=fixture["required_manifest_pubkeys"],
         context=fixture["context"],
+        verifying_key=fixture["vk"],
+        public_inputs=fixture["public_inputs"],
         plan=fixture["plan"],
         witness_policy_set=fixture["policy_set"],
         tree=fixture["tree"],
@@ -442,6 +447,36 @@ def test_split_scalar_sidecar_releases_once_and_replays_identically(tmp_path):
     assert replay.compact_bytes == release.compact_bytes
     assert replay_receipts[0].generation >= receipts[0].generation
     assert fixture["ledger"].verify_audit_chain()
+
+
+def test_split_scalar_sidecar_qualifies_the_exact_statement_before_release(tmp_path):
+    fixture = _fixture(tmp_path)
+    core = FakeCore(
+        fixture["raw"],
+        chain_genesis=fixture["chain"],
+        block_hash=fixture["block_hash"],
+    )
+    service = _service(fixture, core)
+
+    with pytest.raises(
+        SplitScalarAuthorizationError,
+        match="context-bound statement verification",
+    ):
+        replace(service, public_inputs=(18,))
+
+    wrong_vk = replace(fixture["vk"], context=b"another verifying-key context")
+    with pytest.raises(
+        SplitScalarAuthorizationError,
+        match="verifying key differs",
+    ):
+        replace(service, verifying_key=wrong_vk)
+
+    for malformed_index in (-1, 2, True, "0"):
+        with pytest.raises(
+            SplitScalarAuthorizationError,
+            match="outside the signed split-scalar roster",
+        ):
+            replace(service, participant_index=malformed_index)
 
 
 def test_alternate_valid_point_same_txid_is_permanently_rejected(tmp_path):
@@ -519,6 +554,56 @@ def test_core_change_after_burn_aborts_without_emitting_release(tmp_path):
     assert fixture["ledger"].verify_audit_chain()
 
 
+def test_abort_anchor_failure_propagates_primary_and_recovery_errors(
+    tmp_path,
+    monkeypatch,
+):
+    fixture = _fixture(tmp_path)
+    parsed = parse_bitcoin_transaction(fixture["raw"])
+    replacement = fixture["raw"].replace(
+        parsed.output_values[0].to_bytes(8, "little"),
+        (parsed.output_values[0] + 1).to_bytes(8, "little"),
+        1,
+    )
+    core = FakeCore(
+        fixture["raw"],
+        chain_genesis=fixture["chain"],
+        block_hash=fixture["block_hash"],
+        replacement_after_first_read=replacement,
+    )
+    service = _service(fixture, core)
+
+    real_anchor = split_scalar_authorization_module.anchor_ledger_at_all_witnesses
+    calls = 0
+
+    def fail_abort_anchor(*args, **kwargs):
+        nonlocal calls
+        calls += 1
+        if calls == 2:
+            raise RollbackWitnessError("simulated abort witness outage")
+        return real_anchor(*args, **kwargs)
+
+    monkeypatch.setattr(
+        split_scalar_authorization_module,
+        "anchor_ledger_at_all_witnesses",
+        fail_abort_anchor,
+    )
+    output = tmp_path / "must-not-exist-anchor-fail.bin"
+    with pytest.raises(
+        SplitScalarAuthorizationError,
+        match="recovery also failed",
+    ) as excinfo:
+        service.issue(
+            raw_transaction=fixture["raw"],
+            block_hash=fixture["block_hash"],
+            output_path=output,
+        )
+    assert isinstance(excinfo.value.__cause__, ExceptionGroup)
+    assert len(excinfo.value.__cause__.exceptions) == 2
+    assert not output.exists()
+    assert fixture["ledger"].use(0).state == "abort"
+
+
 def test_policy_set_rejects_participant_specific_selector_rules(tmp_path):
     fixture = _fixture(tmp_path)
     base = fixture["policy_set"].unsigned
@@ -575,6 +660,8 @@ def test_policy_or_retained_object_mismatch_fails_at_startup(tmp_path):
             retained_object_bytes=fixture["retained_raw"],
             required_manifest_pubkeys=fixture["required_manifest_pubkeys"],
             context=fixture["context"],
+            verifying_key=fixture["vk"],
+            public_inputs=fixture["public_inputs"],
             plan=fixture["plan"],
             witness_policy_set=SplitScalarWitnessPolicySet((bad_policy, fixture["policy_set"].policies[1])),
             tree=fixture["tree"],
@@ -591,6 +678,8 @@ def test_policy_or_retained_object_mismatch_fails_at_startup(tmp_path):
             retained_object_bytes=fixture["retained_raw"],
             required_manifest_pubkeys=fixture["required_manifest_pubkeys"],
             context=fixture["context"],
+            verifying_key=fixture["vk"],
+            public_inputs=fixture["public_inputs"],
             plan=fixture["plan"],
             witness_policy_set=fixture["policy_set"],
             tree=fixture["tree"],
@@ -607,6 +696,8 @@ def test_policy_or_retained_object_mismatch_fails_at_startup(tmp_path):
             retained_object_bytes=fixture["retained_raw"][:-1] + b"X",
             required_manifest_pubkeys=fixture["required_manifest_pubkeys"],
             context=fixture["context"],
+            verifying_key=fixture["vk"],
+            public_inputs=fixture["public_inputs"],
             plan=fixture["plan"],
             witness_policy_set=fixture["policy_set"],
             tree=fixture["tree"],
@@ -635,6 +726,8 @@ def test_split_scalar_sidecar_rejects_unpinned_rollback_witness_identity(tmp_pat
             retained_object_bytes=fixture["retained_raw"],
             required_manifest_pubkeys=fixture["required_manifest_pubkeys"],
             context=fixture["context"],
+            verifying_key=fixture["vk"],
+            public_inputs=fixture["public_inputs"],
             plan=fixture["plan"],
             witness_policy_set=fixture["policy_set"],
             tree=fixture["tree"],

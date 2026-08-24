@@ -32,13 +32,12 @@ The bridge-side file parser is deliberately not this module's concern; it is
 hardened separately in the Rust overlay.
 """
 
+from collections.abc import Sequence
 from dataclasses import dataclass
 from hashlib import sha256
-import json
 import os
 from pathlib import Path
 import sqlite3
-from collections.abc import Sequence
 from typing import Final
 
 from .babe_positive_lock import (
@@ -47,11 +46,24 @@ from .babe_positive_lock import (
     PositiveLock,
     unlock_positive_lock,
 )
-
+from .private_sqlite import (
+    prepare_private_sqlite_path,
+    require_private_directory,
+    validate_private_file,
+    validate_sqlite_sidecars,
+)
 from .real_secp import P as SECP_FIELD_MODULUS
+from .release_sidecar import (
+    ReleaseSidecarError,
+    atomic_write_once,
+    read_secret_file_secure,
+)
 
-_COMMITMENT_DOMAIN: Final = b"ranklock/strata-ack-commitment/v1\x00"
+# v2 adds an explicit entropy-length prefix and intentionally does not
+# reproduce v1 setup material. No v1 fixture is eligible for funding.
+_COMMITMENT_DOMAIN: Final = b"ranklock/strata-ack-commitment/v2\x00"
 _CONTEXT_DOMAIN: Final = b"ranklock/strata-ack-context/v1\x00"
+_PROOF_SESSION_DOMAIN: Final = b"ranklock/strata-ack-proof-session/v1\x00"
 _PAYLOAD_BYTES: Final = 32
 # Bound on rejection sampling.  Roughly half of all 32-byte digests are valid
 # x-only keys, so exhausting this many attempts indicates a broken derivation
@@ -63,6 +75,26 @@ class StrataExportError(RuntimeError):
     """Raised when an export is unsafe, inconsistent or conflicting."""
 
 
+class StrataPublicationAmbiguousError(StrataExportError):
+    """Raised when bytes are visible but their directory sync did not complete."""
+
+
+def _strict_bytes(value: object, *, label: str) -> bytes:
+    """Accept explicit byte containers, never ``bytes(integer)`` coercion."""
+
+    if not isinstance(value, (bytes, bytearray, memoryview)):
+        raise StrataExportError(f"{label} must be an explicit byte string")
+    return bytes(value)
+
+
+def _strict_u32(value: object, *, label: str) -> int:
+    if isinstance(value, bool) or not isinstance(value, int):
+        raise StrataExportError(f"{label} must be an integer")
+    if not 0 <= value < 2**32:
+        raise StrataExportError(f"{label} does not fit u32")
+    return value
+
+
 def commitment_is_valid_xonly(commitment: bytes) -> bool:
     """Does ``commitment`` parse as a secp256k1 x-only public key?
 
@@ -71,6 +103,8 @@ def commitment_is_valid_xonly(commitment: bytes) -> bool:
     could not be constructed with it.
     """
 
+    if not isinstance(commitment, (bytes, bytearray, memoryview)):
+        return False
     encoded = bytes(commitment)
     if len(encoded) != 32:
         return False
@@ -91,7 +125,7 @@ def ack_commitment(payload: bytes) -> bytes:
     not match what consensus computes.
     """
 
-    encoded = bytes(payload)
+    encoded = _strict_bytes(payload, label="positive-lock payload")
     if len(encoded) != _PAYLOAD_BYTES:
         raise StrataExportError("positive-lock payload must be exactly 32 bytes")
     return sha256(encoded).digest()
@@ -115,14 +149,30 @@ class AckContext:
     schema: str = "ranklock-strata-ack-context-v1"
 
     def __post_init__(self) -> None:
-        if len(bytes(self.chain_genesis_hash)) != 32:
+        if not isinstance(self.network, str) or not self.network:
+            raise StrataExportError("network must be a nonempty string")
+        if "\x00" in self.network:
+            raise StrataExportError("network must not contain NUL")
+        try:
+            encoded_network = self.network.encode("utf-8", "strict")
+        except UnicodeEncodeError as exc:
+            raise StrataExportError("network is not valid UTF-8 text") from exc
+        if len(encoded_network) > 255:
+            raise StrataExportError("network name is too long")
+        if self.schema != "ranklock-strata-ack-context-v1":
+            raise StrataExportError("unsupported ACK context schema")
+        if not isinstance(self.chain_genesis_hash, bytes):
+            raise StrataExportError("chain genesis hash must be immutable bytes")
+        if len(self.chain_genesis_hash) != 32:
             raise StrataExportError("chain genesis hash must be 32 bytes")
         for value, name in (
             (self.bridge_proof_txid, "bridge proof txid"),
             (self.counterproof_txid, "counterproof txid"),
             (self.counterproof_ack_txid, "counterproof ACK txid"),
         ):
-            if len(bytes(value)) != 32:
+            if not isinstance(value, bytes):
+                raise StrataExportError(f"{name} must be immutable bytes")
+            if len(value) != 32:
                 raise StrataExportError(f"{name} must be 32 bytes")
         for value, name in (
             (self.graph_owner, "graph owner"),
@@ -132,10 +182,7 @@ class AckContext:
             (self.slot_id, "slot id"),
             (self.epoch, "epoch"),
         ):
-            if not 0 <= int(value) < 2**32:
-                raise StrataExportError(f"{name} does not fit u32")
-        if not self.network:
-            raise StrataExportError("network must be named")
+            _strict_u32(value, label=name)
 
     @property
     def encoded(self) -> bytes:
@@ -143,16 +190,16 @@ class AckContext:
             _CONTEXT_DOMAIN
             + self.network.encode()
             + b"\x00"
-            + bytes(self.chain_genesis_hash)
-            + int(self.graph_owner).to_bytes(4, "big")
-            + int(self.deposit_index).to_bytes(4, "big")
-            + int(self.game_index).to_bytes(4, "big")
-            + int(self.watchtower_index).to_bytes(4, "big")
-            + int(self.slot_id).to_bytes(4, "big")
-            + int(self.epoch).to_bytes(4, "big")
-            + bytes(self.bridge_proof_txid)
-            + bytes(self.counterproof_txid)
-            + bytes(self.counterproof_ack_txid)
+            + self.chain_genesis_hash
+            + self.graph_owner.to_bytes(4, "big")
+            + self.deposit_index.to_bytes(4, "big")
+            + self.game_index.to_bytes(4, "big")
+            + self.watchtower_index.to_bytes(4, "big")
+            + self.slot_id.to_bytes(4, "big")
+            + self.epoch.to_bytes(4, "big")
+            + self.bridge_proof_txid
+            + self.counterproof_txid
+            + self.counterproof_ack_txid
         )
 
     @property
@@ -164,10 +211,25 @@ class AckContext:
         """Filename the bridge executor reads, in its display-order convention."""
 
         return (
-            f"bridge{bytes(self.bridge_proof_txid).hex()}"
-            f"-counterproof{bytes(self.counterproof_txid).hex()}"
-            f"-ack{bytes(self.counterproof_ack_txid).hex()}"
+            f"bridge{self.bridge_proof_txid.hex()}"
+            f"-counterproof{self.counterproof_txid.hex()}"
+            f"-ack{self.counterproof_ack_txid.hex()}"
         )
+
+
+def ack_proof_session_context(context: AckContext) -> bytes:
+    """Derive the positive-lock session from the exact ACK destination.
+
+    Setup and release must both use this value. Accepting a separate session
+    byte string at release would let a valid unlock be redirected to another
+    bridge/transaction context that happens to share the same setup
+    commitment path. Deriving it here makes that split-brain state
+    unrepresentable at the proof-gated exporter boundary.
+    """
+
+    if not isinstance(context, AckContext):
+        raise StrataExportError("ACK proof session requires an AckContext")
+    return sha256(_PROOF_SESSION_DOMAIN + context.encoded).digest()
 
 
 def derive_setup_payload(
@@ -186,19 +248,24 @@ def derive_setup_payload(
     only the commitment may be published.
     """
 
-    entropy = bytes(entropy)
+    entropy = _strict_bytes(entropy, label="setup entropy")
     if len(entropy) < 32:
         raise StrataExportError(
             "setup entropy must be at least 32 bytes; a short or public seed "
             "would let anyone reconstruct the ACK preimage"
         )
+    owner = _strict_u32(graph_owner, label="graph owner")
+    deposit = _strict_u32(deposit_index, label="deposit index")
+    game = _strict_u32(game_index, label="game index")
+    watchtower = _strict_u32(watchtower_index, label="watchtower index")
     base = (
         _COMMITMENT_DOMAIN
+        + len(entropy).to_bytes(4, "big")
         + entropy
-        + int(graph_owner).to_bytes(4, "big")
-        + int(deposit_index).to_bytes(4, "big")
-        + int(game_index).to_bytes(4, "big")
-        + int(watchtower_index).to_bytes(4, "big")
+        + owner.to_bytes(4, "big")
+        + deposit.to_bytes(4, "big")
+        + game.to_bytes(4, "big")
+        + watchtower.to_bytes(4, "big")
     )
     for counter in range(_MAX_SAMPLING_ATTEMPTS):
         payload = sha256(base + counter.to_bytes(4, "big")).digest()
@@ -211,51 +278,149 @@ def derive_setup_payload(
     )
 
 
-def _atomic_write(path: Path, data: bytes) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    temporary = path.with_name(path.name + ".partial")
-    # 0o600 before any content lands: the unlock file is the released secret.
-    descriptor = os.open(temporary, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+def _write_once(path: Path, data: bytes, *, label: str) -> bool:
     try:
-        with os.fdopen(descriptor, "wb") as handle:
-            handle.write(data)
-            handle.flush()
-            os.fsync(handle.fileno())
-    except BaseException:
-        temporary.unlink(missing_ok=True)
-        raise
-    os.replace(temporary, path)
+        created = atomic_write_once(path, data, mode=0o600)
+    except ReleaseSidecarError as exc:
+        raise StrataExportError(f"failed to publish {label} safely: {exc}") from exc
+    except OSError as exc:
+        # atomic_write_once may have linked the final name before a directory
+        # fsync or temporary-file cleanup failed.  The output is then visible
+        # and must not be mislabeled as an ordinary failed publication: an ACK
+        # consumer may already have read it.  Leave the ledger binding intact
+        # and require an exact retry, which will validate the existing bytes.
+        try:
+            published = read_secret_file_secure(path, maximum_bytes=len(data))
+        except ReleaseSidecarError as inspection_error:
+            raise StrataExportError(
+                f"failed to publish {label} and could not establish whether "
+                "the final output exists safely"
+            ) from ExceptionGroup(
+                f"{label} publication and recovery inspection failures",
+                [exc, inspection_error],
+            )
+        if published == bytes(data):
+            raise StrataPublicationAmbiguousError(
+                f"{label} is present with the expected private bytes, but "
+                "durable directory synchronization failed; exact retry required"
+            ) from exc
+        raise StrataExportError(
+            f"failed to publish {label}; the final output contains unexpected bytes"
+        ) from exc
+
+    try:
+        published = read_secret_file_secure(path, maximum_bytes=len(data))
+    except ReleaseSidecarError as exc:
+        raise StrataExportError(
+            f"published {label} failed private-file validation: {exc}"
+        ) from exc
+    if published != bytes(data):
+        raise StrataExportError(
+            f"published {label} changed before post-publication validation"
+        )
+    return created
+
+
+def _rollback_after_failure(
+    connection: sqlite3.Connection, primary_error: BaseException, *, label: str
+) -> None:
+    if not connection.in_transaction:
+        return
+    try:
+        connection.execute("ROLLBACK")
+    except sqlite3.Error as rollback_error:
+        raise StrataExportError(f"{label}; SQLite rollback also failed") from ExceptionGroup(
+            f"{label} and rollback failure",
+            [primary_error, rollback_error],
+        )
 
 
 class StrataAckExporter:
     """Publishes ACK preimages under a durable one-context-per-commitment rule."""
 
-    def __init__(self, root: str | os.PathLike[str], *, ledger_path: str | os.PathLike[str] | None = None) -> None:
+    def __init__(
+        self,
+        root: str | os.PathLike[str],
+        *,
+        ledger_path: str | os.PathLike[str] | None = None,
+    ) -> None:
         self.root = Path(root)
-        self.root.mkdir(parents=True, exist_ok=True)
-        self.ledger_path = Path(ledger_path) if ledger_path else self.root / "export-ledger.sqlite"
+        root_existed = self.root.exists()
+        try:
+            self.root.mkdir(mode=0o700, parents=True, exist_ok=True)
+            if not root_existed:
+                os.chmod(self.root, 0o700)
+        except OSError as exc:
+            raise StrataExportError(
+                f"could not prepare Strata ACK exporter root: {exc}"
+            ) from exc
+        require_private_directory(
+            self.root,
+            error_type=StrataExportError,
+            label="Strata ACK exporter root",
+        )
+        requested_ledger = (
+            Path(ledger_path) if ledger_path else self.root / "export-ledger.sqlite"
+        )
+        self.ledger_path, self._ledger_identity, _created = prepare_private_sqlite_path(
+            requested_ledger,
+            error_type=StrataExportError,
+            label="Strata ACK export ledger",
+        )
         self._initialize()
 
     def _connect(self) -> sqlite3.Connection:
-        connection = sqlite3.connect(self.ledger_path, isolation_level=None)
-        connection.row_factory = sqlite3.Row
-        connection.execute("PRAGMA journal_mode=WAL")
-        connection.execute("PRAGMA synchronous=FULL")
-        return connection
+        validate_private_file(
+            self.ledger_path,
+            error_type=StrataExportError,
+            label="Strata ACK export ledger",
+            expected=self._ledger_identity,
+        )
+        connection = sqlite3.connect(self.ledger_path, timeout=30, isolation_level=None)
+        try:
+            validate_private_file(
+                self.ledger_path,
+                error_type=StrataExportError,
+                label="Strata ACK export ledger",
+                expected=self._ledger_identity,
+            )
+            connection.row_factory = sqlite3.Row
+            connection.execute("PRAGMA busy_timeout=30000")
+            connection.execute("PRAGMA trusted_schema=OFF")
+            connection.execute("PRAGMA secure_delete=ON")
+            connection.execute("PRAGMA journal_mode=WAL")
+            connection.execute("PRAGMA synchronous=FULL")
+            validate_sqlite_sidecars(
+                self.ledger_path,
+                error_type=StrataExportError,
+                label="Strata ACK export ledger",
+            )
+            return connection
+        except StrataExportError:
+            connection.close()
+            raise
+        except sqlite3.Error as exc:
+            connection.close()
+            raise StrataExportError(f"failed to open ACK export ledger: {exc}") from exc
 
     def _initialize(self) -> None:
         connection = self._connect()
         try:
-            connection.execute(
-                """
-                CREATE TABLE IF NOT EXISTS exports (
-                    commitment BLOB PRIMARY KEY,
-                    context_digest BLOB NOT NULL,
-                    unlock_stem TEXT NOT NULL,
-                    state TEXT NOT NULL CHECK (state IN ('released', 'conflict'))
-                ) WITHOUT ROWID
-                """
-            )
+            try:
+                connection.execute(
+                    """
+                    CREATE TABLE IF NOT EXISTS exports (
+                        commitment BLOB PRIMARY KEY,
+                        context_digest BLOB NOT NULL,
+                        unlock_stem TEXT NOT NULL,
+                        state TEXT NOT NULL CHECK (state IN ('released', 'conflict'))
+                    ) WITHOUT ROWID
+                    """
+                )
+            except sqlite3.Error as exc:
+                raise StrataExportError(
+                    f"failed to initialize ACK export ledger: {exc}"
+                ) from exc
         finally:
             connection.close()
 
@@ -270,9 +435,9 @@ class StrataAckExporter:
         return self.root / "unlock" / f"{context.unlock_stem}.preimage"
 
     def publish_commitment(self, context: AckContext, commitment: bytes) -> Path:
-        """Publish the setup commitment.  Never accepts the payload itself."""
+        """Publish the setup commitment once. Never accepts the payload itself."""
 
-        encoded = bytes(commitment)
+        encoded = _strict_bytes(commitment, label="ACK commitment")
         if len(encoded) != 32:
             raise StrataExportError("ACK commitment must be 32 bytes")
         if not commitment_is_valid_xonly(encoded):
@@ -281,8 +446,63 @@ class StrataAckExporter:
                 "cannot carry it; re-run setup derivation"
             )
         path = self.commitment_path(context)
-        _atomic_write(path, encoded)
+        _write_once(path, encoded, label="ACK commitment")
         return path
+
+    def require_published_commitment(
+        self, context: AckContext, expected_commitment: bytes
+    ) -> Path:
+        """Require the proof-gated export to match the graph setup artifact."""
+
+        expected = _strict_bytes(
+            expected_commitment, label="expected ACK commitment"
+        )
+        if len(expected) != 32:
+            raise StrataExportError("expected ACK commitment must be 32 bytes")
+        path = self.commitment_path(context)
+        try:
+            published = read_secret_file_secure(path, maximum_bytes=32)
+        except ReleaseSidecarError as exc:
+            raise StrataExportError(
+                f"published ACK commitment is unavailable or unsafe at {path}: {exc}"
+            ) from exc
+        if published != expected:
+            raise StrataExportError(
+                "proof-gated ACK commitment differs from the commitment published "
+                "for graph setup"
+            )
+        return path
+
+    def _mark_conflict_after_publish_failure(
+        self, commitment: bytes, context_digest: bytes
+    ) -> None:
+        connection = self._connect()
+        try:
+            connection.execute("BEGIN IMMEDIATE")
+            cursor = connection.execute(
+                "UPDATE exports SET state='conflict' "
+                "WHERE commitment=? AND context_digest=?",
+                (commitment, context_digest),
+            )
+            if cursor.rowcount != 1:
+                connection.execute("ROLLBACK")
+                raise StrataExportError(
+                    "ACK export ledger changed while recording a publish failure"
+                )
+            connection.execute("COMMIT")
+        except Exception as exc:
+            _rollback_after_failure(
+                connection,
+                exc,
+                label="failed to mark ACK commitment conflicted",
+            )
+            if isinstance(exc, StrataExportError):
+                raise
+            raise StrataExportError(
+                f"failed to mark ACK commitment conflicted: {exc}"
+            ) from exc
+        finally:
+            connection.close()
 
     def export_unlock(
         self,
@@ -313,10 +533,10 @@ class StrataAckExporter:
                 "valid proof; use export_ack_from_verified_unlock, or pass "
                 "allow_unverified_payload=True if this is not a release path"
             )
-
-
-        payload = bytes(payload)
-        expected = bytes(expected_commitment)
+        payload = _strict_bytes(payload, label="recovered ACK payload")
+        expected = _strict_bytes(
+            expected_commitment, label="expected ACK commitment"
+        )
         # Deliberately no payload material in any error text below.
         derived = ack_commitment(payload)
         if derived != expected:
@@ -365,39 +585,54 @@ class StrataAckExporter:
             else:
                 connection.execute("COMMIT")
                 created = False
-        except sqlite3.Error as exc:  # pragma: no cover - defensive
-            raise StrataExportError(f"export ledger failure: {exc}") from exc
+        except Exception as exc:
+            _rollback_after_failure(
+                connection,
+                exc,
+                label="ACK export ledger operation failed",
+            )
+            if isinstance(exc, StrataExportError):
+                raise
+            raise StrataExportError(f"ACK export ledger operation failed: {exc}") from exc
         finally:
             connection.close()
 
         path = self.unlock_path(context)
-        # Compare unconditionally. The previous form was
-        # ``if created or not path.is_file()``, which made the guard below
-        # unreachable for any new commitment -- and `created` is always true
-        # for one. Two contexts that differ only outside the three txids in
-        # `unlock_stem` share a filename, so the second release silently
-        # destroyed the first while the ledger reported both as released.
-        # The Rust reader re-checks SHA-256 and hard-fails, so the effect was
-        # a blocked ACK rather than a wrong one; a destroyed secret should
-        # still be loud.
-        if path.is_file():
-            existing = path.read_bytes()
-            if existing != payload:
+        try:
+            _write_once(path, payload, label="ACK unlock")
+        except StrataPublicationAmbiguousError:
+            # The exact authorized payload is already visible.  Marking this
+            # commitment conflicted would contradict the durable context
+            # binding and would not retract bytes a bridge may have consumed.
+            # An exact retry revalidates the file and returns idempotently.
+            raise
+        except StrataExportError as publish_error:
+            try:
+                self._mark_conflict_after_publish_failure(expected, context_digest)
+            except Exception as conflict_error:
                 raise StrataExportError(
-                    "an unlock file already exists for this context with "
-                    "different content; refusing to overwrite a released "
-                    f"secret at {path}"
+                    "ACK unlock publication failed and the exporter could not "
+                    "durably mark the commitment conflicted"
+                ) from ExceptionGroup(
+                    "ACK publish and conflict-recording failures",
+                    [publish_error, conflict_error],
                 )
-            return path, created
-        _atomic_write(path, payload)
+            raise
         return path, created
 
     def released_contexts(self) -> int:
         connection = self._connect()
         try:
-            row = connection.execute(
-                "SELECT COUNT(*) AS n FROM exports WHERE state='released'"
-            ).fetchone()
+            try:
+                row = connection.execute(
+                    "SELECT COUNT(*) AS n FROM exports WHERE state='released'"
+                ).fetchone()
+            except sqlite3.Error as exc:
+                raise StrataExportError(
+                    f"failed to count released ACK contexts: {exc}"
+                ) from exc
+            if row is None:
+                raise StrataExportError("ACK export ledger returned no release count")
             return int(row["n"])
         finally:
             connection.close()
@@ -411,7 +646,6 @@ def export_ack_from_verified_unlock(
     proof: PositiveGroth16Proof,
     lock: PositiveLock,
     r_a_g1: bytes,
-    session_context: bytes,
     context: AckContext,
     expected_commitment: bytes,
 ) -> tuple[Path, bool]:
@@ -427,10 +661,13 @@ def export_ack_from_verified_unlock(
 
     Here the payload is not an argument. It is produced inside this function
     by ``unlock_positive_lock``, which refuses unless the lock is bound to
-    this exact statement *and* ``certify_projective_output`` confirms the
-    supplied ``[r]A`` is the genuine projective output for this proof. A
-    caller cannot substitute a payload it obtained another way, because there
-    is no parameter through which to pass one.
+    this exact statement and ACK context, and
+    ``certify_projective_output`` confirms the supplied ``[r]A`` is the
+    genuine projective output for this proof. The session context is derived
+    from ``context`` rather than supplied separately, so a valid unlock cannot
+    be redirected to another bridge/transaction tuple. A caller cannot
+    substitute a payload it obtained another way, because there is no
+    parameter through which to pass one.
 
     What this does NOT do, stated so the boundary is not overread: it does not
     make setup entropy safe. Whoever holds the entropy can still recompute the
@@ -441,13 +678,14 @@ def export_ack_from_verified_unlock(
     proof-gated path *exist*; it does not yet make it the only one.
     """
 
+    exporter.require_published_commitment(context, expected_commitment)
     payload = unlock_positive_lock(
         vk,
         public_inputs,
         proof,
         lock,
         r_a_g1,
-        session_context=session_context,
+        session_context=ack_proof_session_context(context),
     )
     return exporter.export_unlock(
         payload=payload,

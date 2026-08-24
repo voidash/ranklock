@@ -1,0 +1,249 @@
+diff --git a/crates/bridge-sm/src/tx_classifier.rs b/crates/bridge-sm/src/tx_classifier.rs
+--- a/crates/bridge-sm/src/tx_classifier.rs
++++ b/crates/bridge-sm/src/tx_classifier.rs
+@@ -3,11 +3,13 @@
+ 
+ use bitcoin::{Amount, OutPoint, Transaction, Txid};
+ use bitcoin_bosd::Descriptor;
++use musig2::secp256k1::schnorr::Signature;
+ use strata_asm_common::TxInputRef;
+ use strata_asm_proto_bridge_v1_txs::withdrawal_fulfillment::parse_withdrawal_fulfillment_tx;
+ use strata_bridge_primitives::types::{BitcoinBlockHeight, DepositIdx, OperatorIdx};
+ use strata_bridge_tx_graph::{
+     game_graph::{GameGraph, GameGraphSummary},
++    musig_functor::GameFunctor,
+     transactions::{
+         claim::ClaimTx,
+         prelude::{ContestTx, CounterproofTx},
+@@ -135,19 +137,25 @@
+ /// Check if the transaction is a counterproof NACK transaction and return the counterprover's
+ /// operator index.
+ ///
+-/// A validity-first NACK is an exact pre-signed transaction; alternate outputs or
+-/// fee-wallet mutations are not classified.
++/// A validity-first NACK is an exact finalized pre-signed transaction. The
++/// comparison includes witness data; a matching witness-excluding txid alone
++/// is insufficient.
+ pub fn nack_counterprover_idx(
+     game: &GameGraph,
++    signatures: &GameFunctor<Signature>,
+     graph_owner_idx: OperatorIdx,
+     tx: &Transaction,
+ ) -> Option<OperatorIdx> {
+-    let txid = tx.compute_txid();
+     game.counterproofs
+         .iter()
++        .zip(&signatures.watchtowers)
+         .enumerate()
+-        .find_map(|(watchtower_slot, subgraph)| {
+-            (subgraph.counterproof_nack.as_ref().compute_txid() == txid)
++        .find_map(|(watchtower_slot, (subgraph, watchtower_signatures))| {
++            let expected_tx = subgraph
++                .counterproof_nack
++                .clone()
++                .finalize(watchtower_signatures.counterproof_nack[0]);
++            (expected_tx == *tx)
+                 .then(|| watchtower_slot_to_operator_idx(watchtower_slot, graph_owner_idx))
+         })
+ }
+diff --git a/crates/bridge-sm/src/graph/tx_classifier.rs b/crates/bridge-sm/src/graph/tx_classifier.rs
+--- a/crates/bridge-sm/src/graph/tx_classifier.rs
++++ b/crates/bridge-sm/src/graph/tx_classifier.rs
+@@ -2,6 +2,7 @@
+ 
+ use bitcoin::{Transaction, script::Instruction};
+ use strata_bridge_primitives::types::BitcoinBlockHeight;
++use strata_bridge_tx_graph::musig_functor::GameFunctor;
+ use zkaleido::ProofReceipt;
+ 
+ use crate::{
+@@ -216,6 +217,7 @@
+             GraphState::CounterProofPosted {
+                 graph_data,
+                 graph_summary,
++                signatures,
+                 ..
+             } => {
+                 if txid == graph_summary.bridge_proof_timeout {
+@@ -262,14 +264,20 @@
+                     Some(GraphEvent::StakeSpent(StakeSpentEvent { tx: tx.clone() }))
+                 } else {
+                     let game = generate_game_graph(config, self.context(), graph_data);
+-                    nack_counterprover_idx(&game, self.context().operator_idx(), tx).map(
+-                        |counterprover_idx| {
+-                            GraphEvent::CounterProofNackConfirmed(CounterProofNackConfirmedEvent {
+-                                tx: tx.clone(),
+-                                counterprover_idx,
+-                            })
+-                        },
++                    let unpacked_signatures =
++                        GameFunctor::unpack(signatures.clone(), game.counterproofs.len())?;
++                    nack_counterprover_idx(
++                        &game,
++                        &unpacked_signatures,
++                        self.context().operator_idx(),
++                        tx,
+                     )
++                    .map(|counterprover_idx| {
++                        GraphEvent::CounterProofNackConfirmed(CounterProofNackConfirmedEvent {
++                            tx: tx.clone(),
++                            counterprover_idx,
++                        })
++                    })
+                 }
+             }
+ 
+diff --git a/crates/bridge-sm/src/graph/tests/mod.rs b/crates/bridge-sm/src/graph/tests/mod.rs
+--- a/crates/bridge-sm/src/graph/tests/mod.rs
++++ b/crates/bridge-sm/src/graph/tests/mod.rs
+@@ -361,22 +361,26 @@
+     )
+ }
+ 
+-/// The exact fixed counterproof NACK for watchtower slot 0 of the POV operator's graph.
++/// The exact finalized fixed counterproof NACK and its packed signatures for
++/// watchtower slot 0 of the POV operator's graph.
+ ///
+ /// Validity-first made the NACK a fixed, pre-signed transaction and the state machine now
+-/// recognizes it by exact txid, so a hand-rolled spend of the ACK/NACK outpoint is (rightly)
+-/// no longer classified. The witness does not contribute to the txid, so the unsigned
+-/// template is sufficient for classification.
+-pub(super) fn test_counterproof_nack_tx() -> Transaction {
+-    machine::generate_game_graph(
++/// recognizes the complete finalized transaction, so the fixture must use the same signature
++/// both in the transaction witness and in the state that classifies it.
++pub(super) fn test_counterproof_nack_tx_and_signatures() -> (Transaction, Vec<Signature>) {
++    let game = machine::generate_game_graph(
+         &test_graph_sm_cfg(),
+         &test_graph_sm_ctx(),
+         &test_deposit_params(),
+-    )
+-    .counterproofs[0]
+-        .counterproof_nack
+-        .as_ref()
++    );
++    let signatures = mock_game_signatures(&game);
++    let unpacked = GameFunctor::unpack(signatures.clone(), game.counterproofs.len())
++        .expect("test signature layout must match the game graph");
++    let tx = game.counterproofs[0]
++        .counterproof_nack
+         .clone()
++        .finalize(unpacked.watchtowers[0].counterproof_nack[0]);
++    (tx, signatures)
+ }
+ 
+ pub(super) fn test_deposit_spend_tx() -> Transaction {
+diff --git a/crates/bridge-sm/src/graph/tests/tx_classifier.rs b/crates/bridge-sm/src/graph/tests/tx_classifier.rs
+--- a/crates/bridge-sm/src/graph/tests/tx_classifier.rs
++++ b/crates/bridge-sm/src/graph/tests/tx_classifier.rs
+@@ -7,12 +7,15 @@
+ #[cfg(test)]
+ mod tests {
+     use bitcoin::{
+-        OutPoint,
++        OutPoint, Witness,
+         hashes::{Hash, sha256},
+     };
+     use strata_bridge_primitives::types::{GraphIdx, OperatorIdx};
+     use strata_bridge_test_utils::bitcoin::{generate_spending_tx, generate_txid};
+-    use strata_bridge_tx_graph::game_graph::{CounterproofGraphSummary, GameGraphSummary};
++    use strata_bridge_tx_graph::{
++        game_graph::{CounterproofGraphSummary, GameGraphSummary},
++        musig_functor::GameFunctor,
++    };
+ 
+     use crate::{
+         graph::{
+@@ -138,11 +141,27 @@
+             _ => panic!("expected Some(CounterProofConfirmed) but got {counterproof_result:?}"),
+         }
+ 
+-        let counterproof_posted_sm = create_sm_with_owner_and_pov(
++        let mut counterproof_posted_sm = create_sm_with_owner_and_pov(
+             replace_graph_summary(counter_proof_posted_state(), graph_summary),
+             graph_owner_idx,
+             pov_idx,
+         );
++        let game = generate_game_graph(
++            &cfg,
++            counterproof_posted_sm.context(),
++            &test_deposit_params(),
++        );
++        let signatures = mock_game_signatures(&game);
++        let unpacked_signatures = GameFunctor::unpack(signatures.clone(), game.counterproofs.len())
++            .expect("test signature layout must match the game graph");
++        let GraphState::CounterProofPosted {
++            signatures: state_signatures,
++            ..
++        } = &mut counterproof_posted_sm.state
++        else {
++            panic!("test state must be CounterProofPosted");
++        };
++        *state_signatures = signatures;
+         let counterproof_in_posted_result = counterproof_posted_sm.classify_tx(
+             &cfg,
+             &counterproof_txs[counterproof_slot],
+@@ -170,19 +189,11 @@
+             _ => panic!("expected Some(CounterProofAckConfirmed) but got {ack_result:?}"),
+         }
+ 
+-        // Validity-first recognizes a NACK only by the exact txid of the fixed, pre-signed
+-        // transaction, so the fixture must build the real template rather than an arbitrary
+-        // spend of the ACK/NACK outpoint. It is derived from the same config and context the
+-        // classifier itself regenerates the graph from.
+-        let nack_tx = generate_game_graph(
+-            &cfg,
+-            counterproof_posted_sm.context(),
+-            &test_deposit_params(),
+-        )
+-        .counterproofs[counterproof_slot]
++        // The classifier compares the exact finalized NACK, including its witness.
++        let nack_tx = game.counterproofs[counterproof_slot]
+             .counterproof_nack
+-            .as_ref()
+-            .clone();
++            .clone()
++            .finalize(unpacked_signatures.watchtowers[counterproof_slot].counterproof_nack[0]);
+         let nack_result = counterproof_posted_sm.classify_tx(&cfg, &nack_tx, LATER_BLOCK_HEIGHT);
+         match nack_result {
+             Some(GraphEvent::CounterProofNackConfirmed(event)) => {
+@@ -392,12 +403,37 @@
+     #[test]
+     fn classify_tx_recognizes_counterproof_nack() {
+         let cfg = test_graph_sm_cfg();
+-        let sm = create_sm(counter_proof_posted_state());
+-        let result = sm.classify_tx(&cfg, &test_counterproof_nack_tx(), LATER_BLOCK_HEIGHT);
++        let (tx, signatures) = test_counterproof_nack_tx_and_signatures();
++        let sm = create_sm(counter_proof_posted_state_with_signatures(
++            None,
++            &[],
++            &[],
++            signatures,
++        ));
++        let result = sm.classify_tx(&cfg, &tx, LATER_BLOCK_HEIGHT);
+         assert!(
+             matches!(result, Some(GraphEvent::CounterProofNackConfirmed(_))),
+             "expected Some(CounterProofNackConfirmed) but got {result:?}"
+         );
++    }
++
++    #[test]
++    fn classify_tx_rejects_counterproof_nack_with_modified_witness() {
++        let cfg = test_graph_sm_cfg();
++        let (mut tx, signatures) = test_counterproof_nack_tx_and_signatures();
++        let expected_txid = tx.compute_txid();
++        let mut witness = tx.input[0].witness.to_vec();
++        witness[0][0] ^= 1;
++        tx.input[0].witness = Witness::from_slice(&witness);
++        assert_eq!(tx.compute_txid(), expected_txid);
++
++        let sm = create_sm(counter_proof_posted_state_with_signatures(
++            None,
++            &[],
++            &[],
++            signatures,
++        ));
++        assert_eq!(sm.classify_tx(&cfg, &tx, LATER_BLOCK_HEIGHT), None);
+     }
+ 
+     #[test]

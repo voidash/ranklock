@@ -361,7 +361,7 @@ def test_statement_and_funding_evidence_are_chain_and_context_bound() -> None:
             funding_attestation(ceremony, certificate, bitcoin_core=core)
 
 
-def test_mpc_certificate_attestation_satisfies_the_real_funding_gate() -> None:
+def test_mpc_certificate_cannot_upgrade_the_legacy_subject_to_a_funding_gate() -> None:
     subject = SafetySubject(
         version="0.25.1",
         source_archive_sha256=H(b"source archive"),
@@ -456,9 +456,9 @@ def test_mpc_certificate_attestation_satisfies_the_real_funding_gate() -> None:
         runtime=runtime,
         now=NOW,
     )
-    assert decision.can_start
-    assert decision.may_authorize_funds
-    assert not decision.failures
+    assert not decision.can_start
+    assert not decision.may_authorize_funds
+    assert any("legacy v0.25 safety subject" in failure for failure in decision.failures)
 
     wrong_subject = replace(mpc_attestation, subject_digest=H(b"other subject"))
     denied = evaluate_deployment(

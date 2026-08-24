@@ -1,0 +1,25 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.04s
+     Running unittests src/lib.rs (target/debug/deps/strata_bridge_counterproof-f3edb29ec70ec91d)
+
+running 1 test
+test statements::tests::subject_bound_sp1_guest_generates_and_verifies_groth16_proof has been running for over 60 seconds
+stderr: WARNING: Using insecure random number generator.
+stderr: WARNING: Using insecure random number generator.
+[sp1] downloaded https://sp1-circuits.s3-us-east-2.amazonaws.com/v6.1.0-groth16.tar.gz to /Users/cdjk/.sp1/circuits/groth16/v6.1.0
+
+thread 'tokio-rt-worker' (5918457) panicked at /Users/cdjk/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/sp1-recursion-gnark-ffi-6.2.4/src/ffi/docker.rs:29:9:
+Failed to run `docker info`. Please ensure that docker is installed and running.
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread 'statements::tests::subject_bound_sp1_guest_generates_and_verifies_groth16_proof' (1157190) panicked at crates/proofs/bridge-counterproof/src/statements.rs:809:14:
+minimal subject-bound guest must produce a Groth16 proof: ProofGenerationError("An unexpected error occurred: artifact not found")
+test statements::tests::subject_bound_sp1_guest_generates_and_verifies_groth16_proof ... FAILED
+
+failures:
+
+failures:
+    statements::tests::subject_bound_sp1_guest_generates_and_verifies_groth16_proof
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 48 filtered out; finished in 29237.73s
+
+error: test failed, to rerun pass `-p strata-bridge-counterproof --lib`

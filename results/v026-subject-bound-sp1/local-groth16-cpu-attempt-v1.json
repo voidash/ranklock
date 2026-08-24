@@ -1,0 +1,20 @@
+{
+  "backend": "SP1_PROVER=cpu",
+  "command": "cargo test -p strata-bridge-counterproof subject_bound_sp1_guest_generates_and_verifies_groth16_proof --features sp1-execution-tests -- --ignored --nocapture",
+  "free_disk_gib_after_swap_reclaim": 48,
+  "free_disk_gib_at_start": 56,
+  "free_disk_gib_safety_cutoff": 15,
+  "insecure_rng_warning_count": 2,
+  "log_file": "bridge_counterproof_subject_v1_SP1_v6.2.4.local-groth16.log",
+  "log_sha256": "294ecc0f72afd006c6a557d1caffabcb72c657f6bb8090c2b06af22f728ff85d",
+  "max_observed_process_footprint_gib_lower_bound": 40,
+  "max_observed_system_swap_used_mib_lower_bound": 41239,
+  "observed_cpu_seconds_lower_bound": 37366,
+  "observed_wall_seconds_lower_bound": 2859,
+  "proof_receipt_created": false,
+  "proof_verified": false,
+  "result": "safety-terminated-at-free-disk-cutoff-without-receipt",
+  "schema": "ranklock-v026-local-sp1-groth16-attempt-evidence-v1",
+  "sp1_circuit_version": "v6.2.4",
+  "subject_elf_sha256": "1db3e54249b8e9d2609097ac144f982d80e2fa01ce2913a6a6d1a93b27339f5e"
+}

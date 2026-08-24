@@ -19,6 +19,12 @@ EXCLUDED_PARTS = {
     "v025-audit-shards", "v025-final-full-pytest.log",
 }
 EXCLUDED_NAMES = {
+    # These v0.25.2 companion reports are produced only after this archive is
+    # built. The clean report contains the archive digest, and the release
+    # gate contains the clean-report digest; packaging either creates a
+    # checksum cycle in which no final archive can match its own evidence.
+    "clean_archive_verification_v0252.json",
+    "v0252_release_gate.json",
     "v025_test_files_raw.json",
     "v025_split_scalar_qualification.pid",
     "v025_split_scalar_qualification.done",

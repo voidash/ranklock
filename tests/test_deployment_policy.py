@@ -127,7 +127,7 @@ def test_observe_is_non_authoritative_and_missing_evidence_fails_closed():
     assert any("threshold" in failure for failure in denied.failures)
 
 
-def test_complete_distinct_attestations_enable_only_enforce_mode():
+def test_complete_distinct_attestations_cannot_upgrade_legacy_subject_to_enforce():
     subject, policy, runtime, attestations = _fixture()
     enforce = evaluate_deployment(
         mode="enforce",
@@ -137,8 +137,12 @@ def test_complete_distinct_attestations_enable_only_enforce_mode():
         runtime=runtime,
         now=NOW,
     )
-    assert enforce.can_start and enforce.may_authorize_funds
-    assert not enforce.failures
+    assert not enforce.can_start
+    assert not enforce.may_authorize_funds
+    assert enforce.failures == (
+        "legacy v0.25 safety subject cannot authorize funds; a validated v0.26 "
+        "funding-subject DAG and funds protocol are absent",
+    )
     assert len(enforce.accepted_attestation_digests) == len(PRODUCTION_ROLES)
 
     canary = evaluate_deployment(
@@ -296,7 +300,8 @@ def test_split_scalar_setup_mode_replaces_active_mpc_role_but_adds_runtime_gates
         runtime=runtime,
         now=NOW,
     )
-    assert allowed.may_authorize_funds and not allowed.failures
+    assert not allowed.may_authorize_funds
+    assert any("legacy v0.25 safety subject" in failure for failure in allowed.failures)
 
     denied = evaluate_deployment(
         mode="enforce",

@@ -1,9 +1,41 @@
-$ cd /mnt/data/alpen-validity-first && ./run_bundle_checks.sh
-..........                                                               [100%]
-10 passed in 0.08s
+$ uv run --with pytest ./run_bundle_checks.sh
+MANIFEST.sha256 verified (30 entries)
+..............                                                           [100%]
+14 passed
 
-$ cd /mnt/data/ranklock-v0.22.1/ranklock-v0.22.1-security-audit && PYTHONPATH=src pytest -q tests/test_validity_first_graph.py
+$ PYTHONPATH=src pytest -q tests/test_validity_first_graph.py
 ......                                                                   [100%]
-6 passed in 0.08s
+6 passed
 
-Not executed: cargo check/test and Bitcoin Core regtest (toolchain/binary unavailable).
+$ cargo test -p strata-bridge-tx-graph funds_safety -- --nocapture
+1 passed / 0 failed
+
+$ cargo test -p strata-bridge-sm all_nackd_pov_contested_payout -- --nocapture
+1 passed / 0 failed
+
+Pristine pinned Strata qualification: 452 bridge-sm tests and 952 complete
+serialized workspace tests passed with Bitcoin Core 31.1 and FoundationDB
+7.3.43. The focused economic tests reproduce a negative funds-safety result;
+they are not authorization evidence. STRATA-010..020 remain not executed.
+
+Research-only v0.26 patch verification:
+
+- `pending/v026-rust-research.diff`: `git apply --check -p1` passed against
+  the exact installer-applied f94c checkout.
+- `pending/v026-slash-asm.diff`: `git apply --check -p1` passed against ASM
+  commit `9d2eb77585ceb3ca414aa7a9113a1cb1b7f7307c`.
+- v0.26 real-Core graph/policy cases: 6 passed / 0 failed.
+- v0.26 graph unit/Core slice: 12 passed / 0 failed.
+- tx-graph library: 98 passed / 0 failed.
+- connector library: 54 passed / 0 failed.
+- funding-blocked V1/V2 observation: bridge-sm 7 passed, DB codec 10 passed,
+  pure classifier/subspace 3 passed.
+- exact signed n=2, n_data=128 weights: CounterproofV2 10,690 WU;
+  OwnerPayoutV2 2,345 WU.
+- the unchanged CounterproofV2 is rejected as an unconfirmed v3 child and
+  accepted after Contest confirms.
+- live FoundationDB Created/ExactReplay/Conflict test: compiled and started,
+  but the local harness hung; no pass is claimed.
+
+Neither v0.26 patch is applied by the installer. Both remain non-fundable
+research evidence.

@@ -1,0 +1,51 @@
+{
+  "backend": "SP1_PROVER=cpu",
+  "circuit_artifact_cache": {
+    "directory": "/Users/cdjk/.sp1/circuits/groth16/v6.1.0",
+    "installed_after_attempt": true,
+    "observed_size_gib": 7.9
+  },
+  "command": "cargo test -p strata-bridge-counterproof subject_bound_sp1_guest_generates_and_verifies_groth16_proof --features sp1-execution-tests -- --ignored --nocapture",
+  "docker": {
+    "cli_version": "29.6.1",
+    "daemon_available": false,
+    "required_image": "ghcr.io/succinctlabs/sp1-gnark:v6.1.0"
+  },
+  "free_disk_gib_at_failure": 30,
+  "free_disk_gib_safety_cutoff": 15,
+  "low_memory_configuration": {
+    "gas_executor_workers": 1,
+    "gas_trace_chunk_slots": 1,
+    "memory_limit_bytes": 17179869184,
+    "minimal_trace_chunk_threshold": 4194304,
+    "rayon_threads": 4,
+    "recursion_executor_workers": 1,
+    "recursion_prover_workers": 1,
+    "shard_size": 1048576,
+    "trace_chunk_slots": 2,
+    "worker_buffer_counts": 1
+  },
+  "observed_peak_physical_footprint_gib": 31.2,
+  "observed_peak_swap_allocated_mib": 23552,
+  "observed_wall_seconds": 29237.73,
+  "proof_receipt_created": false,
+  "proof_verified": false,
+  "result": "recursion-completed-groth16-wrapper-blocked-by-missing-docker-daemon",
+  "recursion_phase_sample": {
+    "file": "bridge_counterproof_subject_v1_SP1_v6.2.4.recursion-phase.sample.txt",
+    "sha256": "f4f9e9d0903d2b37e4b309a529a8d99a84ea100a2eda551318c5ba36bb951e95"
+  },
+  "schema": "ranklock-v026-local-sp1-groth16-attempt-evidence-v2",
+  "sp1_circuit_artifact_version": "v6.1.0",
+  "sp1_sdk_version": "6.2.4",
+  "subject_elf_sha256": "1db3e54249b8e9d2609097ac144f982d80e2fa01ce2913a6a6d1a93b27339f5e",
+  "terminal_error": "Failed to run `docker info`. Please ensure that docker is installed and running.",
+  "test_log": {
+    "file": "bridge_counterproof_subject_v1_SP1_v6.2.4.local-groth16-low-memory-v2.log",
+    "sha256": "1a585f3b91c64896e9fad0d8a3b99a7e737454e97f88191400c5ad9b81ca68af"
+  },
+  "wrapper_stage_sample": {
+    "file": "bridge_counterproof_subject_v1_SP1_v6.2.4.wrapper-stage.sample.txt",
+    "sha256": "259b2a2d0d494678d6f6bd7ac276f2a92444c2227743c0fbdde5ec2ae1b43703"
+  }
+}

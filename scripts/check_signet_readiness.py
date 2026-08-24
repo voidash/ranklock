@@ -25,9 +25,11 @@ than merely imperfect.
 
 import argparse
 import ast
+from hashlib import sha256
 import json
 from pathlib import Path
 import sys
+from tempfile import TemporaryDirectory
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -202,14 +204,81 @@ def _exporter_refuses_to_clobber() -> Check:
     """SIGNET-005: a released unlock must never be silently overwritten."""
 
     check = Check("SIGNET-005", "exporter refuses to overwrite a released secret")
-    source = (ROOT / "src" / "ranklock" / "strata_exporter.py").read_text()
-    unreachable = "if created or not path.is_file():" in source
-    guards = "refusing to overwrite a released" in source
-    ok = guards and not unreachable
-    return check.record(
-        ok,
-        "guard is reachable" if ok else "overwrite guard is unreachable or absent",
+    sys.path.insert(0, str(ROOT / "src"))
+    from ranklock.strata_exporter import (  # noqa: PLC0415
+        AckContext,
+        StrataAckExporter,
+        StrataExportError,
+        derive_setup_payload,
     )
+
+    common = {
+        "network": "signet",
+        "chain_genesis_hash": sha256(b"signet-genesis").digest(),
+        "graph_owner": 1,
+        "deposit_index": 2,
+        "game_index": 3,
+        "watchtower_index": 4,
+        "epoch": 5,
+        "bridge_proof_txid": sha256(b"bridge-proof").digest(),
+        "counterproof_txid": sha256(b"counterproof").digest(),
+        "counterproof_ack_txid": sha256(b"counterproof-ack").digest(),
+    }
+    first_context = AckContext(slot_id=0, **common)
+    second_context = AckContext(slot_id=1, **common)
+    first_payload, first_commitment = derive_setup_payload(
+        entropy=b"signet-overwrite-check-one".ljust(32, b"\x00"),
+        graph_owner=1,
+        deposit_index=2,
+        game_index=3,
+        watchtower_index=4,
+    )
+    second_payload, second_commitment = derive_setup_payload(
+        entropy=b"signet-overwrite-check-two".ljust(32, b"\x00"),
+        graph_owner=1,
+        deposit_index=2,
+        game_index=3,
+        watchtower_index=4,
+    )
+    if first_context.unlock_stem != second_context.unlock_stem:
+        return check.record(False, "test contexts do not collide at the bridge filename")
+    if first_commitment == second_commitment:
+        return check.record(False, "test setup unexpectedly produced equal commitments")
+
+    try:
+        with TemporaryDirectory(prefix="ranklock-signet-overwrite-") as directory:
+            exporter = StrataAckExporter(directory)
+            path, created = exporter.export_unlock(
+                payload=first_payload,
+                context=first_context,
+                expected_commitment=first_commitment,
+                allow_unverified_payload=True,
+            )
+            if not created or path.read_bytes() != first_payload:
+                return check.record(False, "first publication did not persist exactly")
+            try:
+                exporter.export_unlock(
+                    payload=second_payload,
+                    context=second_context,
+                    expected_commitment=second_commitment,
+                    allow_unverified_payload=True,
+                )
+            except StrataExportError as error:
+                if "already exists with different bytes" not in str(error):
+                    return check.record(False, f"collision raised the wrong error: {error}")
+            else:
+                return check.record(False, "colliding publication unexpectedly succeeded")
+            if path.read_bytes() != first_payload:
+                return check.record(False, "colliding publication changed the first secret")
+            if exporter.released_contexts() != 1:
+                return check.record(False, "collision left multiple contexts released")
+    except Exception as error:  # noqa: BLE001
+        return check.record(
+            False,
+            f"overwrite check could not complete: {type(error).__name__}: {error}",
+        )
+
+    return check.record(True, "colliding publication rejected; first secret remained intact")
 
 
 def _funds_gate_still_closed() -> Check:

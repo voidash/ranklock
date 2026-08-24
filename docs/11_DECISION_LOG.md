@@ -270,3 +270,401 @@ Decision: set `P0-MASK-FUSION-1` as the primary gate. Kill the two-slot sub-MiB 
 The release now emits a 677,862-byte standalone bundle and two future input-label files, reparses them independently, and reevaluates the complete application. Truncation, non-canonical padding and payload mutation fail closed.
 
 Decision: in-memory garbler state is no longer accepted as evidence for the exact artifact gate.
+
+## 2026-08-18 — Bind fixed NACKs by complete transaction at both boundaries
+
+The imported v0.25.2 handoff closed ACK preimage verification but still routed
+and accepted the supposedly fixed NACK using only its witness-excluding
+BIP141 `txid`. An adversarial finalized NACK with one witness byte changed kept
+the same `txid` and reached the old recognition condition.
+
+Decision: reconstruct the finalized NACK from persisted signatures and compare
+the complete transaction independently in the classifier and the state
+transition. Preserve separate same-txid/different-witness regressions for both
+boundaries. Treat the earlier ACK-only P4 result as incomplete, and keep funds
+disabled until the production proof-to-ACK boundary and STRATA-010..020 are
+executed.
+
+## 2026-08-18 — Require manifest coverage, not only hash verification
+
+The standalone integration manifest passed `shasum -c` while omitting every
+post-format P4 diff, because the checksum tool verifies only named paths. Those
+unlisted files are executable installer inputs and include the witness-binding
+security fixes.
+
+Decision: compare the exact distributable file set against the manifest before
+checking hashes, fail on either missing or extra paths, and pin all three P4
+deltas in a regression test. A hash ledger with no coverage assertion is not
+release-integrity evidence.
+
+## 2026-08-18 — Make ACK publication write-once and setup-bound
+
+The exporter could overwrite a setup commitment, trusted an unchecked SQLite
+path, and let colliding publishers commit separate ledger rows before racing
+on one predictable output name. The proof-gated call also did not prove that
+its expected commitment was the commitment already used for graph setup.
+
+Decision: use private inode-checked ledger storage and write-once file
+publication, validate exact private bytes after every publication, require the
+published setup commitment before proof-gated export, and preserve a released
+binding when the exact bytes are visible but only directory-sync reporting is
+ambiguous. This is local host hardening; it does not replace external rollback
+witnesses.
+
+## 2026-08-18 — Bind the proof session to the complete ACK destination
+
+The proof-gated exporter accepted a caller-supplied positive-lock session and
+an independent `AckContext`. A valid unlock could therefore authenticate one
+statement while selecting another bridge/transaction tuple for publication,
+including a tuple sharing the same partial setup-commitment path.
+
+Decision: remove `session_context` from the release API. Setup and release both
+derive the positive-lock session from the complete canonical `AckContext`, so
+the authenticated statement, output filename and one-shot ledger identity
+cannot diverge. This closes the local redirect but does not supply the missing
+deployed producer.
+
+## 2026-08-18 — Accept only unavailable or exactly pinned Core evidence
+
+The hardening generator accepted only an unavailable Core report, so the
+official reproduction workflow failed after a successful run of the qualified
+binary.
+
+Decision: accept either an explicit unavailable fail-closed result or a
+successful Core 31.1 result carrying the exact numeric version and qualified
+binary SHA-256. Reject contradictory, incomplete, wrong-version and
+wrong-binary success reports.
+
+## 2026-08-18 — Never hide abort/rollback-witness recovery failure
+
+The two-phase sidecar silently swallowed failures while finalizing and
+anchoring an abort after the primary phase-two error.
+
+Decision: surface the primary and recovery failures together through a typed
+error. A caller must never mistake a rejected operation for a durably witnessed
+abort when recovery itself failed.
+
+## 2026-08-18 — Wire the RankLock consumer and pin the deployment image
+
+The Strata executor read `STRATA_RANKLOCK_DIR`, but compose neither set nor
+mounted it and still selected Bitcoin Core 30 by mutable tag while qualification
+used Core 31.1.
+
+Decision: require an explicit host RankLock export root, mount it read-only in
+all three bridge containers, set the executor path, and pin the Core 31.1
+multi-architecture digest. This wires only the consumer; it does not count as
+proof-to-ACK deployment until a verified producer exists and STRATA-010..020
+execute.
+
+## 2026-08-18 — Reject coercible setup secrets and context fields
+
+Python's `bytes(integer)` constructor creates that many zero bytes. The setup
+derivation therefore accepted integer `32` as public all-zero entropy despite
+its `bytes` annotation, and context parsing similarly accepted coercible
+indices and mutable byte containers.
+
+Decision: validate runtime types before conversion, require immutable exact
+bytes in durable ACK contexts, require real bounded integers for u32 fields,
+and length-prefix entropy under a bumped v2 derivation domain. Type hints are
+not a security boundary, and changed derivation semantics must not retain the
+old domain version.
+
+## 2026-08-18 — Make provenance mandatory for passing matrix phases
+
+The verifier's Core-hash and Strata-commit comparisons ran only when both
+identity fields existed. Omitting a field therefore skipped the check.
+
+Decision: require the pinned Core executable hash for every phase with passed
+cases, require the pinned Strata commit for passing Strata evidence, and make
+the E2E runner record the resolved Core path, hash and version. Absence can
+describe an unexecuted phase; it cannot accompany a pass.
+
+## 2026-08-18 — Regenerate artifacts after generator-critical source changes
+
+The imported branch's public conformance binaries did not match fresh output
+from its own generator-critical source. Two clean generations agreed with each
+other, ruling out runtime randomness and identifying stale packaged artifacts.
+
+Decision: regenerate all ten changed committee/split-scalar artifacts and
+their canonical evidence, then require a clean extraction to reproduce them
+byte-for-byte. A prior report for a different archive digest does not qualify
+the current source tree.
+
+## 2026-08-18 — Keep post-build qualification outside its subject archive
+
+The clean report contains the source-archive digest, and the v0.25.2 release
+gate contains the clean-report digest. Packaging either report creates a
+checksum cycle after qualification.
+
+Decision: exclude both post-build companions from the v0.25.1 source archive,
+retain pre-build matrix evidence, and regression-test that boundary. The final
+gate and clean report are detached evidence over an already fixed archive. An
+absent optional clean companion must be represented as absent and keep the
+fact false; it must never be dereferenced merely because the CLI has a default
+path.
+
+## 2026-08-19 — Select shared counterproof gating, but reject it as universal proof
+
+The per-slot no-counterproof-gate proposal allowed several counterproofs to
+confirm and then stranded every losing resolution behind shared settlement
+inputs. Requiring owner payout to spend all per-slot gates also expanded its
+dynamic presignature surface.
+
+Decision: use the existing contest-payout outpoint as the graph-v2 global
+selection gate. Every `CounterproofV2_i` and owner payout spends it; the winner
+creates one resolution connector; ACK and timeout conflict on that resolution;
+timeout conflicts with slash and its declared template allocates the exact
+deposit amount to a committed recovery-policy script. Preserve this as a narrow
+output-allocation direction only until descriptor control and terminal
+reachability are independently established.
+The executable abstract model must remain non-authorizing because Bitcoin
+cannot distinguish a valid counterproof whose N-of-N release was withheld from
+an invalid counterproof with no release. Do not claim universal funds safety
+without consensus-valid adjudication, a newly audited threshold-availability
+theorem, or fully reserved coverage of both worlds.
+
+Independent review rejected the first positive field name and exposed missing
+terminal edges: current Slash is not ACK-gated and can consume the settlement
+input after counterproof selection, while live claim-payout burn parents can
+consume another settlement input. Decision: rename the executable result to
+`counterproof_selection_allocates_exact_deposit`, add terminal-disposition and recovery-
+control funding blockers, count the no-counterproof branch's full abandoned
+reserve, forbid graph-owner change, require one exact independent CPFP output,
+and bind the result to a deterministic fixture/generator. Shared selection
+remains a direction, not a recovery theorem.
+
+Independent review also found that reusing the counterproof/ACK CPFP actor as
+the timeout broadcaster lets the actor who selects the counterproof control a
+timeout-critical path. Decision: use distinct counterproof/ACK and timeout CPFP
+descriptors, require recovery and timeout-broadcaster controls to be disjoint
+from graph-owner, release, and counterproof controls, and retain separate
+funding blockers until those controls are verified against exact Bitcoin
+descriptors.
+
+A further audit found that the first model named the two counterproof
+alternatives like RankLock query slots and used one CP/ACK descriptor for all
+watchtowers. Decision: the graph dimension is an ordered `u32` Strata
+watchtower/counterproof alternative roster, independent of the exactly two
+RankLock query slots. Bind one CP/ACK CPFP descriptor per alternative and one
+common resolution connector value/script/policy commitment; keep resolution
+Script semantics categorically unverified until the versioned Rust connector
+and Bitcoin Core tests exist.
+
+The next terminal audit superseded that layout. Decision: `CounterproofV2_i`
+spends the selected counterproof input, shared contest-payout output, and
+deposit, then immediately allocates the exact deposit amount to the recovery
+descriptor while creating the resolution and CPFP anchor. This makes every
+legacy deposit spender invalid after counterproof confirmation. `ACKV2_i`
+spends only the resolution and creates a distinct slash-authorization output
+plus its CPFP anchor. `SlashV2_i` must spend that authorization, contest-slash,
+and exclusively reserved stake, so Slash has consensus-visible ACK provenance.
+Timeout spends resolution and contest-slash, but never deposit or the
+independently burnable claim-payout output. Before counterproof confirmation,
+the existing D-only CooperativePayout remains a possible hidden-signature race;
+keep funding blocked until an exhaustive one-subject presign/erasure theorem or
+a confirmed script-only deposit cutover excludes it.
+
+## 2026-08-19 — Accept the v0.26 Rust graph as research evidence only
+
+At this checkpoint (superseded by the atomic-reserve decision below), the
+side-by-side Rust slice contained typed NUMS connectors, exact
+Contest/Counterproof/ACK/Timeout/Slash/Owner templates, and a canonical
+private-field `V026Graph` assembler. Five real Bitcoin Core tests independently
+accept both counterproof alternatives, the mature owner payout, ACK, timeout at
+the exact CSV boundary, and an ACK-descended Slash. Losing branches are retried
+only after their own maturity, so rejection is attributable to the intended
+shared inputs rather than an incidental timelock. Two independent read-only
+audits found no P0/P1 within that scope.
+
+Decision: classify this as **REPRODUCED research evidence**, not activation
+evidence. Keep all fifteen assembler blockers and funding disabled. In
+particular, the Core suite deliberately demonstrates that a separately signed
+live-key stake spend can preempt Slash. Do not translate local graph structure
+into stake exclusivity, complete presign/erasure, runtime admission, ASM
+activation, or universal funds-safety claims. The next integration boundary is
+a versioned runtime/admission consumer of the exact graph digest; it must not
+mint a `funding_safe` capability.
+
+## 2026-08-19 — Persist only a funding-blocked runtime observation
+
+Current GraphData, signed content bytes, GraphSM persistence, and bridge duties
+are v1-specific and cannot reconstruct or admit the v0.26 plan. Extending them
+before the wire profile is frozen would invent activation identity and mutate
+existing persisted enums.
+
+Decision: add only a separate `StructurallyVerifiedFundingBlockedV1` lane. It
+persists a local txid manifest plus the exact fifteen blocker codes under an
+`RL26ADM` V1 envelope and a separate FDB subspace. Creation is atomic
+first-writer-wins; exact replay is idempotent; a different manifest is an
+explicit non-overwriting conflict. Parse→canonical-reencode equality is
+mandatory, and the row/key/value types are crate-private so callers cannot use
+the generic DB primitive to inject a mismatched body. There is no transition
+from this record to admitted, ready, signing, duty, P2P, funding, or broadcast
+state. Any future active certificate is a different versioned authority after
+canonical wire identity and evidence verification exist.
+
+## 2026-08-19 — Enumerate terminals, but reject caller policy as a theorem
+
+Pairwise conflict checks could not establish who controls terminal value or
+whether residual outputs are independently spendable by a fixed horizon.
+Decision: add deterministic live-UTXO enumeration and require one disposition
+for every positive terminal output. The two-alternative reference must produce
+exactly five maximal traces and seven semantic worlds, with valid-withheld and
+invalid-absent sharing the exact timeout trace.
+
+Adversarial review then showed that a caller could relabel a recovery output,
+reuse a policy digest after changing spendability, invent vacuous baselines,
+inflate service fees, or vary an unused horizon. Decision: bind dispositions to
+committed beneficiaries, derive the policy digest from canonical content, and
+rename the positive engine result to `AbstractDeclaredPolicySatisfiedV1`.
+Never call it a theorem. Baseline authority, per-principal allowances,
+service-fee schedule/baseline authority, and by-horizon CSV/reorg/fee execution
+remain immutable qualification blockers. At this checkpoint the committed
+reference returned typed infeasibility with six locked-reserve witnesses and
+remained non-fundable; the atomic-reserve decision below supersedes only that
+reserve-disposition result.
+
+## 2026-08-19 — Replace reserve sweeps with atomic all-reserve selection
+
+A delayed per-reserve sweep was rejected because CSV provides earliest
+validity, not priority: after maturity the immediate counterproof and sweep
+would race for the same `C_i`. An aggregate sweep was also rejected because one
+selected reserve makes it invalid, while subset sweeps require an exponential
+template family.
+
+Decision: every CounterproofV2 sibling atomically spends the complete ordered
+`C` roster, followed by shared `P,D`; its selected input uses the
+graph-plus-operator leaf and every sibling input uses the graph-only
+reserve-recovery leaf. It returns each non-selected reserve at exact face value
+to its setup-bound beneficiary. Owner payout atomically spends `D,Q,P,S` plus
+the complete `C` roster and returns every reserve. This removes abandoned
+reserve value without introducing a post-CSV race, while preserving the
+selected equation after exact returns cancel.
+
+The construction is not a covenant. Qualification still requires an exhaustive
+exact-template signing allowlist, one-honest key/nonce/derivation/backup
+erasure, and exclusion of legacy/off-transcript signatures. It also has
+quadratic presign/storage growth and version-3 relay limits. The measured
+two-alternative, `n_data=128` CounterproofV2 is 10,690 WU: Core rejects it as an
+unconfirmed v3 child and accepts the identical signed transaction after Contest
+confirms. Add `AtomicRosterWeightEvidenceUnverified` as blocker sixteen and do
+not derive a general roster bound from this fixture.
+
+The abstract reference now returns `AbstractDeclaredPolicySatisfiedV1` with
+zero abandoned reserve value. This supersedes the locked-reserve result only;
+it remains non-fundable and is not a protected-value theorem.
+
+## 2026-08-19 — Preserve observation V1 and add a non-forgeable V2 lane
+
+Appending blocker sixteen to the existing `RL26ADM` V1 record would silently
+change a frozen persisted schema. Decision: keep the exact fifteen-code V1
+bytes, decoder, DB methods, and subspace; make V1 fail closed for the current
+graph; and add a separate V2 envelope, sixteen-code registry, FDB subspace, and
+typed CAS outcome.
+
+Independent review found that public `Deserialize` on the live observation type
+let callers mint a value named `StructurallyVerified` without running the graph
+verifier. Decision: live V1/V2 write capabilities are observer-created and not
+deserializable. Private wire DTOs decode into validated persisted read models,
+preserving V1 golden bytes without minting a write capability. Neither version
+has any transition to funding, signing, duties, P2P, or broadcast.
+
+## 2026-08-20 — Treat subject receipt confirmation as a live reorg-sensitive capability
+
+A subject-bound receipt proves a relation over a BridgeProof transaction id,
+but it is not itself evidence that the exact witness-bearing transaction is
+confirmed on Bitcoin's active chain. Persisting or cloning a successful lookup
+would also erase the time at which its reorg assumption held.
+
+Decision: compose the unforgeable receipt with an exact Bitcoin Core
+transaction lookup, minimum depth, Merkle-valid block membership, active
+height/hash identity, and a repeated lookup before returning. Represent success
+as a non-serializable, non-cloneable point-in-time capability. Do not add it to
+the legacy preimage duty, do not persist it as admission, and do not let it
+authorize release or funding. A versioned threshold runtime must recreate and
+consume the capability immediately before ACK witness publication, with an
+explicit reorg rollback policy. Until a valid receipt and that consumer exist,
+funding remains disabled.
+
+The next narrow slice composes the live confirmation with an exact
+observer-verified ACK witness and immutable selected-commitment CAS. It checks
+the receipt subject and witness-stripped transaction, queries Bitcoin before
+and after the database action, and rejects conflicts. This is still a helper,
+not enforced runtime authority: the lower-level database method remains
+callable, an FDB write cannot be atomic with Bitcoin consensus, and no positive
+receipt executes the path. Durable rows remain inert and funding remains
+disabled.
+
+## 2026-08-23 — Give the seventeen-blocker threshold-v3 observation a persistence envelope
+
+The live threshold-v3 admission path validates seventeen activation blockers,
+but FoundationDB row specs stopped at the fifteen-blocker V1 and sixteen-blocker
+V2 envelopes. A V3 observation had nowhere to be durably recorded, so the
+seventeen-blocker set existed only in memory.
+
+Decision: add a separate `v026_admissions_v3` row spec, subspace, and envelope
+version 3, exactly as the 2026-08-19 V1-to-V2 split did. Frozen V1 and V2 bytes,
+decoders, and subspaces are untouched, and the V3 decoder refuses every envelope
+version other than 3 — so no earlier row can be reinterpreted under the
+seventeen-blocker schema. The V3 row is keyed by the content-derived
+funded-setup digest rather than a `GraphIdx`, matching the threshold-v3 ACK
+witness rows, because a V3 observation carries no graph index.
+
+As with V1 and V2 the stored row is an inert value. It is not admission, not
+receipt or chain authority, and has no transition to funding, signing, duties,
+P2P, or broadcast. Both the live and persisted types report
+`funding_eligible = false` by construction, and the write outcome remains a
+typed first-writer-wins Created/ExactReplay/Conflict with no funding path.
+
+The envelope reuses the frozen seven-byte `RL26ADM` family magic. Protocol §4.2
+mandates an eight-byte magic, so the whole family is nonconformant; that is
+recorded as defect D-1 in
+`60_V026_DECISION4_WIRE_SIGNATURE_PROFILE_PROPOSAL.md` and belongs to the
+wire-profile owners. Diverging here would fork the header layout under a shared
+magic — strictly worse than being consistently nonconformant, because a reader
+dispatching on `RL26ADM` plus a `u16` version would misparse. Moving the family
+to eight bytes is a new envelope version and a new subject, not an edit to this
+one.
+
+Codec, key-packing, and fail-closed negatives are covered by pure tests that
+need no cluster. Live FoundationDB execution remains unverified: no `fdbserver`
+runs on the development host, and the existing `fdb::bridge_db` tests
+additionally panic on `the fdb select api version can only be run once per
+process`, which makes them unrunnable except serially.
+
+## 2026-08-24 — Isolate FoundationDB tests per test rather than per process
+
+The `strata-bridge-db` suite failed 33 of 68 tests on a host with no running
+FoundationDB. Restoring a cluster fixed those, but the suite then failed 11 of
+69 under the default parallel harness while passing serially. The convenient
+reading — that FDB tests simply need `--test-threads=1` — was wrong, and acting
+on it would have preserved the defect behind a flag.
+
+Two distinct causes were conflated. The
+`the fdb select api version can only be run once per process` panics were a
+cascade, not a cause: `OnceLock::get_or_init` re-runs its closure when the
+closure panics, so one failed `FdbClient::setup` against a dangling cluster file
+left the cell empty and every later test re-entered setup. With a working
+cluster that message does not appear at all.
+
+The real defect is that `get_client()` built one client under one root
+directory and shared it across every test, making one keyspace for the whole
+suite. proptest draws from a per-test deterministic seed, so different tests
+routinely generate the same key; in parallel one test read a row another had
+just overwritten. Caught directly: `deposit_state_roundtrip` read back a
+`DepositSM` carrying its own `deposit_idx` but a different test's
+`operator_table`.
+
+Decision: isolate by keyspace, not by serializing the harness.
+`FdbApiBuilder::build` and the `NetworkAutoStop` network thread are genuinely
+once-per-process, but `Database::new` and the directory layer are not. A
+test-only `FdbClient::additional_in_root` opens a further client in its own root
+directory without re-selecting the API version, and a `get_client!()` macro keys
+each test's keyspace to its own name. `process_client()` still boots the network
+exactly once and its `MustDrop` guard outlives every derived client.
+
+Collisions between tests are now impossible rather than improbable. The suite
+passes in parallel across repeated runs, in roughly 16 seconds against 125
+serially — the serialization was most of the runtime. No production code path
+changed: the new constructor is `#[cfg(test)]`, and no row, blocker count, or
+funding flag moved.

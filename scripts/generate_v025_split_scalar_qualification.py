@@ -351,7 +351,7 @@ def _generate_participant(
         public_inputs,
         payload,
         scale=scalar,
-        session_context=fixture_context,
+        session_context=context.digest,
     )
     ciphertexts: list[bytes] = []
     trees: list[LabelCommitmentTree] = []
@@ -574,7 +574,9 @@ def main() -> None:
     if SignedSplitScalarBundle.parse(bundle.encoded) != bundle:
         raise RuntimeError("split-scalar bundle failed canonical roundtrip")
     if not bundle.verify_for_statement(
-        vk=vk, public_inputs=public_inputs, session_context=fixture_context
+        vk=vk,
+        public_inputs=public_inputs,
+        expected_context_digest=context.digest,
     ):
         raise RuntimeError("split-scalar bundle failed statement verification")
 
@@ -711,6 +713,8 @@ def main() -> None:
                     retained_object_bytes=retained_objects[participant_index].encoded,
                     required_manifest_pubkeys=manifest_pubkeys[participant_index],
                     context=context,
+                    verifying_key=vk,
+                    public_inputs=public_inputs,
                     plan=plan,
                     witness_policy_set=policy_sets[slot_id],
                     tree=trees_by_participant[participant_index][slot_id],
@@ -770,7 +774,7 @@ def main() -> None:
                 public_inputs=public_inputs,
                 proof=proofs[slot_id],
                 participant_outputs_g1=participant_output_tuple,
-                session_context=fixture_context,
+                expected_context_digest=context.digest,
             )
             if unlocked.preimages != (payload0, p1["payload"]):
                 raise RuntimeError("split-scalar positive locks recovered wrong preimages")
@@ -803,7 +807,7 @@ def main() -> None:
                 participant_outputs_by_slot[1][0],
                 participant_outputs_by_slot[0][1],
             ),
-            session_context=fixture_context,
+            expected_context_digest=context.digest,
         )
     except Exception:
         crosswire_rejected = True

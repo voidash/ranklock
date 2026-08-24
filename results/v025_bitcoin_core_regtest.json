@@ -1,6 +1,59 @@
 {
-  "error": "a pinned bitcoind executable SHA-256 is required; set --expected-bitcoind-sha256 or RANKLOCK_BITCOIND_SHA256",
-  "executed": false,
-  "passed": false,
+  "executed": true,
+  "passed": true,
+  "result": {
+    "authorization_plan_bytes": 382,
+    "authorization_plan_digest": "cf60c521944338b77f2ed3e5b10d1b1cf31d9944d393e7160aab0bab7290b3bf",
+    "bitcoin_core_version": "/Satoshi:31.1.0/",
+    "bitcoin_core_version_number": 310100,
+    "bitcoind_sha256": "d55c12b0b02001cc16b1481c4075361dcba193100a8143924abda911174c09ec",
+    "exact_phase_one_replay_created_no_second_response": true,
+    "exact_phase_two_replay_created_no_second_response": true,
+    "reorg_never_reopened_consumed_slots": true,
+    "schema": "ranklock-v025-bitcoin-core-regtest-result-v3",
+    "standard_policy_enabled": true,
+    "transactions": [
+      {
+        "block_hash": "6d5760e50d2d37d5ccba52c6ee32533f2dc7ba07a1d9bd91fc767a5a9da3d325",
+        "confirmations": 6,
+        "labels_released_before_broadcast": true,
+        "mempool_policy_allowed": true,
+        "phase_one_response_bytes": 25098,
+        "phase_two_response_bytes": 708,
+        "point_encoding": "942a7688cf05c29f7593351e1b86eb87e3ad5dcb1b0fc3d853e9852040c57019",
+        "program_seed_commitment": "4c112f2906ce605dde0403fc897393203879c0d17fe5f1516feda82b32a9a274",
+        "raw_transaction_sha256": "5f5e1b792b4b11df20ce70e307b83caceefe07c9d464a27dfb68b43ec50f3c7a",
+        "schema": "ranklock-v025-bitcoin-core-regtest-transaction-v3",
+        "seed_released_only_after_confirmation": true,
+        "seed_share_responses": 3,
+        "selector_items": 512,
+        "slot_id": 0,
+        "txid": "51229b52eae6b68d242aa4ff3d3b27ce27e94131b34503233bc671b7bbee24c4",
+        "witness_policy_sha256": "3a711d7f1850a799e3da6b2d3e3bd0517dd4146cdeb3371bc2f9362e0fb55c52",
+        "witness_share_responses": 3,
+        "wtxid": "49e1e20a27c3090854a8eae1e3652e09973ead3c7cba190df3a58da01e4ea749"
+      },
+      {
+        "block_hash": "370791416ab47489cc06b2bfd778921df43f48e9a807f6f7771992b3c0192249",
+        "confirmations": 6,
+        "labels_released_before_broadcast": true,
+        "mempool_policy_allowed": true,
+        "phase_one_response_bytes": 25098,
+        "phase_two_response_bytes": 708,
+        "point_encoding": "8a5a32e29427a090356b1774d99fc8f305a676b925b2b6515a0b689103b86fca",
+        "program_seed_commitment": "b14902ee63876b8a88a272102726c001f7d02866c82aa80e4ec575fe6196988c",
+        "raw_transaction_sha256": "75f5153e045fd44f6fd3a270a23396466522994ed286eff5da3af736414a16bd",
+        "schema": "ranklock-v025-bitcoin-core-regtest-transaction-v3",
+        "seed_released_only_after_confirmation": true,
+        "seed_share_responses": 3,
+        "selector_items": 512,
+        "slot_id": 1,
+        "txid": "6b4349c234c642cd50ab52b1a2655f227057e45e16dcbc497f052dd222d15880",
+        "witness_policy_sha256": "f5bff5965c158c4b8340205473425c5f1782e22fd6fe763c372fe74d8f152332",
+        "witness_share_responses": 3,
+        "wtxid": "888d9abc5547f2e10d804c35088f32220f1fd9be8a4414f6e6d0a59da127f8cc"
+      }
+    ]
+  },
   "schema": "ranklock-v025-bitcoin-core-regtest-evidence-v3"
 }

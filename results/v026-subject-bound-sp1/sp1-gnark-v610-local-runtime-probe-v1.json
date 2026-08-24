@@ -1,0 +1,60 @@
+{
+  "artifact_scope": "environment-only-bundled-sp1-witness-not-ranklock-receipt",
+  "circuit_artifacts": {
+    "constraints_json_sha256": "1fb0b3d5f59c45b8f41973b111604aba2402db3c8e887074300ab8d164def92b",
+    "groth16_circuit_bin_sha256": "d6a66be2702206e2b1a20bebf7096142864feac9e399a309e5e6e00353264cbc",
+    "groth16_pk_bin_sha256": "c3760e0e3b58487f8704680d5b3ad32a9fbca9f3cb0749d69055c4f1271ca167",
+    "groth16_vk_bin_sha256": "4388a21c687fdd5f218d7e3d13190cac4c5355818d3605fd5fb811df468ee696",
+    "groth16_witness_json_sha256": "ee2ac8e094712a87ec3b0dc50ed39704aa90ee066ce4c5bf6160d54f04014c94",
+    "version": "v6.1.0"
+  },
+  "docker": {
+    "architecture": "x86_64",
+    "colima_cpus": 6,
+    "colima_memory_gib": 20,
+    "image": "ghcr.io/succinctlabs/sp1-gnark:v6.1.0",
+    "image_digest": "sha256:e1a1cd62838b561ca301f9b2c26475c4a92bfe0e2c916e9bba213062e1548c4d"
+  },
+  "failed_capacity_probes": [
+    {
+      "memory_gib": 10,
+      "mode": "test-with-srs-generation",
+      "result": "exit-137"
+    },
+    {
+      "memory_gib": 16,
+      "mode": "test-with-srs-generation",
+      "result": "exit-137"
+    },
+    {
+      "memory_gib": 16,
+      "mode": "prove-with-cached-proving-key",
+      "result": "exit-137"
+    }
+  ],
+  "funding_eligible": false,
+  "observed_corrected_run": {
+    "constraint_count": 15972262,
+    "minimum_host_free_disk_gib": 23,
+    "observed_peak_container_memory_gib": 17.81,
+    "proof_generation_seconds": 272.505610911,
+    "r1cs_read_seconds": 175.323244411
+  },
+  "output": {
+    "bincode_file": "sp1-gnark-v610-20g-environment-probe.bincode",
+    "bincode_sha256": "082cf274d5f94e68ef44f9c708b99a08da683bc3f2246c1e2697083e3c752193",
+    "bincode_size_bytes": 1673,
+    "raw_proof_file": "sp1-gnark-v610-20g-environment-probe.raw-proof.txt",
+    "raw_proof_sha256": "180cc8a3338f42f229cfe1d1628e24779b0ff8ce739ea006cae56ef2ab8b605b",
+    "raw_proof_size_bytes": 648,
+    "verify_output": "OK",
+    "verify_output_file": "sp1-gnark-v610-20g-environment-probe.verify-output.txt",
+    "verify_output_sha256": "565339bc4d33d72817b583024112eb7f5cdf3e5eef0252d6ec1b9c9a94e12bb3"
+  },
+  "proof_receipt_created": false,
+  "purpose": "prove that the pinned local Groth16 wrapper can generate and independently verify with a 20 GiB Colima guest before repeating the eight-hour RankLock recursion",
+  "ranklock_subject_proved": false,
+  "result": "pinned-local-gnark-runtime-probe-passed",
+  "schema": "ranklock-v026-sp1-gnark-local-runtime-probe-v1",
+  "verified": true
+}

@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RankLock v0.26 SP1 proof handoff</title>
+  <style>
+    :root { color-scheme: dark; --bg:#0b1020; --panel:#141b2d; --ink:#e8edf7; --muted:#aab5c9; --accent:#78d6c6; --warn:#ffcb6b; --bad:#ff7b86; --line:#29334b; }
+    * { box-sizing: border-box; }
+    body { margin:0; background:linear-gradient(145deg,#08101b,#11182a 48%,#0b1020); color:var(--ink); font:16px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace; }
+    main { max-width:1040px; margin:0 auto; padding:52px 24px 90px; }
+    h1 { font:700 clamp(2rem,5vw,4.3rem)/1.02 ui-sans-serif,system-ui,sans-serif; letter-spacing:-.045em; margin:0 0 14px; }
+    h2 { margin:42px 0 14px; color:var(--accent); font-size:1.05rem; text-transform:uppercase; letter-spacing:.12em; }
+    p, li { max-width:88ch; }
+    .lede { color:var(--muted); font-size:1.1rem; }
+    .status { display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:12px; margin:30px 0; }
+    .card { background:rgba(20,27,45,.88); border:1px solid var(--line); border-radius:12px; padding:18px; }
+    .label { color:var(--muted); font-size:.75rem; text-transform:uppercase; letter-spacing:.1em; }
+    .value { margin-top:7px; font-weight:700; }
+    .good { color:var(--accent); } .warn { color:var(--warn); } .bad { color:var(--bad); }
+    code, pre { background:#090e19; border:1px solid var(--line); border-radius:7px; }
+    code { padding:.12em .35em; }
+    pre { overflow:auto; padding:15px; color:#d9e3f3; }
+    a { color:var(--accent); }
+    .boundary { border-left:4px solid var(--bad); padding:14px 18px; background:rgba(255,123,134,.08); }
+    ol, ul { padding-left:1.5rem; }
+    footer { margin-top:54px; color:var(--muted); border-top:1px solid var(--line); padding-top:18px; }
+  </style>
+</head>
+<body><main>
+  <div class="label">Claude handoff · 2026-08-22 · Asia/Kathmandu</div>
+  <h1>Recover the proof.<br>Do not prove again.</h1>
+  <p class="lede">The reserved SP1 request completed successfully. Local verification failed because RankLock pinned the crate version instead of the circuit version, and zkaleido reconstructed a Blake3-bound proof with a SHA-256 public-values input.</p>
+
+  <div class="status">
+    <div class="card"><div class="label">Reserved request</div><div class="value good">Fulfilled in ~44s network time</div></div>
+    <div class="card"><div class="label">Local test</div><div class="value bad">Rejected after lossy round-trip</div></div>
+    <div class="card"><div class="label">Next action</div><div class="value warn">Offline import + standalone verify</div></div>
+    <div class="card"><div class="label">Funds status</div><div class="value bad">Still false / blocked</div></div>
+  </div>
+
+  <div class="boundary"><strong>Hard boundary:</strong> do not submit another proof request, expose the key, edit unrelated dirty files, or convert receipt success into a safe-for-funds claim.</div>
+
+  <h2>Exact state</h2>
+  <ul>
+    <li>Request ID: <code>0da45348ba6a7fbd6e7af661a782133b8771b1008d303cfbe4fb26122331bcc7</code></li>
+    <li>SP1 request: <code>sp1-v6.1.0</code>, Groth16, reserved, 23,524,988 cycles.</li>
+    <li><a href="https://artifacts.production.succinct.xyz/proofs/artifact_631297ba7d839a297b94a1514d30a4879e8aef87b57c708320d57168dcd8cc9b">Public 2,179-byte proof artifact</a>; recover before the cleanup window closes.</li>
+    <li>Key: macOS login Keychain; service and account redacted in this public repository. It is not needed for recovery and is intentionally absent here.</li>
+  </ul>
+
+  <h2>Root causes</h2>
+  <ol>
+    <li><strong>Metadata pin:</strong> <code>subject_receipt.rs</code> says <code>v6.2.4</code>; the actual <code>SP1_CIRCUIT_VERSION</code> and network proof say <code>v6.1.0</code>.</li>
+    <li><strong>Hash rewrite:</strong> zkaleido's <code>ProofReceiptWithMetadata → SP1ProofReceipt</code> path reconstructs public input 1 with SHA-256. This proof used SP1's valid Blake3 alternative. The standalone Groth16 verifier already retries both.</li>
+  </ol>
+
+  <h2>Worktrees</h2>
+  <pre>/Users/cdjk/github/llm/ranklock/worktree-v0.25.2
+/Users/cdjk/github/llm/ranklock/tmp/strata-v026-f94c
+/Users/cdjk/.cargo/git/checkouts/zkaleido-7822bc7834ae932e/b1c3a5a</pre>
+
+  <h2>Patch sequence</h2>
+  <ol>
+    <li>Pin circuit metadata to <code>v6.1.0</code> and update the wrong-version negative.</li>
+    <li>Add an ignored offline importer for network bincode (<code>SP1ProofWithPublicValues</code>, fallback <code>ProofFromNetwork</code>).</li>
+    <li>Construct canonical zkaleido proof bytes directly from <code>network_proof.bytes()</code>; do not route through <code>host.verify</code>.</li>
+    <li>Standalone-verify, decode and compare the exact minimal output, then create-new/write/fsync/reload/reverify the final receipt.</li>
+    <li>Run focused tests, strict Clippy, rustdoc, and record final length/SHA-256.</li>
+  </ol>
+
+  <h2>Target artifact</h2>
+  <pre>/Users/cdjk/github/llm/ranklock/worktree-v0.25.2/results/v026-subject-bound-sp1/bridge_counterproof_subject_v1_SP1_v6.1.0.groth16.proof</pre>
+  <p>The source patch described above is <strong>not applied yet</strong>. The exact paste-ready engineering handoff is the adjacent <code>CLAUDE_HANDOFF_2026-08-22.txt</code>.</p>
+
+  <footer>A valid proof closes the deterministic final Groth16 evidence gate only. Runtime consumption, chain identity, economics, ceremony, and the remaining v0.26 activation blockers remain open.</footer>
+</main></body></html>

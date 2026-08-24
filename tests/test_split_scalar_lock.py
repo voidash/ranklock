@@ -8,6 +8,7 @@ import pytest
 from ranklock.babe_positive_lock import (
     deterministic_fixture,
     honest_projective_output,
+    statement_digest,
 )
 from ranklock.bip340 import public_key
 from ranklock.bn254_real import CURVE_ORDER, compress_g1, multiply, decompress_g1
@@ -33,15 +34,13 @@ def _fixture():
         public_inputs=(17,), context=b"ranklock-v025-split-scalar-test-vk"
     )
     context = sha256(b"ranklock-v025-split-scalar/context").digest()
-    session_context = b"ranklock-v025-split-scalar/session"
     participant_secrets = (101, 103)
     scalar_shares = (41, 73)
     preimages = (sha256(b"preimage-0").digest(), sha256(b"preimage-1").digest())
     bundle, chosen = setup_split_scalar_fixture(
         vk=vk,
         public_inputs=public_inputs,
-        session_context=session_context,
-        context_digest=context,
+        expected_context_digest=context,
         participant_secrets=participant_secrets,
         scalar_shares=scalar_shares,
         retained_object_digests=(sha256(b"artifact-0").digest(), sha256(b"artifact-1").digest()),
@@ -54,7 +53,6 @@ def _fixture():
         "public_inputs": public_inputs,
         "proof": proof,
         "context": context,
-        "session_context": session_context,
         "participant_secrets": participant_secrets,
         "scalar_shares": scalar_shares,
         "preimages": chosen,
@@ -69,7 +67,7 @@ def test_bundle_roundtrip_unlock_and_aggregate_output():
     assert bundle.verify_for_statement(
         vk=fixture["vk"],
         public_inputs=fixture["public_inputs"],
-        session_context=fixture["session_context"],
+        expected_context_digest=fixture["context"],
     )
     assert SignedSplitScalarBundle.parse(bundle.encoded) == bundle
     assert UnsignedSplitScalarBundle.parse(bundle.unsigned.encoded) == bundle.unsigned
@@ -80,7 +78,7 @@ def test_bundle_roundtrip_unlock_and_aggregate_output():
         public_inputs=fixture["public_inputs"],
         proof=fixture["proof"],
         participant_outputs_g1=fixture["outputs"],
-        session_context=fixture["session_context"],
+        expected_context_digest=fixture["context"],
     )
     assert result.preimages == fixture["preimages"]
     expected_scale = sum(fixture["scalar_shares"]) % CURVE_ORDER
@@ -102,7 +100,7 @@ def test_missing_wrong_or_crosswired_participant_output_fails():
             public_inputs=fixture["public_inputs"],
             proof=fixture["proof"],
             participant_outputs_g1=fixture["outputs"][:1],
-            session_context=fixture["session_context"],
+            expected_context_digest=fixture["context"],
         )
     with pytest.raises(SplitScalarLockError, match="participant 0"):
         unlock_split_scalar_bundle(
@@ -111,7 +109,7 @@ def test_missing_wrong_or_crosswired_participant_output_fails():
             public_inputs=fixture["public_inputs"],
             proof=fixture["proof"],
             participant_outputs_g1=tuple(reversed(fixture["outputs"])),
-            session_context=fixture["session_context"],
+            expected_context_digest=fixture["context"],
         )
 
 
@@ -132,7 +130,7 @@ def test_scale_proof_bundle_signatures_and_reordering_are_binding():
     assert not tampered.verify_for_statement(
         vk=fixture["vk"],
         public_inputs=fixture["public_inputs"],
-        session_context=fixture["session_context"],
+        expected_context_digest=fixture["context"],
     )
 
     bad_signature = bytearray(bundle.signatures[0]); bad_signature[-1] ^= 1
@@ -160,8 +158,7 @@ def test_aggregate_zero_scalar_is_rejected():
         setup_split_scalar_fixture(
             vk=vk,
             public_inputs=public_inputs,
-            session_context=b"zero-aggregate",
-            context_digest=sha256(b"zero aggregate context").digest(),
+            expected_context_digest=sha256(b"zero aggregate context").digest(),
             participant_secrets=(107, 109),
             scalar_shares=(19, CURVE_ORDER - 19),
             retained_object_digests=(sha256(b"z0").digest(), sha256(b"z1").digest()),
@@ -218,11 +215,77 @@ def test_noncanonical_bundle_and_wrong_statement_fail():
     bundle = fixture["bundle"]
     with pytest.raises(SplitScalarLockError):
         SignedSplitScalarBundle.parse(bundle.encoded + b"\x00")
+    legacy_unsigned = bytearray(bundle.unsigned.encoded)
+    legacy_unsigned[8:10] = (2).to_bytes(2, "big")
+    with pytest.raises(SplitScalarLockError, match="unsupported"):
+        UnsignedSplitScalarBundle.parse(bytes(legacy_unsigned))
     assert not bundle.verify_for_statement(
         vk=fixture["vk"],
         public_inputs=(18,),
-        session_context=fixture["session_context"],
+        expected_context_digest=fixture["context"],
     )
+
+
+def test_bundle_context_is_the_only_positive_lock_session_authority():
+    fixture = _fixture()
+    bundle = fixture["bundle"]
+    expected_statement = statement_digest(
+        fixture["vk"],
+        fixture["public_inputs"],
+        session_context=fixture["context"],
+    )
+    assert all(
+        contribution.positive_lock.statement_digest == expected_statement
+        for contribution in bundle.unsigned.contributions
+    )
+
+    other_context = sha256(b"other authorization context").digest()
+    rebound_unsigned = replace(bundle.unsigned, context_digest=other_context)
+    rebound_bundle = SignedSplitScalarBundle.create(
+        rebound_unsigned,
+        participant_secrets=fixture["participant_secrets"],
+    )
+    assert not rebound_bundle.verify_for_statement(
+        vk=fixture["vk"],
+        public_inputs=fixture["public_inputs"],
+        expected_context_digest=fixture["context"],
+    )
+    # The attacker may align the externally claimed context with the newly
+    # signed bundle.  Verification must still fail because the positive locks
+    # were created for the original context.
+    assert not rebound_bundle.verify_for_statement(
+        vk=fixture["vk"],
+        public_inputs=fixture["public_inputs"],
+        expected_context_digest=other_context,
+    )
+    assert not bundle.verify_for_statement(
+        vk=fixture["vk"],
+        public_inputs=fixture["public_inputs"],
+        expected_context_digest=other_context,
+    )
+
+    with pytest.raises(SplitScalarLockError, match="statement qualification"):
+        unlock_split_scalar_bundle(
+            rebound_bundle,
+            vk=fixture["vk"],
+            public_inputs=fixture["public_inputs"],
+            proof=fixture["proof"],
+            participant_outputs_g1=fixture["outputs"],
+            expected_context_digest=other_context,
+        )
+
+
+def test_unlock_canonicalizes_public_input_iterable_once():
+    fixture = _fixture()
+    result = unlock_split_scalar_bundle(
+        fixture["bundle"],
+        vk=fixture["vk"],
+        public_inputs=(value for value in fixture["public_inputs"]),
+        proof=fixture["proof"],
+        participant_outputs_g1=fixture["outputs"],
+        expected_context_digest=fixture["context"],
+    )
+    assert result.preimages == fixture["preimages"]
 
 
 def test_bundle_signatures_can_be_produced_in_independent_processes():

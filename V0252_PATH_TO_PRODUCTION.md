@@ -1,7 +1,7 @@
 # RankLock v0.25.2 — path from `canary` to `safe_for_funds`
 
 Current gate: `safe_for_funds: false`, `maximum_mode: canary`,
-8 funds blockers. This document turns those 8 into named work items with an
+7 funds blockers. This document turns those 7 into named work items with an
 owner and an acceptance test for each, so nothing here is a wall — every row
 is a task someone can start.
 
@@ -16,43 +16,17 @@ false. Do not "fix" that test.
 
 ---
 
-## Tier 1 — one command, closes 2 blockers
+## Tier 1 — local build baseline complete
 
-**Owner: whoever holds local admin. Effort: one minute.**
+The FoundationDB 7.3.43 client and a reachable local cluster allowed the
+complete serialized workspace to execute. The pinned Strata tree now passes
+STRATA-001..009, closing `current bridge commit was not compiled and tested`.
+The current rerun uses the measured 32-modified/4-new installer, not the older
+31-file deployment baseline.
 
-Blockers closed: `Bitcoin Core regtest did not pass`,
-`current bridge commit was not compiled and tested`.
-
-The FoundationDB 7.3.43 client is staged and checksum-verified against
-Apple's published `.sha256`
-(`415088e5c36e22067d20c6da5f849536aaea99e103633fd0e05ce7287e19bab5`,
-native arm64). Clients component only — no `fdbserver`, no launchd job:
-
-```
-sudo mkdir -p /usr/local/include /usr/local/lib
-sudo cp -R /tmp/fdb743/expanded/FoundationDB-clients.pkg/Payload/usr/local/include/foundationdb /usr/local/include/
-sudo cp /tmp/fdb743/expanded/FoundationDB-clients.pkg/Payload/usr/local/lib/libfdb_c.dylib /usr/local/lib/
-```
-
-Reversible by deleting those two paths.
-
-*Why it cannot be engineered around:* `foundationdb-gen/src/lib.rs:341`
-resolves the options file with a compile-time
-`include_bytes!("/usr/local/include/foundationdb/fdb.options")` — an
-absolute path with no environment override. `FDB_CLIENT_LIB_PATH`
-(`foundationdb-sys/build.rs:63`) redirects only the link search path.
-Enabling `embedded-fdb-include`, or `[patch]`-ing the dependency, would
-compile — but STRATA-009 asserts *"the complete intended workspace test
-suite passes"*, and a modified dependency graph is no longer the intended
-workspace. That would be a false pass, which is worse than an honest
-`unavailable`.
-
-**Acceptance:** re-run
-`scripts/run_v0252_strata_build_matrix.py <pristine-clone>`; STRATA-005 and
-STRATA-009 move from `unavailable` to `passed`. Then run the Strata E2E so
-STRATA-010..020 execute, which unblocks the five remaining CORE rows
-(CORE-021/022/023/026/027 are each `blocked_by` the Strata ACK/NACK graph,
-STRATA-012).
+`Bitcoin Core regtest did not pass` remains open because five CORE rows depend
+on the unexecuted Strata ACK/NACK graph. Only the Tier 1b service-boundary run
+can close it; more build-only tests cannot.
 
 ---
 
@@ -69,18 +43,19 @@ services: `foundationdb`, `asm-runner`, `asm-params-init`, three
 `mosaic`, and `bitcoind`. Driving the eleven cases means operating a real
 multi-operator deployment.
 
-### The trap: the stack is pinned to Bitcoin Core 30, not 31.1
+### Deployment baseline now pins Core 31.1; the producer is still absent
 
-`compose.yml` uses `bitcoin/bitcoin:30`. Every CORE row in this
-qualification is executed against **signature-verified Core 31.1**, and
-`verify_v0252_evidence.py` cross-checks *"Core matrix and Strata E2E matrix
-used the same pinned bitcoind executable"*.
+The installer now replaces the old `bitcoin/bitcoin:30` tag with
+`bitcoin/bitcoin:31.1` at registry index digest
+`sha256:da25cedc66b1daefff9f412ee196c901a899c3fa68a33b20849c3e08b5c40d63`.
+It also requires a host RankLock export root and mounts it read-only into all
+three bridge nodes. A pristine install passes `docker compose config` with
+those mounts and image identity intact.
 
-Running the stack as shipped therefore produces E2E evidence on a different
-consensus and policy version, which the verifier will reject **after** the
-build rather than before it. Repoint the stack at 31.1 first, and record
-that repoint as a deviation. Left undetected this would have burned hours
-and then produced unusable evidence.
+That is consumer wiring, not an E2E producer. No deployed process invokes
+`export_ack_from_verified_unlock`, so an empty or fixture-populated mount does
+not satisfy the execution matrix. The old Core-version trap is closed; the
+proof-verifying sidecar/service boundary remains the actual blocker.
 
 Also note `foundationdb/foundationdb:7.3.75` against the 7.3.43 client
 installed on this host — same minor series, but worth confirming rather
@@ -109,7 +84,7 @@ Every service that matters is a binary this workspace already produces
 (`bin/strata-bridge`, `bin/secret-service`), the host already runs a real
 FoundationDB cluster and verified Core 31.1, and the workspace compiles
 natively. Running the bridge natively rather than in Docker would avoid the
-emulation, the external `mosaic` fetch and the Core 30 mismatch in one move.
+emulation and the external `mosaic` fetch.
 It has not been attempted; `asm-runner` and `mosaic` are the two pieces that
 would need resolving, since neither is a binary of this workspace.
 
@@ -182,11 +157,14 @@ For contrast, so the remaining list is not mistaken for the whole picture:
   exploitable against real Core regtest, where an attacker redirected the
   output and the transaction confirmed. Fixed with `OP_CHECKSIGVERIFY` over
   the BIP341 sighash plus a NUMS internal key.
-- CORE matrix 18 passed / 0 failed, negatives pinned to their specific
-  rejection reasons
-- STRATA 7 passed / 0 failed / 2 unavailable
-- Rust: connectors 27/0, tx-graph 46/0, bridge-sm 449/0
-- Clean-archive reproduction: 15/15 checks, 484 tests from a clean
-  extraction — this is what moved the gate to `canary`
+- CORE matrix 18 passed / 0 failed / 7 modeled-only / 5 not-executed,
+  negatives pinned to their specific rejection reasons
+- STRATA build matrix 9 passed / 0 failed; E2E matrix 0 passed / 11
+  not-executed
+- Rust: bridge-sm 452/0; complete serialized workspace 952/0
+- Clean-archive reproduction: 15/15 checks and 525 tests across 111 files from
+  a clean extraction, with generator-dependent public artifacts reproduced
+  byte-for-byte — this is what moves the gate to `canary`
 - Deterministic build: 4/4 byte-identical artifacts
-- Evidence verifier: 79 integrity checks, 0 failing
+- Evidence verifier remains fail-closed and additionally requires pinned
+  binary/commit identity for every phase containing passed cases

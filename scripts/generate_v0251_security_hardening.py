@@ -14,6 +14,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 RESULTS = ROOT / "results"
+EXPECTED_BITCOIND_SHA256 = (
+    "d55c12b0b02001cc16b1481c4075361dcba193100a8143924abda911174c09ec"
+)
+EXPECTED_BITCOIN_CORE_VERSION = 310100
 
 
 def digest(path: Path) -> str:
@@ -25,6 +29,23 @@ def load(path: Path) -> dict[str, object]:
     if not isinstance(value, dict):
         raise RuntimeError(f"expected JSON object: {path}")
     return value
+
+
+def core_evidence_is_fail_closed_or_pinned(core: dict[str, object]) -> bool:
+    """Accept only an honest unavailable state or the qualified Core binary."""
+
+    executed = core.get("executed") is True
+    passed = core.get("passed") is True
+    if not executed:
+        return not passed and isinstance(core.get("error"), str)
+    result = core.get("result")
+    return bool(
+        passed
+        and isinstance(result, dict)
+        and result.get("bitcoin_core_version_number")
+        == EXPECTED_BITCOIN_CORE_VERSION
+        and result.get("bitcoind_sha256") == EXPECTED_BITCOIND_SHA256
+    )
 
 
 def main() -> int:
@@ -47,8 +68,8 @@ def main() -> int:
         == "FULL_SIZE_SPLIT_SCALAR_PARTICIPANT_LOCAL_RELEASE_PASS_REAL_CORE_NATIVE_AUDIT_GATES_OPEN",
         "static_bitcoin_policy_envelope": policy.get("passed") is True,
         "canonical_evidence_verifier": evidence.get("all_checks_passed") is True,
-        "core_gate_fail_closed_when_unavailable": bool(
-            core.get("executed") is False and core.get("passed") is False
+        "core_evidence_fail_closed_or_pinned": core_evidence_is_fail_closed_or_pinned(
+            core
         ),
     }
     source_paths = {

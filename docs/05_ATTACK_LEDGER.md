@@ -267,3 +267,381 @@ activated Bitcoin fault/adaptor condition, not merely common-scalar anchor gener
 **Executable evidence:** `tests/test_shared_proof_binding.py::test_split_brain_view_can_hash_one_proof_and_pair_another`.
 
 **Decision:** canonically parse each proof element once and share the typed object across all gadgets.
+
+## A-017 — Witness-blind fixed-NACK recognition
+
+**Status:** closed in the local v0.25.2 installer; live STRATA-010..020
+qualification remains open.
+
+**Broken interface:** the NACK classifier and `process_counterproof_nackd`
+transition compared only the expected BIP141 `txid`. A `txid` excludes SegWit
+witness data, so this did not establish that the exact pre-signed NACK witness
+was the transaction being classified or accepted by the state machine.
+
+**Executable attack:** start from a correctly finalized NACK, flip one witness
+byte, and preserve the unsigned transaction. The malicious transaction keeps
+the same `txid` while its `wtxid` changes.
+
+**Regression evidence:**
+
+- `classify_tx_rejects_counterproof_nack_with_modified_witness`;
+- `event_rejected_same_txid_with_modified_witness`;
+- `integration/alpen-validity-first-f94c-v025/pending/p4-nack-classifier.diff`;
+- `integration/alpen-validity-first-f94c-v025/pending/p4-nack-witness.diff`.
+
+**Decision:** reconstruct the finalized fixed NACK from the persisted state
+signatures and compare the complete `bitcoin::Transaction` independently at
+both the classifier and transition boundaries. A txid-only match is never
+sufficient evidence for a fixed witness path.
+
+## A-018 — Unmanifested executable integration deltas
+
+**Status:** closed locally.
+
+**Broken interface:** `run_bundle_checks.sh` verified hashes only for paths
+already named in the standalone bundle manifest. All post-format P4 diffs were
+absent from that list, including the code that enforces ACK and NACK witness
+binding. Modifying or replacing an unlisted executable delta did not affect
+the manifest check.
+
+**Regression evidence:** the bundle check now compares the sorted manifest
+paths with every distributable file before hashing, and
+`test_manifest_covers_every_distributable_bundle_file` requires exact coverage
+plus explicit inclusion of all three P4 diffs. The current 27-entry bundle
+passes this check.
+
+**Decision:** checksum verification without a complete-file-set assertion is
+not accepted as bundle-integrity evidence. Both omission and hash drift must
+fail closed.
+
+## A-019 — Overwritable and path-unsafe ACK export state
+
+**Status:** closed in the local exporter; deployed producer and rollback
+witness qualification remain open.
+
+**Broken interface:** setup commitments were written with a predictable
+`.partial` file followed by replacement, so a second publication could replace
+the commitment used to build a graph. The unlock exporter opened SQLite at an
+unchecked caller path and used the same overwrite-shaped file publication.
+Two contexts whose full bindings differed but whose bridge/counterproof/ACK
+txids produced the same filename could race after both ledger commits. The
+proof-gated entry point also accepted an expected commitment without requiring
+that the same bytes had already been published for graph setup.
+
+**Regression evidence:**
+
+- `test_commitment_publication_is_write_once`;
+- `test_commitment_publication_rejects_insecure_existing_file`;
+- `test_exporter_rejects_world_writable_root`;
+- `test_exporter_rejects_symlinked_ledger`;
+- `test_concurrent_unlock_publishers_cannot_overwrite_each_other`;
+- `test_proof_gated_export_requires_the_published_graph_commitment`;
+- `test_visible_unlock_after_directory_sync_failure_requires_exact_retry`.
+
+**Decision:** require a private real directory and owner-only inode-checked
+SQLite ledger; publish commitments and unlocks by write-once hard-link; verify
+private ownership, mode and exact bytes after publication; bind proof export to
+the already-published setup commitment; and permanently conflict a commitment
+after an ordinary publication collision. If the exact authorized bytes are
+already visible but directory durability reporting fails, retain the durable
+context binding and require an exact retry—do not pretend an observable secret
+was never published.
+
+## A-020 — Silent two-phase abort-witness failure
+
+**Status:** closed locally.
+
+**Broken interface:** when phase-two authorization failed, the recovery path
+attempted to finalize the slot as aborted and anchor that state at the rollback
+witnesses. A broad nested `except Exception: pass` discarded any failure of
+that recovery. The caller saw only the original phase-two error and could not
+distinguish a durably witnessed abort from an unanchored local transition.
+
+**Regression evidence:**
+`tests/test_two_phase_authorization.py::test_two_phase_sidecar_reports_abort_anchor_failure`.
+
+**Decision:** preserve both the primary failure and recovery failure in an
+`ExceptionGroup`, raise a typed `TwoPhaseSidecarError`, and never report the
+primary rejection as if fail-closed recovery had completed successfully.
+
+## A-021 — Integer-to-zero-byte setup entropy coercion
+
+**Status:** closed locally; production setup remains prohibited.
+
+**Broken interface:** `derive_setup_payload` began with `bytes(entropy)`.
+Python defines `bytes(32)` as thirty-two zero bytes, so a caller that violated
+the type hint by supplying integer `32` silently received a syntactically valid
+but public setup secret instead of an error. Context indices similarly used
+`int(value)`, accepting booleans and numeric strings, while `AckContext`
+coerced mutable and non-byte transaction identifiers on demand.
+
+**Regression evidence:**
+
+- `test_setup_refuses_integer_bytes_coercion`;
+- `test_setup_refuses_noncanonical_indices`;
+- `test_ack_context_requires_immutable_exact_bytes`.
+
+**Decision:** secret-bearing APIs accept only explicit byte containers, stored
+context identifiers require immutable exact bytes, u32 fields require real
+integers rather than coercible values, and the variable-length entropy input
+is length-prefixed under a bumped v2 derivation domain. No runtime coercion may
+turn an input-type error into valid key material, and v1 setup material is not
+silently reinterpreted.
+
+## A-022 — Optional provenance in passing matrix evidence
+
+**Status:** closed locally.
+
+**Broken interface:** the evidence verifier compared the Core and Strata E2E
+bitcoind hashes only when both report identities supplied a hash. It used the
+same optional pattern for the build/E2E Strata commit. A future report with
+passed commands could omit the identity field and skip the cross-report check
+instead of failing closed.
+
+**Regression evidence:**
+`tests/test_verify_v0252_evidence.py::test_verifier_rejects_passing_core_report_without_binary_identity`.
+The E2E runner now records the resolved executable, SHA-256 and version in its
+environment probe and report identity.
+
+**Decision:** any phase containing passed cases must identify the pinned
+Bitcoin Core executable and, for Strata, the exact pinned commit. Missing
+execution may remain honestly unavailable or not executed; passing evidence
+may never omit provenance to bypass a comparison.
+
+## A-023 — Stale deterministic artifacts accepted as release inputs
+
+**Status:** closed locally.
+
+**Broken interface:** generator-critical source changed after the public
+committee and split-scalar conformance artifacts were produced. The committed
+artifacts therefore embedded obsolete generator-code commitments, while a
+previous clean-archive report described a different archive and could not
+establish reproducibility for the current tree.
+
+**Executable evidence:** two independent clean extractions regenerated the
+same bytes, but ten packaged artifacts differed from those fresh results. The
+first current-tree clean-archive run consequently failed only
+`packaged_fixtures_match_clean_generation`. After regenerating the public
+fixtures and their evidence, a new clean extraction passed all 15 checks and
+519 tests; the final regression count is updated with this continuation's
+archive-boundary test.
+
+**Decision:** source changes covered by a generator-code commitment require
+regenerating every dependent conformance artifact and evidence report. A green
+report for another archive digest is historical evidence, never permission to
+reuse stale binaries.
+
+## A-024 — Post-build evidence packaged into the archive it attests
+
+**Status:** closed locally.
+
+**Broken interface:** the source builder included both
+`clean_archive_verification_v0252.json`, which records the archive digest, and
+`v0252_release_gate.json`, which records the clean-report digest. Rebuilding
+after either companion changed invalidated the subject archive, so no final
+archive could simultaneously contain and match its post-build evidence.
+Once the clean report was correctly removed, the gate generator also crashed
+while hashing the missing default path even though its optional loader had
+already returned `None`, preventing clean-extraction tests from failing closed.
+
+**Regression evidence:**
+`test_post_build_companion_evidence_is_not_packaged_into_its_subject` requires
+the clean report and v0.25.2 release gate to remain outside the source archive
+while retaining pre-build matrix verification evidence.
+`test_missing_clean_archive_companion_is_absent_not_an_io_error` proves an
+absent companion yields a closed fact rather than an I/O exception.
+
+**Decision:** post-build qualification is companion evidence. Exclude it from
+the source archive and its manifest; verify it by detached digest after the
+archive is fixed. Never solve a checksum cycle by accepting a stale report.
+
+## A-025 — Proof-session and ACK-destination split brain
+
+**Status:** closed at the local library boundary; the deployed producer and
+live STRATA-010..020 qualification remain open.
+
+**Broken interface:** `export_ack_from_verified_unlock` accepted both an
+authenticated positive-lock `session_context` and an independent `AckContext`.
+The former selected the statement that could unlock the payload; the latter
+selected the output filename and durable one-shot ledger identity. The setup
+commitment path binds only graph owner, deposit, game and watchtower indices,
+so two contexts differing in slot, epoch or transaction identifiers can share
+that path.
+
+**Executable attack:** construct a valid proof, lock and `[r]A` for the
+original session, publish its commitment, then invoke the exporter with the
+original session bytes and a substituted ACK transaction identifier. Before
+the fix, proof verification succeeded and the commitment could be consumed
+under the substituted destination.
+
+**Regression evidence:**
+`tests/test_strata_exporter.py::test_a_valid_unlock_cannot_be_redirected_to_another_ack_context`
+proves that two contexts share the old partial commitment path, but the
+substituted destination now fails statement verification, publishes no
+preimage and consumes no ledger entry. The API-shape test also requires that
+the proof-gated function expose neither `payload` nor `session_context`.
+
+**Decision:** derive the positive-lock session from the complete canonical
+`AckContext` at setup and derive it again internally at proof-gated release.
+Never accept separately caller-controlled statement and publication contexts
+at a funds-releasing boundary.
+
+## A-026 — Verified Core execution rejected by the hardening generator
+
+**Status:** closed locally.
+
+**Broken evidence predicate:** the v0.25.1 security-hardening generator treated
+only `executed=false, passed=false` as a valid Core state. Running the official
+reproduction workflow with the qualified Core 31.1 binary produced successful
+evidence and then failed the hardening stage because execution had occurred.
+This was fail-closed, but it made the claimed pinned-Core reproduction path
+internally inconsistent.
+
+**Regression evidence:**
+`tests/test_generate_v0251_security_hardening.py` covers the unavailable
+fail-closed state, the exact Core 31.1 version and binary hash, and rejection of
+missing, wrong-version, or wrong-binary success evidence.
+
+**Decision:** accept exactly two Core evidence states: honest unavailability
+with a recorded error, or successful execution of version 310100 with SHA-256
+`d55c12b0b02001cc16b1481c4075361dcba193100a8143924abda911174c09ec`.
+Do not equate “a node ran” with “the qualified node ran.”
+
+## A-027 — Valid counterproof plus release withholding redirects timeout value
+
+**Status:** current graph broken; shared-selection deposit-recovery model added,
+universal funds safety still open.
+
+**Executable counterexample:** in the applied validity-first graph, assume the
+counterproof is semantically valid and one participant required by every
+N-of-N ACK withholds. Every ACK is unavailable. After CSV, exact NACK parents
+pay the graph owner and `AllNackd` enables the existing contested payout, while
+the canonical ACK/slash branch never executes. The Rust
+`detect_correlated_ack_withholder_loss` analyzer derives that trace from the
+generated graph and returns a negative funds-safety verdict.
+
+**Narrow repair model:** `ranklock.v026.timeout_economics` makes every
+`CounterproofV2_i` and owner payout atomically consume the complete ordered
+counterproof-reserve roster plus one shared contest-payout outpoint, so at most
+one selector confirms and any confirmation consensus-conflicts with every
+sibling. Each counterproof also consumes the deposit, immediately allocates its
+exact amount to a distinct plan-committed P2TR recovery descriptor, and returns
+each non-selected reserve exactly to its setup-bound beneficiary. Owner payout
+returns every reserve. Selected ACK and timeout parents conflict on resolution. ACK
+alone creates a slash-authorization outpoint; timeout consumes contest-slash
+and deliberately omits the independently burnable claim-payout output.
+Sixty-four regressions cover graph resurrection, multi-counterproof selection,
+CPFP/control-domain separation, beneficiary/value diversion, exact ordered
+Slash distribution and zero-value header, separate CPFP/payout descriptors,
+safe timeout change, and residual reserve accounting.
+
+The alternative index in this model is the ordered Strata watchtower index,
+not either of the two RankLock query slots. Each counterproof/ACK alternative
+has its own ordered CPFP descriptor. Every selected resolution output must also
+match one plan-level value/script/policy commitment; exact connector Script
+semantics remain a categorical blocker until Rust/Core verification.
+
+**Remaining attack:** Bitcoin cannot distinguish `valid counterproof + withheld
+release` from `invalid counterproof + no release` at the timeout. Counterproof
+selection allocates the deposit to the declared recovery script, but actual
+descriptor control is not yet proven; an invalid first counterproof may also
+deny reimbursement to an honest fronting operator. The abstract model therefore hard-codes
+`funding_eligible=false`. Universal protection requires consensus-valid
+adjudication, threshold availability under a new theorem, or fully reserved
+coverage for both indistinguishable worlds.
+
+The model does not yet establish a qualified terminal recovery theorem. Its
+abstract v2 parents remove the current post-selection deposit, ungated-Slash,
+claim-payout-burn, and abandoned-reserve dependencies. Before counterproof confirmation, however, the
+existing CooperativePayout can spend the deposit alone. Funding therefore
+requires an exhaustive presign allowlist plus verified destruction of at least
+one subject-unique signing share and every backup, or a confirmed cutover into a
+fresh script-only deposit state; erasure cannot prove a hidden signature never
+existed. The complete applied parent set and principal disposition are not yet
+enumerated. Accordingly the only positive field is
+`counterproof_selection_allocates_exact_deposit`, not “principal preserved,” and
+`terminal-principal-disposition-unmodeled` remains a categorical blocker.
+Stake exclusivity and complete exact-presign/legacy-template exclusion are
+separate categorical blockers: current stake also feeds Unstaking and other
+games, and any surviving v1 counterproof/ACK/NACK/Slash material bypasses the v2
+consumer roster.
+Slash payout scripts are distinct from every other committed plan script, and their
+declared control domains are disjoint from graph-owner, recovery, and timeout-
+broadcaster controls. Actual key possession/control remains an explicit funding
+blocker.
+
+**Terminal-enumeration delta:** the abstract model walks live UTXO states
+to every maximal local terminal rather than treating pairwise conflicts as a
+terminal theorem. For two alternatives it deterministically produces five
+traces (`Owner`, two `CP -> ACK -> Slash`, and two `CP -> Timeout`) and maps
+seven semantic worlds. Each `valid + withheld` world and its corresponding
+`invalid + absent` world name the exact same timeout trace. Atomic selection
+eliminates the prior six locked-reserve witnesses: the committed policy now
+returns `AbstractDeclaredPolicySatisfiedV1` with zero abandoned reserve value.
+Output dispositions must match committed non-null beneficiaries and the policy
+digest is content-derived. That result is deliberately named
+`AbstractDeclaredPolicySatisfiedV1`; it hard-codes `funding_eligible=false`,
+`protected_value_theorem_established=false`, and retains blockers for baseline
+authority, per-principal allowances, service-fee authority, and by-horizon
+CSV/reorg/fee execution.
+
+**Reproduced Rust/Core delta:** a side-by-side research `V026Graph` assembler
+now derives every internal `C/P/S/R/L` edge from parent transaction bytes,
+reconstructs an exact spender matrix, and retains sixteen unconditional
+activation blockers. Six real Bitcoin Core cases independently accept both
+counterproof siblings, the mature owner branch, ACK, the first-valid CSV
+timeout, and the ACK-descended Slash. They also reproduce both directions of
+the shared-input conflicts only after the losing branch is independently
+mature, execute a competing live-key stake spend that prevents Slash, and show
+that the signed 10,690-WU counterproof is accepted only after Contest confirms
+under the tested version-3 policy.
+This closes the earlier “Rust graph absent” and “no Core execution” evidence
+gaps only for the isolated research graph. It does not close A-027: the stake
+counterexample is positive evidence that global exclusivity is absent, the
+runtime does not consume the graph type, the Slash-v2 ASM profile is not
+activated, and the validity/withholding economic ambiguity remains.
+
+The frozen `StructurallyVerifiedFundingBlockedV1` observation preserves its
+exact fifteen-code bytes and subspace but fails closed for the current graph.
+A separate `StructurallyVerifiedFundingBlockedV2` envelope/subspace records the
+current sixteen-code set. Both reject non-canonical encodings and distinguish
+atomic creation, exact replay, and conflict without overwrite; their live write
+capabilities are not publicly deserializable. No runtime, P2P, funding, signing,
+duty, or broadcast path consumes either record. This improves crash-visible
+negative evidence; it is not admission. The live FoundationDB replay test did
+not complete locally, so only codec/classification behavior is reproduced.
+
+## A-028 — Receipt txid equality is not canonical-chain confirmation
+
+**Status:** exact transaction, active-chain observation, ACK-subject binding,
+and witness-CAS classification are composed; a positive receipt and an enforced
+runtime consumer remain open.
+
+**Attack:** a valid subject-bound receipt authenticates the non-witness
+BridgeProof transaction id, but txid equality alone does not prove which witness
+was mined, whether the transaction is only in the mempool, whether the reported
+block remains on the active chain, or whether a reorganization occurred while
+the runtime checked it. Treating receipt verification as confirmation could
+therefore expose threshold release for an off-chain, alternate-witness, or
+stale-chain observation.
+
+**Regression evidence:** the bridge executor now creates a non-serializable,
+non-cloneable live capability only after Bitcoin Core returns the exact full
+transaction bytes, a minimum confirmation count, a Merkle-valid containing
+block, and the same active block hash at the reported height. It repeats the
+transaction and active-height lookups before returning. Real-Core regressions
+reject a mempool transaction, insufficient depth, an invalidated block, and a
+same-txid/different-witness transaction.
+
+The executor can then consume that live capability with one independently
+verified threshold-v3 ACK witness, compare every receipt-authenticated subject
+field and the witness-stripped transaction template, recheck Bitcoin on both
+sides of selected-commitment CAS, accept only exact create/replay, and reject a
+conflicting first writer. Two pure regressions cover the subject and CAS
+decision table. There is no positive receipt execution of this composed path,
+and the lower-level witness-store API is not yet hidden behind it.
+
+**Decision:** classify this capability as reorg-sensitive point-in-time
+evidence. Recreate it immediately before any irreversible action. Keep funding
+disabled because no valid production receipt exists and no runtime duty
+requires the composition before threshold release.

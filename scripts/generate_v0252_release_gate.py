@@ -203,11 +203,11 @@ def main() -> int:
             ),
             "clean_archive_report": (
                 None
-                if args.clean_archive_report is None
+                if clean is None
                 else {
                     "path": str(args.clean_archive_report.resolve()),
                     "sha256": _digest(args.clean_archive_report.resolve()),
-                    "all_checks_passed": bool(clean and clean.get("all_checks_passed") is True),
+                    "all_checks_passed": clean.get("all_checks_passed") is True,
                 }
             ),
             "local_security_hardening_passed": True,

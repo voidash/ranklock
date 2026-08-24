@@ -1,0 +1,33 @@
+{
+  "command": "cargo test -p strata-bridge-counterproof subject_bound_sp1_guest_generates_and_verifies_groth16_proof --features sp1-execution-tests -- --ignored --nocapture",
+  "docker_started": false,
+  "free_disk_gib_at_termination": 17,
+  "free_disk_gib_safety_cutoff": 15,
+  "funding_eligible": false,
+  "low_memory_configuration": {
+    "gas_executor_workers": 1,
+    "gas_trace_chunk_slots": 1,
+    "memory_limit_bytes": 17179869184,
+    "minimal_trace_chunk_threshold": 4194304,
+    "rayon_threads": 4,
+    "recursion_executor_workers": 1,
+    "recursion_prover_workers": 1,
+    "shard_size": 1048576,
+    "trace_chunk_slots": 2,
+    "worker_buffer_counts": 1
+  },
+  "observed_elapsed_seconds": 3138,
+  "observed_swap_allocated_mib": 21504,
+  "observed_swap_used_mib": 20480,
+  "proof_receipt_created": false,
+  "proof_verified": false,
+  "receipt_output_path": "bridge_counterproof_subject_v1_SP1_v6.2.4.groth16.proof",
+  "result": "safety-terminated-before-receipt-to-preserve-disk-floor",
+  "schema": "ranklock-v026-local-sp1-groth16-attempt-evidence-v4",
+  "source_sha256": "8dfc52f49ca735eab7296571a2acc6bf79d58b9b3dafaed2fbd702391b1f3437",
+  "termination_reason": "host free disk approached the 15 GiB hard floor as macOS expanded swap; no Docker wrapper or receipt write had begun",
+  "test_log": {
+    "file": "bridge_counterproof_subject_v1_SP1_v6.2.4.local-groth16-low-memory-v4.log",
+    "sha256": "7bcdf8b74357c5208ab0e4a045f2a158a68ad23ab579a0d70486eeb3cd860fe1"
+  }
+}

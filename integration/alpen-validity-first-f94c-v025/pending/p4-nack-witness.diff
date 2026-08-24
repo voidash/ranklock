@@ -1,0 +1,211 @@
+diff --git a/crates/bridge-sm/src/graph/transitions/contested.rs b/crates/bridge-sm/src/graph/transitions/contested.rs
+--- a/crates/bridge-sm/src/graph/transitions/contested.rs
++++ b/crates/bridge-sm/src/graph/transitions/contested.rs
+@@ -1,6 +1,9 @@
+ use std::sync::Arc;
+ 
+-use strata_bridge_tx_graph::game_graph::{GameConnectors, GameGraphSummary};
++use strata_bridge_tx_graph::{
++    game_graph::{GameConnectors, GameGraphSummary},
++    musig_functor::GameFunctor,
++};
+ 
+ use crate::{
+     graph::{
+@@ -351,25 +354,39 @@
+                 stake_spent,
+                 payout_connector_spent,
+             } => {
+-                // Validate the exact pre-signed fixed NACK txid. This rejects
+-                // alternate outputs, replayed deposits/games and fee-wallet mutations.
++                // A BIP141 txid does not commit to witness data. Reconstruct the
++                // finalized pre-signed NACK and compare the entire transaction so an
++                // alternate witness cannot be classified as the fixed timeout path.
+                 let game =
+                     crate::graph::machine::generate_game_graph(&cfg, self.context(), &graph_data);
++                let Some(unpacked_signatures) = GameFunctor::unpack(
++                    signatures.clone(),
++                    self.context().watchtower_pubkeys().len(),
++                ) else {
++                    return Err(GSMError::rejected(
++                        self.state.clone(),
++                        event.into(),
++                        "cannot validate counterproof NACK: state signature layout is malformed",
++                    ));
++                };
+                 let slot = watchtower_slot_for_operator(
+                     self.context().operator_idx(),
+                     event.counterprover_idx,
+                 );
+-                let valid_nack = slot
+-                    .and_then(|slot| game.counterproofs.get(slot))
+-                    .is_some_and(|subgraph| {
+-                        subgraph.counterproof_nack.as_ref().compute_txid()
+-                            == event.tx.compute_txid()
+-                    });
+-                if !valid_nack {
++                let valid_nack = slot.and_then(|slot| {
++                    let subgraph = game.counterproofs.get(slot)?;
++                    let watchtower_signatures = unpacked_signatures.watchtowers.get(slot)?;
++                    let expected_tx = subgraph
++                        .counterproof_nack
++                        .clone()
++                        .finalize(watchtower_signatures.counterproof_nack[0]);
++                    Some(expected_tx == event.tx)
++                });
++                if valid_nack != Some(true) {
+                     return Err(GSMError::rejected(
+                         self.state.clone(),
+                         event.into(),
+-                        "counterproof NACK tx does not spend the expected counterproof outpoint",
++                        "counterproof NACK does not match the exact finalized pre-signed transaction",
+                     ));
+                 }
+ 
+diff --git a/crates/bridge-sm/src/graph/tests/contested/process_counterproof_nackd.rs b/crates/bridge-sm/src/graph/tests/contested/process_counterproof_nackd.rs
+--- a/crates/bridge-sm/src/graph/tests/contested/process_counterproof_nackd.rs
++++ b/crates/bridge-sm/src/graph/tests/contested/process_counterproof_nackd.rs
+@@ -3,11 +3,15 @@
+ //! Tests use a two-slot graph summary ([`build_test_graph_summary(2)`]) so that the
+ //! `AllNackd` transition requires two NACKs — one per watchtower slot.
+ 
+-use std::collections::BTreeMap;
++use std::{collections::BTreeMap, sync::OnceLock};
+ 
+-use bitcoin::{Txid, hashes::Hash};
++use bitcoin::{Txid, Witness, hashes::Hash};
++use musig2::secp256k1::schnorr::Signature;
+ use strata_bridge_test_utils::{bitcoin::generate_tx, prelude::generate_txid};
+-use strata_bridge_tx_graph::game_graph::{GameGraph, GameGraphSummary};
++use strata_bridge_tx_graph::{
++    game_graph::{GameGraph, GameGraphSummary},
++    musig_functor::GameFunctor,
++};
+ 
+ use crate::{
+     graph::{
+@@ -18,6 +22,7 @@
+         tests::{
+             GraphInvalidTransition, GraphTransition, LATER_BLOCK_HEIGHT, TEST_NONPOV_IDX,
+             TEST_POV_IDX, build_test_graph_summary, create_nonpov_sm, get_state,
++            mock_game_signatures,
+             mock_states::{
+                 TEST_FULFILLMENT_TXID, all_nackd_state, all_state_variants,
+                 counter_proof_posted_state,
+@@ -41,18 +46,23 @@
+ /// Creates a NACK tx that spends the ACK/NACK output of the counterproof at the given
+ /// watchtower slot in the two-slot test summary.
+ fn nack_tx_for_slot(slot: usize) -> bitcoin::Transaction {
+-    // Validity-first accepts only the exact fixed pre-signed NACK: the
+-    // transition regenerates the game graph and compares
+-    // counterproof_nack txids. An arbitrary transaction that merely spends
+-    // the ACK/NACK outpoint is now correctly rejected, so the fixture must
+-    // return the real template. The witness does not affect the txid, so the
+-    // unsigned template is sufficient here.
+-    test_game_graph().counterproofs[slot]
++    let game = test_game_graph();
++    let signatures = GameFunctor::unpack(test_signatures(), game.counterproofs.len())
++        .expect("test signature layout must match the game graph");
++    game.counterproofs[slot]
+         .counterproof_nack
+-        .as_ref()
+         .clone()
++        .finalize(signatures.watchtowers[slot].counterproof_nack[0])
+ }
+ 
++/// Stable mock signatures shared by the state and its finalized NACK transaction.
++fn test_signatures() -> Vec<Signature> {
++    static SIGNATURES: OnceLock<Vec<Signature>> = OnceLock::new();
++    SIGNATURES
++        .get_or_init(|| mock_game_signatures(&test_game_graph()))
++        .clone()
++}
++
+ /// The exact pre-signed counterproof ACK for the given watchtower slot.
+ fn ack_tx_for_slot(slot: usize) -> bitcoin::Transaction {
+     test_game_graph().counterproofs[slot]
+@@ -92,7 +102,7 @@
+         last_block_height: LATER_BLOCK_HEIGHT,
+         graph_data: test_deposit_params(),
+         graph_summary: summary,
+-        signatures: Default::default(),
++        signatures: test_signatures(),
+         fulfillment_txid: Some(*TEST_FULFILLMENT_TXID),
+         contest_block_height: LATER_BLOCK_HEIGHT,
+         refuted_bridge_proof: None,
+@@ -137,7 +147,7 @@
+             last_block_height: LATER_BLOCK_HEIGHT,
+             graph_data: test_deposit_params(),
+             graph_summary: summary,
+-            signatures: Default::default(),
++            signatures: test_signatures(),
+             fulfillment_txid: Some(*TEST_FULFILLMENT_TXID),
+             contest_block_height: LATER_BLOCK_HEIGHT,
+             refuted_bridge_proof: None,
+@@ -179,7 +189,7 @@
+         expected_state: GraphState::AllNackd {
+             last_block_height: LATER_BLOCK_HEIGHT,
+             graph_data: test_deposit_params(),
+-            signatures: Default::default(),
++            signatures: test_signatures(),
+             claim_txid: summary.claim,
+             fulfillment_txid: Some(*TEST_FULFILLMENT_TXID),
+             contest_block_height: LATER_BLOCK_HEIGHT,
+@@ -206,7 +216,7 @@
+             expected_state: GraphState::AllNackd {
+                 last_block_height: LATER_BLOCK_HEIGHT,
+                 graph_data: test_deposit_params(),
+-                signatures: Default::default(),
++                signatures: test_signatures(),
+                 claim_txid: summary.claim,
+                 fulfillment_txid: Some(*TEST_FULFILLMENT_TXID),
+                 contest_block_height: LATER_BLOCK_HEIGHT,
+@@ -262,7 +272,7 @@
+         expected_state: GraphState::AllNackd {
+             last_block_height: LATER_BLOCK_HEIGHT,
+             graph_data: test_deposit_params(),
+-            signatures: Default::default(),
++            signatures: test_signatures(),
+             claim_txid: summary.claim,
+             fulfillment_txid: Some(*TEST_FULFILLMENT_TXID),
+             contest_block_height: LATER_BLOCK_HEIGHT,
+@@ -323,6 +333,30 @@
+     test_graph_invalid_transition(GraphInvalidTransition {
+         from_state: counter_proof_posted_state_with_nacks(&[]),
+         event: GraphEvent::CounterProofNackConfirmed(event),
++        expected_error: |e| matches!(e, GSMError::Rejected { .. }),
++    });
++}
++
++#[test]
++fn event_rejected_same_txid_with_modified_witness() {
++    let slot = watchtower_slot_for_operator(TEST_POV_IDX, TEST_NONPOV_IDX)
++        .expect("non-pov idx must have a watchtower slot");
++    let mut tx = nack_tx_for_slot(slot);
++    let expected_txid = tx.compute_txid();
++    let expected_wtxid = tx.compute_wtxid();
++    let mut witness = tx.input[0].witness.to_vec();
++    witness[0][0] ^= 1;
++    tx.input[0].witness = Witness::from_slice(&witness);
++
++    assert_eq!(tx.compute_txid(), expected_txid);
++    assert_ne!(tx.compute_wtxid(), expected_wtxid);
++
++    test_graph_invalid_transition(GraphInvalidTransition {
++        from_state: counter_proof_posted_state_with_nacks(&[]),
++        event: GraphEvent::CounterProofNackConfirmed(CounterProofNackConfirmedEvent {
++            tx,
++            counterprover_idx: TEST_NONPOV_IDX,
++        }),
+         expected_error: |e| matches!(e, GSMError::Rejected { .. }),
+     });
+ }
+@@ -345,7 +379,7 @@
+         last_block_height: LATER_BLOCK_HEIGHT,
+         graph_data: test_deposit_params(),
+         graph_summary: summary,
+-        signatures: Default::default(),
++        signatures: test_signatures(),
+         fulfillment_txid: Some(*TEST_FULFILLMENT_TXID),
+         contest_block_height: LATER_BLOCK_HEIGHT,
+         refuted_bridge_proof: None,

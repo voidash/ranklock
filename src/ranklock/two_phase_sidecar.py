@@ -223,11 +223,23 @@ class TwoPhaseParticipantSidecar:
                     participant_secret=self.participant.participant_secret,
                     witnesses=self.rollback_witnesses,
                 )
-            except Exception:
-                pass
+            except Exception as recovery_exc:
+                raise TwoPhaseSidecarError(
+                    "phase-two failed and abort/rollback-witness recovery also failed"
+                ) from ExceptionGroup(
+                    "phase-two primary and fail-closed recovery failures",
+                    [exc, recovery_exc],
+                )
             if isinstance(exc, TwoPhaseSidecarError):
                 raise
-            if isinstance(exc, (ReleaseSidecarError, TwoPhaseAuthorizationError, RollbackWitnessError)):
+            if isinstance(
+                exc,
+                (
+                    ReleaseSidecarError,
+                    TwoPhaseAuthorizationError,
+                    RollbackWitnessError,
+                ),
+            ):
                 raise TwoPhaseSidecarError(f"phase-two authorization failed: {exc}") from exc
             raise TwoPhaseSidecarError(f"phase-two recheck failed: {exc}") from exc
 

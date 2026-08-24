@@ -1,7 +1,7 @@
 {
   "all_local_checks_passed": true,
   "external_gates": {
-    "bitcoin_core_31_1_regtest": false,
+    "bitcoin_core_31_1_regtest": true,
     "current_strata_workspace_compile_and_tests": false,
     "independent_cryptography_audit": false,
     "independent_implementation_audit": false,
@@ -22,7 +22,7 @@
   "local_checks": {
     "canonical_evidence_verifier": true,
     "complete_per_file_suite": true,
-    "core_gate_fail_closed_when_unavailable": true,
+    "core_evidence_fail_closed_or_pinned": true,
     "durable_two_phase_committee_harness": true,
     "split_scalar_one_honest_harness": true,
     "static_bitcoin_policy_envelope": true
@@ -34,7 +34,7 @@
   "source_digests": {
     "bitcoin_core_regtest": {
       "path": "src/ranklock/bitcoin_core_regtest.py",
-      "sha256": "4b119a87470ed47249247e0003190c25ec9e1e8468b712ab0bd2b1ffaf391841"
+      "sha256": "527179a55cf838376ec6a2ecf9672adbefa591f28d89f12c83d532345bb6aa3a"
     },
     "ceremony_core_binding": {
       "path": "src/ranklock/setup_ceremony_evidence.py",
@@ -42,7 +42,7 @@
     },
     "durable_ledger": {
       "path": "src/ranklock/durable_slot_ledger.py",
-      "sha256": "a488bd52433faaa4c17f7e21e2fe69f491a3d0f4ed0599a3764d0195a335577b"
+      "sha256": "41ecf971b4ff6607b5c13c7ac15fb92da42426ae9848dc7bb08fbaccb53be98d"
     },
     "kill_safe_test_runner": {
       "path": "scripts/run_test_files.py",
@@ -58,12 +58,12 @@
     },
     "two_phase_sidecar": {
       "path": "src/ranklock/two_phase_sidecar.py",
-      "sha256": "e7a931421f22d8091592764f0d18912a4329d6d6e63accd837a29a149840b1ed"
+      "sha256": "fa50396b36a97428790f2c7ea009207d9c5fef9bd06a2add792b61abbf046d47"
     }
   },
   "tests": {
     "failed": 0,
-    "files": 108,
-    "passed": 480
+    "files": 111,
+    "passed": 525
   }
 }

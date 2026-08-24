@@ -1,0 +1,75 @@
+{
+  "base_commit": "f94c06d08ff29eee746f3e20bd63078d2949b304",
+  "capabilities_exposed": {
+    "broadcast": false,
+    "duty_scheduling": false,
+    "funding": false,
+    "p2p_admission": false,
+    "signing": false
+  },
+  "evidence_class": "REPRODUCED local codec and classification behavior; live FoundationDB execution unavailable",
+  "funding_eligible": false,
+  "live_foundationdb": {
+    "executed_to_completion": false,
+    "failure_class": "environment-harness-hang",
+    "test_compiled_and_started": true
+  },
+  "observation_state": "StructurallyVerifiedFundingBlockedV2",
+  "patch_artifact": {
+    "path": "integration/alpen-validity-first-f94c-v025/pending/v026-rust-research.diff",
+    "reapplied_to_installer_baseline": true,
+    "sha256": "8e1d5a762f0ac29b8717047f9ddb74715e1ee7b007d896ebbedcf3f934ea9841"
+  },
+  "persistence": {
+    "first_writer_wins": true,
+    "live_write_capability_deserializable": false,
+    "outcomes": [
+      "Created",
+      "ExactReplay",
+      "Conflict"
+    ],
+    "persisted_reads_are_inert_validated_models": true,
+    "v1": {
+      "blocker_count": 15,
+      "canonical_parse_reencode_required": true,
+      "current_16_blocker_graph_encodable": false,
+      "envelope_magic": "RL26ADM",
+      "envelope_version": 1,
+      "golden_bytes": 225,
+      "golden_sha256": "c91853dfa75da20f06c297d36cea3d6b6530256cdc78da73b3653e4fce1a7734",
+      "separate_fdb_subspace": "v026_admissions_v1"
+    },
+    "v2": {
+      "blocker_count": 16,
+      "canonical_parse_reencode_required": true,
+      "envelope_magic": "RL26ADM",
+      "envelope_version": 2,
+      "separate_fdb_subspace": "v026_admissions_v2"
+    }
+  },
+  "runtime_admission_implemented": false,
+  "safe_for_funds": false,
+  "schema": "ranklock-v026-runtime-observation-evidence-v2",
+  "source_hashes": {
+    "crates/bridge-sm/src/lib.rs": "955df07f60974a684defb6df185f54a59e5a71b324a1f2ec2714dddf66d57c1e",
+    "crates/bridge-sm/src/v026_admission.rs": "d180d5d757345a541d051934a73f84452551fe6d2934290a770991b503b4ad11",
+    "crates/bridge-sm/src/v026_admission_v2.rs": "cdef0509147a01635ebad40fc9d366df9f34dd2f0476bea52cb9ab2a43e6a8f7",
+    "crates/db/src/fdb/bridge_db.rs": "cdd6d204eb05d00b37417e6d4c4e4f7a5623736ba33172a2818ccbe9b3206efe",
+    "crates/db/src/fdb/dirs.rs": "32ea3d2630c1e72d51bbc60c84be8625d739b4d2176ec54af6d06a96a8c8384f",
+    "crates/db/src/fdb/row_spec/mod.rs": "7eb32dc43beaf1bb99f76629c4b4a55544d56fe2065212789e853aaa8723d6fd",
+    "crates/db/src/fdb/row_spec/v026_admissions.rs": "6364b33da4ca800e6c082f5ab9b45096ec4251f271a28fc6cea6e310b1cdd372",
+    "crates/db/src/fdb/row_spec/v026_admissions_v2.rs": "b5cdf4b5480e39c17849af280818e1eb59030645654fe2d2d78d5f949a2d3121",
+    "crates/db/src/traits.rs": "19b9ae875b254d55e6611e5578a99773e093f706c83be4bd082c6a1b6ff1d796",
+    "crates/db/src/types.rs": "07b8fd7bd4271d384d53017bf6bbf83d41497f8a13941a9f20207b0b480c5127"
+  },
+  "tests": {
+    "bridge_sm_observation_failed": 0,
+    "bridge_sm_observation_passed": 7,
+    "db_codec_failed": 0,
+    "db_codec_passed": 10,
+    "db_pure_classifier_and_subspace_failed": 0,
+    "db_pure_classifier_and_subspace_passed": 3,
+    "strict_new_code_clippy_passed": true,
+    "strict_rustdoc_passed": true
+  }
+}

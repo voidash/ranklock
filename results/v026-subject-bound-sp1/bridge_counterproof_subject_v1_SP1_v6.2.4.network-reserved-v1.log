@@ -1,0 +1,20 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.34s
+     Running unittests src/lib.rs (target/debug/deps/strata_bridge_counterproof-f3edb29ec70ec91d)
+
+running 1 test
+stderr: WARNING: Using insecure random number generator.
+test statements::tests::subject_bound_sp1_guest_generates_and_verifies_groth16_proof has been running for over 60 seconds
+
+thread 'statements::tests::subject_bound_sp1_guest_generates_and_verifies_groth16_proof' (10980609) panicked at crates/proofs/bridge-counterproof/src/statements.rs:811:14:
+subject-bound Groth16 proof must verify against the loaded ELF: ProofVerificationError("Groth16 verification error: Proof verification failed")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test statements::tests::subject_bound_sp1_guest_generates_and_verifies_groth16_proof ... FAILED
+
+failures:
+
+failures:
+    statements::tests::subject_bound_sp1_guest_generates_and_verifies_groth16_proof
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 48 filtered out; finished in 113.37s
+
+error: test failed, to rerun pass `-p strata-bridge-counterproof --lib`

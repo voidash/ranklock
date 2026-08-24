@@ -19,16 +19,26 @@
     "bitcoin_core_regtest_executed": false,
     "bundle_python_tests": {
       "failed": 0,
-      "passed": 10
+      "passed": 13
+    },
+    "economic_kill_witness_rust_tests": {
+      "failed": 0,
+      "passed": 2
     },
     "ranklock_validity_first_tests": {
       "failed": 0,
       "passed": 6
     },
-    "rust_compile_executed": false
+    "rust_compile_executed": true
   },
   "execution_limit": "creation environment lacked Rust, bitcoind, Docker, and package-network access",
   "fee_rate_sat_per_vbyte": 2,
+  "funds_safety": {
+    "analyzer_can_authorize_funds": false,
+    "funds_safe_under_valid_counterproof_one_shared_n_of_n_withholder": false,
+    "reason": "mature NACKs and contested payout pay the graph owner while canonical ACK/slash watchtower receipts are avoided",
+    "typed_kill_witness": "strata-validity-first-economic-kill-witness-v1"
+  },
   "polarity": {
     "immediate": "ACK requiring RankLock 32-byte preimage plus exact-message N/N signature",
     "timeout": "CSV NACK requiring exact-message N/N signature"

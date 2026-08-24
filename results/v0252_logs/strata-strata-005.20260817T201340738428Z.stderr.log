@@ -1,0 +1,46 @@
+    Checking algebra v0.1.0 (/private/tmp/ranklock-strata-v0252.YIEMqs/matrix/crates/algebra)
+    Checking strata-bridge-proof-common v0.1.0 (/private/tmp/ranklock-strata-v0252.YIEMqs/matrix/crates/proofs/common)
+    Checking strata-bridge-common v0.1.0 (/private/tmp/ranklock-strata-v0252.YIEMqs/matrix/crates/common)
+    Checking operator-wallet v0.1.0 (/private/tmp/ranklock-strata-v0252.YIEMqs/matrix/crates/operator-wallet)
+   Compiling strata-bridge-sp1-guest-builder v0.1.0 (/private/tmp/ranklock-strata-v0252.YIEMqs/matrix/guest-builder/sp1)
+    Checking memory_pprof v0.1.0 (/private/tmp/ranklock-strata-v0252.YIEMqs/matrix/crates/memory_pprof)
+    Checking strata-bridge-primitives v0.1.0 (/private/tmp/ranklock-strata-v0252.YIEMqs/matrix/crates/primitives)
+    Checking strata-bridge-proof v0.1.0 (/private/tmp/ranklock-strata-v0252.YIEMqs/matrix/crates/proofs/bridge-proof)
+    Checking strata-bridge-connectors v0.1.0 (/private/tmp/ranklock-strata-v0252.YIEMqs/matrix/crates/connectors)
+    Checking strata-mosaic-client-api v0.1.0 (/private/tmp/ranklock-strata-v0252.YIEMqs/matrix/crates/mosaic-client-api)
+    Checking strata-bridge-p2p-types v0.1.0 (/private/tmp/ranklock-strata-v0252.YIEMqs/matrix/crates/p2p-types)
+    Checking secret-service-proto v0.1.0 (/private/tmp/ranklock-strata-v0252.YIEMqs/matrix/crates/secret-service-proto)
+    Checking strata-bridge-test-utils v0.1.0 (/private/tmp/ranklock-strata-v0252.YIEMqs/matrix/crates/test-utils)
+    Checking btc-tracker v0.1.0 (/private/tmp/ranklock-strata-v0252.YIEMqs/matrix/crates/btc-tracker)
+    Checking strata-bridge-key-deriv v0.1.0 (/private/tmp/ranklock-strata-v0252.YIEMqs/matrix/crates/key-deriv)
+    Checking strata-mosaic-client v0.1.0 (/private/tmp/ranklock-strata-v0252.YIEMqs/matrix/crates/mosaic-client)
+    Checking strata-bridge-tx-graph v0.1.0 (/private/tmp/ranklock-strata-v0252.YIEMqs/matrix/crates/tx-graph)
+    Checking strata-bridge-counterproof v0.1.0 (/private/tmp/ranklock-strata-v0252.YIEMqs/matrix/crates/proofs/bridge-counterproof)
+    Checking secret-service-client v0.1.0 (/private/tmp/ranklock-strata-v0252.YIEMqs/matrix/crates/secret-service-client)
+    Checking secret-service-server v0.1.0 (/private/tmp/ranklock-strata-v0252.YIEMqs/matrix/crates/secret-service-server)
+    Checking strata-bridge-p2p-service v0.1.0 (/private/tmp/ranklock-strata-v0252.YIEMqs/matrix/crates/p2p-service)
+warning: unused import: `TxOut`
+   --> crates/tx-graph/src/fee.rs:445:49
+    |
+445 |         Amount, Network, OutPoint, Transaction, TxOut, Witness,
+    |                                                 ^^^^^
+    |
+    = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused imports: `CounterproofNackData` and `CounterproofNackTx`
+   --> crates/tx-graph/src/fee.rs:463:57
+    |
+463 |             CooperativePayoutData, CooperativePayoutTx, CounterproofNackData, CounterproofNackTx,
+    |                                                         ^^^^^^^^^^^^^^^^^^^^  ^^^^^^^^^^^^^^^^^^
+
+    Checking secret-service v0.2.0 (/private/tmp/ranklock-strata-v0252.YIEMqs/matrix/bin/secret-service)
+    Checking strata-bridge-asm-events v0.1.0 (/private/tmp/ranklock-strata-v0252.YIEMqs/matrix/crates/asm-events)
+    Checking strata-bridge-sm v0.1.0 (/private/tmp/ranklock-strata-v0252.YIEMqs/matrix/crates/bridge-sm)
+warning: `strata-bridge-tx-graph` (lib test) generated 2 warnings (run `cargo fix --lib -p strata-bridge-tx-graph --tests` to apply 2 suggestions)
+    Checking strata-bridge-db v0.1.0 (/private/tmp/ranklock-strata-v0252.YIEMqs/matrix/crates/db)
+    Checking strata-bridge-rpc v0.1.0 (/private/tmp/ranklock-strata-v0252.YIEMqs/matrix/crates/rpc)
+    Checking strata-bridge-exec v0.1.0 (/private/tmp/ranklock-strata-v0252.YIEMqs/matrix/crates/bridge-exec)
+    Checking dev-cli v0.2.0 (/private/tmp/ranklock-strata-v0252.YIEMqs/matrix/bin/dev-cli)
+    Checking strata-bridge-orchestrator v0.1.0 (/private/tmp/ranklock-strata-v0252.YIEMqs/matrix/crates/orchestrator)
+    Checking strata-bridge v0.1.0 (/private/tmp/ranklock-strata-v0252.YIEMqs/matrix/bin/strata-bridge)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 8.18s

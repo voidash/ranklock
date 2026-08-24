@@ -151,9 +151,9 @@
     "below_one_mib": false,
     "complete_split_scalar_retained_bytes": 2090910,
     "participant_0_bytes": 1044952,
-    "participant_0_sha256": "00bd5871554d188b72c6d93c0712073bae62c99cc11c054c8d904938ea8ebe11",
+    "participant_0_sha256": "bc77b9440e9035b0dc011714806b1b136864d7486753abe33f18ce79cbd7be1d",
     "participant_1_bytes": 1044952,
-    "participant_1_sha256": "2897fa1fb00cdf9a747eb46dca9d0af617f63b3a907ba8a199ca83a2e9cd5261",
+    "participant_1_sha256": "c48ab96fd0351b8a811f912bdc7798d5fb3c0b31bbcee0fdd32b0a057d916fb8",
     "signed_bundle_bytes": 1006,
     "size_tradeoff": "approximately linear in independently generated scalar-share artifacts",
     "unsigned_bundle_bytes": 864

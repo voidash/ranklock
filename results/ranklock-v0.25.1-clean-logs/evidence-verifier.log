@@ -1,8 +1,8 @@
 {
   "all_checks_passed": true,
   "authorization_plan_digest": "f341646744b7ee2dbcebd4ed3be866da491e2860edaf15f2fa7d783e75169c0d",
-  "bitcoin_core_executed": false,
-  "bitcoin_core_passed": false,
+  "bitcoin_core_executed": true,
+  "bitcoin_core_passed": true,
   "checks": {
     "Bitcoin Core evidence is internally fail-closed": true,
     "Strata handoff manifest": true,
@@ -40,9 +40,9 @@
   },
   "committee_retained_object": {
     "bytes": 1044952,
-    "sha256": "a719c7503276de7744ae9e8ab4badc7d8420155b5ec26ef853a792ef26e96f60"
+    "sha256": "63669b2ea2922a746cd56d8efd55a9e71070eb6d78bfcbf079dbbaf4f61a98ba"
   },
   "safe_for_funds": false,
   "schema": "ranklock-v025-evidence-verification-v1",
-  "split_scalar_bundle_digest": "b4aa9feb7175bcb325df86eebbbd835e497f466ef03957ac5ab3b4079cce9662"
+  "split_scalar_bundle_digest": "4d9b0ef6d98548731be63a1f7d65501439eef966bbdba453228f8480db54220d"
 }

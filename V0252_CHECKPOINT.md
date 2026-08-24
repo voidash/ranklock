@@ -153,7 +153,7 @@ regenerated from them rather than maintained by hand.
 
 The STRATA row is a full run against a pristine clone of the pinned commit
 with **every case executing and passing**, including STRATA-009's complete
-workspace suite (949 passed / 0 failed, serialized) against a live
+workspace suite (952 passed / 0 failed, serialized) against a live
 FoundationDB cluster. `strata_build_all_passed` is therefore `true`, closing
 the funds blocker *"current bridge commit was not compiled and tested"*.
 
@@ -294,10 +294,14 @@ against an authority outside the implementation:
 drifted from `apply_validity_first.py` — and had done so *before* this
 session's edits. Nothing in `run_bundle_checks.sh` or `CHECKS.txt` ever
 checked it, so a ledger recording nothing was indistinguishable from one
-recording everything. All 23 entries were regenerated and
-`shasum -a 256 -c --quiet` was added to the bundle check, so drift now fails
-closed. The mechanism was confirmed by watching it reject an edit to the
-bundle script before the manifest was regenerated.
+recording everything. The first repair regenerated 23 enumerated entries and
+added `shasum -a 256 -c --quiet`, which caught drift in listed files but did
+not prove coverage. The later funds-safety audit found that every executable
+post-format P4 diff under `pending/` was absent from that ledger, so an
+unlisted patch could still change while the bundle check passed. The bundle
+now compares the manifest file set with every distributable file before
+checking hashes, includes all 27 files, and has a regression that requires all
+three P4 deltas to be listed.
 
 **A fail-open version hole in the release gate.** The gate validates the
 schema of the evidence-verification report, but consumed the optional
@@ -588,7 +592,7 @@ entirely, so it is a question for the protocol audit, not a patch.
    labeled base delta (`patch_base_p2p_address_collision`). The crate went
    3 passed / 1 failed to **4 passed / 0 failed**; pristine base is 2/2.
 
-   Serialized, **the complete workspace is 949 passed / 0 failed**, with zero
+   Serialized, **the complete workspace is 952 passed / 0 failed**, with zero
    crate-level failures, including the FoundationDB-backed crate against the
    live cluster.
 
@@ -684,6 +688,66 @@ entirely, so it is a question for the protocol audit, not a patch.
    exporter now exists (`src/ranklock/strata_exporter.py`), replacing the
    unsafe fixture, but the ACK/NACK paths cannot be driven until blocker 2
    is resolved.
+
+## 2026-08-18 continuation audit
+
+The imported qualification was re-read from the code and reproduced rather
+than accepted from its prose. Ten additional local defects or omissions were
+found:
+
+1. the fixed NACK was still recognized by witness-blind txid at two
+   independent state-machine boundaries (A-017);
+2. every executable post-format P4 delta was outside the standalone manifest
+   (A-018);
+3. ACK commitments and unlocks used overwrite-shaped publication with an
+   unchecked SQLite path, and proof export did not require the graph's
+   published setup commitment (A-019);
+4. two-phase abort/rollback-witness recovery failure was silently discarded
+   (A-020);
+5. integer `32` was silently coerced to public all-zero setup entropy, and
+   durable context fields accepted coercible runtime types (A-021);
+6. passing evidence could omit binary/commit identity and thereby skip the
+   verifier's conditional cross-report comparison (A-022);
+7. the packaged committee and split-scalar artifacts were stale relative to
+   generator-critical source, despite a prior green report for another archive
+   (A-023);
+8. post-build clean/gate companions were packaged into the archive whose
+   digest they attest, creating a checksum cycle (A-024);
+9. the proof-gated exporter authenticated a caller-supplied positive-lock
+   session independently from the `AckContext` that selected the output file
+   and one-shot ledger binding, allowing a valid unlock to be redirected to a
+   different transaction tuple sharing the partial commitment path (A-025);
+10. the canonical security-hardening generator rejected a successful pinned
+    Core run because it recognized only the unavailable fail-closed state,
+    making the official reproduction workflow incompatible with the exact
+    binary it was meant to qualify (A-026).
+
+The local fixes are adversarially tested and fail closed. Exporter and
+two-phase focused tests pass 34/34. The installer now also patches
+`compose.yml`: it requires a host RankLock root, mounts it read-only into each
+bridge, sets the executor path, and pins Bitcoin Core 31.1 to registry index
+digest `sha256:da25cedc66b1daefff9f412ee196c901a899c3fa68a33b20849c3e08b5c40d63`.
+A pristine base checkout measured **32 modified + 4 new**, `git diff --check`
+clean and `cargo fmt --all -- --check` clean. `docker compose config` resolved
+all three RankLock mounts as read-only and retained the digest-pinned image.
+
+This does **not** close proof-to-ACK deployment: compose now has the consumer,
+but no deployed process invokes `export_ack_from_verified_unlock`. The
+current installer has now been rerun from a pristine base: STRATA-001..009
+passed 9/9 with the measured 32-modified/4-new scope, pinned Strata commit,
+and pinned Core 31.1 executable recorded in the report. STRATA-010..020 remain
+entirely `not_executed`, setup entropy remains a release capability, BABE
+remains variable-time BN254 with roughly 100-bit GT security, and production
+DKG, ceremony, rollback witnesses, governance and independent audits remain
+open.
+
+The clean-archive replay also caught stale committed conformance artifacts.
+Two independent generations agreed with each other and not with the package;
+the ten affected public artifacts and their evidence were regenerated. A
+subsequent clean extraction reproduced them byte-for-byte, passed the pinned
+Core 31.1 run, and passed all 15 archive checks. The builder now excludes the
+post-build clean report and v0.25.2 release gate from their subject archive so
+that final companion evidence does not create a checksum self-reference.
 
 ## Gates that engineering cannot close
 

@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="description" content="Review surface for the RankLock v0.26 funds-safety protocol design.">
+  <title>RankLock v0.26 · Funds-Safety Protocol Review</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to protocol</a>
+
+  <header class="masthead">
+    <div class="masthead__rule" aria-hidden="true"></div>
+    <div class="masthead__inner">
+      <div class="wordmark" aria-label="RankLock protocol review">
+        <span class="wordmark__index">RL / 026</span>
+        <span class="wordmark__name">FUNDS-SAFETY DOSSIER</span>
+      </div>
+      <div class="status-lock" aria-label="Funding status prohibited">
+        <span class="status-lock__key">FUNDING</span>
+        <strong>PROHIBITED</strong>
+      </div>
+      <a class="document-link" href="../../docs/58_V026_FUNDS_SAFETY_PROTOCOL.md">Open native protocol ↗</a>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="rail" aria-label="Protocol navigation">
+      <div class="rail__status">
+        <span>Design state</span>
+        <strong>Draft / fail-closed</strong>
+        <small>Not an audit or approval</small>
+      </div>
+      <nav class="section-nav">
+        <a href="#verdict" data-nav="verdict">01 · Verdict</a>
+        <a href="#breaks" data-nav="breaks">02 · Why v0.25 breaks</a>
+        <a href="#architecture" data-nav="architecture">03 · Architecture</a>
+        <a href="#flow" data-nav="flow">04 · Fund path</a>
+        <a href="#state" data-nav="state">05 · State machine</a>
+        <a href="#gates" data-nav="gates">06 · Acceptance gates</a>
+        <a href="#decisions" data-nav="decisions">07 · Open decisions</a>
+        <a href="#sequence" data-nav="sequence">08 · Build sequence</a>
+      </nav>
+      <div class="rail__legend" aria-label="Status legend">
+        <span><i class="dot dot--stop"></i> blocks funds</span>
+        <span><i class="dot dot--work"></i> design direction</span>
+        <span><i class="dot dot--open"></i> owner decision</span>
+      </div>
+    </aside>
+
+    <main id="main">
+      <section class="hero" id="verdict" data-section>
+        <div class="hero__eyebrow">Protocol review · 19 August 2026</div>
+        <h1>Do not wire the old exporter.<br><em>Change the protocol boundary.</em></h1>
+        <p class="hero__lede">
+          The current release gate selects split-scalar N-of-N, but the Strata
+          graph accepts one preimage. The proof and publication contexts are
+          separate identities, setup entropy remains an ACK capability, and a
+          live signing quorum can authorize another parent. This is a version
+          break, not an integration chore.
+        </p>
+        <div class="hero__metrics" aria-label="Current qualification summary">
+          <div><strong>0 / 11</strong><span>live Strata E2E cases</span></div>
+          <div><strong>7</strong><span>current release blockers</span></div>
+          <div><strong>~100 bit</strong><span>current BN254 target</span></div>
+          <div><strong>v0.26</strong><span>new graph required</span></div>
+        </div>
+        <div class="verdict-strip">
+          <span class="verdict-strip__label">DECISION</span>
+          <p>Choose and qualify one exact release profile, settle timeout loss-safety, then build the acyclic identity DAG and vector-hash graph before a coordinator.</p>
+        </div>
+      </section>
+
+      <section class="section" id="breaks" data-section>
+        <header class="section__header">
+          <span class="section__number">02</span>
+          <div>
+            <p class="kicker">Evidence from the actual worktree</p>
+            <h2>Six boundaries describe different systems</h2>
+          </div>
+        </header>
+        <div class="fault-ledger">
+          <article>
+            <span class="fault-ledger__id">B-01</span>
+            <h3>Cardinality mismatch</h3>
+            <p>Split-scalar requires 2–64 ordered preimages. The integrated connector, transaction finalizer, and bridge loader carry exactly one.</p>
+            <a href="../../src/ranklock/split_scalar_lock.py">split_scalar_lock.py</a>
+          </article>
+          <article>
+            <span class="fault-ledger__id">B-02</span>
+            <h3>Split protocol identity</h3>
+            <p><code>EvaluationContext</code> and <code>AckContext</code> overlap but bind different fields. v0.26 replaces them with one final funding root built from an acyclic dependency graph.</p>
+            <a href="../../src/ranklock/authorized_labels.py">authorized_labels.py</a>
+          </article>
+          <article>
+            <span class="fault-ledger__id">B-03</span>
+            <h3>Alternate ACK capability</h3>
+            <p>Retained setup entropy can recreate the preimage. A public boolean flag exposes the unverified publish path.</p>
+            <a href="../../src/ranklock/strata_exporter.py">strata_exporter.py</a>
+          </article>
+          <article>
+            <span class="fault-ledger__id">B-04</span>
+            <h3>Weak handoff</h3>
+            <p>The bridge trusts a filename plus a raw-or-hex preimage and SHA-256 check—no subject, producer, policy, or receipt binding.</p>
+            <a href="../../integration/alpen-validity-first-f94c-v025/new_files/crates/bridge-exec/src/graph/ranklock.rs">bridge ranklock.rs</a>
+          </article>
+          <article>
+            <span class="fault-ledger__id">B-05</span>
+            <h3>Research crypto</h3>
+            <p>BN254 target-group security is about 100 bits and every fund-critical Python operation is variable-time. Split-scalar does not multiply the work factor.</p>
+            <a href="../../src/ranklock/babe_positive_lock.py">babe_positive_lock.py</a>
+          </article>
+          <article>
+            <span class="fault-ledger__id">B-06</span>
+            <h3>Gate not in the service</h3>
+            <p>The deployment evaluator has test callers only, accepts opaque evidence digests, and trusts caller-declared value at risk.</p>
+            <a href="../../src/ranklock/deployment_policy.py">deployment_policy.py</a>
+          </article>
+        </div>
+      </section>
+
+      <section class="section architecture" id="architecture" data-section>
+        <header class="section__header">
+          <span class="section__number">03</span>
+          <div>
+            <p class="kicker">Breaking design</p>
+            <h2>The v0.26 protocol boundary</h2>
+          </div>
+        </header>
+
+        <div class="decision-band">
+          <div class="decision-band__title">ONE IDENTITY</div>
+          <div class="decision-band__body">
+            <h3><code>FundingSubjectV1</code></h3>
+            <p>The sole runtime root is the end of an acyclic chain: graph key → setup intent → contributions → graph presign → ceremony → immutable execution policy. Runtime wtxid and block data live only in a derived evaluation binding.</p>
+          </div>
+        </div>
+
+        <div class="decision-band">
+          <div class="decision-band__title">RELEASE PROFILE</div>
+          <div class="decision-band__body">
+            <h3>S-DFB or C-DIRECT—not both under one id</h3>
+            <p>S-DFB erases the scalar but still lacks its adaptive/output-mask theorem. C-DIRECT deletes DFB but retains the scalar as an ACK-recovery capability inside an audited non-exportable one-shot custodian. Both are blocked; governance must ratify the trust model.</p>
+          </div>
+        </div>
+
+        <div class="architecture-grid">
+          <article>
+            <span class="architecture-grid__tag">SETUP</span>
+            <h3>Acyclic activation DAG</h3>
+            <p>No certificate hashes itself through a subject. Contributions bind the setup intent; audits and activation bind the final funding root.</p>
+          </article>
+          <article>
+            <span class="architecture-grid__tag">CONSENSUS</span>
+            <h3>Vector hash + dead signer</h3>
+            <p>The new graph verifies every ordered preimage. Exact ACK/NACK parents are fully presigned and at least one one-subject signing share is destroyed before funding.</p>
+          </article>
+          <article>
+            <span class="architecture-grid__tag">COORDINATION</span>
+            <h3>BFT safety registry</h3>
+            <p>A 2f+1-of-3f+1 total-order service owns admission caps, slot locks, participant burn/readiness, one subject-wide release reservation, publication, and chain state.</p>
+          </article>
+          <article>
+            <span class="architecture-grid__tag">RUNTIME</span>
+            <h3>Profile-bound release</h3>
+            <p>Each participant checks Core, CAS-burns, then fully verifies and commits nonsecret readiness. S-DFB requires losing-slot erasure; C-DIRECT requires every one-shot scalar handle to bind the exact proof before one multiplication.</p>
+          </article>
+        </div>
+
+        <div class="security-floor">
+          <div>
+            <span>Planning projection</span>
+            <strong>1,493,132 B</strong>
+          </div>
+          <p>Historical S-DFB planning only: two BLS12-381-shaped compact slots plus the old manifest. This is neither a BN462 measurement nor a C-DIRECT requirement. The one-MiB target is subordinate to safety.</p>
+        </div>
+      </section>
+
+      <section class="section" id="flow" data-section>
+        <header class="section__header">
+          <span class="section__number">04</span>
+          <div>
+            <p class="kicker">Trust-boundary spine</p>
+            <h2>No byte crosses a gate on reputation</h2>
+          </div>
+        </header>
+
+        <ol class="trust-spine">
+          <li>
+            <span class="trust-spine__index">P0</span>
+            <div><h3>Activate an acyclic subject</h3><p>Setup intent, contributions, graph presign, key erasure, ceremony, immutable execution policy, audits, and activation resolve forward to one funding digest.</p></div>
+            <b>no value</b>
+          </li>
+          <li>
+            <span class="trust-spine__index">P1</span>
+            <div><h3>Reserve admission</h3><p>The BFT registry atomically reserves subject, outpoint, value, and active count before custody can sign or broadcast funding.</p></div>
+            <b>funding</b>
+          </li>
+          <li>
+            <span class="trust-spine__index">P2</span>
+            <div><h3>Authenticate, derive, lock</h3><p>The coordinator parses the intent, derives txid/wtxid and semantic identity, checks Core, then globally locks that one request.</p></div>
+            <b>pre-burn</b>
+          </li>
+          <li>
+            <span class="trust-spine__index">P3</span>
+            <div><h3>Participants burn &amp; become ready</h3><p>Each participant structurally binds the proof and checks Core, CAS-burns, then fully verifies and commits signed nonsecret readiness. No honest projective output exists yet.</p></div>
+            <b>no exposure</b>
+          </li>
+          <li>
+            <span class="trust-spine__index">P4</span>
+            <div><h3>Reserve, bind, release once</h3><p>The reservation wins against NACK and the alternate slot. S-DFB waits for complete losing-slot erasure. C-DIRECT waits for every custody handle to bind the exact proof, then stages one result, erases the scalar, and only then emits.</p></div>
+            <b>point of no return</b>
+          </li>
+          <li>
+            <span class="trust-spine__index">P5</span>
+            <div><h3>Stage &amp; publish intent</h3><p>Exact signed capsule bytes are staged, then replicated inline so rollback cannot destroy a certified publication. This is durability, not the first possible exposure.</p></div>
+            <b>publication</b>
+          </li>
+          <li>
+            <span class="trust-spine__index">P6</span>
+            <div><h3>Consume independently</h3><p>The bridge validates the DAG, intent certificate and live txid+wtxid/outpoint/NACK state, then broadcasts the exact parent plus bounded CPFP child.</p></div>
+            <b>consensus</b>
+          </li>
+        </ol>
+      </section>
+
+      <section class="section" id="state" data-section>
+        <header class="section__header">
+          <span class="section__number">05</span>
+          <div>
+            <p class="kicker">Distributed monotonic state</p>
+            <h2>Uncertainty consumes; it never rewinds</h2>
+          </div>
+        </header>
+
+        <div class="state-machine" role="img" aria-label="Coordinator phases with append-only ACK or NACK seen, reorg, and final chain observations">
+          <div class="state-machine__line">
+            <span>RECEIVED</span><i></i><span>STRUCTURAL_VALID</span><i></i><span>INTENT_LOCKED</span><i></i><span>COLLECTING_READY</span><i></i><span>READY_SET</span>
+          </div>
+          <div class="state-machine__turn" aria-hidden="true">↓</div>
+          <div class="state-machine__line state-machine__line--reverse">
+            <span>CONSUMER_ACCEPTED</span><i></i><span>PUBLISHED</span><i></i><span>PUBLISH_INTENT</span><i></i><span>VERIFIED_SNAPSHOT</span><i></i><span>COMPLETE_RESULTS</span><i></i><span>COLLECTING_RESULTS</span><i></i><span>PROFILE_RELEASE_BARRIER_COMPLETE</span><i></i><span class="state--critical">PROFILE_RELEASE_RESERVED</span>
+          </div>
+          <div class="state-machine__terminal">
+            <div><small>pre-lock</small><strong>REJECTED_UNCONSUMED</strong></div>
+            <div><small>participant failure</small><strong>ABORTED_BURNED / ABORTED_RESERVED</strong></div>
+            <div><small>profile barrier</small><strong>S-DFB: ERASE · C-DIRECT: BIND</strong></div>
+            <div><small>append-only chain view</small><strong>SEEN ↔ REORG · FINAL AFTER DEPTH</strong></div>
+          </div>
+        </div>
+
+        <div class="failure-rules">
+          <h3>Recovery invariants</h3>
+          <ul>
+            <li>The BFT CAS lock selects one semantic request across every coordinator and participant.</li>
+            <li>Every participant withholds output until reservation and the complete selected-profile barrier: losing-slot erasure for S-DFB, one-shot custody binding for C-DIRECT.</li>
+            <li>C-DIRECT exposes only module-gated ciphertext before erasure. Exact per-clone or shared-monotonic-domain receipts are required to attest that every inventoried scalar copy is irrecoverable under the selected model; then the result key is released and the final wrapper is replicated and emitted. A no-result path must also tombstone the threshold envelope and erase its forward-secure child-key shares. If power fails after consuming the one output intent but before caching it, the subject remains reserved: no retry and no alternate slot. Funding stays prohibited until a loss-safe timeout is independently qualified for that terminal.</li>
+            <li>NACK seen before reservation blocks release; after reservation it blocks a new publish intent/broadcast. Reorg may resume only the exact path; finality requires depth.</li>
+            <li>Exact objects and nonrecursive finalization envelopes survive rollback through retirement plus the reorg tail.</li>
+            <li>Secret payloads are ciphertext under threshold-HSM retention keys; expiry erases honest managed shares, not an adversary’s memory.</li>
+            <li>A certified publish intent is recoverable byte-for-byte; no retry signs a fresh capsule or selects another vector.</li>
+            <li>Core reorg after release: coordinator stays released; bridge may rebroadcast only the same ACK.</li>
+            <li>Primary and recovery failures are preserved together and page operators.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="section" id="gates" data-section>
+        <header class="section__header section__header--with-controls">
+          <span class="section__number">06</span>
+          <div>
+            <p class="kicker">Enforce-mode prerequisites</p>
+            <h2>Every gate is hard</h2>
+          </div>
+          <div class="gate-filters" aria-label="Filter acceptance gates">
+            <button class="is-active" data-filter="all">All</button>
+            <button data-filter="protocol">Protocol</button>
+            <button data-filter="crypto">Crypto</button>
+            <button data-filter="runtime">Runtime</button>
+            <button data-filter="ops">Ops</button>
+          </div>
+        </header>
+
+        <div class="gate-table" role="table" aria-label="v0.26 acceptance gates">
+          <div class="gate-table__head" role="row"><span>Gate</span><span>Evidence required</span><span>State</span></div>
+          <div class="gate-row" data-domain="protocol" role="row"><strong>Acyclic identity</strong><p>Machine-checked setup-to-funding DAG; exact statement and two-slot budget; runtime wtxid/block data excluded from activation.</p><em>OPEN</em></div>
+          <div class="gate-row" data-domain="protocol" role="row"><strong>Activation evidence verifier</strong><p>Canonical activation codec; Core-MTP-derived activation time; immutable subject lifetime; typed signed security report resolved and verified through that lifetime.</p><em>BLOCKED</em></div>
+          <div class="gate-row" data-domain="crypto" role="row"><strong>Approved suite</strong><p>No BN254 funds dependency; exact encodings, subgroup negatives, mixed-suite rejection, and a signed security report valid through the complete subject lifetime.</p><em>BLOCKED</em></div>
+          <div class="gate-row" data-domain="crypto" role="row"><strong>Release mechanism</strong><p>S-DFB needs its adaptive/output-mask theorem and measured artifacts. C-DIRECT needs a positive-lock theorem plus audited non-exportable, anti-clone, rollback-resistant one-shot custody.</p><em>BLOCKED</em></div>
+          <div class="gate-row" data-domain="crypto" role="row"><strong>Native implementation</strong><p>Audited constant-time secret operations, zeroization, DoS bounds, differential verification.</p><em>BLOCKED</em></div>
+          <div class="gate-row" data-domain="protocol" role="row"><strong>Graph v2 + presign</strong><p>A side-by-side research assembler, typed connectors, atomic all-reserve templates, and six real-Core cases now reproduce the local topology. The measured 10,690-WU counterproof is accepted only after Contest confirms under the tested v3 policy. Activation is still blocked on canonical NUMS/wire identity, full presign inventory, one-honest key/nonce/backup erasure, legacy-material exclusion, external prevout evidence, and a qualified roster/weight policy.</p><em>BLOCKED</em></div>
+          <div class="gate-row" data-domain="runtime" role="row"><strong>BFT safety registry</strong><p>2f+1-of-3f+1 order, exact nonrecursive envelopes, readiness/reservation/profile barrier, append-only reorg events, threshold-HSM retention keys.</p><em>OPEN</em></div>
+          <div class="gate-row" data-domain="ops" role="row"><strong>Atomic admission</strong><p>The frozen fifteen-code <code>StructurallyVerifiedFundingBlockedV1</code> lane remains byte-compatible and fails closed for the current graph. A separate sixteen-code V2 lane has canonical decoding and Created/ExactReplay/Conflict semantics. Live write capabilities cannot be deserialized, and nothing consumes either lane for P2P, signing, duties, funding, or broadcast. Real admission still requires canonical identity, external evidence, risk reservation, custody gating, and Core/reorg-tail reconciliation.</p><em>BLOCKED</em></div>
+          <div class="gate-row" data-domain="runtime" role="row"><strong>Participant + coordinator</strong><p>Burn then full verify/READY; execute the exact profile barrier; durable outbox, scalar/artifact retirement, coordinator-key failover before publish CAS, deterministic snapshot.</p><em>OPEN</em></div>
+          <div class="gate-row" data-domain="runtime" role="row"><strong>Bridge finality</strong><p>Certified intent, independent Core quorum, exact wtxid and ACK/NACK finality deeper than their reorg bounds, live outpoint/NACK, bounded CPFP.</p><em>OPEN</em></div>
+          <div class="gate-row" data-domain="ops" role="row"><strong>Loss-safe timeout</strong><p>BLOCKING COUNTEREXAMPLE: one shared N-of-N release withholder suppresses every valid ACK; exact mature NACKs plus contested payout pay the graph owner while the canonical slash is avoided. The atomic all-reserve abstract model now passes 64 regressions and enumerates five maximal local traces across seven semantic worlds. The two no-ACK worlds share the exact same timeout trace and every reserve is returned in every selecting branch, but <code>AbstractDeclaredPolicySatisfiedV1</code> is explicitly not a protected-value theorem and retains four authority/execution blockers. The side-by-side Rust research graph passes 98 tx-graph tests, 54 connector tests, and six real-Core branch/conflict/policy cases; the same suite proves a live-key stake spend can preempt Slash. Funding remains false with sixteen Rust activation blockers and thirteen model funding blockers.</p><em>BLOCKED</em></div>
+          <div class="gate-row" data-domain="ops" role="row"><strong>Policy separation</strong><p>Mutable admission cannot strand immutable execution; audit validity freezes at admission; typed evidence at every boundary.</p><em>OPEN</em></div>
+          <div class="gate-row" data-domain="runtime" role="row"><strong>Live E2E</strong><p>Every STRATA-010..020 and new v0.26 row records a real zero-exit command.</p><em>BLOCKED</em></div>
+          <div class="gate-row" data-domain="ops" role="row"><strong>Independent review</strong><p>No critical/high findings across cryptography, implementation, Bitcoin economics, and operations.</p><em>BLOCKED</em></div>
+        </div>
+      </section>
+
+      <section class="section" id="decisions" data-section>
+        <header class="section__header">
+          <span class="section__number">07</span>
+          <div>
+            <p class="kicker">Not defaults</p>
+            <h2>Decisions that change the theorem</h2>
+          </div>
+        </header>
+
+        <div class="decision-ledger">
+          <article><span>CRYPTO + PROTOCOL + OPS</span><h3>Release trust model</h3><p>Choose S-DFB with its unproved evaluator theorem, or the separately versioned C-DIRECT profile with audited online scalar custody. Ordinary encrypted storage cannot qualify C-DIRECT.</p><b>Before contribution codec</b></article>
+          <article><span>CRYPTO + GOVERNANCE</span><h3>Native suite backend</h3><p>The required floor is 128 bits and the curve target is BN462. A curve recommendation or attack ceiling is not an approved suite floor. No reviewed native suite is qualified, and CFRG deliberately leaves BN462 point encoding to the application profile.</p><b>Before suite build</b></article>
+          <article><span>PROTOCOL + ECONOMICS</span><h3>Timeout semantics</h3><p>Selected research direction: every CounterproofV2 and Owner parent atomically consumes the full counterproof-reserve roster; non-selected reserves are returned exactly to setup-bound beneficiaries, and selection allocates the deposit to recovery. ACK creates the only Slash authorization; timeout conflicts on resolution and contest-slash while omitting claim-payout. Rust/Core reproduce those local edges. The abstract terminal engine enumerates every maximal local branch and proves that valid-withheld and invalid-absent see the same timeout, but policy identity, baseline authority, per-principal allowances, service-fee authority, by-horizon execution, hidden legacy signatures, and stake exclusivity remain unproved.</p><b>Local dispositions satisfied; protected-value theorem blocked</b></article>
+          <article><span>BITCOIN + OPS</span><h3>Race budget</h3><p>Confirmation depth, reorg bound, CSV delay, CPFP reserve, fee owner, and halt threshold.</p><b>Before E2E</b></article>
+          <article><span>GOVERNANCE</span><h3>Loss budget</h3><p>Per-deposit, aggregate, and active-count caps plus policy expiry, cooldown, and revocation channel.</p><b>Before activation</b></article>
+          <article><span>OPERATIONS + SECURITY</span><h3>Registry profile</h3><p>Choose f, 3f+1 independent replicas, immutable risk namespace, cluster lifetime, and joint handoff procedure.</p><b>Before registry build</b></article>
+          <article><span>PROTOCOL + AUDITORS</span><h3>Wire and evidence profiles</h3><p>Exact field maxima, signature domains/quorums, typed findings, control-domain registry, and admission-time validity.</p><b>Before codec build</b></article>
+        </div>
+      </section>
+
+      <section class="section" id="sequence" data-section>
+        <header class="section__header">
+          <span class="section__number">08</span>
+          <div>
+            <p class="kicker">Build order</p>
+            <h2>Front-load the decisions that can kill the route</h2>
+          </div>
+        </header>
+
+        <ol class="build-sequence">
+          <li><span>01</span><div><h3>Kill decisions</h3><p>Ratify S-DFB versus C-DIRECT, enforce the 128-bit floor, qualify a BN462 backend, and prove timeout/NACK fund preservation. Stop the route if any fails.</p></div></li>
+          <li><span>02</span><div><h3>Identity DAG + graph v2</h3><p>Strict codecs, exact statement/two-slot budget, vector connector, fixed NUMS keys, txid-stable funding, presign/key erasure.</p></div></li>
+          <li><span>03</span><div><h3>Safety registry + admission</h3><p>BFT CAS, nonrecursive exact envelopes, readiness/reservation/profile barrier, append-only chain events, risk caps, custody gating.</p></div></li>
+          <li><span>04</span><div><h3>Complete proof-suite spike</h3><p>Implement the selected DFB or direct-custody release mechanism with the actual curve port and security theorem. Drop the storage target if safety requires it.</p></div></li>
+          <li><span>05</span><div><h3>Participants + coordinator + bridge</h3><p>Ready-after-burn, profile-bound one-shot release, failover-safe outboxes, typed capsule, independent Core finality, bounded CPFP.</p></div></li>
+          <li><span>06</span><div><h3>Live matrix + independent audits</h3><p>Crash, fork, reorg, concurrency, admission races, fee pressure, downstream payouts, then staged activation.</p></div></li>
+        </ol>
+
+        <div class="final-note">
+          <span>FIRST MILESTONE</span>
+          <p>Do not start with a proof coordinator. First settle the kill decisions, then build the acyclic funding-subject codec and graph-v2 presign theorem.</p>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <div>
+          <strong>RankLock v0.26 protocol review</strong>
+          <p>Review surface for <a href="../../docs/58_V026_FUNDS_SAFETY_PROTOCOL.md">docs/58_V026_FUNDS_SAFETY_PROTOCOL.md</a></p>
+        </div>
+        <div>
+          <span>Claim boundary</span>
+          <p>Design only · safe_for_funds remains false</p>
+        </div>
+      </footer>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

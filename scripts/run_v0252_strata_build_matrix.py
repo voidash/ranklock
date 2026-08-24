@@ -27,20 +27,22 @@ PINNED_COMMIT = "f94c06d08ff29eee746f3e20bd63078d2949b304"
 PINNED_BITCOIND_SHA256 = "d55c12b0b02001cc16b1481c4075361dcba193100a8143924abda911174c09ec"
 INSTALLER = ROOT / "integration" / "alpen-validity-first-f94c-v025" / "apply_validity_first.py"
 
-# Declared patch scope: 29 edited + 4 added. Over the original PATCH_SCOPE.md
+# Declared patch scope: 33 edited + 5 added. Over the original PATCH_SCOPE.md
 # this adds six bridge-sm test files retargeted to validity-first semantics
 # (without which the crate does not compile or its suite asserts the old
-# immediate-NACK polarity), plus two base-defect deltas. Both are pre-existing
-# and unrelated to validity-first, and both are carried as labeled separate
-# deltas rather than folded into the feature patch:
+# immediate-NACK polarity), two base-defect deltas, and compose.yml deployment
+# wiring, plus the read-only economic kill-witness module/export. The base
+# defects are pre-existing and unrelated to validity-first;
+# both are carried as labeled separate deltas rather than folded into the
+# feature patch:
 #   crates/common/src/logging.rs -- an unguarded global tracing dispatcher
 #     aborts any test binary that initializes logging twice (untouched
 #     claim_payout tests fail identically at the pinned commit).
 #   crates/p2p-service/src/tests/common.rs -- every test binds the same fixed
 #     libp2p memory addresses, and that registry is process-global, so tests
 #     collide with each other's listeners.
-EXPECTED_CHANGED_FILES = 31
-EXPECTED_NEW_FILES = 4
+EXPECTED_CHANGED_FILES = 33
+EXPECTED_NEW_FILES = 5
 
 
 def _bitcoind_identity() -> dict[str, object]:
@@ -215,7 +217,7 @@ def main() -> int:
             CaseResult(
                 case_id="STRATA-003",
                 status="passed" if in_scope else "failed",
-                description="patch changes exactly the declared 31-file scope",
+                description="patch changes exactly the declared 33-modified/5-new scope",
                 commands=(scope_cmd,),
                 evidence=scope_evidence,
             )

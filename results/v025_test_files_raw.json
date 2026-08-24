@@ -1,27 +1,27 @@
 {
   "failed": 0,
-  "files": 108,
+  "files": 111,
   "nonzero_files": 0,
-  "passed": 480,
+  "passed": 525,
   "results": [
     {
-      "duration_seconds": 6.186,
+      "duration_seconds": 8.421,
       "failed": 0,
       "file": "tests/test_activation_nizk_frontier.py",
-      "output": "..                                                                       [100%]\n2 passed in 6.04s\n",
+      "output": "..                                                                       [100%]\n2 passed in 8.29s\n",
       "passed": 2,
       "returncode": 0
     },
     {
-      "duration_seconds": 4.173,
+      "duration_seconds": 4.866,
       "failed": 0,
       "file": "tests/test_additive_projective_ceremony.py",
-      "output": "....                                                                     [100%]\n4 passed in 4.03s\n",
+      "output": "....                                                                     [100%]\n4 passed in 4.73s\n",
       "passed": 4,
       "returncode": 0
     },
     {
-      "duration_seconds": 0.161,
+      "duration_seconds": 0.152,
       "failed": 0,
       "file": "tests/test_algebraic_input_auth.py",
       "output": "......                                                                   [100%]\n6 passed in 0.02s\n",
@@ -29,55 +29,55 @@
       "returncode": 0
     },
     {
-      "duration_seconds": 0.155,
+      "duration_seconds": 0.144,
       "failed": 0,
       "file": "tests/test_authenticated_witness_lift.py",
-      "output": "...                                                                      [100%]\n3 passed in 0.02s\n",
+      "output": "...                                                                      [100%]\n3 passed in 0.01s\n",
       "passed": 3,
       "returncode": 0
     },
     {
-      "duration_seconds": 1.483,
+      "duration_seconds": 8.903,
       "failed": 0,
       "file": "tests/test_authorization_carrier_binding.py",
-      "output": ".........                                                                [100%]\n9 passed in 1.33s\n",
-      "passed": 9,
+      "output": "..........                                                               [100%]\n10 passed in 8.76s\n",
+      "passed": 10,
       "returncode": 0
     },
     {
-      "duration_seconds": 0.34,
+      "duration_seconds": 0.283,
       "failed": 0,
       "file": "tests/test_authorization_transaction_plan.py",
-      "output": "....                                                                     [100%]\n4 passed in 0.19s\n",
+      "output": "....                                                                     [100%]\n4 passed in 0.14s\n",
       "passed": 4,
       "returncode": 0
     },
     {
-      "duration_seconds": 3.409,
+      "duration_seconds": 4.08,
       "failed": 0,
       "file": "tests/test_basis_separated_kzg.py",
-      "output": "...                                                                      [100%]\n3 passed in 3.28s\n",
+      "output": "...                                                                      [100%]\n3 passed in 3.95s\n",
       "passed": 3,
       "returncode": 0
     },
     {
-      "duration_seconds": 0.459,
+      "duration_seconds": 0.468,
       "failed": 0,
       "file": "tests/test_batched_inner_product_we.py",
-      "output": "....                                                                     [100%]\n4 passed in 0.32s\n",
+      "output": "....                                                                     [100%]\n4 passed in 0.33s\n",
       "passed": 4,
       "returncode": 0
     },
     {
-      "duration_seconds": 0.146,
+      "duration_seconds": 0.166,
       "failed": 0,
       "file": "tests/test_batched_opening.py",
-      "output": "...                                                                      [100%]\n3 passed in 0.02s\n",
+      "output": "...                                                                      [100%]\n3 passed in 0.03s\n",
       "passed": 3,
       "returncode": 0
     },
     {
-      "duration_seconds": 0.138,
+      "duration_seconds": 0.147,
       "failed": 0,
       "file": "tests/test_beacon_sumcheck.py",
       "output": "..                                                                       [100%]\n2 passed in 0.01s\n",
@@ -85,47 +85,47 @@
       "returncode": 0
     },
     {
-      "duration_seconds": 0.311,
+      "duration_seconds": 0.324,
       "failed": 0,
       "file": "tests/test_bip340.py",
-      "output": "...                                                                      [100%]\n3 passed in 0.18s\n",
+      "output": "...                                                                      [100%]\n3 passed in 0.19s\n",
       "passed": 3,
-      "returncode": 0
-    },
-    {
-      "duration_seconds": 0.144,
-      "failed": 0,
-      "file": "tests/test_bitcoin_authorization.py",
-      "output": "......                                                                   [100%]\n6 passed in 0.01s\n",
-      "passed": 6,
-      "returncode": 0
-    },
-    {
-      "duration_seconds": 0.323,
-      "failed": 0,
-      "file": "tests/test_bitcoin_core_regtest_harness.py",
-      "output": ".....                                                                    [100%]\n5 passed in 0.17s\n",
-      "passed": 5,
       "returncode": 0
     },
     {
       "duration_seconds": 0.153,
       "failed": 0,
-      "file": "tests/test_bitcoin_spv.py",
-      "output": ".....                                                                    [100%]\n5 passed in 0.02s\n",
+      "file": "tests/test_bitcoin_authorization.py",
+      "output": "......                                                                   [100%]\n6 passed in 0.03s\n",
+      "passed": 6,
+      "returncode": 0
+    },
+    {
+      "duration_seconds": 0.352,
+      "failed": 0,
+      "file": "tests/test_bitcoin_core_regtest_harness.py",
+      "output": ".....                                                                    [100%]\n5 passed in 0.18s\n",
       "passed": 5,
       "returncode": 0
     },
     {
-      "duration_seconds": 0.149,
+      "duration_seconds": 0.169,
+      "failed": 0,
+      "file": "tests/test_bitcoin_spv.py",
+      "output": ".....                                                                    [100%]\n5 passed in 0.04s\n",
+      "passed": 5,
+      "returncode": 0
+    },
+    {
+      "duration_seconds": 0.164,
       "failed": 0,
       "file": "tests/test_bitcoin_tx_core_vector.py",
-      "output": "..                                                                       [100%]\n2 passed in 0.02s\n",
+      "output": "..                                                                       [100%]\n2 passed in 0.03s\n",
       "passed": 2,
       "returncode": 0
     },
     {
-      "duration_seconds": 1.603,
+      "duration_seconds": 1.604,
       "failed": 0,
       "file": "tests/test_bitcoin_witness_selection.py",
       "output": "........                                                                 [100%]\n8 passed in 1.45s\n",
@@ -133,18 +133,26 @@
       "returncode": 0
     },
     {
-      "duration_seconds": 0.232,
+      "duration_seconds": 0.25,
       "failed": 0,
       "file": "tests/test_bn254_direct_wrapper.py",
-      "output": "....                                                                     [100%]\n4 passed in 0.10s\n",
+      "output": "....                                                                     [100%]\n4 passed in 0.12s\n",
       "passed": 4,
       "returncode": 0
     },
     {
-      "duration_seconds": 8.95,
+      "duration_seconds": 0.304,
+      "failed": 0,
+      "file": "tests/test_bn254_real.py",
+      "output": "..                                                                       [100%]\n2 passed in 0.17s\n",
+      "passed": 2,
+      "returncode": 0
+    },
+    {
+      "duration_seconds": 10.286,
       "failed": 0,
       "file": "tests/test_bounded_mpc_embryo.py",
-      "output": ".........                                                                [100%]\n9 passed in 8.81s\n",
+      "output": ".........                                                                [100%]\n9 passed in 10.16s\n",
       "passed": 9,
       "returncode": 0
     },
@@ -152,92 +160,92 @@
       "duration_seconds": 0.164,
       "failed": 0,
       "file": "tests/test_bridge_comparison.py",
-      "output": "...                                                                      [100%]\n3 passed in 0.03s\n",
+      "output": "...                                                                      [100%]\n3 passed in 0.04s\n",
       "passed": 3,
       "returncode": 0
     },
     {
-      "duration_seconds": 0.154,
+      "duration_seconds": 0.202,
       "failed": 0,
       "file": "tests/test_canary_observer.py",
-      "output": ".                                                                        [100%]\n1 passed in 0.02s\n",
+      "output": ".                                                                        [100%]\n1 passed in 0.06s\n",
       "passed": 1,
       "returncode": 0
     },
     {
-      "duration_seconds": 0.145,
+      "duration_seconds": 0.148,
       "failed": 0,
       "file": "tests/test_canonical_bytes.py",
-      "output": "...                                                                      [100%]\n3 passed in 0.01s\n",
+      "output": "...                                                                      [100%]\n3 passed in 0.02s\n",
       "passed": 3,
       "returncode": 0
     },
     {
-      "duration_seconds": 16.552,
+      "duration_seconds": 23.768,
       "failed": 0,
       "file": "tests/test_ciphertext_free_fault_key.py",
-      "output": "....                                                                     [100%]\n4 passed in 16.41s\n",
+      "output": "....                                                                     [100%]\n4 passed in 23.63s\n",
       "passed": 4,
       "returncode": 0
     },
     {
-      "duration_seconds": 0.203,
+      "duration_seconds": 0.209,
       "failed": 0,
       "file": "tests/test_co_ot.py",
-      "output": "....                                                                     [100%]\n4 passed in 0.07s\n",
-      "passed": 4,
-      "returncode": 0
-    },
-    {
-      "duration_seconds": 0.142,
-      "failed": 0,
-      "file": "tests/test_commitment_oblivious_lower_bound.py",
-      "output": "..                                                                       [100%]\n2 passed in 0.01s\n",
-      "passed": 2,
-      "returncode": 0
-    },
-    {
-      "duration_seconds": 2.119,
-      "failed": 0,
-      "file": "tests/test_committee_authorization.py",
-      "output": "......                                                                   [100%]\n6 passed in 1.97s\n",
-      "passed": 6,
-      "returncode": 0
-    },
-    {
-      "duration_seconds": 0.172,
-      "failed": 0,
-      "file": "tests/test_constraint_backend.py",
-      "output": ".....                                                                    [100%]\n5 passed in 0.04s\n",
-      "passed": 5,
-      "returncode": 0
-    },
-    {
-      "duration_seconds": 7.776,
-      "failed": 0,
-      "file": "tests/test_core_matrix_v0252.py",
-      "output": "......                                                                   [100%]\n6 passed in 7.62s\n",
-      "passed": 6,
-      "returncode": 0
-    },
-    {
-      "duration_seconds": 0.23,
-      "failed": 0,
-      "file": "tests/test_coupled_shvzk_frontier.py",
-      "output": "....                                                                     [100%]\n4 passed in 0.09s\n",
-      "passed": 4,
-      "returncode": 0
-    },
-    {
-      "duration_seconds": 0.52,
-      "failed": 0,
-      "file": "tests/test_crash_durability.py",
-      "output": "....                                                                     [100%]\n4 passed in 0.38s\n",
+      "output": "....                                                                     [100%]\n4 passed in 0.08s\n",
       "passed": 4,
       "returncode": 0
     },
     {
       "duration_seconds": 0.148,
+      "failed": 0,
+      "file": "tests/test_commitment_oblivious_lower_bound.py",
+      "output": "..                                                                       [100%]\n2 passed in 0.02s\n",
+      "passed": 2,
+      "returncode": 0
+    },
+    {
+      "duration_seconds": 2.598,
+      "failed": 0,
+      "file": "tests/test_committee_authorization.py",
+      "output": "......                                                                   [100%]\n6 passed in 2.40s\n",
+      "passed": 6,
+      "returncode": 0
+    },
+    {
+      "duration_seconds": 0.151,
+      "failed": 0,
+      "file": "tests/test_constraint_backend.py",
+      "output": ".....                                                                    [100%]\n5 passed in 0.02s\n",
+      "passed": 5,
+      "returncode": 0
+    },
+    {
+      "duration_seconds": 26.449,
+      "failed": 0,
+      "file": "tests/test_core_matrix_v0252.py",
+      "output": "......                                                                   [100%]\n6 passed in 26.30s\n",
+      "passed": 6,
+      "returncode": 0
+    },
+    {
+      "duration_seconds": 0.237,
+      "failed": 0,
+      "file": "tests/test_coupled_shvzk_frontier.py",
+      "output": "....                                                                     [100%]\n4 passed in 0.11s\n",
+      "passed": 4,
+      "returncode": 0
+    },
+    {
+      "duration_seconds": 1.301,
+      "failed": 0,
+      "file": "tests/test_crash_durability.py",
+      "output": "........                                                                 [100%]\n8 passed in 1.16s\n",
+      "passed": 8,
+      "returncode": 0
+    },
+    {
+      "duration_seconds": 0.15,
       "failed": 0,
       "file": "tests/test_crt_bridge.py",
       "output": "...                                                                      [100%]\n3 passed in 0.02s\n",
@@ -245,10 +253,10 @@
       "returncode": 0
     },
     {
-      "duration_seconds": 0.147,
+      "duration_seconds": 0.155,
       "failed": 0,
       "file": "tests/test_crt_field.py",
-      "output": "......                                                                   [100%]\n6 passed in 0.02s\n",
+      "output": "......                                                                   [100%]\n6 passed in 0.03s\n",
       "passed": 6,
       "returncode": 0
     },
@@ -261,7 +269,7 @@
       "returncode": 0
     },
     {
-      "duration_seconds": 0.162,
+      "duration_seconds": 0.148,
       "failed": 0,
       "file": "tests/test_direct_relation_barrier.py",
       "output": "..                                                                       [100%]\n2 passed in 0.02s\n",
@@ -269,71 +277,79 @@
       "returncode": 0
     },
     {
-      "duration_seconds": 0.652,
+      "duration_seconds": 1.147,
       "failed": 0,
       "file": "tests/test_durable_slot_ledger.py",
-      "output": "........                                                                 [100%]\n8 passed in 0.51s\n",
+      "output": "........                                                                 [100%]\n8 passed in 1.01s\n",
       "passed": 8,
       "returncode": 0
     },
     {
-      "duration_seconds": 7.329,
+      "duration_seconds": 7.279,
       "failed": 0,
       "file": "tests/test_embryo_mask_fusion.py",
-      "output": "..........                                                               [100%]\n10 passed in 7.18s\n",
+      "output": "..........                                                               [100%]\n10 passed in 7.13s\n",
       "passed": 10,
       "returncode": 0
     },
     {
-      "duration_seconds": 1.245,
+      "duration_seconds": 1.315,
       "failed": 0,
       "file": "tests/test_evidence_v0252.py",
-      "output": "..........                                                               [100%]\n10 passed in 1.11s\n",
+      "output": "..........                                                               [100%]\n10 passed in 1.17s\n",
       "passed": 10,
       "returncode": 0
     },
     {
-      "duration_seconds": 0.15,
+      "duration_seconds": 0.173,
       "failed": 0,
       "file": "tests/test_field_bridge.py",
-      "output": "....                                                                     [100%]\n4 passed in 0.01s\n",
+      "output": "....                                                                     [100%]\n4 passed in 0.05s\n",
       "passed": 4,
       "returncode": 0
     },
     {
-      "duration_seconds": 0.147,
+      "duration_seconds": 0.148,
       "failed": 0,
       "file": "tests/test_fixed_relation_budget.py",
-      "output": "..                                                                       [100%]\n2 passed in 0.01s\n",
+      "output": "..                                                                       [100%]\n2 passed in 0.02s\n",
       "passed": 2,
       "returncode": 0
     },
     {
-      "duration_seconds": 0.216,
+      "duration_seconds": 0.218,
       "failed": 0,
       "file": "tests/test_fixed_statement_wrapper_candidate.py",
-      "output": "...                                                                      [100%]\n3 passed in 0.08s\n",
+      "output": "...                                                                      [100%]\n3 passed in 0.09s\n",
       "passed": 3,
       "returncode": 0
     },
     {
-      "duration_seconds": 0.302,
+      "duration_seconds": 0.31,
       "failed": 0,
       "file": "tests/test_fixed_yes_instance_gap.py",
-      "output": "....                                                                     [100%]\n4 passed in 0.17s\n",
+      "output": "....                                                                     [100%]\n4 passed in 0.19s\n",
       "passed": 4,
       "returncode": 0
     },
     {
-      "duration_seconds": 0.359,
+      "duration_seconds": 0.155,
       "failed": 0,
-      "file": "tests/test_generate_v0252_release_gate.py",
-      "output": "...                                                                      [100%]\n3 passed in 0.22s\n",
+      "file": "tests/test_generate_v0251_security_hardening.py",
+      "output": "...                                                                      [100%]\n3 passed in 0.03s\n",
       "passed": 3,
       "returncode": 0
     },
     {
-      "duration_seconds": 0.157,
+      "duration_seconds": 0.767,
+      "failed": 0,
+      "file": "tests/test_generate_v0252_release_gate.py",
+      "output": "..........                                                               [100%]\n10 passed in 0.62s\n",
+      "passed": 10,
+      "returncode": 0
+    },
+    {
+      "duration_seconds": 0.143,
       "failed": 0,
       "file": "tests/test_generic_air.py",
       "output": "..                                                                       [100%]\n2 passed in 0.02s\n",
@@ -341,15 +357,15 @@
       "returncode": 0
     },
     {
-      "duration_seconds": 0.159,
+      "duration_seconds": 0.141,
       "failed": 0,
       "file": "tests/test_groth16_projective_lock.py",
-      "output": ".....                                                                    [100%]\n5 passed in 0.02s\n",
+      "output": ".....                                                                    [100%]\n5 passed in 0.01s\n",
       "passed": 5,
       "returncode": 0
     },
     {
-      "duration_seconds": 0.153,
+      "duration_seconds": 0.136,
       "failed": 0,
       "file": "tests/test_hidden_challenge_audit.py",
       "output": "..                                                                       [100%]\n2 passed in 0.01s\n",
@@ -357,7 +373,7 @@
       "returncode": 0
     },
     {
-      "duration_seconds": 0.145,
+      "duration_seconds": 0.131,
       "failed": 0,
       "file": "tests/test_hidden_product_crs_frontier.py",
       "output": "...                                                                      [100%]\n3 passed in 0.01s\n",
@@ -365,7 +381,7 @@
       "returncode": 0
     },
     {
-      "duration_seconds": 0.145,
+      "duration_seconds": 0.132,
       "failed": 0,
       "file": "tests/test_hidden_scalar_lower_bound.py",
       "output": ".....                                                                    [100%]\n5 passed in 0.01s\n",
@@ -373,95 +389,95 @@
       "returncode": 0
     },
     {
-      "duration_seconds": 6.017,
+      "duration_seconds": 6.61,
       "failed": 0,
       "file": "tests/test_hybrid_conditional_lock.py",
-      "output": "....                                                                     [100%]\n4 passed in 5.88s\n",
+      "output": "....                                                                     [100%]\n4 passed in 6.48s\n",
       "passed": 4,
       "returncode": 0
     },
     {
-      "duration_seconds": 0.595,
+      "duration_seconds": 0.622,
       "failed": 0,
       "file": "tests/test_inner_product_we.py",
-      "output": "...                                                                      [100%]\n3 passed in 0.46s\n",
+      "output": "...                                                                      [100%]\n3 passed in 0.48s\n",
       "passed": 3,
       "returncode": 0
     },
     {
-      "duration_seconds": 0.615,
+      "duration_seconds": 0.626,
       "failed": 0,
       "file": "tests/test_ipa_pcs.py",
-      "output": "....                                                                     [100%]\n4 passed in 0.49s\n",
+      "output": "....                                                                     [100%]\n4 passed in 0.50s\n",
       "passed": 4,
       "returncode": 0
     },
     {
-      "duration_seconds": 0.149,
+      "duration_seconds": 0.154,
       "failed": 0,
       "file": "tests/test_kzg_we_conjunction.py",
-      "output": "....                                                                     [100%]\n4 passed in 0.01s\n",
-      "passed": 4,
-      "returncode": 0
-    },
-    {
-      "duration_seconds": 0.14,
-      "failed": 0,
-      "file": "tests/test_laconic_shvzk_we_frontier.py",
-      "output": "....                                                                     [100%]\n4 passed in 0.01s\n",
+      "output": "....                                                                     [100%]\n4 passed in 0.03s\n",
       "passed": 4,
       "returncode": 0
     },
     {
       "duration_seconds": 0.148,
       "failed": 0,
+      "file": "tests/test_laconic_shvzk_we_frontier.py",
+      "output": "....                                                                     [100%]\n4 passed in 0.02s\n",
+      "passed": 4,
+      "returncode": 0
+    },
+    {
+      "duration_seconds": 0.155,
+      "failed": 0,
       "file": "tests/test_low_rank_convolution.py",
-      "output": "...                                                                      [100%]\n3 passed in 0.02s\n",
-      "passed": 3,
-      "returncode": 0
-    },
-    {
-      "duration_seconds": 0.147,
-      "failed": 0,
-      "file": "tests/test_low_rank_field_bridge.py",
-      "output": "...                                                                      [100%]\n3 passed in 0.02s\n",
-      "passed": 3,
-      "returncode": 0
-    },
-    {
-      "duration_seconds": 4.37,
-      "failed": 0,
-      "file": "tests/test_low_rank_ppe_lock.py",
-      "output": ".......                                                                  [100%]\n7 passed in 4.24s\n",
-      "passed": 7,
-      "returncode": 0
-    },
-    {
-      "duration_seconds": 0.141,
-      "failed": 0,
-      "file": "tests/test_lva_gadget_coverage.py",
-      "output": "...                                                                      [100%]\n3 passed in 0.01s\n",
-      "passed": 3,
-      "returncode": 0
-    },
-    {
-      "duration_seconds": 0.161,
-      "failed": 0,
-      "file": "tests/test_memory_air.py",
       "output": "...                                                                      [100%]\n3 passed in 0.03s\n",
       "passed": 3,
       "returncode": 0
     },
     {
-      "duration_seconds": 1.573,
+      "duration_seconds": 0.158,
+      "failed": 0,
+      "file": "tests/test_low_rank_field_bridge.py",
+      "output": "...                                                                      [100%]\n3 passed in 0.03s\n",
+      "passed": 3,
+      "returncode": 0
+    },
+    {
+      "duration_seconds": 6.109,
+      "failed": 0,
+      "file": "tests/test_low_rank_ppe_lock.py",
+      "output": ".......                                                                  [100%]\n7 passed in 5.98s\n",
+      "passed": 7,
+      "returncode": 0
+    },
+    {
+      "duration_seconds": 0.144,
+      "failed": 0,
+      "file": "tests/test_lva_gadget_coverage.py",
+      "output": "...                                                                      [100%]\n3 passed in 0.02s\n",
+      "passed": 3,
+      "returncode": 0
+    },
+    {
+      "duration_seconds": 0.168,
+      "failed": 0,
+      "file": "tests/test_memory_air.py",
+      "output": "...                                                                      [100%]\n3 passed in 0.04s\n",
+      "passed": 3,
+      "returncode": 0
+    },
+    {
+      "duration_seconds": 1.594,
       "failed": 0,
       "file": "tests/test_mpc_qualification.py",
-      "output": "........                                                                 [100%]\n8 passed in 1.44s\n",
+      "output": "........                                                                 [100%]\n8 passed in 1.46s\n",
       "passed": 8,
       "returncode": 0
     },
     {
-      "duration_seconds": 0.161,
+      "duration_seconds": 0.14,
       "failed": 0,
       "file": "tests/test_nonnative_field.py",
       "output": ".....                                                                    [100%]\n5 passed in 0.02s\n",
@@ -469,7 +485,7 @@
       "returncode": 0
     },
     {
-      "duration_seconds": 0.148,
+      "duration_seconds": 0.137,
       "failed": 0,
       "file": "tests/test_one_beacon_air.py",
       "output": "...                                                                      [100%]\n3 passed in 0.02s\n",
@@ -477,7 +493,7 @@
       "returncode": 0
     },
     {
-      "duration_seconds": 0.143,
+      "duration_seconds": 0.131,
       "failed": 0,
       "file": "tests/test_one_sided_lva_decomposition.py",
       "output": "...                                                                      [100%]\n3 passed in 0.01s\n",
@@ -485,7 +501,7 @@
       "returncode": 0
     },
     {
-      "duration_seconds": 0.235,
+      "duration_seconds": 0.226,
       "failed": 0,
       "file": "tests/test_one_sided_scalar_verifier.py",
       "output": "....                                                                     [100%]\n4 passed in 0.10s\n",
@@ -493,23 +509,23 @@
       "returncode": 0
     },
     {
-      "duration_seconds": 7.888,
+      "duration_seconds": 8.335,
       "failed": 0,
       "file": "tests/test_one_sided_static_session_gap.py",
-      "output": "....                                                                     [100%]\n4 passed in 7.75s\n",
+      "output": "....                                                                     [100%]\n4 passed in 8.21s\n",
       "passed": 4,
       "returncode": 0
     },
     {
-      "duration_seconds": 0.921,
+      "duration_seconds": 0.948,
       "failed": 0,
       "file": "tests/test_one_sided_wrapper_frontier.py",
-      "output": "....                                                                     [100%]\n4 passed in 0.79s\n",
+      "output": "....                                                                     [100%]\n4 passed in 0.82s\n",
       "passed": 4,
       "returncode": 0
     },
     {
-      "duration_seconds": 0.217,
+      "duration_seconds": 0.211,
       "failed": 0,
       "file": "tests/test_outer_curve_candidate.py",
       "output": "....                                                                     [100%]\n4 passed in 0.09s\n",
@@ -517,31 +533,31 @@
       "returncode": 0
     },
     {
-      "duration_seconds": 0.222,
+      "duration_seconds": 0.216,
       "failed": 0,
       "file": "tests/test_outer_g1_binding.py",
-      "output": "....                                                                     [100%]\n4 passed in 0.08s\n",
+      "output": "....                                                                     [100%]\n4 passed in 0.09s\n",
       "passed": 4,
       "returncode": 0
     },
     {
-      "duration_seconds": 0.225,
+      "duration_seconds": 0.223,
       "failed": 0,
       "file": "tests/test_pairing_rank.py",
-      "output": "......                                                                   [100%]\n6 passed in 0.09s\n",
+      "output": "......                                                                   [100%]\n6 passed in 0.10s\n",
       "passed": 6,
       "returncode": 0
     },
     {
-      "duration_seconds": 0.158,
+      "duration_seconds": 0.159,
       "failed": 0,
       "file": "tests/test_phased_air.py",
-      "output": "...                                                                      [100%]\n3 passed in 0.02s\n",
+      "output": "...                                                                      [100%]\n3 passed in 0.03s\n",
       "passed": 3,
       "returncode": 0
     },
     {
-      "duration_seconds": 0.195,
+      "duration_seconds": 0.165,
       "failed": 0,
       "file": "tests/test_phased_memory.py",
       "output": "...                                                                      [100%]\n3 passed in 0.04s\n",
@@ -549,7 +565,7 @@
       "returncode": 0
     },
     {
-      "duration_seconds": 0.177,
+      "duration_seconds": 0.154,
       "failed": 0,
       "file": "tests/test_phased_permutation.py",
       "output": "...                                                                      [100%]\n3 passed in 0.02s\n",
@@ -557,34 +573,34 @@
       "returncode": 0
     },
     {
-      "duration_seconds": 0.289,
+      "duration_seconds": 0.271,
       "failed": 0,
       "file": "tests/test_poseidon2_bn254_transcript.py",
-      "output": "....                                                                     [100%]\n4 passed in 0.15s\n",
+      "output": "....                                                                     [100%]\n4 passed in 0.14s\n",
       "passed": 4,
       "returncode": 0
     },
     {
-      "duration_seconds": 0.147,
+      "duration_seconds": 0.14,
       "failed": 0,
       "file": "tests/test_ppe_normal_form.py",
-      "output": "..                                                                       [100%]\n2 passed in 0.01s\n",
+      "output": "..                                                                       [100%]\n2 passed in 0.02s\n",
       "passed": 2,
       "returncode": 0
     },
     {
-      "duration_seconds": 1.802,
+      "duration_seconds": 1.784,
       "failed": 0,
       "file": "tests/test_projective_vole_lock.py",
-      "output": ".....                                                                    [100%]\n5 passed in 1.66s\n",
+      "output": ".....                                                                    [100%]\n5 passed in 1.65s\n",
       "passed": 5,
       "returncode": 0
     },
     {
-      "duration_seconds": 0.462,
+      "duration_seconds": 0.443,
       "failed": 0,
       "file": "tests/test_protocol_negatives.py",
-      "output": ".....                                                                    [100%]\n5 passed in 0.29s\n",
+      "output": ".....                                                                    [100%]\n5 passed in 0.30s\n",
       "passed": 5,
       "returncode": 0
     },
@@ -592,84 +608,84 @@
       "duration_seconds": 0.209,
       "failed": 0,
       "file": "tests/test_public_correlation_rank.py",
-      "output": "....                                                                     [100%]\n4 passed in 0.07s\n",
+      "output": "....                                                                     [100%]\n4 passed in 0.08s\n",
       "passed": 4,
       "returncode": 0
     },
     {
-      "duration_seconds": 0.146,
+      "duration_seconds": 0.149,
       "failed": 0,
       "file": "tests/test_public_multiplicand.py",
-      "output": "...                                                                      [100%]\n3 passed in 0.01s\n",
+      "output": "...                                                                      [100%]\n3 passed in 0.02s\n",
       "passed": 3,
       "returncode": 0
     },
     {
-      "duration_seconds": 0.207,
+      "duration_seconds": 0.199,
       "failed": 0,
       "file": "tests/test_rank_compiler.py",
-      "output": "...                                                                      [100%]\n3 passed in 0.06s\n",
+      "output": "...                                                                      [100%]\n3 passed in 0.07s\n",
       "passed": 3,
       "returncode": 0
     },
     {
-      "duration_seconds": 0.159,
+      "duration_seconds": 0.164,
       "failed": 0,
       "file": "tests/test_rankfold.py",
+      "output": ".....                                                                    [100%]\n5 passed in 0.03s\n",
+      "passed": 5,
+      "returncode": 0
+    },
+    {
+      "duration_seconds": 0.15,
+      "failed": 0,
+      "file": "tests/test_rankvm_wprf_target.py",
+      "output": "....                                                                     [100%]\n4 passed in 0.03s\n",
+      "passed": 4,
+      "returncode": 0
+    },
+    {
+      "duration_seconds": 0.374,
+      "failed": 0,
+      "file": "tests/test_real_dfb_embryo.py",
+      "output": ".......s.....                                                            [100%]\n=========================== short test summary info ============================\nSKIPPED [1] tests/test_real_dfb_embryo.py:238: heavy 128-bit fixture is regenerated by the v0.22.1 and v0.23 release generators\n12 passed, 1 skipped in 0.24s\n",
+      "passed": 12,
+      "returncode": 0
+    },
+    {
+      "duration_seconds": 3.04,
+      "failed": 0,
+      "file": "tests/test_real_kzg_we.py",
+      "output": "..                                                                       [100%]\n2 passed in 2.91s\n",
+      "passed": 2,
+      "returncode": 0
+    },
+    {
+      "duration_seconds": 0.187,
+      "failed": 0,
+      "file": "tests/test_real_secp.py",
+      "output": "..                                                                       [100%]\n2 passed in 0.06s\n",
+      "passed": 2,
+      "returncode": 0
+    },
+    {
+      "duration_seconds": 0.144,
+      "failed": 0,
+      "file": "tests/test_release_qualification.py",
       "output": ".....                                                                    [100%]\n5 passed in 0.02s\n",
       "passed": 5,
       "returncode": 0
     },
     {
-      "duration_seconds": 0.157,
-      "failed": 0,
-      "file": "tests/test_rankvm_wprf_target.py",
-      "output": "....                                                                     [100%]\n4 passed in 0.01s\n",
-      "passed": 4,
-      "returncode": 0
-    },
-    {
-      "duration_seconds": 0.375,
-      "failed": 0,
-      "file": "tests/test_real_dfb_embryo.py",
-      "output": ".......s.....                                                            [100%]\n=========================== short test summary info ============================\nSKIPPED [1] tests/test_real_dfb_embryo.py:238: heavy 128-bit fixture is regenerated by the v0.22.1 and v0.23 release generators\n12 passed, 1 skipped in 0.23s\n",
-      "passed": 12,
-      "returncode": 0
-    },
-    {
-      "duration_seconds": 2.807,
-      "failed": 0,
-      "file": "tests/test_real_kzg_we.py",
-      "output": "..                                                                       [100%]\n2 passed in 2.67s\n",
-      "passed": 2,
-      "returncode": 0
-    },
-    {
-      "duration_seconds": 0.189,
-      "failed": 0,
-      "file": "tests/test_real_secp.py",
-      "output": "..                                                                       [100%]\n2 passed in 0.05s\n",
-      "passed": 2,
-      "returncode": 0
-    },
-    {
-      "duration_seconds": 0.142,
-      "failed": 0,
-      "file": "tests/test_release_qualification.py",
-      "output": ".....                                                                    [100%]\n5 passed in 0.01s\n",
-      "passed": 5,
-      "returncode": 0
-    },
-    {
-      "duration_seconds": 2.705,
+      "duration_seconds": 2.767,
       "failed": 0,
       "file": "tests/test_release_sidecar.py",
-      "output": "..............                                                           [100%]\n14 passed in 2.55s\n",
+      "output": "..............                                                           [100%]\n14 passed in 2.62s\n",
       "passed": 14,
       "returncode": 0
     },
     {
-      "duration_seconds": 0.798,
+      "duration_seconds": 0.767,
       "failed": 0,
       "file": "tests/test_rollback_witness.py",
       "output": ".......                                                                  [100%]\n7 passed in 0.64s\n",
@@ -677,23 +693,23 @@
       "returncode": 0
     },
     {
-      "duration_seconds": 0.903,
+      "duration_seconds": 0.856,
       "failed": 0,
       "file": "tests/test_rollback_witness_mtls.py",
-      "output": "..                                                                       [100%]\n2 passed in 0.76s\n",
+      "output": "..                                                                       [100%]\n2 passed in 0.72s\n",
       "passed": 2,
       "returncode": 0
     },
     {
-      "duration_seconds": 1.38,
+      "duration_seconds": 1.354,
       "failed": 0,
       "file": "tests/test_rpc_transport_hardening.py",
-      "output": "...                                                                      [100%]\n3 passed in 1.22s\n",
+      "output": "...                                                                      [100%]\n3 passed in 1.21s\n",
       "passed": 3,
       "returncode": 0
     },
     {
-      "duration_seconds": 0.545,
+      "duration_seconds": 0.537,
       "failed": 0,
       "file": "tests/test_setup_ceremony.py",
       "output": "...                                                                      [100%]\n3 passed in 0.41s\n",
@@ -701,31 +717,31 @@
       "returncode": 0
     },
     {
-      "duration_seconds": 0.69,
+      "duration_seconds": 0.666,
       "failed": 0,
       "file": "tests/test_setup_ceremony_evidence.py",
-      "output": "......                                                                   [100%]\n6 passed in 0.56s\n",
+      "output": "......                                                                   [100%]\n6 passed in 0.54s\n",
       "passed": 6,
       "returncode": 0
     },
     {
-      "duration_seconds": 0.222,
+      "duration_seconds": 0.203,
       "failed": 0,
       "file": "tests/test_shared_proof_binding.py",
-      "output": "...                                                                      [100%]\n3 passed in 0.09s\n",
+      "output": "...                                                                      [100%]\n3 passed in 0.08s\n",
       "passed": 3,
       "returncode": 0
     },
     {
-      "duration_seconds": 12.594,
+      "duration_seconds": 16.001,
       "failed": 0,
       "file": "tests/test_split_basis_ppe_we.py",
-      "output": "......                                                                   [100%]\n6 passed in 12.46s\n",
+      "output": "......                                                                   [100%]\n6 passed in 15.87s\n",
       "passed": 6,
       "returncode": 0
     },
     {
-      "duration_seconds": 0.155,
+      "duration_seconds": 0.142,
       "failed": 0,
       "file": "tests/test_split_limb_field.py",
       "output": ".....                                                                    [100%]\n5 passed in 0.02s\n",
@@ -733,23 +749,23 @@
       "returncode": 0
     },
     {
-      "duration_seconds": 14.265,
+      "duration_seconds": 17.401,
       "failed": 0,
       "file": "tests/test_split_scalar_authorization.py",
-      "output": ".......                                                                  [100%]\n7 passed in 14.11s\n",
+      "output": ".......                                                                  [100%]\n7 passed in 17.26s\n",
       "passed": 7,
       "returncode": 0
     },
     {
-      "duration_seconds": 14.666,
+      "duration_seconds": 18.418,
       "failed": 0,
       "file": "tests/test_split_scalar_lock.py",
-      "output": ".......                                                                  [100%]\n7 passed in 14.53s\n",
+      "output": ".......                                                                  [100%]\n7 passed in 18.29s\n",
       "passed": 7,
       "returncode": 0
     },
     {
-      "duration_seconds": 0.15,
+      "duration_seconds": 0.137,
       "failed": 0,
       "file": "tests/test_static_kzg_we.py",
       "output": "....                                                                     [100%]\n4 passed in 0.02s\n",
@@ -757,7 +773,7 @@
       "returncode": 0
     },
     {
-      "duration_seconds": 2.242,
+      "duration_seconds": 2.23,
       "failed": 0,
       "file": "tests/test_static_linear_conjunction.py",
       "output": "......                                                                   [100%]\n6 passed in 2.11s\n",
@@ -765,15 +781,23 @@
       "returncode": 0
     },
     {
-      "duration_seconds": 0.183,
+      "duration_seconds": 7.699,
       "failed": 0,
       "file": "tests/test_strata_exporter.py",
-      "output": "............                                                             [100%]\n12 passed in 0.05s\n",
-      "passed": 12,
+      "output": "............................                                             [100%]\n28 passed in 7.55s\n",
+      "passed": 28,
       "returncode": 0
     },
     {
-      "duration_seconds": 0.144,
+      "duration_seconds": 0.48,
+      "failed": 0,
+      "file": "tests/test_threshold_sharing.py",
+      "output": "..........                                                               [100%]\n10 passed in 0.35s\n",
+      "passed": 10,
+      "returncode": 0
+    },
+    {
+      "duration_seconds": 0.134,
       "failed": 0,
       "file": "tests/test_transcript_mini_lock.py",
       "output": "....                                                                     [100%]\n4 passed in 0.01s\n",
@@ -781,7 +805,7 @@
       "returncode": 0
     },
     {
-      "duration_seconds": 0.148,
+      "duration_seconds": 0.139,
       "failed": 0,
       "file": "tests/test_tuple_permutation.py",
       "output": "...                                                                      [100%]\n3 passed in 0.02s\n",
@@ -789,7 +813,7 @@
       "returncode": 0
     },
     {
-      "duration_seconds": 0.147,
+      "duration_seconds": 0.138,
       "failed": 0,
       "file": "tests/test_two_beacon_permutation.py",
       "output": "...                                                                      [100%]\n3 passed in 0.02s\n",
@@ -797,15 +821,15 @@
       "returncode": 0
     },
     {
-      "duration_seconds": 3.391,
+      "duration_seconds": 3.884,
       "failed": 0,
       "file": "tests/test_two_phase_authorization.py",
-      "output": ".....                                                                    [100%]\n5 passed in 3.24s\n",
-      "passed": 5,
+      "output": "......                                                                   [100%]\n6 passed in 3.74s\n",
+      "passed": 6,
       "returncode": 0
     },
     {
-      "duration_seconds": 0.172,
+      "duration_seconds": 0.166,
       "failed": 0,
       "file": "tests/test_unified_memory_opening.py",
       "output": "...                                                                      [100%]\n3 passed in 0.04s\n",
@@ -813,23 +837,23 @@
       "returncode": 0
     },
     {
-      "duration_seconds": 3.023,
+      "duration_seconds": 3.42,
       "failed": 0,
       "file": "tests/test_v0241_security_recovery.py",
-      "output": ".....                                                                    [100%]\n5 passed in 2.88s\n",
+      "output": ".....                                                                    [100%]\n5 passed in 3.29s\n",
       "passed": 5,
       "returncode": 0
     },
     {
-      "duration_seconds": 0.191,
+      "duration_seconds": 0.171,
       "failed": 0,
       "file": "tests/test_v0241_uniform_body_pads.py",
-      "output": ".                                                                        [100%]\n1 passed in 0.05s\n",
+      "output": ".                                                                        [100%]\n1 passed in 0.04s\n",
       "passed": 1,
       "returncode": 0
     },
     {
-      "duration_seconds": 0.142,
+      "duration_seconds": 0.134,
       "failed": 0,
       "file": "tests/test_v025_bitcoin_policy_envelope.py",
       "output": ".                                                                        [100%]\n1 passed in 0.01s\n",
@@ -837,7 +861,7 @@
       "returncode": 0
     },
     {
-      "duration_seconds": 0.143,
+      "duration_seconds": 0.131,
       "failed": 0,
       "file": "tests/test_validity_first_graph.py",
       "output": "......                                                                   [100%]\n6 passed in 0.01s\n",
@@ -845,7 +869,7 @@
       "returncode": 0
     },
     {
-      "duration_seconds": 0.143,
+      "duration_seconds": 0.131,
       "failed": 0,
       "file": "tests/test_verifier_shape_frontier.py",
       "output": "..                                                                       [100%]\n2 passed in 0.01s\n",
@@ -853,15 +877,15 @@
       "returncode": 0
     },
     {
-      "duration_seconds": 0.438,
+      "duration_seconds": 0.49,
       "failed": 0,
       "file": "tests/test_verify_v0252_evidence.py",
-      "output": ".....                                                                    [100%]\n5 passed in 0.31s\n",
-      "passed": 5,
+      "output": "......                                                                   [100%]\n6 passed in 0.37s\n",
+      "passed": 6,
       "returncode": 0
     },
     {
-      "duration_seconds": 0.156,
+      "duration_seconds": 0.137,
       "failed": 0,
       "file": "tests/test_vole_input_auth.py",
       "output": ".....                                                                    [100%]\n5 passed in 0.02s\n",
@@ -873,7 +897,7 @@
   "shard_count": 1,
   "shard_index": 0,
   "timeout_per_file_seconds": 420,
-  "total_discovered_files": 108,
-  "wall_seconds": 41.657,
+  "total_discovered_files": 111,
+  "wall_seconds": 57.055,
   "workers": 4
 }

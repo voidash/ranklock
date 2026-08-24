@@ -17,6 +17,12 @@ class ReleaseQualificationError(ValueError):
     pass
 
 
+_LEGACY_PROTOCOL_BLOCKER = (
+    "legacy v0.25 release facts cannot authorize funds; a validated v0.26 "
+    "funding-subject DAG and funds protocol are absent"
+)
+
+
 @dataclass(frozen=True, slots=True)
 class LocalReleaseFacts:
     complete_source_archive_reproducible: bool
@@ -78,7 +84,15 @@ class LocalReleaseFacts:
             ("independent implementation audit is absent", self.independent_implementation_audit_passed),
             (f"production setup gate is open for {self.setup_security_mode}", self.setup_gate_passed),
         )
-        return tuple(message for message, passed in checks if not passed)
+        # This v1 schema predates the v0.26 funding subject, ordered-vector ACK
+        # connector, loss-safe timeout policy, script-only Taproot key rule,
+        # presign/key-erasure transcript, and externally monotonic release
+        # registry.  None of those properties can be inferred from the legacy
+        # booleans above.  Consequently, even authentic external evidence must
+        # not promote this legacy document to a funds authorization.
+        return (_LEGACY_PROTOCOL_BLOCKER,) + tuple(
+            message for message, passed in checks if not passed
+        )
 
     @property
     def safe_for_funds(self) -> bool:

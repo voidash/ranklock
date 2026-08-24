@@ -1,0 +1,31 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.36s
+     Running unittests src/lib.rs (target/debug/deps/strata_bridge_counterproof-f3edb29ec70ec91d)
+
+running 1 test
+test statements::tests::subject_bound_sp1_guest_generates_and_verifies_groth16_proof has been running for over 60 seconds
+stderr: WARNING: Using insecure random number generator.
+stderr: WARNING: Using insecure random number generator.
+error: test failed, to rerun pass `-p strata-bridge-counterproof --lib`
+
+Caused by:
+  process didn't exit successfully: `/Users/cdjk/github/llm/ranklock/tmp/strata-v026-f94c/target/debug/deps/strata_bridge_counterproof-f3edb29ec70ec91d subject_bound_sp1_guest_generates_and_verifies_groth16_proof --ignored --nocapture` (signal: 2, SIGINT: terminal interrupt signal)
+real 22777.70
+user 77756.35
+sys 303.38
+         11002871808  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+            36394842  page reclaims
+                6930  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   1  signals received
+              572390  voluntary context switches
+            11416071  involuntary context switches
+          5610581320  instructions retired
+          1649309908  cycles elapsed
+           225772264  peak memory footprint

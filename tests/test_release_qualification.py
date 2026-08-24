@@ -41,7 +41,7 @@ def test_local_evidence_can_qualify_canary_but_not_funds():
     assert facts.document()["maximum_mode"] == "canary"
 
 
-def test_every_external_gate_is_required_for_enforce():
+def test_legacy_release_facts_cannot_enable_enforce_even_when_all_booleans_are_true():
     facts = replace(
         _facts(),
         bitcoin_core_regtest_executed=True,
@@ -54,9 +54,12 @@ def test_every_external_gate_is_required_for_enforce():
         independent_implementation_audit_passed=True,
         split_scalar_production_setup_passed=True,
     )
-    assert facts.safe_for_funds
-    assert facts.maximum_mode == "enforce"
-    assert not facts.funds_blockers
+    assert not facts.safe_for_funds
+    assert facts.maximum_mode == "canary"
+    assert facts.funds_blockers == (
+        "legacy v0.25 release facts cannot authorize funds; a validated v0.26 "
+        "funding-subject DAG and funds protocol are absent",
+    )
 
 
 

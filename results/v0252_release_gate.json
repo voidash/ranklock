@@ -2,8 +2,8 @@
   "claim_boundary": "hash-pinned Bitcoin Core and the pinned Strata validity-first path were executed and passed the stated matrix, to the extent bitcoin_core_regtest_passed and current_bridge_compiled_and_tested are true above; this is not a statement that RankLock is safe for production funds -- production setup, native hardening, independent rollback operations, governance and external audits remain separate, externally-gated requirements",
   "clean_archive_report": {
     "all_checks_passed": true,
-    "path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/results/clean_archive_verification_v0252.json",
-    "sha256": "2a94b171a391cf9eb4065ab150bb34936768dadc4c4bbad12ec9773ed7f75526"
+    "path": "/Users/cdjk/github/llm/ranklock/worktree-v0.25.2/results/clean_archive_verification_v0252.json",
+    "sha256": "35dd6072a4d43bb2b234b20f9618817ee2c3d46cf78817fcc5292b3491cc0c57"
   },
   "evidence": {
     "bitcoin_policy": {
@@ -12,30 +12,30 @@
     },
     "committee": {
       "path": "results/v025_committee_qualification.json",
-      "sha256": "d2036c58d539a974e54eaa479473ff16292fdf6a5dfc04c680dd6c90bbf923a6"
+      "sha256": "902397b966905557e019e92d5c3e9f6d22f7446af8333607b15be47bc291b555"
     },
     "hardening": {
       "path": "results/v0251_security_hardening.json",
-      "sha256": "fe52fad32046fa02aa6928039f0fce37786d6668e0019cc8e116412956c9435a"
+      "sha256": "fd15cc37be4881b3adb0197ce36bf44963b7c73eb04ab633f1dbc02f0c78500b"
     },
     "split_scalar": {
       "path": "results/v025_split_scalar_qualification.json",
-      "sha256": "da7af5eb596952b0039e88299df0cadb789f5ccb416ba8326a9d6c299bd0bae7"
+      "sha256": "b11cd8d6f9fca49c809e64d0f8cb1cc127861d3a125dd6d78cb14f7c9b34e96d"
     },
     "tests": {
       "path": "results/v025_test_files.json",
-      "sha256": "d6c142cf8df575e6b8c428a411d2141c913e0ccdbc34e196d7b6171680ed5741"
+      "sha256": "1c5f5f36b595d55e059bd5bb1af768ffff6531223b340f8c969dfd91342e0679"
     }
   },
   "evidence_verification": {
     "all_checks_passed": true,
-    "path": "/Users/cdjk/Downloads/ranklock-v0.25.2-claude-handoff/work/ranklock-v0.25.1/results/v0252_evidence_verification.json",
+    "path": "/Users/cdjk/github/llm/ranklock/worktree-v0.25.2/results/v0252_evidence_verification.json",
     "reports_present": [
       "core",
       "strata_build",
       "strata_e2e"
     ],
-    "sha256": "bfb65a0293f4a0d1c8fe941eaf2d4e4b29934c0ec26d409f6ede1ef35026140f"
+    "sha256": "1c0a373cc91b908858c7a24b4a8e965a6f1974a8a44cbfa69a48d4996cd8d438"
   },
   "external_attestations_must_be_verified_by": "ranklock.deployment_policy.evaluate_deployment",
   "facts": {

@@ -16,9 +16,22 @@ import sys
 
 from ranklock.acceptance_matrix_v0252 import CORE_CASE_IDS
 from ranklock.evidence_v0252 import CaseResult, MatrixReport
+from scripts.build_v025_release import included as included_in_source_archive
 
 ROOT = Path(__file__).resolve().parents[1]
 GENERATOR = ROOT / "scripts" / "generate_v0252_release_gate.py"
+PINNED_BITCOIND_SHA256 = "d55c12b0b02001cc16b1481c4075361dcba193100a8143924abda911174c09ec"
+PINNED_STRATA_COMMIT = "f94c06d08ff29eee746f3e20bd63078d2949b304"
+
+
+def test_post_build_companion_evidence_is_not_packaged_into_its_subject():
+    assert included_in_source_archive(
+        ROOT / "results" / "v0252_evidence_verification.json"
+    )
+    assert not included_in_source_archive(
+        ROOT / "results" / "clean_archive_verification_v0252.json"
+    )
+    assert not included_in_source_archive(ROOT / "results" / "v0252_release_gate.json")
 
 
 def _run_generator(args: list[str]) -> subprocess.CompletedProcess[str]:
@@ -48,6 +61,22 @@ def test_gate_stays_fail_closed_with_no_v0252_evidence(tmp_path: Path):
     assert document["facts"]["bitcoin_core_regtest_passed"] is False
     assert document["facts"]["current_bridge_compiled_and_tested"] is False
     assert document["evidence_verification"] is None
+
+
+def test_missing_clean_archive_companion_is_absent_not_an_io_error(tmp_path: Path):
+    result = _run_generator(
+        [
+            "--clean-archive-report",
+            str(tmp_path / "does-not-exist.json"),
+            "--output",
+            str(tmp_path / "gate.json"),
+        ]
+    )
+    assert result.returncode == 0, result.stderr
+    document = json.loads((tmp_path / "gate.json").read_text())
+    assert document["clean_archive_report"] is None
+    assert document["facts"]["complete_source_archive_reproducible"] is False
+    assert document["safe_for_funds"] is False
 
 
 def test_gate_refuses_to_run_when_verifier_flags_inconsistency(tmp_path: Path):
@@ -115,7 +144,10 @@ def test_gate_reflects_a_genuinely_passed_core_matrix_via_the_verifier_only(tmp_
     MatrixReport(
         schema_name="ranklock-v0252-core-matrix-v1",
         required_case_ids=CORE_CASE_IDS,
-        identity={"expected_release": "31.1"},
+        identity={
+            "expected_release": "31.1",
+            "bitcoind_sha256": PINNED_BITCOIND_SHA256,
+        },
         cases=tuple(cases),
     ).write(matrix_path)
 
@@ -301,7 +333,10 @@ def test_a_fully_passing_local_matrix_still_cannot_open_the_funds_gate(tmp_path:
     MatrixReport(
         schema_name="ranklock-v0252-core-matrix-v1",
         required_case_ids=CORE_CASE_IDS,
-        identity={"expected_release": "31.1"},
+        identity={
+            "expected_release": "31.1",
+            "bitcoind_sha256": PINNED_BITCOIND_SHA256,
+        },
         cases=tuple(
             CaseResult(
                 case_id=cid,
@@ -318,7 +353,10 @@ def test_a_fully_passing_local_matrix_still_cannot_open_the_funds_gate(tmp_path:
     MatrixReport(
         schema_name="ranklock-v0252-strata-build-matrix-v1",
         required_case_ids=STRATA_BUILD_CASE_IDS,
-        identity={"strata_commit": "f" * 40},
+        identity={
+            "strata_commit": PINNED_STRATA_COMMIT,
+            "bitcoind": {"sha256": PINNED_BITCOIND_SHA256},
+        },
         cases=tuple(
             CaseResult(
                 case_id=cid,

@@ -1,0 +1,79 @@
+{
+  "schema": "ranklock-v026-subject-bound-sp1-network-receipt-recovery-v1",
+  "evidence_class": "EXACT",
+  "base_commit": "f94c06d08ff29eee746f3e20bd63078d2949b304",
+  "generated_by": "scripts/generate_v026_subject_bound_sp1_recovery_results.py; every size and digest computed from the artifacts on disk",
+  "date_utc": "2026-08-23T17:28:31Z",
+  "recovery_mode": "offline import; no network request, no local proving",
+  "fulfilled_request_id": "0da45348ba6a7fbd6e7af661a782133b8771b1008d303cfbe4fb26122331bcc7",
+  "source_artifact": {
+    "path": "results/v026-subject-bound-sp1/network-proof-0da45348-raw.bincode",
+    "bytes": 2179,
+    "sha256": "158b6e0c200479499b6232a5a8c80de8eb4bfeb2fc169625547604d77cf1a09d",
+    "decoded_as": "sp1_verifier::ProofFromNetwork",
+    "why_not_sp1_proof_with_public_values": "SP1ProofWithPublicValues carries a trailing tee_proof Option<Vec<u8>> that the network form omits; the artifact ends at sp1_version, so that deserialization is short by the Option discriminant and cannot succeed. sp1-sdk was therefore not added as a dependency."
+  },
+  "verified_receipt": {
+    "path": "results/v026-subject-bound-sp1/bridge_counterproof_subject_v1_SP1_v6.1.0.groth16.proof",
+    "bytes": 908,
+    "sha256": "35d12fc470bb501c8b5d743554dc40e160f385821e8d5f28b860662b4be6dc75",
+    "proof_bytes": 356,
+    "public_values_bytes": 488,
+    "sp1_circuit_version": "v6.1.0",
+    "proof_type": "Groth16",
+    "verified_by": "SubjectBoundSp1Groth16VerifierV1 (standalone); host.verify not used"
+  },
+  "root_causes_fixed": [
+    {
+      "id": "RC1-circuit-version-pin",
+      "was": "SUBJECT_BOUND_SP1_CIRCUIT_VERSION_V1 = v6.2.4, the sp1-prover crate version",
+      "now": "v6.1.0",
+      "evidence": "sp1-prover-6.2.4/SP1_CIRCUIT_VERSION contains v6.1.0; the network artifact records v6.1.0"
+    },
+    {
+      "id": "RC2-lossy-host-round-trip",
+      "was": "host.verify rebuilt Groth16 public input 1 via SP1PublicValues::hash_bn254() (SHA-256), rejecting a proof that committed to SP1's Blake3 public-values hash",
+      "now": "the importer builds canonical zkaleido bytes directly from the network proof and verifies with the standalone verifier, which retries both hashes",
+      "zkaleido_modified": false
+    },
+    {
+      "id": "RC3-nondeterministic-expected-output",
+      "discovered_during_this_run": true,
+      "was": "tests compared a persisted receipt's output against run_subject_bound_counterproof recomputed in a later process, but OPERATOR_KEYPAIR is LazyLock::new(generate_keypair) \u2014 random per process \u2014 so operator_pubkey and the signature-dependent bridge_proof_txid can never match. The assertion was unsatisfiable by construction, which left saved_subject_bound_sp1_groth16_receipt_verifies_standalone unrunnable against any saved receipt.",
+      "now": "assert_persisted_subject_output_matches compares the complete manifest-determined ack_subject and game_idx exactly, and asserts the two per-process fields are well-formed"
+    }
+  ],
+  "verification_performed": {
+    "cargo_check_default_features": "pass",
+    "cargo_check_subject_bound_sp1_verifier_v1": "pass",
+    "cargo_clippy_sp1_execution_tests_tests_D_warnings": "pass",
+    "cargo_test_sp1_execution_tests": "46 passed, 0 failed, 4 ignored",
+    "importer_test": "network_subject_bound_sp1_groth16_artifact_imports_and_verifies_standalone: pass",
+    "reload_test": "saved_subject_bound_sp1_groth16_receipt_verifies_standalone: pass against the persisted receipt",
+    "receipt_roundtrip": "create_new + write_all + sync_all + reload + exact equality + standalone re-verification"
+  },
+  "source_hashes": {
+    "crates/proofs/bridge-counterproof/Cargo.toml": "55accc106cee20206377c1dda90dc301b8cdbb6b026a54308497e0725699edc8",
+    "crates/proofs/bridge-counterproof/src/lib.rs": "f3b78ddc380ac0e120c0f0b2994ecbaa6a96342e489b0a892c81669657491f06",
+    "crates/proofs/bridge-counterproof/src/statements.rs": "a45993b1e6e2ab1183d339c12e81633e56a51720f5c3c4a49ae02b933afd1a89",
+    "crates/proofs/bridge-counterproof/src/subject_receipt.rs": "95728bd82a43914306a4b8c8c5868c877f654fb1a27940ad1bdb089a9479b52b"
+  },
+  "funding_eligible": false,
+  "safe_for_funds": false,
+  "what_this_closes": "The deterministic final Groth16 execution/verification evidence gate for the subject-bound counterproof statement, and only that gate. The suite is BN254 Groth16, which kill criterion 8 disqualifies from the funding path regardless of how well the receipt verifies.",
+  "what_remains_open": [
+    "runtime consumption of the receipt",
+    "canonical-chain binding and Bitcoin confirmation",
+    "economic qualification",
+    "ceremony",
+    "the remaining v0.26 activation blockers (see docs/59_V026_CRITICAL_PATH_GAP_MAP.md)"
+  ],
+  "not_performed": [
+    "no new paid proof request",
+    "no resubmission to Succinct",
+    "no local prover run",
+    "no private key access",
+    "no edit to zkaleido in the Cargo cache",
+    "no change to STATUS.json or any funding-eligibility flag"
+  ]
+}

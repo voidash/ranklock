@@ -69,7 +69,10 @@ from .predicate_locked_hashlock import (
 _MAGIC_UNSIGNED = b"RLSSU250"
 _MAGIC_SIGNED = b"RLSSS250"
 _MAGIC_BUNDLE_SIGNATURE = b"RLSG2501"
-_VERSION = 2
+# Version 3 makes the bundle context digest the sole positive-lock statement
+# context.  Version-2 bundles accepted an independently supplied lock session
+# and are semantically ambiguous, so they must not parse under this API.
+_VERSION = 3
 _SIG_BYTES = 64
 _G1_BYTES = 32
 _G2_BYTES = 64
@@ -82,8 +85,8 @@ _OP_SHA256 = 0xA8
 _OP_CHECKSIGVERIFY = 0xAD
 
 _CONTRIBUTION_DOMAIN = b"ranklock/split-scalar/contribution/v1\x00"
-_UNSIGNED_DOMAIN = b"ranklock/split-scalar/unsigned-bundle/v1\x00"
-_SIGN_DOMAIN = b"ranklock/split-scalar/bundle-sign/v1\x00"
+_UNSIGNED_DOMAIN = b"ranklock/split-scalar/unsigned-bundle/v3\x00"
+_SIGN_DOMAIN = b"ranklock/split-scalar/bundle-sign/v3\x00"
 _SCALE_CHALLENGE_DOMAIN = b"ranklock/split-scalar/scale-challenge/v1\x00"
 _SCALE_NONCE_DOMAIN = b"ranklock/split-scalar/scale-nonce/v1\x00"
 _CONNECTOR_DOMAIN = b"ranklock/split-scalar/hashlock-connector/v1\x00"
@@ -406,7 +409,7 @@ class SplitScalarContribution:
 class UnsignedSplitScalarBundle:
     context_digest: bytes
     contributions: tuple[SplitScalarContribution, ...]
-    schema: str = "ranklock-unsigned-split-scalar-bundle-v1"
+    schema: str = "ranklock-unsigned-split-scalar-bundle-v3"
 
     def __post_init__(self) -> None:
         _d(self.context_digest, 32, "split-scalar context digest")
@@ -512,7 +515,7 @@ class SplitScalarBundleSignature:
     participant_index: int
     participant_pubkey: bytes
     signature: bytes
-    schema: str = "ranklock-split-scalar-bundle-signature-v1"
+    schema: str = "ranklock-split-scalar-bundle-signature-v3"
 
     def __post_init__(self) -> None:
         _d(self.unsigned_digest, _HASH_BYTES, "unsigned bundle digest")
@@ -616,7 +619,7 @@ def assemble_signed_split_scalar_bundle(
 class SignedSplitScalarBundle:
     unsigned: UnsignedSplitScalarBundle
     signatures: tuple[bytes, ...]
-    schema: str = "ranklock-signed-split-scalar-bundle-v1"
+    schema: str = "ranklock-signed-split-scalar-bundle-v3"
 
     def __post_init__(self) -> None:
         if len(self.signatures) != len(self.unsigned.contributions):
@@ -678,11 +681,26 @@ class SignedSplitScalarBundle:
         *,
         vk: PositiveGroth16VerifyingKey,
         public_inputs: Iterable[int],
-        session_context: bytes,
+        expected_context_digest: bytes,
     ) -> bool:
         if not self.verify_signatures():
             return False
-        expected_statement = statement_digest(vk, public_inputs, session_context=session_context)
+        try:
+            context_digest = _d(
+                expected_context_digest,
+                _HASH_BYTES,
+                "expected split-scalar context digest",
+            )
+            inputs = tuple(int(value) for value in public_inputs)
+            expected_statement = statement_digest(
+                vk,
+                inputs,
+                session_context=context_digest,
+            )
+        except (BabePositiveLockError, SplitScalarLockError, TypeError, ValueError):
+            return False
+        if self.unsigned.context_digest != context_digest:
+            return False
         if any(
             contribution.positive_lock.vk_digest != vk.digest
             or contribution.positive_lock.statement_digest != expected_statement
@@ -777,13 +795,21 @@ def unlock_split_scalar_bundle(
     public_inputs: Iterable[int],
     proof: PositiveGroth16Proof,
     participant_outputs_g1: Sequence[bytes],
-    session_context: bytes,
+    expected_context_digest: bytes,
 ) -> SplitScalarUnlockResult:
     outputs = tuple(bytes(item) for item in participant_outputs_g1)
+    context_digest = _d(
+        expected_context_digest,
+        _HASH_BYTES,
+        "expected split-scalar context digest",
+    )
+    inputs = tuple(int(value) for value in public_inputs)
     if len(outputs) != len(bundle.unsigned.contributions):
         raise SplitScalarLockError("one projective output is required per participant")
     if not bundle.verify_for_statement(
-        vk=vk, public_inputs=public_inputs, session_context=session_context
+        vk=vk,
+        public_inputs=inputs,
+        expected_context_digest=context_digest,
     ):
         raise SplitScalarLockError("split-scalar bundle failed statement qualification")
     preimages: list[bytes] = []
@@ -791,11 +817,11 @@ def unlock_split_scalar_bundle(
         try:
             preimage = unlock_positive_lock(
                 vk,
-                public_inputs,
+                inputs,
                 proof,
                 contribution.positive_lock,
                 output,
-                session_context=session_context,
+                session_context=context_digest,
             )
         except BabePositiveLockError as exc:
             raise SplitScalarLockError(
@@ -824,8 +850,7 @@ def setup_split_scalar_fixture(
     *,
     vk: PositiveGroth16VerifyingKey,
     public_inputs: Iterable[int],
-    session_context: bytes,
-    context_digest: bytes,
+    expected_context_digest: bytes,
     participant_secrets: Sequence[int],
     scalar_shares: Sequence[int],
     retained_object_digests: Sequence[bytes],
@@ -833,9 +858,20 @@ def setup_split_scalar_fixture(
     preimages: Sequence[bytes] | None = None,
     nonce_namespace_bases: Sequence[int] | None = None,
 ) -> tuple[SignedSplitScalarBundle, tuple[bytes, ...]]:
-    """Single-process conformance helper; production parties run this independently."""
+    """Single-process conformance helper; production parties run this independently.
+
+    The bundle context is also the positive-lock session context.  Accepting
+    those as independent caller inputs previously allowed a correctly signed
+    bundle to name one authorization context while its locks targeted another.
+    """
 
     count = len(participant_secrets)
+    bound_context_digest = _d(
+        expected_context_digest,
+        _HASH_BYTES,
+        "expected split-scalar context digest",
+    )
+    inputs = tuple(int(value) for value in public_inputs)
     if not (
         count
         == len(scalar_shares)
@@ -870,10 +906,10 @@ def setup_split_scalar_fixture(
             raise SplitScalarLockError("scalar shares must be nonzero")
         lock = setup_positive_lock(
             vk,
-            public_inputs,
+            inputs,
             preimage,
             scale=scale,
-            session_context=session_context,
+            session_context=bound_context_digest,
         )
         contributions.append(
             SplitScalarContribution.create(
@@ -888,7 +924,7 @@ def setup_split_scalar_fixture(
                 nonce_namespace_base=namespace_bases[index],
             )
         )
-    unsigned = UnsignedSplitScalarBundle(_d(context_digest, 32, "context digest"), tuple(contributions))
+    unsigned = UnsignedSplitScalarBundle(bound_context_digest, tuple(contributions))
     bundle = SignedSplitScalarBundle.create(
         unsigned, participant_secrets=participant_secrets
     )

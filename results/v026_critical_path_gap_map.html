@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RankLock v0.26 critical-path gap map</title>
+  <style>
+    :root { color-scheme: dark; --bg:#0b1020; --panel:#141b2d; --ink:#e8edf7; --muted:#aab5c9; --accent:#78d6c6; --warn:#ffcb6b; --bad:#ff7b86; --line:#29334b; }
+    * { box-sizing: border-box; }
+    body { margin:0; background:linear-gradient(145deg,#08101b,#11182a 48%,#0b1020); color:var(--ink); font:16px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace; }
+    main { max-width:1080px; margin:0 auto; padding:52px 24px 90px; }
+    h1 { font:700 clamp(2rem,5vw,4.3rem)/1.02 ui-sans-serif,system-ui,sans-serif; letter-spacing:-.045em; margin:0 0 14px; }
+    h2 { margin:46px 0 14px; color:var(--accent); font-size:1.05rem; text-transform:uppercase; letter-spacing:.12em; }
+    h3 { margin:26px 0 8px; font-size:.95rem; color:var(--warn); letter-spacing:.04em; }
+    p, li { max-width:88ch; }
+    .lede { color:var(--muted); font-size:1.1rem; }
+    .status { display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:12px; margin:30px 0; }
+    .card { background:rgba(20,27,45,.88); border:1px solid var(--line); border-radius:12px; padding:18px; }
+    .label { color:var(--muted); font-size:.75rem; text-transform:uppercase; letter-spacing:.1em; }
+    .value { margin-top:7px; font-weight:700; }
+    .good { color:var(--accent); } .warn { color:var(--warn); } .bad { color:var(--bad); }
+    code, pre { background:#090e19; border:1px solid var(--line); border-radius:7px; }
+    code { padding:.12em .35em; }
+    pre { overflow:auto; padding:15px; color:#d9e3f3; }
+    a { color:var(--accent); }
+    .boundary { border-left:4px solid var(--bad); padding:14px 18px; background:rgba(255,123,134,.08); }
+    .note { border-left:4px solid var(--warn); padding:14px 18px; background:rgba(255,203,107,.07); margin:18px 0; }
+    .scroll { overflow-x:auto; margin:18px 0; }
+    table { border-collapse:collapse; width:100%; min-width:640px; font-size:.9rem; }
+    th, td { border:1px solid var(--line); padding:9px 11px; text-align:left; vertical-align:top; }
+    th { color:var(--muted); font-size:.74rem; text-transform:uppercase; letter-spacing:.09em; background:rgba(20,27,45,.7); }
+    .bar { display:flex; height:26px; border-radius:6px; overflow:hidden; border:1px solid var(--line); margin:14px 0 6px; min-width:340px; }
+    .bar span { display:flex; align-items:center; justify-content:center; font-size:.7rem; color:#08101b; font-weight:700; }
+    ol, ul { padding-left:1.5rem; }
+    footer { margin-top:54px; color:var(--muted); border-top:1px solid var(--line); padding-top:18px; }
+  </style>
+</head>
+<body><main>
+  <div class="label">Critical-path gap map · 2026-08-22 · Asia/Kathmandu</div>
+  <h1>28 obligations.<br>Four are code.</h1>
+  <p class="lede">Everything that must be true before RankLock v0.26 can hold funds, classified by what kind of work it is and who can actually do it. Non-authorizing. No flag changed, no blocker closed.</p>
+
+  <div class="status">
+    <div class="card"><div class="label">Blocker entries enumerated</div><div class="value">72 raw · 71 unique · 7 sets</div></div>
+    <div class="card"><div class="label">Distinct obligations</div><div class="value warn">28</div></div>
+    <div class="card"><div class="label">Structural blockers</div><div class="value good">0 &mdash; the model checks out</div></div>
+    <div class="card"><div class="label">safe_for_funds</div><div class="value bad">false</div></div>
+  </div>
+
+  <div class="boundary"><strong>This document is decision input, not progress.</strong> It closes nothing, promotes nothing, and does not modify <code>STATUS.json</code> or any <code>results/*.json</code>. Full detail: <code>docs/59_V026_CRITICAL_PATH_GAP_MAP.md</code>.</div>
+
+  <h2>The shape of the remaining work</h2>
+  <p>Of 28 distinct obligations, only four are implementation work in this repo. The rest are decisions with named owners, custody attestations from operations, external execution evidence, or cryptography that does not exist yet.</p>
+
+  <div class="scroll">
+  <div class="bar">
+    <span style="width:35.7%;background:#ff7b86">GOV 10</span>
+    <span style="width:28.6%;background:#ffcb6b">CTRL 8</span>
+    <span style="width:17.9%;background:#9ab8ff">EXEC 5</span>
+    <span style="width:14.3%;background:#78d6c6">CODE 4</span>
+    <span style="width:3.5%;background:#c9a2ff">1</span>
+  </div>
+  </div>
+
+  <div class="scroll">
+  <table>
+    <tr><th>Class</th><th>#</th><th>What it means</th></tr>
+    <tr><td class="bad">GOV</td><td>10</td><td>Governance / Bitcoin-economics ratification. A named owner must decide. No code closes it.</td></tr>
+    <tr><td class="warn">CTRL</td><td>8</td><td>Control, possession, and custody attestation. Operations must prove who controls what &mdash; and prove erasure.</td></tr>
+    <tr><td>EXEC</td><td>5</td><td>External execution evidence: full Bitcoin Core matrix, live FoundationDB, ASM activation, signet.</td></tr>
+    <tr><td class="good">CODE</td><td>4</td><td>Actual Rust/Python work in this repo.</td></tr>
+    <tr><td>CRYPTO</td><td>1</td><td>The proof suite. Does not exist. Expands into 25 gate-level entries and blocks the largest subtree.</td></tr>
+  </table>
+  </div>
+
+  <p><code>results/v026_timeout_economics.json</code> reports <code>/assessment/structural_blockers: 0</code>. Every structural property the model can check already passes. What is missing is external authority, not logic.</p>
+
+  <div class="note"><strong>Where external audit sits.</strong> There is deliberately no AUDIT class &mdash; no obligation is <em>solely</em> an audit item. Independent review attaches to three of them via the &sect;12 gates: validity-withholding economics (<em>Liveness/economics</em>), presign erasure (<em>Graph signing</em>), and release cryptography (<em>Concrete security</em> and <em>Native implementation</em>). All three land at &sect;15 step 9 under &sect;16 decision 11. Kill criteria 34 and 35 make it binding: untyped audit evidence, or any open critical/high finding, keeps <code>safe_for_funds</code> false regardless of implementation state.</div>
+
+  <h2>Five findings</h2>
+
+  <h3>F1 &mdash; This is not a coding problem</h3>
+  <p>24 of 28 obligations cannot be discharged by writing software. Staffing this as an engineering push mistakes the bottleneck.</p>
+
+  <h3>F2 &mdash; The SP1/BN254 receipt track is not on the funding path</h3>
+  <p>Protocol doc &sect;14 hard kill criterion 8: <em>&ldquo;BN254 remains in the proof or conditional-lock trust path&rdquo;</em> keeps <code>safe_for_funds</code> false. Criterion 9 closes the escape hatch: <em>&ldquo;a new lock wraps a still-authoritative weaker proof suite.&rdquo;</em> &sect;1.4 sets a 128-bit floor with a BN462 target and states neither suite is implemented or qualified today; &sect;2 places the current BN254 <code>PositiveLock</code> near 100-bit security with variable-time Python operations.</p>
+  <p>The subject-bound SP1 work is BN254 Groth16. Recovering that receipt closes the deterministic final Groth16 execution/verification evidence gate and nothing else. Legitimate research evidence &mdash; not funds-safety progress, and it must not be reported as such.</p>
+
+  <h3>F3 &mdash; Four decisions gate almost everything</h3>
+  <p>&sect;16 decisions 1&ndash;4 (proof-suite floor, S-DFB vs C-DIRECT release profile, timeout/NACK economics, wire profile) sit upstream of the CRYPTO obligation, both identity-layer CODE obligations, and the entire GOV cluster. The doc is blunt about it: <em>&ldquo;Open decisions are not permission to use defaults. Each one changes the security theorem or economic loss bound.&rdquo;</em></p>
+
+  <h3>F4 &mdash; Published evidence tracks the older graph; the live path is unpersisted</h3>
+  <p>Verified in source, not inferred:</p>
+  <ul>
+    <li><code>V026ActivationBlocker</code> &mdash; <strong>16</strong> blockers. This is what <code>results/v026_rust_graph_core.json</code> reports, and it is correctly scoped to the v1 assembler it tests.</li>
+    <li><code>V026ThresholdActivationBlockerV3</code> &mdash; <strong>17</strong> blockers, adding <code>ThresholdAckWitnessAdoptionUnimplemented</code>.</li>
+    <li><code>v026_admission_v3.rs:36</code> &mdash; <code>V026_BLOCKER_COUNT_V3 = 17</code>. This is the live path.</li>
+    <li>FoundationDB row specs present: <code>v026_admissions.rs</code> (15), <code>v026_admissions_v2.rs</code> (16), <code>v026_ack_witnesses_v3.rs</code>. <strong>There is no <code>v026_admissions_v3.rs</code>.</strong></li>
+  </ul>
+  <p>The v3 threshold observation carrying 17 blockers has no persistence envelope at all &mdash; the same class of gap already recorded for v1 as <code>current_16_blocker_graph_encodable: false</code>, one generation later, and named by no evidence file.</p>
+  <div class="note"><strong>Report only.</strong> Closing this means regenerating evidence and extending the claim boundary. Hand-editing run-generated JSON destroys provenance.</div>
+
+  <h3>F5 &mdash; v0.25.2 blockers are superseded by redesign, not inherited</h3>
+  <p>&sect;2 establishes as implementation fact that v0.25.2 cannot be promoted in place, and &sect;1.8 forbids in-place migration. The seven v0.25.2 funds blockers are historical context. Three of them &mdash; native constant-time implementation, independent cryptography audit, independent implementation audit &mdash; nevertheless recur as v0.26 acceptance gates. They were never closed; they return under new scope.</p>
+
+  <h2>What each open decision unblocks</h2>
+  <p>&sect;16 lists <strong>eleven</strong> open decisions, each with owners and a &ldquo;must be fixed before&rdquo; boundary. Inverted, highest-leverage first:</p>
+
+  <div class="scroll">
+  <table>
+    <tr><th>Decision</th><th>Owners</th><th>Unblocks</th></tr>
+    <tr><td>1. Ratify 128-bit floor + BN462; select, harden, audit, pin native backend</td><td>cryptography + governance</td><td>The CRYPTO obligation and all 25 gate-level entries under it; kill criteria 8, 9, 10, 16, 17. <strong>Root of the largest subtree.</strong></td></tr>
+    <tr><td>2. Select S-DFB or C-DIRECT; for C-DIRECT pin device/firmware/attestation policy</td><td>crypto + protocol + governance + operations</td><td>Release-mechanism shape; &sect;12 Setup and One-shot gates; kill 12, 15, 44, 52&ndash;55.</td></tr>
+    <tr><td>3. Timeout/NACK economic semantics; N-of-N vs weaker threshold</td><td>protocol + Bitcoin economics</td><td>Four GOV obligations; &sect;15 step-1 kill decision; kill 18, 30.</td></tr>
+    <tr><td>4. Exact wire maxima/widths and operational signature profile</td><td>protocol + implementation + crypto</td><td>Three obligations plus the &sect;15 step-2 milestone. <strong>Cheapest high-leverage decision; owners already internal.</strong></td></tr>
+    <tr><td>5. Participant and graph-signer counts / control domains</td><td>governance + operations</td><td>Roster weight, controller domain, presign erasure; kill 7, 42, 46.</td></tr>
+    <tr><td>6. Parent-release and ACK/NACK finality depths + removal bounds</td><td>Bitcoin economics + operations</td><td>By-horizon CSV/reorg execution; signet deployment; kill 43, 50.</td></tr>
+    <tr><td>7. CSV delay, fee reserve, CPFP responsibility, halt threshold</td><td>Bitcoin economics</td><td>Four obligations; &sect;12 E2E matrix.</td></tr>
+    <tr><td>8. Registry <em>f</em>, BFT engine, replica roster, retention-key service, failure domains</td><td>operations + security</td><td>Runtime admission; Safety-registry and exact-byte-availability gates; kill 22, 45.</td></tr>
+    <tr><td>9. Initial per-deposit, aggregate, active-count caps</td><td>governance</td><td>Per-principal allowance; bounded activation; kill 25, 40.</td></tr>
+    <tr><td>10. Admission expiry, revocation distribution, cooldown</td><td>governance + operations</td><td>Protected-baseline authority; runtime admission; kill 24, 41.</td></tr>
+    <tr><td>11. Exact evidence schemas and external signer rosters</td><td>auditors + governance</td><td>External-review gate; kill 34, 35.</td></tr>
+  </table>
+  </div>
+
+  <p><strong>Reading:</strong> decision 4 is the cheapest with real downstream unlock and its owners are internal. Decisions 1 and 2 unlock the most but need external cryptography review and governance ratification &mdash; longest lead time, so start them first even though they finish last.</p>
+
+  <h2>Order (&sect;15, non-negotiable)</h2>
+  <ol>
+    <li><strong>Kill decisions</strong> &mdash; security floor, release profile, timeout fund preservation. The doc says explicitly: <em>&ldquo;Stop if any cannot be made safe.&rdquo;</em></li>
+    <li><strong>Identity DAG and profiles</strong> &mdash; <em>&ldquo;The first implementation milestone is therefore not a proof coordinator. It is the acyclic identity/profile codec plus graph-v2 connector and presign theorem.&rdquo;</em></li>
+    <li>Graph v2 and presigning</li>
+    <li>Safety registry and admission &mdash; including the missing v3 persistence envelope from F4</li>
+    <li>Proof-suite spike &mdash; the CRYPTO obligation proper</li>
+    <li>Selected ceremony and participant</li>
+    <li>Coordinator and bridge</li>
+    <li>Live matrix &mdash; full STRATA-010..020 restoration with zero-exit commands</li>
+    <li>Independent review &mdash; cryptography, implementation, Bitcoin economics, operations</li>
+    <li>Staged activation &mdash; signet &rarr; mainnet shadow &rarr; governance-capped bounded activation</li>
+  </ol>
+
+  <h2>One demonstrated hole, not merely unverified</h2>
+  <p>Stake exclusivity is not an open question &mdash; it has a live counterexample. From the claim boundary: <em>&ldquo;A valid competing live-key stake spend is accepted and prevents Slash; stake exclusivity is not established.&rdquo;</em> <code>STATUS.json</code> records <code>stake_exclusivity_proved: false</code>. Every other EXEC obligation is missing evidence; this one is a known defect.</p>
+
+  <h2>Deferred out of this session</h2>
+  <ul>
+    <li><strong>D1 &mdash; SP1 receipt recovery.</strong> The fulfilled reserved request's artifact carries an S3 expiry of <code>Tue 25 Aug 2026 00:00 UTC</code> and resubmission is forbidden, so the 2179 bytes were irreplaceable and on a clock. Fetched and persisted durably at <code>results/v026-subject-bound-sp1/network-proof-0da45348-raw.bincode</code> (0600), sha256 <code>158b6e0c&hellip;1a09d</code>. Recovery is now offline and unscheduled. Value bounded by F2.</li>
+    <li><strong>D2 &mdash; Rotate the SP1 network key.</strong> Mandated by the handoff because the value was pasted into chat history. Not required for D1. Not done.</li>
+    <li><strong>D3 &mdash; Regenerate v3 evidence</strong> for the 17-blocker graph and the missing row spec. Evidence run plus claim-boundary extension, not a hand edit.</li>
+  </ul>
+
+  <h2>Reconciliation</h2>
+  <pre>72 raw entries across 7 sets
+ -1 exact duplicate (atomic-roster-weight-evidence-unverified)
+ = 71 unique
+
+   32  primary   (activation 16 + funding 13 + terminal 4, less the duplicate)
+   32  supporting gate-level (threshold 16 + wrapper 9 + counterproof 7)
+    7  historical v0.25.2
+ = 71  ✓
+
+   32  unique primary strings
+   -4  semantic merges (validity-withholding, fresh-deposit,
+       presign-erasure, stake-exclusivity)
+ = 28  distinct obligations
+     = 10 GOV + 8 CTRL + 5 EXEC + 4 CODE + 1 CRYPTO  ✓</pre>
+  <p>Counts verified mechanically against the JSON, not tallied by hand. Every enumerated entry appears exactly once.</p>
+
+  <footer>
+    <p><code>safe_for_funds</code> is false. Every <code>funding_eligible</code> is false. No blocker was closed, downgraded, or reinterpreted. <code>results/v026_timeout_economics.json</code> remains EXACT abstract graph and terminal-policy evidence; <code>results/v026_rust_graph_core.json</code> remains REPRODUCED research graph/Core evidence; both remain non-authorizing.</p>
+    <p>Full document with per-obligation sourcing: <code>docs/59_V026_CRITICAL_PATH_GAP_MAP.md</code></p>
+  </footer>
+</main></body>
+</html>

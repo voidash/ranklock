@@ -19,7 +19,10 @@ For v0.25, the producer of that preimage must be the public evaluator after:
    graph data and writes the context-specific unlock file atomically.
 
 The Python reference implementation for steps 1–4 is in
-`ranklock.two_phase_sidecar`. The final evaluator/preimage export remains a
+`ranklock.two_phase_sidecar`. `export_ack_from_verified_unlock` implements the
+proof-gated step-6 library boundary and refuses a commitment that was not
+already published for graph setup. A deployed process connecting step 5 to
+that function is still absent. The evaluator/preimage export remains a
 separate process boundary so the bridge executor never receives setup secrets,
 participant shares, or an alternative signing key.
 

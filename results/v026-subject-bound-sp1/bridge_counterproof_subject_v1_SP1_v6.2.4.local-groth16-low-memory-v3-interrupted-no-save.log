@@ -1,0 +1,5 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.11s
+     Running unittests src/lib.rs (target/debug/deps/strata_bridge_counterproof-f3edb29ec70ec91d)
+
+running 1 test
+test statements::tests::subject_bound_sp1_guest_generates_and_verifies_groth16_proof has been running for over 60 seconds

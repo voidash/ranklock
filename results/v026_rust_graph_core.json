@@ -1,0 +1,110 @@
+{
+  "activation_blockers": [
+    "research-nums-profile",
+    "canonical-wire-identity-unimplemented",
+    "release-cryptography-evidence-unverified",
+    "controller-domain-evidence-unverified",
+    "slash-header-profile-incompatible",
+    "external-output-evidence-unverified",
+    "fresh-deposit-evidence-unverified",
+    "stake-exclusivity-evidence-unverified",
+    "presign-erasure-evidence-unverified",
+    "legacy-material-exclusion-unverified",
+    "fee-policy-evidence-unverified",
+    "bitcoin-core-execution-evidence-unverified",
+    "asm-activation-evidence-unverified",
+    "runtime-admission-unimplemented",
+    "validity-withholding-economics-unresolved",
+    "atomic-roster-weight-evidence-unverified"
+  ],
+  "atomic_reserve_topology": {
+    "counterproof_input_order": "C_0..C_(n-1),P,D",
+    "counterproof_output_order": "D_recovery,R_i,anchor_CP,U_j_for_j_ne_i",
+    "owner_input_order": "D,Q,P,S,C_0..C_(n-1)",
+    "owner_output_order": "owner,U_0..U_(n-1)",
+    "reserve_returns_exact_and_beneficiary_bound": true,
+    "worst_case_abandoned_counterproof_sat": 0
+  },
+  "base_commit": "f94c06d08ff29eee746f3e20bd63078d2949b304",
+  "bitcoin_core": {
+    "branch_acceptance": {
+      "ack": true,
+      "counterproof_alternative_0": true,
+      "counterproof_alternative_1": true,
+      "owner_payout_at_first_valid_csv_height": true,
+      "slash_after_ack_and_csv": true,
+      "timeout_at_first_valid_csv_height": true
+    },
+    "conflict_and_ancestry_checks": {
+      "ack_created_slash_authorization": true,
+      "ack_timeout_shared_resolution": true,
+      "all_counterproof_reserves_consumed_by_every_selector": true,
+      "counterproof_owner_shared_deposit_and_selection": true,
+      "counterproof_sibling_shared_selection": true,
+      "stake_exclusivity_proved": false,
+      "timeout_slash_shared_contest_slash": true
+    },
+    "focused_tests_failed": 0,
+    "focused_tests_passed": 6,
+    "relay_policy": {
+      "confirmed_contest_parent_accepts_same_signed_counterproof": true,
+      "unconfirmed_v3_contest_parent_rejects_same_signed_counterproof": true,
+      "unconfirmed_v3_child_weight_limit_wu": 4000
+    },
+    "stake_non_exclusivity_counterexample_executed": true
+  },
+  "commands": [
+    "cargo test -p strata-bridge-tx-graph 'v026_graph::tests::core_' -- --nocapture",
+    "cargo test -p strata-bridge-tx-graph v026_graph::tests",
+    "cargo test -p strata-bridge-tx-graph --lib",
+    "cargo test -p strata-bridge-connectors --lib",
+    "cargo clippy -p strata-bridge-connectors --all-targets -- -D warnings",
+    "cargo clippy -p strata-bridge-tx-graph --all-targets -- -D warnings",
+    "RUSTDOCFLAGS='-D warnings' cargo doc -p strata-bridge-tx-graph --no-deps",
+    "cargo fmt --all -- --check",
+    "git diff --check"
+  ],
+  "evidence_class": "REPRODUCED",
+  "execution_log_embedded": false,
+  "funding_eligible": false,
+  "independent_read_only_audits": 3,
+  "measured_signed_weights": {
+    "counterproof_v2_n2_n_data128_wu": 10690,
+    "owner_payout_v2_n2_n_data128_wu": 2345,
+    "profile_is_general_roster_bound": false
+  },
+  "patch_artifact": {
+    "path": "integration/alpen-validity-first-f94c-v025/pending/v026-rust-research.diff",
+    "reapplied_to_installer_baseline": true,
+    "sha256": "8e1d5a762f0ac29b8717047f9ddb74715e1ee7b007d896ebbedcf3f934ea9841"
+  },
+  "safe_for_funds": false,
+  "schema": "ranklock-v026-rust-graph-core-evidence-v2",
+  "source_hashes": {
+    "crates/connectors/src/contest_counterproof_v2.rs": "3e27b1c39ccf279a4559c6e6edcee69c7e36e5316cf459f8bee9ac2d42a43bef",
+    "crates/connectors/src/contest_payout_gate_v2.rs": "6a0f4e0d3b6524665ce6625942d95ec10f7cf4f620b9abf4bc3dd1fbddc998b8",
+    "crates/connectors/src/contest_slash_gate_v2.rs": "7a48ff464ea6a7ec2d95d016c242781c10399d6048bd2857b247e1a4749b0742",
+    "crates/connectors/src/counterproof_resolution_v2.rs": "4e104bc53e8e3abae534933aca3465701818c9175e743278a1c4c38eb8ecd900",
+    "crates/connectors/src/ranklock_nums.rs": "15e071f8ecddbc70184048728fe166b88e4059d5def1513a2b9016e4841ae368",
+    "crates/connectors/src/slash_authorization_v2.rs": "2258d134fa0d768f54aa747d5edfebdc68b50a25a8ce011e436e2a3f3d558a55",
+    "crates/tx-graph/src/transactions/contest_v2.rs": "fb77a3d5c112954eb1268447222ea06ed7f75cbd0f311c6e3f041cc6044cc2d4",
+    "crates/tx-graph/src/transactions/counterproof_ack_v2.rs": "7b727651f3cf4c1f9302a2d13d1fa776ee62931a53baee556b9b7a97a6f9a26b",
+    "crates/tx-graph/src/transactions/counterproof_timeout_settlement_v2.rs": "8092b9f48c65e895b1e289174ca491aed3a8e1c08bb9559eb934b947e068eaa4",
+    "crates/tx-graph/src/transactions/counterproof_v2.rs": "b0542d6684a45d9f83c86ea709801e6fcd25c56e8cdd12993e9b03af6a58d9e5",
+    "crates/tx-graph/src/transactions/nums_safety_v2.rs": "2b8543767d6918dc57f37bceed133aa58af69544e62859ed710aebddab9573c8",
+    "crates/tx-graph/src/transactions/owner_payout_v2.rs": "5fce9291e1a710b97d9885c3d82bb6fc48c0466570a43edd24446e1270207edd",
+    "crates/tx-graph/src/transactions/slash_v2.rs": "517d4f81e3bf52126c0442379dde7db14daed5bdf033b541c53fbe80c210b54f",
+    "crates/tx-graph/src/transactions/template_fee_v2.rs": "165556807c9025f171313c6d5a4761b6c87561d989c232efed1745fd4366f9a5",
+    "crates/tx-graph/src/v026_graph.rs": "a85c3c8e65dffbf35c9b884765c2ffc14667fd4719d1e4a5e7ca382f1931c516"
+  },
+  "workspace_checks": {
+    "connectors_lib_failed": 0,
+    "connectors_lib_passed": 54,
+    "graph_tests_failed": 0,
+    "graph_tests_passed": 12,
+    "strict_clippy_passed": true,
+    "strict_rustdoc_passed": true,
+    "tx_graph_lib_failed": 0,
+    "tx_graph_lib_passed": 98
+  }
+}

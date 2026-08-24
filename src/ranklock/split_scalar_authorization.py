@@ -30,6 +30,7 @@ from .authorized_labels import (
     LabelCommitmentTree,
     issue_label_release,
 )
+from .babe_positive_lock import PositiveGroth16VerifyingKey
 from .bip340 import public_key, sign, verify
 from .bitcoin_authorization import BitcoinAuthorizationBinding
 from .bitcoin_witness_selection import (
@@ -473,6 +474,8 @@ class SplitScalarParticipantReleaseSidecar:
     retained_object_bytes: bytes
     required_manifest_pubkeys: tuple[bytes, ...]
     context: EvaluationContext
+    verifying_key: PositiveGroth16VerifyingKey
+    public_inputs: tuple[int, ...]
     plan: AuthorizationTransactionPlan
     witness_policy_set: SplitScalarWitnessPolicySet
     tree: LabelCommitmentTree
@@ -483,9 +486,34 @@ class SplitScalarParticipantReleaseSidecar:
     minimum_confirmations: int
 
     def __post_init__(self) -> None:
-        index = int(self.participant_index)
-        if not self.bundle.verify_signatures() or index >= len(self.bundle.unsigned.contributions):
-            raise SplitScalarAuthorizationError("split-scalar bundle failed verification")
+        if (
+            isinstance(self.participant_index, bool)
+            or not isinstance(self.participant_index, int)
+            or not 0 <= self.participant_index < len(self.bundle.unsigned.contributions)
+        ):
+            raise SplitScalarAuthorizationError(
+                "participant index is outside the signed split-scalar roster"
+            )
+        index = self.participant_index
+        try:
+            inputs = tuple(int(value) for value in self.public_inputs)
+        except (TypeError, ValueError) as exc:
+            raise SplitScalarAuthorizationError(
+                "split-scalar public inputs are malformed"
+            ) from exc
+        self.public_inputs = inputs
+        if self.verifying_key.digest != self.context.verifier_key_digest:
+            raise SplitScalarAuthorizationError(
+                "split-scalar verifying key differs from evaluation context"
+            )
+        if not self.bundle.verify_for_statement(
+            vk=self.verifying_key,
+            public_inputs=inputs,
+            expected_context_digest=self.context.digest,
+        ):
+            raise SplitScalarAuthorizationError(
+                "split-scalar bundle failed context-bound statement verification"
+            )
         contribution = self.bundle.unsigned.contributions[index]
         if public_key(self.participant_secret) != contribution.participant_pubkey:
             raise SplitScalarAuthorizationError("participant release secret does not match bundle")
@@ -684,8 +712,14 @@ class SplitScalarParticipantReleaseSidecar:
                             participant_secret=self.participant_secret,
                             witnesses=self.rollback_witnesses,
                         )
-                except Exception:
-                    pass
+                except Exception as recovery_exc:
+                    raise SplitScalarAuthorizationError(
+                        "split-scalar participant release failed and "
+                        "abort/rollback-witness recovery also failed"
+                    ) from ExceptionGroup(
+                        "split-scalar primary and fail-closed recovery failures",
+                        [exc, recovery_exc],
+                    )
             if isinstance(exc, SplitScalarAuthorizationError):
                 raise
             if isinstance(exc, (ReleaseSidecarError, RollbackWitnessError)):

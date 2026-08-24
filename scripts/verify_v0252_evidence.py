@@ -43,6 +43,8 @@ RESULTS = ROOT / "results"
 CORE_SCHEMA = "ranklock-v0252-core-matrix-v1"
 STRATA_BUILD_SCHEMA = "ranklock-v0252-strata-build-matrix-v1"
 STRATA_E2E_SCHEMA = "ranklock-v0252-strata-e2e-matrix-v1"
+PINNED_BITCOIND_SHA256 = "d55c12b0b02001cc16b1481c4075361dcba193100a8143924abda911174c09ec"
+PINNED_STRATA_COMMIT = "f94c06d08ff29eee746f3e20bd63078d2949b304"
 
 
 def _check(condition: bool, label: str, checks: dict[str, bool]) -> None:
@@ -132,6 +134,41 @@ def main() -> int:
     for name, report in reports.items():
         _verify_command_integrity(name, report, checks)
         _verify_passed_cases_have_real_commands(name, report, checks)
+
+    # Identity fields are untrusted report input. A passing phase may not
+    # omit them to skip a conditional cross-report comparison.
+    if core is not None and core.status_counts.get("passed", 0) > 0:
+        _check(
+            core.identity.get("bitcoind_sha256") == PINNED_BITCOIND_SHA256,
+            "passing Core evidence identifies the pinned Bitcoin Core executable",
+            checks,
+        )
+    if strata_build is not None and strata_build.status_counts.get("passed", 0) > 0:
+        build_bitcoind = strata_build.identity.get("bitcoind")
+        _check(
+            strata_build.identity.get("strata_commit") == PINNED_STRATA_COMMIT,
+            "passing Strata build evidence identifies the pinned commit",
+            checks,
+        )
+        _check(
+            isinstance(build_bitcoind, dict)
+            and build_bitcoind.get("sha256") == PINNED_BITCOIND_SHA256,
+            "passing Strata build evidence identifies the pinned Bitcoin Core executable",
+            checks,
+        )
+    if strata_e2e is not None:
+        _check(
+            strata_e2e.identity.get("strata_commit") == PINNED_STRATA_COMMIT,
+            "Strata E2E report identifies the pinned commit",
+            checks,
+        )
+        if strata_e2e.status_counts.get("passed", 0) > 0:
+            _check(
+                strata_e2e.identity.get("bitcoind_sha256")
+                == PINNED_BITCOIND_SHA256,
+                "passing Strata E2E evidence identifies the pinned Bitcoin Core executable",
+                checks,
+            )
 
     # Cross-report identity: if both the Core matrix and the Strata E2E
     # matrix recorded a bitcoind executable hash, they must be the same

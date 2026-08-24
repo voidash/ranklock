@@ -12,9 +12,14 @@ import argparse
 import shutil
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 BASE_COMMIT = "f94c06d08ff29eee746f3e20bd63078d2949b304"
+BITCOIN_CORE_31_1_IMAGE = (
+    "bitcoin/bitcoin:31.1@"
+    "sha256:da25cedc66b1daefff9f412ee196c901a899c3fa68a33b20849c3e08b5c40d63"
+)
 HERE = Path(__file__).resolve().parent
 
 
@@ -120,6 +125,7 @@ def apply(repo: Path, dry_run: bool) -> None:
         "crates/bridge-exec/src/graph/ranklock.rs",
         "crates/tx-graph/src/transactions/counterproof.rs",
         "crates/tx-graph/src/transactions/counterproof_ack.rs",
+        "crates/tx-graph/src/funds_safety.rs",
         "crates/bridge-sm/src/graph/transitions/counterproof.rs",
     ):
         install_overlay(repo, rel, dry_run)
@@ -144,6 +150,18 @@ def apply(repo: Path, dry_run: bool) -> None:
                 "    n_of_n::*, timelocked::*, unstaking_intent::*,\n",
                 "    n_of_n::*, timelocked::*, unstaking_intent::*, validity_first_counterproof::*,\n",
                 "prelude export",
+            )
+        ],
+        dry_run,
+    )
+    patch(
+        repo,
+        "crates/tx-graph/src/lib.rs",
+        [
+            (
+                "pub mod fee;\npub mod game_graph;",
+                "pub mod fee;\npub mod funds_safety;\npub mod game_graph;",
+                "export read-only economic safety analyzer",
             )
         ],
         dry_run,
@@ -185,9 +203,11 @@ def apply(repo: Path, dry_run: bool) -> None:
     patch_executor(repo, dry_run)
     patch_bridge_sm_shared_test_fixtures(repo, dry_run)
     patch_notify_new_block_test(repo, dry_run)
+    patch_economic_kill_witness_test(repo, dry_run)
     patch_bridge_sm_nack_tests(repo, dry_run)
     patch_base_logging_defect(repo, dry_run)
     patch_base_p2p_address_collision(repo, dry_run)
+    patch_compose_deployment(repo, dry_run)
 
     if not dry_run:
         scripts_dir = repo / "scripts"
@@ -206,7 +226,7 @@ def patch_fee(repo: Path, dry_run: bool) -> None:
     ))
     edits.append((
         "/// Predicted vsize of [`crate::transactions::counterproof_ack::CounterproofAckTx`].\n///\n/// Structure: 2 inputs (Counterproof timeout script path, ContestPayout normal key path)\n/// + 1 P2TR output (cpfp anchor).\nconst COUNTERPROOF_ACK_VSIZE: u64 = 187;",
-        "/// Predicted vsize of [`crate::transactions::counterproof_ack::CounterproofAckTx`].\n///\n/// Structure: 2 script-path/key-path inputs. Input 0 carries a 32-byte RankLock preimage,\n/// an N/N Schnorr signature, the positive-lock script and a two-leaf control block; input 1\n/// spends ContestPayout normally. The only output is the keyed CPFP anchor.\nconst COUNTERPROOF_ACK_VSIZE: u64 = 211;\n\n/// Exact fixed NACK vsize for a given CSV delay. The transaction has a 94-byte stripped\n/// body. Its witness is one Schnorr signature, the CSV leaf and a two-leaf control block.\nfn validity_first_counterproof_nack_vsize(delay: relative::Height) -> u64 {\n    let n = delay.value() as u64;\n    let sequence_push_len: u64 = if n <= 16 {\n        1\n    } else if n <= 0x7f {\n        2\n    } else if n <= 0x7fff {\n        3\n    } else {\n        4\n    };\n    let leaf_script_len: u64 = 36 + sequence_push_len;\n    let weight: u64 = 94 * 4 + 135 + leaf_script_len;\n    (weight + WITNESS_SCALE_FACTOR as u64 - 1) / WITNESS_SCALE_FACTOR as u64\n}",
+        "/// Predicted vsize of [`crate::transactions::counterproof_ack::CounterproofAckTx`].\n///\n/// Structure: 2 script-path/key-path inputs. Input 0 carries a 32-byte RankLock preimage,\n/// an N/N Schnorr signature, the positive-lock script and a two-leaf control block; input 1\n/// spends ContestPayout normally. The only output is the keyed CPFP anchor.\nconst COUNTERPROOF_ACK_VSIZE: u64 = 211;\n\n/// Exact fixed NACK vsize for a given CSV delay. The transaction has a 94-byte stripped\n/// body. Its witness is one Schnorr signature, the CSV leaf and a two-leaf control block.\nfn validity_first_counterproof_nack_vsize(delay: relative::Height) -> u64 {\n    let n = delay.value() as u64;\n    let sequence_push_len: u64 = if n <= 16 {\n        1\n    } else if n <= 0x7f {\n        2\n    } else if n <= 0x7fff {\n        3\n    } else {\n        4\n    };\n    let leaf_script_len: u64 = 36 + sequence_push_len;\n    let weight: u64 = 94 * 4 + 135 + leaf_script_len;\n    weight.div_ceil(WITNESS_SCALE_FACTOR as u64)\n}",
         "ACK and exact NACK vsize",
     ))
     edits.append((
@@ -227,6 +247,17 @@ def patch_fee(repo: Path, dry_run: bool) -> None:
     marker = '''    #[test]\n    fn pin_contested_payout_vsize() {'''
     added = '''    #[test]\n    fn pin_validity_first_counterproof_nack_vsize() {\n        let signer = TestSigner::generate(N_WATCHTOWERS);\n        let (graph, _) = GameGraph::new(test_game_data(&signer, N_WATCHTOWERS as u32, N_DATA));\n        let signed = graph.counterproofs[0]\n            .counterproof_nack\n            .clone()\n            .finalize(dummy_sig());\n        pin(\n            signed.weight().to_vbytes_ceil(),\n            validity_first_counterproof_nack_vsize(relative::Height::from_height(5)),\n            "validity_first_counterproof_nack",\n        );\n        assert_eq!(\n            validity_first_counterproof_nack_vsize(relative::Height::from_height(144)),\n            138,\n        );\n    }\n\n'''+marker
     edits.append((marker, added, "fixed nack vsize test"))
+    edits.append((
+        "        Amount, Network, OutPoint, Transaction, TxOut, Witness,\n",
+        "        Amount, Network, OutPoint, Transaction, Witness,\n",
+        "remove obsolete mutable-NACK TxOut test import",
+    ))
+    edits.append((
+        "            CooperativePayoutData, CooperativePayoutTx, CounterproofNackData, CounterproofNackTx,\n"
+        "            DepositData, DepositTx,\n",
+        "            CooperativePayoutData, CooperativePayoutTx, DepositData, DepositTx,\n",
+        "remove obsolete mutable-NACK type imports",
+    ))
     # The first edit is an intentional anchor/no-op; drop it to preserve replace_once semantics.
     edits = [e for e in edits if e[0] != e[1]]
     # Remove the pin for the OLD mutable CounterproofNackTx. Under
@@ -821,6 +852,44 @@ def patch_executor(repo: Path, dry_run: bool) -> None:
     write(repo, rel, text, dry_run)
 
 
+def patch_compose_deployment(repo: Path, dry_run: bool) -> None:
+    """Mount the RankLock handoff read-only and pin qualified Bitcoin Core."""
+
+    rel = "compose.yml"
+    patch(
+        repo,
+        rel,
+        [
+            (
+                "    - RUST_BACKTRACE=full\n"
+                "    - FDB_CLUSTER_FILE=/var/fdb/fdb.cluster\n"
+                "  depends_on:\n",
+                "    - RUST_BACKTRACE=full\n"
+                "    - FDB_CLUSTER_FILE=/var/fdb/fdb.cluster\n"
+                "    - STRATA_RANKLOCK_DIR=/var/lib/strata/ranklock\n"
+                "  depends_on:\n",
+                "RankLock directory environment",
+            ),
+            *(
+                (
+                    f"      - ./docker/vol/strata-bridge-{index}:/app\n",
+                    f"      - ./docker/vol/strata-bridge-{index}:/app\n"
+                    "      - ${STRATA_RANKLOCK_DIR:?set STRATA_RANKLOCK_DIR to the "
+                    "private RankLock export root}:/var/lib/strata/ranklock:ro\n",
+                    f"bridge {index} read-only RankLock mount",
+                )
+                for index in range(1, 4)
+            ),
+            (
+                "    image: bitcoin/bitcoin:30\n",
+                f"    image: {BITCOIN_CORE_31_1_IMAGE}\n",
+                "Bitcoin Core 31.1 digest pin",
+            ),
+        ],
+        dry_run,
+    )
+
+
 # Every .rs path this installer creates or edits.  The pinned base tree is
 # rustfmt-clean, so formatting exactly these files normalizes the text this
 # installer inserts without touching anything outside the declared scope.
@@ -833,6 +902,8 @@ TOUCHED_RUST_FILES = (
     "crates/tx-graph/src/transactions/counterproof_ack.rs",
     "crates/tx-graph/src/transactions/mod.rs",
     "crates/tx-graph/src/transactions/prelude.rs",
+    "crates/tx-graph/src/funds_safety.rs",
+    "crates/tx-graph/src/lib.rs",
     "crates/tx-graph/src/fee.rs",
     "crates/tx-graph/src/musig_functor.rs",
     "crates/tx-graph/src/game_graph.rs",
@@ -870,6 +941,8 @@ TOUCHED_RUST_FILES = (
     "crates/bridge-sm/src/graph/tests/contested/process_counterproof_ack.rs",
 )
 
+TOUCHED_NON_RUST_FILES = ("compose.yml",)
+
 
 def format_touched(repo: Path) -> None:
     """Normalize the files this installer wrote with the repo's own rustfmt.
@@ -900,7 +973,7 @@ def format_touched(repo: Path) -> None:
     # pinned base is rustfmt-clean.  Assert that rather than assume it: if the
     # caller's tree had pre-existing formatting drift we must not silently
     # widen the patch beyond its declared scope.
-    declared = set(TOUCHED_RUST_FILES)
+    declared = set(TOUCHED_RUST_FILES) | set(TOUCHED_NON_RUST_FILES)
     changed = {
         line.strip()
         for line in run(repo, "git", "diff", "--name-only").splitlines()
@@ -1184,12 +1257,189 @@ def patch_p4_ack_witness_check(repo: Path, dry_run: bool) -> None:
 
     diff = HERE / "pending" / "p4-complete.diff"
     if not diff.is_file():
-        raise SystemExit(f"missing P4 diff: {diff}")
+        raise PatchError(f"missing P4 ACK diff: {diff}")
 
     # --check is the preflight; it refuses on any context mismatch.
     run(repo, "git", "apply", "--check", "-p1", str(diff))
     if not dry_run:
         run(repo, "git", "apply", "-p1", str(diff))
+
+
+def patch_p4_nack_witness_check(repo: Path, dry_run: bool) -> None:
+    """Verify the complete finalized fixed NACK, including its witness.
+
+    The earlier P4 delta closed the analogous ACK issue but left NACK
+    confirmation comparing only ``txid``. Under BIP141 that comparison does
+    not commit to the witness and therefore cannot establish that the
+    pre-signed NACK path actually executed. This post-format delta rebuilds
+    the NACK with the persisted N/N signature and compares the complete
+    transaction. It also carries a same-txid/different-wtxid regression.
+    """
+
+    diffs = (
+        HERE / "pending" / "p4-nack-witness.diff",
+        HERE / "pending" / "p4-nack-classifier.diff",
+    )
+    for diff in diffs:
+        if not diff.is_file():
+            raise PatchError(f"missing P4 NACK diff: {diff}")
+        run(repo, "git", "apply", "--check", "-p1", str(diff))
+        if not dry_run:
+            run(repo, "git", "apply", "-p1", str(diff))
+
+
+def patch_economic_kill_witness_test(repo: Path, dry_run: bool) -> None:
+    """Exercise the typed economic counterexample against a real generated graph.
+
+    This intentionally remains a diagnostic test.  The witness cannot authorize
+    funding and ``Ok(None)`` is explicitly not a positive safety verdict.
+    """
+
+    patch(
+        repo,
+        "crates/bridge-sm/src/graph/tests/notify_new_block.rs",
+        [
+            (
+                "    use std::collections::BTreeMap;\n\n"
+                "    use musig2::secp256k1::schnorr::Signature;",
+                "    use std::collections::BTreeMap;\n\n"
+                "    use bitcoin::Amount;\n"
+                "    use musig2::secp256k1::schnorr::Signature;",
+                "economic witness amount import",
+            ),
+            (
+                "    use strata_bridge_test_utils::bitcoin::generate_txid;\n"
+                "    use strata_bridge_tx_graph::musig_functor::GameFunctor;",
+                "    use strata_bridge_connectors::{Connector, prelude::KeyedAnchor};\n"
+                "    use strata_bridge_test_utils::bitcoin::generate_txid;\n"
+                "    use strata_bridge_tx_graph::{\n"
+                "        funds_safety::{\n"
+                "            AckReleasePolicy, detect_correlated_ack_withholder_loss,\n"
+                "        },\n"
+                "        musig_functor::GameFunctor,\n"
+                "    };",
+                "economic witness imports",
+            ),
+            (
+                "    fn all_nackd_pov_contested_payout() {\n"
+                "        let cfg = test_graph_sm_cfg();\n"
+                "        let ctx = test_graph_sm_ctx();\n"
+                "        let contest_height = LATER_BLOCK_HEIGHT;\n"
+                "        let ack_timelock = u64::from(cfg.game_graph_params.ack_timelock.value());\n"
+                "        let new_height = contest_height + ack_timelock + 1;\n\n"
+                "        let game_graph = generate_game_graph(&cfg, &ctx, &test_deposit_params());\n"
+                "        let signatures = mock_game_signatures(&game_graph);\n"
+                "        let contested_payout_sigs =\n",
+                "    fn all_nackd_pov_contested_payout() {\n"
+                "        let cfg = test_graph_sm_cfg();\n"
+                "        let ctx = test_graph_sm_ctx();\n"
+                "        let contest_height = LATER_BLOCK_HEIGHT;\n"
+                "        let ack_timelock = u64::from(cfg.game_graph_params.ack_timelock.value());\n"
+                "        let new_height = contest_height + ack_timelock + 1;\n\n"
+                "        let game_graph = generate_game_graph(&cfg, &ctx, &test_deposit_params());\n"
+                "\n"
+                "        // A valid counterproof plus one shared N-of-N release withholder can\n"
+                "        // drive every slot through NACK and then reach the owner payout. The\n"
+                "        // analyzer derives all transaction ids, conflicts, beneficiaries, and\n"
+                "        // values from the generated graph rather than accepting claimed totals.\n"
+                "        let owner_descriptor = &cfg.payout_descs[ctx.operator_idx() as usize];\n"
+                "        let owner_script = owner_descriptor.to_script();\n"
+                "        let ack_anchor_scripts = ctx\n"
+                "            .watchtower_pubkeys()\n"
+                "            .into_iter()\n"
+                "            .map(|pubkey| {\n"
+                "                KeyedAnchor::new(\n"
+                "                    cfg.game_graph_params.network,\n"
+                "                    pubkey,\n"
+                "                    Amount::from_sat(1),\n"
+                "                )\n"
+                "                .tx_out()\n"
+                "                .script_pubkey\n"
+                "            })\n"
+                "            .collect::<Vec<_>>();\n"
+                "        let slash_beneficiary_scripts = cfg\n"
+                "            .payout_descs\n"
+                "            .iter()\n"
+                "            .filter(|descriptor| *descriptor != owner_descriptor)\n"
+                "            .map(|descriptor| descriptor.to_script())\n"
+                "            .collect::<Vec<_>>();\n"
+                "        let n_of_n_policy = AckReleasePolicy::new(2, 2).expect(\"valid 2-of-2\");\n"
+                "        let witness = detect_correlated_ack_withholder_loss(\n"
+                "            &game_graph,\n"
+                "            &owner_script,\n"
+                "            &ack_anchor_scripts,\n"
+                "            &slash_beneficiary_scripts,\n"
+                "            0,\n"
+                "            n_of_n_policy,\n"
+                "        )\n"
+                "        .expect(\"generated graph must satisfy reviewed transaction invariants\")\n"
+                "        .expect(\"one shared N-of-N withholder must produce a kill witness\");\n"
+                "        assert!(!witness.funds_safe_under_premise);\n"
+                "        assert!(witness.withholding_owner_receipts_sat > 0);\n"
+                "        assert!(witness.canonical_protected_receipts_sat > 0);\n"
+                "        assert!(!witness.residual_stake_disposition_proven);\n"
+                "\n"
+                "        // This is only a counterexample detector: a threshold that survives one\n"
+                "        // withholder suppresses this witness but does not prove the graph safe.\n"
+                "        let threshold_policy =\n"
+                "            AckReleasePolicy::new(2, 1).expect(\"valid 1-of-2 control\");\n"
+                "        assert_eq!(\n"
+                "            detect_correlated_ack_withholder_loss(\n"
+                "                &game_graph,\n"
+                "                &owner_script,\n"
+                "                &ack_anchor_scripts,\n"
+                "                &slash_beneficiary_scripts,\n"
+                "                0,\n"
+                "                threshold_policy,\n"
+                "            )\n"
+                "            .expect(\"generated graph must remain structurally valid\"),\n"
+                "            None\n"
+                "        );\n"
+                "\n"
+                "        let signatures = mock_game_signatures(&game_graph);\n"
+                "        let contested_payout_sigs =\n",
+                "all-NACK economic kill witness",
+            ),
+        ],
+        dry_run,
+    )
+
+
+def preflight_complete_install(repo: Path) -> None:
+    """Exercise the complete post-format install in a disposable worktree.
+
+    The P4 deltas are generated against the formatted output of the anchor
+    installer, so they cannot be checked directly against the pristine base.
+    A detached temporary worktree lets ``--check`` validate those deltas too,
+    and lets a real install fail before its first target-tree write if either
+    post-format patch has drifted.
+    """
+
+    with tempfile.TemporaryDirectory(prefix="ranklock-validity-first-") as temp_dir:
+        scratch = Path(temp_dir) / "checkout"
+        run(repo, "git", "worktree", "add", "--detach", str(scratch), BASE_COMMIT)
+        try:
+            apply(scratch, False)
+            format_touched(scratch)
+            patch_p4_ack_witness_check(scratch, False)
+            patch_p4_nack_witness_check(scratch, True)
+        except Exception:
+            cleanup = subprocess.run(
+                ["git", "worktree", "remove", "--force", str(scratch)],
+                cwd=repo,
+                text=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            )
+            if cleanup.returncode:
+                print(
+                    f"warning: failed to remove temporary worktree {scratch}: "
+                    f"{cleanup.stderr.strip()}",
+                    file=sys.stderr,
+                )
+            raise
+        else:
+            run(repo, "git", "worktree", "remove", "--force", str(scratch))
 
 
 def patch_base_p2p_address_collision(repo: Path, dry_run: bool) -> None:
@@ -1250,9 +1500,11 @@ def main() -> int:
         repo = args.repo.resolve()
         if args.check:
             apply(repo, True)
+            preflight_complete_install(repo)
         else:
             # Verify every exact anchor before performing the first write.
             apply(repo, True)
+            preflight_complete_install(repo)
             apply(repo, False)
             format_touched(repo)
             # Applied after formatting: this delta ships as a unified diff
@@ -1260,6 +1512,7 @@ def main() -> int:
             # its context only matches once the anchor edits above have been
             # normalised.
             patch_p4_ack_witness_check(repo, False)
+            patch_p4_nack_witness_check(repo, False)
     except PatchError as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2

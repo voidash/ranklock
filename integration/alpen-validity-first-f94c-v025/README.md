@@ -21,6 +21,15 @@ It makes the smallest graph-preserving replacement of Alpen's current counterpro
 
 ## Security boundary
 
+> **Funds-safety kill:** this graph is not fundable. With a valid
+> counterproof, one participant shared by every N-of-N RankLock release can
+> withhold, suppress all ACKs, let the exact CSV NACKs pay the graph owner, and
+> then let contested payout pay that owner while the canonical slash is
+> avoided. Longer CSV and CPFP do not repair intentional withholding. The
+> bundle ships a typed, read-only economic kill witness so this failure is
+> executable rather than a prose caveat; it is deliberately disconnected from
+> authorization.
+
 The released RankLock value is a **32-byte preimage**, not a Bitcoin signing key. Spending the ACK leaf additionally requires the existing N/N signature over the exact ACK transaction. A recovered preimage therefore cannot authorize an alternate output, fee mutation, different game/deposit, or replayed transaction template.
 
 The two leaves are:
@@ -47,11 +56,19 @@ python /path/to/alpen-validity-first/apply_validity_first.py .
 
 The installer refuses a different commit, a dirty worktree, missing anchors, duplicate anchors, or pre-existing new files. It preflights all edits before writing and finishes with `git diff --check`.
 
-Set the sidecar root before graph-data generation:
+For native graph-data generation, set the sidecar root to the path the bridge
+process can read:
 
 ```bash
 export STRATA_RANKLOCK_DIR=/var/lib/strata/ranklock
 ```
+
+For Compose, set `STRATA_RANKLOCK_DIR` to an existing absolute **host** path
+owned by the exporter user and inaccessible to group/other writers. The
+installer mounts that path read-only at `/var/lib/strata/ranklock` in all
+three bridge containers. It also pins Bitcoin Core 31.1 to the qualified
+multi-architecture registry digest; `docker compose config` must be run with
+the host variable set before deployment.
 
 The included deterministic fixture can create setup/unlock files for regtest. It is test plumbing, not the RankLock proof evaluator:
 
@@ -95,15 +112,28 @@ The connector surcharge funds the larger ACK. ACK retains the existing keyed anc
 
 ## Verification status
 
-Executed in this bundle environment:
+Current v0.25.2 qualification:
 
 ```text
-10 passed  bundle/sidecar/static integration checks
+13 passed  bundle/sidecar/static integration checks
  6 passed  retained validity-first graph reference tests
+452 passed strata-bridge-sm tests
+952 passed complete serialized Strata workspace tests
+  9 passed STRATA-001..009 build-matrix cases
 ```
 
-The Rust source and Bitcoin Core regtest cases are included, but this environment had no Rust toolchain, `bitcoind`, Docker, or package-network access. Consequently, this bundle does **not** claim that `cargo check` or Core regtest was executed here. See `TEST_LEDGER.md` for the exact matrix and commands.
+The Rust results were reproduced from a pristine pinned checkout using Bitcoin
+Core 31.1 and FoundationDB 7.3.43. They establish the local build and
+state-machine baseline. They do not establish funds safety. The current
+timeout graph has an executable one-withholder economic counterexample, and
+the release-level Core matrix plus live STRATA-010..020 service-boundary matrix
+remain fail-closed. See `TEST_LEDGER.md` for commands and the exact claim
+boundary.
+
+The Compose change is consumer wiring only. This bundle still does not ship a
+proof-verifying producer that calls `export_ack_from_verified_unlock`; the
+deterministic fixture is never an acceptable substitute.
 
 ## Scope
 
-This updates the Alpen graph-integration handoff to the reviewed `f94c06d` base and RankLock v0.25 two-phase authorization boundary. It is still an apply-ready candidate, not a production qualification: the Rust workspace and Bitcoin Core regtest must pass in the target environment, the exact compact setup still needs malicious-secure generation, and independent cryptographic and implementation audits remain mandatory.
+This updates the Alpen graph-integration handoff to the reviewed `f94c06d` base and RankLock v0.25 two-phase authorization boundary. It is an apply-ready diagnostic/regtest candidate, not a production qualification. Even a perfect backend would inherit the current timeout loss trace. The graph therefore needs a fund-preserving refund/insurance terminal or an explicitly weaker threshold-release theorem before further deployment work matters.

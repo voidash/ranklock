@@ -1,0 +1,170 @@
+RankLock v0.26 subject-bound SP1 proof handoff
+Date: 2026-08-22 (Asia/Kathmandu)
+
+DECISION BOUNDARY
+
+- Do not submit another paid proof request. One reserved request was fulfilled.
+- Do not print, log, commit, or paste the private key.
+- Do not claim RankLock is safe for funds. The v0.26 graph and every receipt/admission
+  capability remain funding_eligible=false with explicit blockers.
+- Preserve the dirty worktrees and all unrelated user changes.
+
+CURRENT TASK
+
+Recover the already-fulfilled Succinct network Groth16 proof, verify it through the
+standalone RankLock verifier, and persist the verified metadata-bearing receipt.
+The remaining work is offline. The failed test did not save a receipt because it
+called zkaleido host verification before the standalone verifier and before save.
+
+WORKTREES
+
+- RankLock evidence/docs:
+  /Users/cdjk/github/llm/ranklock/worktree-v0.25.2
+- Active Strata/Rust checkout:
+  /Users/cdjk/github/llm/ranklock/tmp/strata-v026-f94c
+- zkaleido dependency actually used by Cargo:
+  /Users/cdjk/.cargo/git/checkouts/zkaleido-7822bc7834ae932e/b1c3a5a
+
+PRIVATE KEY HANDLING
+
+The key is stored only in macOS login Keychain.
+
+- service: [redacted in public repository]
+- account: [redacted in public repository]
+
+Do not include its value in this handoff or any log. If a later explicitly approved
+network request genuinely needs it, obtain it process-locally with `security
+find-generic-password -w` and ensure shell tracing is disabled. That is not needed
+for the current recovery. Rotate the key after this investigation because its value
+was pasted into chat history.
+
+FULFILLED RESERVED REQUEST
+
+- request ID:
+  0da45348ba6a7fbd6e7af661a782133b8771b1008d303cfbe4fb26122331bcc7
+- requester address:
+  [redacted in public repository]
+- created: 2026-08-21 19:07:41 UTC
+- fulfilled: 2026-08-21 19:08:25 UTC
+- SP1 network version: sp1-v6.1.0
+- proof mode: Groth16
+- strategy: reserved
+- cycles: 23,524,988
+- gas used: 23,391,357
+- public proof artifact (2179 bytes; recover before cleanup):
+  https://artifacts.production.succinct.xyz/proofs/artifact_631297ba7d839a297b94a1514d30a4879e8aef87b57c708320d57168dcd8cc9b
+- observed cleanup/expiry header: Tue 25 Aug 2026
+
+The request returned in 113.37 seconds and used modest local resources. Reserved
+capacity solved the local proving resource problem. The failure was receipt
+integration, not proof generation.
+
+FAILURE LOG
+
+/Users/cdjk/github/llm/ranklock/worktree-v0.25.2/results/v026-subject-bound-sp1/bridge_counterproof_subject_v1_SP1_v6.2.4.network-reserved-v1.log
+
+The panic is at:
+
+  crates/proofs/bridge-counterproof/src/statements.rs:810
+  host.verify(&receipt)
+
+with:
+
+  ProofVerificationError("Groth16 verification error: Proof verification failed")
+
+VERIFIED ROOT CAUSES
+
+1. Wrong circuit-version metadata pin.
+
+   Active source:
+   /Users/cdjk/github/llm/ranklock/tmp/strata-v026-f94c/crates/proofs/bridge-counterproof/src/subject_receipt.rs
+
+   It currently pins `SUBJECT_BOUND_SP1_CIRCUIT_VERSION_V1` to `v6.2.4`.
+   The installed crate is 6.2.4, but the actual SP1 circuit/receipt version is read
+   from `sp1-prover-6.2.4/SP1_CIRCUIT_VERSION` and is exactly `v6.1.0`. The network
+   artifact also records `v6.1.0`.
+
+2. zkaleido destroys the network proof's committed-values hash during a needless
+   round trip.
+
+   Dependency source:
+   /Users/cdjk/.cargo/git/checkouts/zkaleido-7822bc7834ae932e/b1c3a5a/adapters/sp1/host/src/proof.rs
+
+   `TryFrom<&ProofReceiptWithMetadata> for SP1ProofReceipt` reconstructs Groth16
+   public input 1 using `SP1PublicValues::hash_bn254()`, which is SHA-256. The
+   fulfilled proof used SP1's permitted Blake3 public-values hash. Thus
+   `host.verify(&receipt)` verifies a reconstructed proof different from the proof
+   returned by the network.
+
+   The standalone `SP1Groth16Verifier` is the correct verifier for the canonical
+   metadata receipt: it retries SHA-256 and Blake3.
+
+RAW ARTIFACT FACTS ALREADY CHECKED
+
+- artifact `sp1_version`: v6.1.0
+- Groth16 program public input:
+  00012805c27a29a2a16357606a843d0b1f2a0cde5d412e71c659bc80d1622cb0
+- pinned guest vkey bytes equal that program input exactly
+- public values: 488 bytes
+- on-chain proof bytes: 356 bytes (4-byte selector plus 352-byte encoded proof)
+- ELF SHA-256:
+  1db3e54249b8e9d2609097ac144f982d80e2fa01ce2913a6a6d1a93b27339f5e
+- Groth16 VK selector: 4388a21c
+
+NO SOURCE PATCH HAS BEEN APPLIED FOR THESE TWO ROOT CAUSES YET.
+
+SAFE NEXT PATCH
+
+1. Change `SUBJECT_BOUND_SP1_CIRCUIT_VERSION_V1` from `v6.2.4` to `v6.1.0`.
+   Update the wrong-version negative fixture to another actually different version.
+
+2. Add an ignored, offline-only import test. It must:
+   - read one network artifact path from `SUBJECT_BOUND_SP1_NETWORK_PROOF_PATH`;
+   - deserialize bytes in memory as `SP1ProofWithPublicValues`, falling back to
+     `ProofFromNetwork`;
+   - build canonical zkaleido proof bytes from `network_proof.bytes()` and public
+     values from `network_proof.public_values.to_vec()`;
+   - attach exact metadata: SP1, pinned program ID, v6.1.0, Groth16;
+   - verify with `SubjectBoundSp1Groth16VerifierV1`, not `host.verify`;
+   - decode and compare the exact expected minimal subject-bound output;
+   - save with create_new, write_all, sync_all, reload, exact equality, and a second
+     standalone verification when `SUBJECT_BOUND_SP1_PROOF_OUTPUT` is set.
+
+3. Add direct optional `sp1-sdk` and `bincode` dependencies only to the
+   `sp1-execution-tests` feature if required by the importer. They already exist as
+   workspace dependencies; inspect actual Cargo declarations before editing.
+
+4. Remove the duplicated `#[cfg(feature = "sp1-execution-tests")]` immediately
+   above `saved_subject_bound_sp1_groth16_receipt_verifies_standalone`.
+
+5. Do not modify zkaleido in Cargo's cache as the RankLock fix. A separate upstream
+   zkaleido regression/fix is warranted, but RankLock should preserve canonical
+   network bytes and use its standalone verifier now.
+
+OFFLINE RECOVERY OUTPUT
+
+Target (currently absent):
+
+/Users/cdjk/github/llm/ranklock/worktree-v0.25.2/results/v026-subject-bound-sp1/bridge_counterproof_subject_v1_SP1_v6.1.0.groth16.proof
+
+Avoid persisting the raw network bincode unless necessary. A named FIFO or in-memory
+download can feed the importer. The final receipt is intentionally persisted only
+after standalone algebraic verification and exact public-output comparison.
+
+MINIMUM VERIFICATION
+
+- rustfmt only the touched Rust/Cargo files as applicable
+- focused receipt metadata/negative tests
+- focused offline importer test using the already-fulfilled public artifact
+- saved receipt standalone reload test
+- `cargo check` and strict Clippy for `strata-bridge-counterproof` with the relevant
+  features
+- SHA-256 and byte length of the final saved receipt
+
+Do not rerun the six-hour local prover. Do not resubmit to Succinct. Do not update
+funding eligibility, production theorem, or safe-for-funds claims merely because a
+valid receipt is recovered. A valid receipt closes only the deterministic final
+Groth16 execution/verification evidence gate; runtime consumption, canonical-chain
+binding, economic qualification, ceremony, and the other v0.26 activation blockers
+remain.
+

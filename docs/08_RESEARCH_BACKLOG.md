@@ -1,5 +1,38 @@
 # Research Backlog and Kill Criteria
 
+## v0.25.2 current funds-safety lane
+
+### P0-STRATA-E2E-1 — production proof-to-ACK wiring and live matrix
+
+The library function `export_ack_from_verified_unlock` binds a verified
+RankLock unlock to ACK export, but no production service or CLI invokes it.
+The consumer side is now present: compose requires a host RankLock export
+root, mounts it read-only into all three bridges, and pins Bitcoin Core 31.1
+by registry digest. No deployed producer invokes the verified exporter, and
+STRATA-010..020 remain `not_executed`.
+
+Required deliverables:
+
+- wire the deployed proof-verification result to
+  `export_ack_from_verified_unlock` without exposing the direct exporter;
+- provision the positive lock with `ack_proof_session_context` so the verified
+  statement and complete ACK destination are one identity;
+- bind the one-shot RankLock directory, context, deposit, graph, committee,
+  chain observation, and durable burn/authorization state across restart;
+- remove or make operationally unavailable every setup-entropy path that can
+  recreate the ACK preimage;
+- pin and attest Bitcoin Core 31.1 plus the exact Strata revision in deployment;
+- execute STRATA-010..020 against the real service boundary, including crash,
+  restart, reorg, malformed proof, alternate context, timeout, fee/CPFP,
+  rollback witness, and concurrent-use cases;
+- retain logs, exact commands, versions, hashes, and failure evidence in the
+  canonical result files.
+
+Funding is killed—not merely downgraded—if an unverified caller can export the
+ACK, setup entropy remains a live release capability, any E2E case is absent or
+modeled-only, rollback witnesses are not independently deployed, or the
+release gate does not remain fail-closed on missing evidence.
+
 ## v0.22 current P0 lane
 
 ### P0-MASK-FUSION-1 — final-output-mask fusion or impossibility
@@ -323,6 +356,131 @@ Kill if the point/transcript wrapper exceeds the one-MiB envelope with no major 
 Instantiate the NP relation in `activation_nizk_frontier.py`. Verify every proof before funding, bind the proof-system/program digest into the manifest, and implement epoch burn/restart and contributor receipts.
 
 Required theorem: all but one contributor may be malicious; no accepted contributor can substitute an unlock-dead secp key without breaking proof soundness.
+
+## P0-GRAPH-3 — Shared-selection timeout and two-world economic closure
+
+Replace the broken per-slot NACK/`AllNackd` owner-payout path with a side-by-side
+graph version in which every counterproof and owner payout consume the shared
+contest-payout outpoint. The selected counterproof creates one resolution
+connector and consumes the deposit, allocating its exact amount immediately to
+the committed recovery-policy script. ACK and CSV timeout spend the resolution
+connector exclusively; ACK creates a slash-only authorization output, and
+timeout conflicts with slash while omitting claim-payout. Descriptor control
+remains a separate acceptance gate.
+
+Required deliverables:
+
+- Rust `CounterproofV2`, resolution connector, slash-authorization connector,
+  `ACKV2`, `SlashV2`, and timeout-settlement parents with fresh full-transaction
+  presignatures;
+- exact ordered watchtower/counterproof roster, one CP/ACK CPFP descriptor per
+  alternative, and no reuse of the two RankLock query-slot ids for that roster;
+- a typed resolution connector with exact value, Taproot policy, control block,
+  ACK path and CSV timeout path verified from consensus bytes;
+- exact ordered output/principal map, value conservation, fee/CPFP bounds and
+  bounded cleanup or explicit accounting for every unselected counterproof
+  funding output;
+- Bitcoin Core tests for shared-`P` double-spend exclusion, CSV boundaries,
+  ACK/timeout and timeout/slash conflicts, parent/witness mutation, fee
+  pressure, reorg and recovery;
+- an ACK-created slash authorization outpoint so Slash cannot race timeout
+  before ACK, omission of claim-payout from timeout, and exclusive reservation
+  of the stake input through the ACK/slash horizon;
+- an exhaustive subject-unique signing allowlist and verified destruction of at
+  least one deposit-signing share/nonces/backups before funding, or a confirmed
+  cutover of legacy deposit into a fresh script-only state, so a hidden
+  CooperativePayout signature cannot preempt counterproof selection;
+- a fresh versioned counterproof input/ContestV2 outpoint and categorical
+  exclusion of every v1 counterproof, ACK, NACK, Slash signature, partial
+  signature, adaptor value and runtime parent;
+- global exclusive reservation of stake against Unstaking and every other
+  game's Slash through the ACK/slash finality and reorg horizon;
+- exhaustive maximal-compatible-terminal enumeration proving every declared
+  principal obligation is paid or remains spendable, rather than inferring
+  priority from pairwise conflicts;
+- an explicit resolution of the indistinguishable `valid + withheld` versus
+  `invalid + absent` timeout worlds using consensus validity, audited threshold
+  availability, or fully reserved two-world insurance.
+
+The Python model is EXACT abstract conflict/value evidence only. Kill any claim
+that it proves Bitcoin acceptance or universal funds safety, any graph where
+two counterproofs confirm, any timeout that can resurrect owner payout, and any
+policy that calls stranded or indefinitely locked value preserved.
+
+The local terminal enumerator now satisfies the finite-roster portion of this
+task: it produces five maximal traces and seven semantic mappings for the
+two-alternative reference, requires a disposition for every positive terminal
+outpoint, binds declared principals to committed beneficiaries, and proves the
+two no-ACK semantic worlds share one timeout trace. Atomic all-reserve selection
+now assigns every reserve exactly and the reference satisfies its declared
+local policy with zero abandoned reserve value. This does **not** discharge the
+deliverable above or establish protected value. Protected-baseline authority,
+per-principal loss allowances, the service-fee schedule/baseline, and exact
+by-horizon CSV/reorg/fee execution remain explicit blockers, and the Python
+fixture is not a canonical projection of the Rust graph.
+
+Current executable progress is **REPRODUCED research evidence**: typed v0.26
+NUMS connectors, six exact transaction templates, a private-field
+`V026Graph` assembler, an independently reconstructed transaction projection,
+and an exact spender matrix pass 97 tx-graph and 54 connector tests. Six
+real-Core cases independently validate both counterproof alternatives, the
+mature owner path, ACK, first-valid CSV timeout, ACK-created Slash ancestry,
+the intended shared-input conflicts, and the confirmed-Contest relay boundary
+for the measured 10,690-WU v3 counterproof. The Slash case also proves that a
+separate valid live-key spend can consume `K` and defeat Slash. Therefore this
+progress discharges neither global stake reservation nor any activation gate.
+Remaining P0-GRAPH-3 work includes authenticated terminal economics,
+runtime/state serialization, the upstream
+Slash-v2 ASM activation, exact presign/erasure and legacy-material evidence,
+fee/package/reorg qualification, terminal wealth enumeration, and the
+validity/withholding economic theorem.
+
+The first runtime-adjacent slice is intentionally negative-only. The frozen
+`StructurallyVerifiedFundingBlockedV1`/fifteen-code namespace remains
+byte-compatible and fails closed for the current graph; bridge-sm derives the
+current sixteen-code `StructurallyVerifiedFundingBlockedV2`, and DB persists it
+in a separate versioned namespace with first-writer-wins replay/conflict
+detection. Live write capabilities are not deserializable. Neither version
+exposes admission or action and therefore neither discharges
+`RuntimeAdmissionUnimplemented`.
+Before any active state-machine work, freeze the canonical v0.26 plan/wire
+schema and supply authenticated external Claim/D/Q/K, controller, fee,
+presign/erasure, and legacy-material evidence. The live FoundationDB CAS test
+must also execute in a qualified environment; its local harness currently
+hangs.
+
+## P0-GRAPH-4 — Consume a confirmed subject receipt in the versioned threshold runtime
+
+The subject-bound counterproof slice now verifies the receipt's exact
+BridgeProof transaction id and can combine the unforgeable receipt with exact
+Bitcoin Core transaction bytes, Merkle-valid inclusion, active-chain identity,
+minimum confirmation depth, and a repeated reorg check. That capability is
+point-in-time evidence only. A fail-closed executor helper now additionally
+checks every ACK-subject field, rechecks Bitcoin before and after immutable
+witness CAS, and rejects a conflicting first writer. No valid receipt executes
+that composed path, no duty requires it, and the lower-level witness store
+remains independently callable.
+
+Required deliverables:
+
+- generate and positively verify a valid receipt with a qualified prover, or
+  bind an authorized network prover to explicit capacity, latency, quota, and
+  transcript evidence;
+- define a new versioned duty carrying the exact threshold-v3 selected subject,
+  verify the receipt, and create the live canonical-confirmation capability;
+- bind released signatures to the selected commitment, exact `R` outpoint,
+  ACK template, and BIP341 sighash before publication;
+- repeat the active-chain check immediately before irreversible publication,
+  and define reorg rollback, stale-capability invalidation, and retry behavior;
+- atomically adopt the exact ACK witness through the selected-commitment
+  first-writer-wins store; and
+- keep the legacy preimage ACK profile and threshold-v3 receipt profile in
+  distinct wire, state, persistence, and activation namespaces.
+
+The two current Core regressions qualify only the confirmation mechanics, and
+two pure regressions qualify only subject/CAS classification. They do not
+provide a valid receipt, enforced runtime consumption, atomic Bitcoin/FDB
+finality, or funding authority.
 
 ## P0-CDS-7 — Purpose-built LVA alternative
 

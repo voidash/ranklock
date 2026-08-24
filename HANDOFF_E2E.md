@@ -1,7 +1,9 @@
 # Handoff: RankLock funds-safety work
 
 **Goal:** cryptographic soundness + the whole thing running end to end.
-**Branch:** `v0.25.2-qualification`, 56 commits, clean tree, nothing pushed.
+**Imported branch:** `v0.25.2-qualification` at
+`94440e3b6e251d888402def5b59bb4977c831c05`. The workspace lane contains
+uncommitted fund-safety hardening described below; nothing was pushed.
 
 Read `V0252_THREAT_MODEL.md` first — especially §3b, which records the
 largest thing found here — then this file. `V0252_CHECKPOINT.md` has the
@@ -34,17 +36,93 @@ From `00_START_HERE.md`. These are not style preferences.
 
 | | |
 |---|---|
-| Python suite | 507 passed / 1 skipped |
-| `strata-bridge-sm` | 450 passed / 0 failed |
-| Full Strata workspace | 949 passed / 0 failed (serialized) |
-| Evidence verifier | 83 checks, 0 failing |
+| Python suite | 525 passed / 1 skipped |
+| `strata-bridge-sm` | 452 passed / 0 failed |
+| Full Strata workspace | 952 passed / 0 failed (serialized) |
+| Evidence verifier | 88 checks, 0 failing |
 | STRATA matrix | 9/9 passed |
 | Signet gate | green (`signet_ready: true`) |
 | Funds gate | `safe_for_funds: false`, `maximum_mode: canary` — correct |
 
-Landed this session: the proof-to-ACK binding (which did not exist at all),
-P4's ACK witness check, Tier 0 crypto hardening, t-of-n VSS with resharing,
-and fixes for three defects found by adversarial review.
+### 2026-08-19 P0: current timeout graph is economically refuted
+
+Do not describe funds safety as merely waiting for more E2E coverage. The
+applied `f94c06d` validity-first graph has a concrete loss trace: with a
+semantically valid counterproof, one participant shared by every N-of-N
+release can withhold, suppress all ACKs, let the exact CSV NACKs pay the graph
+owner, and then let contested payout pay that owner while the canonical slash
+is avoided. Longer CSV and CPFP improve inclusion but cannot repair deliberate
+withholding.
+
+The integration bundle now adds
+`crates/tx-graph/src/funds_safety.rs`, a typed read-only analyzer that derives
+the transaction conflicts, beneficiaries, txids, outpoints, and value totals
+from a real generated graph. The real `AllNackd -> contested payout` bridge-sm
+test asserts `funds_safe_under_premise=false`; a 1-of-2 control returns
+`Ok(None)` only to prove the detector is narrow, never to authorize funds.
+Fresh pinned-checkout installer preflight, rustfmt, the analyzer test, and the
+bridge state test pass. The bundle scope is now 33 modified + 5 new paths and
+its 28-entry manifest plus 13 Python checks pass.
+
+The next protocol decision is unavoidable: either redesign timeout into a
+principal-preserving refund/insurance terminal, or adopt a t-of-n/BFT release
+and explicitly weaken/re-audit the corruption theorem. Do not continue with a
+vector connector or proof backend as though either choice were settled.
+
+The first graph-v2 research slice is now executable in
+`src/ranklock/v026/timeout_economics.py`. It models the selected shared-`P`
+topology: all counterproof alternatives and owner payout consume the same
+contest-payout outpoint; each counterproof also consumes the deposit and
+immediately allocates its exact amount to a distinct, plan-committed P2TR
+recovery descriptor; ACK and timeout consume the selected resolution; ACK alone
+creates the authorization required by Slash; and timeout consumes contest-slash
+but not the independently burnable claim-payout output. Fifty focused
+regressions pass.
+Counterproof alternatives are explicitly
+the ordered Strata watchtower roster—not the two RankLock query slots—and every
+resolution output is bound to one plan-level connector policy. The honest result is narrow:
+`counterproof_selection_allocates_exact_deposit=true`, but
+`universal_funds_safety_established=false` and `funding_eligible=false` because
+recovery/CPFP/Slash-beneficiary control, resolution/slash-authorization Script policy, the
+exclusion of hidden alternate graph signatures, exclusive stake reservation,
+and terminal principal disposition are not verified, the
+valid-counterproof/withheld-release and invalid-counterproof/no-release worlds
+remain indistinguishable, the Rust graph is not implemented, and no Bitcoin
+Core acceptance has run. In particular, the abstract v2 parents fix the current
+post-selection deposit, Slash, and claim-payout burn races. They do not prove
+that an adversary lacks a pre-created cooperative deposit signature, that stake
+is exclusively reserved, or that the complete terminal graph preserves every
+principal. Do not convert this abstract result into an authorization input.
+The Slash policy separately binds the required zero-value protocol header and
+the ordered penalty-payout descriptors; it does not conflate them with CPFP
+keys.
+
+Landed: the proof-to-ACK library binding, ACK witness verification, Tier 0
+crypto hardening, t-of-n VSS with resharing, and fixes for defects found by
+adversarial review. This continuation also closed the witness-blind NACK gap
+Claude left behind: both classification and transition now reconstruct and
+compare the complete finalized pre-signed NACK, with same-txid/different-wtxid
+regressions. The installer now preflights every post-format P4 delta in a
+disposable worktree before touching its target. The standalone integration
+manifest now covers every distributable file, including all three executable
+P4 deltas, and its check rejects unlisted files as well as hash drift. The
+exporter now uses private, inode-checked SQLite state and write-once
+publication, and the two-phase abort path no longer hides rollback-witness
+failures. Passing CORE, Strata-build, and Strata-E2E evidence now has to name
+the pinned binary and commit rather than bypassing provenance checks by
+omission. Compose mounts the exporter root read-only into every bridge and
+pins the qualified Core image by registry digest; this wires the consumer,
+not the still-missing proof-verifying producer. The stale public conformance
+artifacts were regenerated from the actual generator-critical source, and
+post-build clean/gate companion evidence is no longer packaged into the
+archive it attests. The proof-gated exporter now derives its positive-lock
+session from the exact `AckContext`; a caller can no longer present a valid
+unlock under one statement while redirecting publication to another bridge or
+transaction tuple.
+The v0.25.1 hardening generator also now accepts the verified Core 31.1
+execution while rejecting missing, contradictory, wrong-version, or
+wrong-binary success evidence; the official reproduction path no longer fails
+merely because the pinned node actually ran.
 
 ---
 
@@ -98,10 +176,9 @@ with TLS material), 3× `strata-bridge`, 3× `mosaic`, `bitcoind`.
 
 ### Traps, all confirmed by probing
 
-- **`compose.yml` pins `bitcoin/bitcoin:30`.** Every CORE row is qualified
-  against 31.1 and the verifier cross-checks it. Running as shipped produces
-  evidence the verifier rejects *after* the build. **Repoint first**, and
-  record the repoint as a declared deviation.
+- **The installer now pins Core 31.1 by registry digest.** The exact image is
+  `bitcoin/bitcoin:31.1@sha256:da25cedc...5c40d63`; changing the tag or digest
+  invalidates the deployment qualification and must be recorded.
 - **`docker/asm-runner/Dockerfile` hardcodes `FROM --platform=linux/amd64`**,
   so it is emulated on arm64 regardless of VM architecture. `bitcoin` and
   `foundationdb` images do publish arm64.
@@ -111,17 +188,20 @@ with TLS material), 3× `strata-bridge`, 3× `mosaic`, `bitcoind`.
 - **Colima silently ignores `--arch` when reusing a profile.** Switching
   needs `colima delete`, which destroys other images in that VM — use
   `--profile <name>` instead. The user has unrelated images there.
-- **`STRATA_RANKLOCK_DIR` is wired nowhere.** It appears only as its own
-  declaration at `bridge-exec/src/graph/ranklock.rs:25`. The RankLock sidecar
-  is not connected to the deployment at all.
+- **Only the consumer half is wired.** The installer mounts the host
+  `STRATA_RANKLOCK_DIR` read-only into all three bridge containers and sets the
+  executor variable. No deployed producer invokes
+  `export_ack_from_verified_unlock`; a mounted empty directory is still an
+  absent proof-to-ACK path. The host directory must be an existing private
+  absolute path owned by the exporter user.
 
 ### The cheaper path, not yet attempted
 
 `bin/strata-bridge` and `bin/secret-service` are binaries this workspace
 already builds; the host already runs FDB and verified Core 31.1 natively;
 the workspace compiles natively (that is STRATA-005). A **native** bring-up
-would sidestep emulation, the external `mosaic` fetch, and the Core 30
-mismatch in one move. `asm-runner` and `mosaic` are the unresolved pieces —
+would sidestep emulation and the external `mosaic` fetch. `asm-runner` and
+`mosaic` are the unresolved pieces —
 neither is a binary of this workspace. **Evaluate this before committing to
 Docker.**
 
@@ -188,7 +268,7 @@ decision: existing deposits keep XOR, or regenerate.
   fields.
 - **`git stash` on a patched-but-uncommitted tree reverts to the pristine
   base**, discarding the patch, not just your change.
-- **Regenerating the P4 diff has one working recipe** — see
+- **Regenerating the post-format P4 diffs has one working recipe** — see
   `integration/.../pending/README.md`. A diff against the pristine base
   carries the whole installer as context; one from a long-lived scratch
   clone carries formatting the installer never produces.
@@ -204,18 +284,20 @@ cd <ranklock>
 source .venv/bin/activate && export PYTHONPATH=$PWD/src
 export PATH=/tmp/core311/bitcoin-31.1/bin:$PATH
 
-python -m pytest tests/ -q                        # expect 507 passed / 1 skipped
+python -m pytest tests/ -q                        # expect 525 passed / 1 skipped
 python scripts/check_signet_readiness.py          # must stay green
-python scripts/verify_v0252_evidence.py           # 83 checks, 0 failing
+python scripts/verify_v0252_evidence.py           # 88 checks, 0 failing
 python scripts/generate_v0252_release_gate.py     # safe_for_funds must stay false
 python scripts/build_v025_release.py --output-dir /tmp/rb   # regenerates MANIFEST
 ```
 
 Installer changes must be verified from a **pristine clone**: preflight,
-apply, scope count (31 modified + 4 new), `cargo fmt --all -- --check`, then
-the bridge-sm suite. `EXPECTED_CHANGED_FILES` lives in
+apply, scope count (32 modified + 4 new), `cargo fmt --all -- --check`, then
+the bridge-sm suite (currently 452/0) or, for release evidence, the full
+STRATA-001..009 matrix (currently 9/9). `EXPECTED_CHANGED_FILES` lives in
 `scripts/run_v0252_strata_build_matrix.py` and must be updated from the
-*measured* count — I predicted 32 and it was 31.
+*measured* count. The current clean 9/9 record measures 32 modified + 4 new
+paths and includes `compose.yml`; do not reuse the older 31-file evidence.
 
 ---
 

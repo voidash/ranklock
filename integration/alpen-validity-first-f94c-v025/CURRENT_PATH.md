@@ -33,6 +33,14 @@ ACK -> existing contest-payout input -> existing ACK anchor -> existing slash se
 NACK(s) -> existing AllNackd state -> existing contested-payout semantics
 ```
 
+That preserved terminal meaning is now a confirmed funds-safety failure, not a
+neutral compatibility property. With a semantically valid counterproof and one
+shared N-of-N release withholder, every ACK can be suppressed, the owner can
+collect fixed NACK outputs and contested payout, and the canonical slash does
+not consume stake. `crates/tx-graph/src/funds_safety.rs` reconstructs the exact
+conflicts, beneficiaries, transaction ids, and values and returns a typed kill
+witness. It is deliberately read-only and disconnected from authorization.
+
 No outpoint in `ClaimTx`, `ContestTx`, `ContestedPayoutTx`, `SlashTx`, deposit graph, stake graph, or payout connector is renumbered.
 
 ## Pre-signing delta
@@ -48,14 +56,27 @@ counterproof_nack[1]   # new
 
 This is the only packed signature-count change.
 
-## Exact classification
+## Exact classification and transition validation
 
-The old NACK classifier accepted any transaction spending the expected ACK/NACK outpoint. The patch reconstructs the graph and accepts only the exact fixed NACK txid for the counterprover's slot. This rejects:
+The old NACK classifier accepted any transaction spending the expected ACK/NACK outpoint. An intermediate validity-first patch improved that to the fixed NACK `txid`, but BIP141 txids exclude witness data. The final patch unpacks the persisted N/N signatures, reconstructs the finalized fixed NACK for the counterprover's slot, and compares the complete transaction in both the classifier and the state transition. This rejects:
 
 - alternate outputs;
 - extra fee-wallet inputs;
 - different deposit/game templates;
 - a NACK copied from another watchtower slot;
 - a mutated parent transaction.
+- the same unsigned NACK body with any different witness.
 
-ACK classification remains exact txid classification.
+ACK routing begins with the exact txid, but the transition also inspects the
+complete transaction and requires the witness to reveal the slot's committed
+preimage. Thus neither ACK nor NACK state resolution relies on txid alone.
+
+## Deployment consumer boundary
+
+The installer requires a host `STRATA_RANKLOCK_DIR`, mounts it read-only at
+`/var/lib/strata/ranklock` in every bridge container, and configures the
+executor to read that path. It pins `bitcoin/bitcoin:31.1` by the qualified
+multi-architecture registry digest. This is deliberately only the consumer
+boundary: no service in this bundle evaluates a RankLock proof or calls the
+verified exporter, and the deterministic fixture is not a production
+producer.

@@ -500,3 +500,61 @@ def test_two_phase_sidecar_reorg_race_aborts_without_seed_output(tmp_path):
         )
     assert not output.exists()
     assert row["ledgers"][0].use(0).state == "abort"
+
+
+def test_two_phase_sidecar_reports_abort_anchor_failure(tmp_path, monkeypatch):
+    import ranklock.two_phase_sidecar as two_phase_sidecar_module
+    from ranklock.rollback_witness import RollbackWitnessError, SqliteRollbackWitness
+    from ranklock.two_phase_sidecar import TwoPhaseParticipantSidecar, TwoPhaseSidecarError
+
+    row = _fixture(tmp_path)
+    block_hash = "ce" * 32
+    witness = SqliteRollbackWitness(tmp_path / "rollback-anchor-fail.sqlite", witness_secret=97)
+    core = _FakeCore(
+        raw=row["raw"],
+        chain_genesis_hash=row["plan"].chain_genesis_hash,
+        block_hash=block_hash,
+    )
+    sidecar = TwoPhaseParticipantSidecar(
+        activation=row["activation"],
+        plan=row["plan"],
+        witness_policy=row["policy"],
+        participant=row["participants"][0],
+        ledger=row["ledgers"][0],
+        rollback_witnesses=(witness,),
+        bitcoin_core=core,
+        minimum_confirmations=6,
+    )
+    sidecar.issue_witness_shares(
+        preauthorization=row["preauthorization"],
+        output_path=tmp_path / "labels-anchor-fail.bin",
+    )
+    core.change_height_after_first = True
+
+    real_anchor = two_phase_sidecar_module.anchor_ledger_at_all_witnesses
+    calls = 0
+
+    def fail_abort_anchor(*args, **kwargs):
+        nonlocal calls
+        calls += 1
+        if calls == 2:
+            raise RollbackWitnessError("simulated abort witness outage")
+        return real_anchor(*args, **kwargs)
+
+    monkeypatch.setattr(
+        two_phase_sidecar_module,
+        "anchor_ledger_at_all_witnesses",
+        fail_abort_anchor,
+    )
+    output = tmp_path / "must-not-exist-anchor-fail.seed"
+    with pytest.raises(TwoPhaseSidecarError, match="recovery also failed") as excinfo:
+        sidecar.issue_seed_share(
+            preauthorization=row["preauthorization"],
+            confirmation_request=row["confirmation"],
+            raw_transaction=row["raw"],
+            block_hash=block_hash,
+            output_path=output,
+        )
+    assert isinstance(excinfo.value.__cause__, ExceptionGroup)
+    assert not output.exists()
+    assert row["ledgers"][0].use(0).state == "abort"
