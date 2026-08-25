@@ -332,12 +332,14 @@ network request solved — see §8.
 ## 6. The §16 inversion — what each decision unblocks
 
 This is the actionable table. §16 lists **11** open decisions (not ten), each
-— decisions 1, 3 and 4 now have drafted proposals, in
-`62_V026_DECISION1_SECURITY_FLOOR_PROPOSAL.md`,
-`64_V026_DECISION3_TIMEOUT_ECONOMICS_PROPOSAL.md` and
-`60_V026_DECISION4_WIRE_SIGNATURE_PROFILE_PROPOSAL.md` respectively; none
-is ratified and none moves a blocker. Doc 64 carries an unresolved
-reviewer objection in its §0.3 —
+— all three step-1 kill decisions plus decision 4 now have drafted
+proposals: `62_V026_DECISION1_SECURITY_FLOOR_PROPOSAL.md` (§16.1),
+`65_V026_DECISION2_RELEASE_PROFILE_PROPOSAL.md` (§16.2),
+`64_V026_DECISION3_TIMEOUT_ECONOMICS_PROPOSAL.md` (§16.3) and
+`60_V026_DECISION4_WIRE_SIGNATURE_PROFILE_PROPOSAL.md` (§16.4). None is
+ratified and none moves a blocker. Doc 64 carries an unresolved reviewer
+objection in its §0.3; doc 65's recommendation is conditional on an
+attempt that has not been made —
 with owners and a "must be fixed before" boundary. Inverted:
 
 | §16 decision | Owners | Unblocks |
