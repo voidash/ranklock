@@ -1,0 +1,230 @@
+{
+  "all_passed": true,
+  "bitcoin_core": {
+    "path": "/opt/homebrew/bin/bitcoind",
+    "present": true,
+    "version": "Bitcoin Core daemon version v31.0.0 bitcoind"
+  },
+  "executions": [
+    {
+      "crate": "strata-bridge-tx-graph",
+      "measurements": [],
+      "passed": true,
+      "proves": "each counterproof alternative is independently valid against Core",
+      "stage": "funding-and-counterproof",
+      "summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 129 filtered out; finished in 1.21s",
+      "test": "v026_graph::tests::core_each_counterproof_sibling_is_independently_valid"
+    },
+    {
+      "crate": "strata-bridge-tx-graph",
+      "measurements": [],
+      "passed": true,
+      "proves": "selecting one counterproof invalidates its siblings and the owner path",
+      "stage": "funding-and-counterproof",
+      "summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 129 filtered out; finished in 1.05s",
+      "test": "v026_graph::tests::core_selected_counterproof_invalidates_sibling_and_owner_paths"
+    },
+    {
+      "crate": "strata-bridge-tx-graph",
+      "measurements": [],
+      "passed": true,
+      "proves": "an oversized v3 child is rejected under an unconfirmed Contest and accepted after it confirms",
+      "stage": "relay-policy",
+      "summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 129 filtered out; finished in 0.98s",
+      "test": "v026_graph::tests::core_requires_confirmed_contest_for_atomic_research_counterproof_relay"
+    },
+    {
+      "crate": "strata-bridge-tx-graph",
+      "measurements": [],
+      "passed": true,
+      "proves": "the mature owner payout is valid and blocks every counterproof",
+      "stage": "owner-payout",
+      "summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 129 filtered out; finished in 1.03s",
+      "test": "v026_graph::tests::core_mature_owner_payout_is_valid_and_blocks_every_counterproof"
+    },
+    {
+      "crate": "strata-bridge-tx-graph",
+      "measurements": [],
+      "passed": true,
+      "proves": "ACK and timeout contend for one resolution outpoint at the exact CSV boundary",
+      "stage": "ack-and-timeout",
+      "summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 129 filtered out; finished in 1.98s",
+      "test": "v026_graph::tests::core_ack_and_timeout_share_resolution_with_exact_csv_boundary"
+    },
+    {
+      "crate": "strata-bridge-tx-graph",
+      "measurements": [],
+      "passed": true,
+      "proves": "slash requires the ACK-created authorization; stake is demonstrably not exclusive",
+      "stage": "slash",
+      "summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 129 filtered out; finished in 2.04s",
+      "test": "v026_graph::tests::core_slash_requires_ack_created_authorization_and_k_is_not_exclusive"
+    },
+    {
+      "crate": "strata-bridge-connectors",
+      "measurements": [],
+      "passed": true,
+      "proves": "Core accepts a complete ordered preimage-vector ACK",
+      "stage": "ack-vector",
+      "summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 81 filtered out; finished in 0.77s",
+      "test": "counterproof_resolution_v2::tests::immediate_vector_ack_spend_is_accepted_by_core"
+    },
+    {
+      "crate": "strata-bridge-connectors",
+      "measurements": [
+        "maximum vector ACK: n=64, witness_bytes=4707, total_weight_wu=5378"
+      ],
+      "passed": true,
+      "proves": "Core accepts the declared maximum vector against a confirmed parent",
+      "stage": "ack-vector",
+      "summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 81 filtered out; finished in 0.74s",
+      "test": "counterproof_resolution_v2::tests::maximum_vector_ack_spend_weight_is_recorded_against_core"
+    },
+    {
+      "crate": "strata-bridge-connectors",
+      "measurements": [
+        "test counterproof_resolution_v2::tests::vector_ack_truc_child_crossover_is_measured_against_core ... ok",
+        "n=  2 weight_wu=  912 truc_child_relayable=true",
+        "n=  8 weight_wu= 1346 truc_child_relayable=true",
+        "n= 16 weight_wu= 1922 truc_child_relayable=true",
+        "n= 24 weight_wu= 2498 truc_child_relayable=true",
+        "n= 32 weight_wu= 3074 truc_child_relayable=true",
+        "n= 40 weight_wu= 3650 truc_child_relayable=true",
+        "n= 44 weight_wu= 3938 truc_child_relayable=true",
+        "n= 45 weight_wu= 4010 truc_child_relayable=false",
+        "n= 46 weight_wu= 4082 truc_child_relayable=false",
+        "n= 47 weight_wu= 4154 truc_child_relayable=false",
+        "n= 48 weight_wu= 4226 truc_child_relayable=false",
+        "n= 56 weight_wu= 4802 truc_child_relayable=false",
+        "n= 64 weight_wu= 5378 truc_child_relayable=false",
+        "TRUC crossover: largest relayable-as-unconfirmed-v3-child n=44, first oversized n=45"
+      ],
+      "passed": true,
+      "proves": "the exact vector length at which an ACK stops relaying under an unconfirmed v3 parent",
+      "stage": "ack-vector",
+      "summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 81 filtered out; finished in 9.51s",
+      "test": "counterproof_resolution_v2::tests::vector_ack_truc_child_crossover_is_measured_against_core"
+    },
+    {
+      "crate": "strata-bridge-connectors",
+      "measurements": [],
+      "passed": true,
+      "proves": "Core rejects missing, reordered, malformed and key-path-bypass ACK witnesses",
+      "stage": "ack-vector-negatives",
+      "summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 81 filtered out; finished in 0.73s",
+      "test": "counterproof_resolution_v2::tests::malformed_reordered_missing_and_key_path_witnesses_fail_in_core"
+    },
+    {
+      "crate": "strata-bridge-connectors",
+      "measurements": [],
+      "passed": true,
+      "proves": "Core accepts the timeout spend of the resolution outpoint",
+      "stage": "timeout",
+      "summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 81 filtered out; finished in 0.76s",
+      "test": "counterproof_resolution_v2::tests::timeout_spend_is_accepted_by_core"
+    },
+    {
+      "crate": "strata-bridge-connectors",
+      "measurements": [],
+      "passed": true,
+      "proves": "Core accepts the slash path from its authorization outpoint",
+      "stage": "slash",
+      "summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 81 filtered out; finished in 0.78s",
+      "test": "slash_authorization_v2::tests::slash_path_is_accepted_by_core"
+    },
+    {
+      "crate": "strata-bridge-connectors",
+      "measurements": [],
+      "passed": true,
+      "proves": "both declared threshold-v3 release paths are accepted by Core",
+      "stage": "threshold-v3-release",
+      "summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 81 filtered out; finished in 1.55s",
+      "test": "counterproof_resolution_threshold_v3::tests::both_declared_paths_are_accepted_by_core"
+    },
+    {
+      "crate": "strata-bridge-connectors",
+      "measurements": [],
+      "passed": true,
+      "proves": "Core enforces each 2-of-3 release quorum and rejects malformed share shapes",
+      "stage": "threshold-v3-release",
+      "summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 81 filtered out; finished in 0.77s",
+      "test": "counterproof_resolution_threshold_v3::tests::core_enforces_each_two_of_three_quorum_and_rejects_bad_raw_shapes"
+    },
+    {
+      "crate": "strata-bridge-connectors",
+      "measurements": [],
+      "passed": true,
+      "proves": "Core rejects a control block bound to a different selected commitment",
+      "stage": "threshold-v3-release",
+      "summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 81 filtered out; finished in 0.84s",
+      "test": "counterproof_resolution_threshold_v3::tests::core_rejects_a_control_block_for_a_different_selected_commitment"
+    },
+    {
+      "crate": "strata-bridge-connectors",
+      "measurements": [],
+      "passed": true,
+      "proves": "the threshold-v3 timeout obeys its exact CSV boundary in Core",
+      "stage": "threshold-v3-release",
+      "summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 81 filtered out; finished in 0.76s",
+      "test": "counterproof_resolution_threshold_v3::tests::timeout_obeys_exact_csv_boundary_in_core"
+    },
+    {
+      "crate": "strata-bridge-connectors",
+      "measurements": [],
+      "passed": true,
+      "proves": "both declared contest-payout-gate leaves are accepted by Core",
+      "stage": "contest-gates",
+      "summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 81 filtered out; finished in 1.57s",
+      "test": "contest_payout_gate_v2::tests::both_declared_leaves_are_accepted_by_core"
+    },
+    {
+      "crate": "strata-bridge-connectors",
+      "measurements": [],
+      "passed": true,
+      "proves": "both declared contest-slash-gate leaves are accepted by Core",
+      "stage": "contest-gates",
+      "summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 81 filtered out; finished in 2.02s",
+      "test": "contest_slash_gate_v2::tests::both_declared_leaves_are_accepted_by_core"
+    },
+    {
+      "crate": "strata-bridge-connectors",
+      "measurements": [],
+      "passed": true,
+      "proves": "Core accepts the consensus-maximum complete v2 contest-counterproof witness",
+      "stage": "contest-counterproof",
+      "summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 81 filtered out; finished in 1.08s",
+      "test": "contest_counterproof_v2::tests::consensus_maximum_complete_v2_witness_is_accepted_by_core"
+    },
+    {
+      "crate": "strata-bridge-connectors",
+      "measurements": [],
+      "passed": true,
+      "proves": "the reserve recovery path is independently accepted by Core",
+      "stage": "contest-counterproof",
+      "summary": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 81 filtered out; finished in 0.73s",
+      "test": "contest_counterproof_v2::tests::reserve_recovery_path_is_independently_accepted_by_core"
+    }
+  ],
+  "executions_passed": 20,
+  "executions_total": 20,
+  "funding_eligible": false,
+  "graph_stages_covered": [
+    "ack-and-timeout",
+    "ack-vector",
+    "ack-vector-negatives",
+    "contest-counterproof",
+    "contest-gates",
+    "funding-and-counterproof",
+    "owner-payout",
+    "relay-policy",
+    "slash",
+    "threshold-v3-release",
+    "timeout"
+  ],
+  "known_gap": "The v0.26 threshold-v3 graph assembler (crates/tx-graph/src/v026_threshold_graph_v3.rs) has no Core test of its own; its release connector does. Assembler-level Core coverage for the live 17-blocker path is still absent.",
+  "safe_for_funds": false,
+  "schema": "ranklock-v026-regtest-e2e-v1",
+  "scope_note": "v0.26 stage-1 regtest execution evidence. Protocol 13.1 permits deterministic fixtures at this stage and assigns it zero economic value. Every execution listed drives a real bitcoind regtest node. This establishes nothing about the security floor, release profile, ceremony, proof suite, or funds, and must never be cited as evidence of funds safety.",
+  "stage": "1-regtest",
+  "strata_commit": "0c61ca7724bacd3900fea56c60fec713f241fc23"
+}
