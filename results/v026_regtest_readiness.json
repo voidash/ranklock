@@ -1,0 +1,69 @@
+{
+  "checks": [
+    {
+      "blocks": "\u00a712 Bitcoin connector",
+      "description": "real Bitcoin Core accepts every intended v0.26 terminal branch",
+      "detail": "6/6 branches accepted",
+      "id": "RT-001",
+      "passed": true
+    },
+    {
+      "blocks": "\u00a712 Bitcoin connector",
+      "description": "intended shared-input conflicts and ancestry reproduce under Core",
+      "detail": "6/6 conflict checks hold",
+      "id": "RT-002",
+      "passed": true
+    },
+    {
+      "blocks": "protocol defect tracked; not a stage-1 blocker",
+      "description": "stake non-exclusivity is a demonstrated counterexample, not an untested gap",
+      "detail": "counterexample executed and exclusivity correctly reported false",
+      "id": "RT-003",
+      "passed": true
+    },
+    {
+      "blocks": "\u00a712 Bitcoin connector",
+      "description": "confirmed-parent requirement and v3 child weight limit hold under Core",
+      "detail": "confirmed-parent accept=True, unconfirmed reject=True, child weight limit=4000 WU",
+      "id": "RT-004",
+      "passed": true
+    },
+    {
+      "blocks": "\u00a712 E2E",
+      "description": "focused Bitcoin Core test suite reports zero failures",
+      "detail": "6 passed, 0 failed",
+      "id": "RT-005",
+      "passed": true
+    },
+    {
+      "blocks": "\u00a712 Bitcoin connector; \u00a715 step 3",
+      "description": "Rust vector-hash connector accepting 2..64 preimages exists",
+      "detail": "bounds and range guard enforced in: crates/connectors/src/counterproof_resolution_v2.rs",
+      "id": "RT-006",
+      "passed": true
+    },
+    {
+      "blocks": "\u00a712 Bitcoin connector; \u00a716 decision 4",
+      "description": "NUMS role/index derivation is canonical rather than research-only",
+      "detail": "still the research profile: roles are funding-ineligible and output_index semantics are undefined (doc 60 \u00a74.6)",
+      "id": "RT-007",
+      "passed": false
+    },
+    {
+      "blocks": "invariant",
+      "description": "no evidence artifact claims funding eligibility or funds safety",
+      "detail": "all v0.26 evidence reports funding_eligible/safe_for_funds false",
+      "id": "RT-008",
+      "passed": true
+    }
+  ],
+  "funding_eligible": false,
+  "regtest_ready": false,
+  "remaining_checks": [
+    "RT-007"
+  ],
+  "safe_for_funds": false,
+  "schema": "ranklock-v026-regtest-readiness-v1",
+  "scope_note": "v0.26 stage-1 (regtest) readiness only. Protocol \u00a713.1 permits deterministic fixtures at this stage and assigns zero economic value to it. Passing every check means the graph and connector behave correctly against real Bitcoin Core under fixtures. It establishes nothing about the security floor, release profile, ceremony, proof suite, or funds, and it is not signet readiness \u2014 stage 2 additionally requires production binaries, topology, policy, and the ceremony path. It must never be cited as evidence of funds safety.",
+  "stage": "1-regtest"
+}

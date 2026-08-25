@@ -490,14 +490,29 @@ out-of-scope.
 4,000,000, cited in §4.3. Not a conflict between them; a conflict with §4.2's
 prohibition on inherited defaults.
 
-**D-5 — the 2..64 preimage bound exists only in Python.**
-`src/ranklock/split_scalar_lock.py:946` and `:982` enforce it. No Rust
-counterpart was found in the active checkout — §1 of the protocol document
-states the Strata connector path accepts exactly one `[u8; 32]`. §4.2 requires
-Python and Rust to share golden vectors and differential fuzz tests for the wire
-profile. Until the Rust vector-hash connector exists (§15 step 3), that
-requirement is unsatisfiable for this bound, and obligation 27 (Rust graph
-projection unverified against the Python model) cannot close.
+**D-5 — the 2..64 preimage bound is enforced on both sides, but the shared
+golden vectors are still absent.**
+
+*Corrected 2026-08-25.* The first version of this defect claimed the bound
+existed "only in Python" and that no Rust counterpart was found. **That was
+wrong**, and the error was one of search rather than reading: the original grep
+looked for `vector_hash` / `VectorHash` and missed the Rust connector, which
+uses `ACK_PREIMAGES` naming.
+
+Both sides enforce it. Python: `src/ranklock/split_scalar_lock.py:946` and
+`:982`. Rust: `crates/connectors/src/counterproof_resolution_v2.rs` declares
+`MIN_ACK_PREIMAGES: usize = 2` and `MAX_ACK_PREIMAGES: usize = 64` and applies
+`(MIN_ACK_PREIMAGES..=MAX_ACK_PREIMAGES).contains(...)` at `:50`. §1 of the
+protocol says the *Strata* connector accepts exactly one `[u8; 32]`, which
+remains true and is why v0.26 introduces its own connector rather than reusing
+that one — it is not a statement about this file.
+
+What survives of the defect: §4.2 requires Python and Rust to **share golden
+vectors and differential fuzz tests** for the wire profile. Two independent
+implementations of the same numeric bound are not shared vectors. Until those
+exist, obligation 27 (Rust graph projection unverified against the Python model)
+cannot close — but the reason is a missing differential harness, not a missing
+connector, and the remaining work is correspondingly smaller.
 
 ---
 
