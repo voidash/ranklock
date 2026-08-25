@@ -239,7 +239,7 @@ stated in this document and referenced by both implementations.
 | Vector | Proposed max | Tag / basis |
 |---|---|---|
 | ordered logical query slots | exactly **2** | **FIXED** — §4.1 "exactly two ordered logical query-slot descriptors"; kill criterion 37 pins the uniform `u16` slot encoding |
-| ACK preimage commitments per connector | **2..64** | **OBSERVED** — `src/ranklock/split_scalar_lock.py:946`, `:982`; §1 of the protocol states the same 2..64 |
+| ACK preimage commitments per connector | **2..64** declared; **2..44** operationally relayable | **OBSERVED** — `split_scalar_lock.py:946`, `:982` and Rust `counterproof_resolution_v2.rs` (`MIN/MAX_ACK_PREIMAGES`) both enforce 2..64. **MEASURED against real Bitcoin Core 2026-08-25** (`vector_ack_truc_child_crossover_is_measured_against_core`): ACK weight grows ~72 WU per preimage — n=2 → 912 WU, n=44 → 3,938 WU, **n=45 → 4,009 WU**, n=64 → 5,378 WU. The v3 relay path caps children of an *unconfirmed* v3 parent at 4,000 WU, so **45..64 are valid and Core-acceptable only against a confirmed parent.** Owners must decide whether the profile maximum stays 64 with a documented confirmed-parent requirement above 44, or is lowered to 44. |
 | ordered split participants | 256 | **PROPOSED** — blocked on §16.5 |
 | one-subject graph signers | 256 | **PROPOSED** — blocked on §16.5 |
 | control domains | 64 | **PROPOSED** — blocked on §16.5 |
